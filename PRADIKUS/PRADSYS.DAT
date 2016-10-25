@@ -6,8 +6,8 @@
 
 ;
 ;SOLARxx:
-;	.DB	SYSINFO
-;	.DB	XPOS, YPOS, TYPE, DATA
+;	.byte	SYSINFO
+;	.byte	XPOS, YPOS, TYPE, DATA
 ;
 ;
 ;SYSINFO: 
@@ -15,10 +15,10 @@
 ;      ^
 ;      +------ = top 2 bits is which video sets to use (+3) 
 ;
-	.EQU	X_SET4,		H'00   	;ie. set 4
-	.EQU	X_SET5,		H'40	;    set 5
-	.EQU	X_SET6,		H'80	;    set 6
-	.EQU	X_SET7,		H'C0	;    set 7
+	.define	X_SET4 		 $00   	;ie. set 4
+	.define	X_SET5 		 $40	;    set 5
+	.define	X_SET6 		 $80	;    set 6
+	.define	X_SET7 		 $C0	;    set 7
 ;
 ;
 ;TYPE:
@@ -33,973 +33,973 @@
 ;
 ;
 ;DATA:	
-;	.EQU	GAS,		H'80	;1xxxxxxx ;low 3 bits unused?
-;	.EQU	INHAB,		H'40	;x1xxxxxx
-;	.EQU	FRNDLY,		H'20	;xx1xxxxx
-;	.EQU	V_HIGH,		H'18	;xxx11xxx
-;	.EQU	HIGH,		H'10	;xxx10xxx
-;	.EQU	AVG,		H'08	;xxx01xxx
-;	.EQU	LOW,		H'00	;xxx00xxx
+;	.define	GAS 		 $80	;1xxxxxxx ;low 3 bits unused?
+;	.define	INHAB 		 $40	;x1xxxxxx
+;	.define	FRNDLY 		 $20	;xx1xxxxx
+;	.define	V_HIGH 		 $18	;xxx11xxx
+;	.define	HIGH 		 $10	;xxx10xxx
+;	.define	AVG 		 $08	;xxx01xxx
+;	.define	LOW 		 $00	;xxx00xxx
 ;
 ;
-;	.EQU	SUN,		H'36
+;	.define	SUN 		 $36
 
 
   SOLAR00:
-	.DB	X_SET4 + H'04
-	.DB	H'66, H'1b, H'13, GAS + INHAB + AVG
-	.DB	H'0e, H'1f, H'25, INHAB + LOW
-	.DB	H'3c, H'34, SUN, H'00	;sun
-	.DB	H'3c, H'66, H'12, GAS + INHAB + FRNDLY + AVG
+	.byte	X_SET4 +  $04
+	.byte	 $66,  $1b,  $13, GAS + INHAB + AVG
+	.byte	 $0e,  $1f,  $25, INHAB + LOW
+	.byte	 $3c,  $34, SUN,  $00	;sun
+	.byte	 $3c,  $66,  $12, GAS + INHAB + FRNDLY + AVG
 				      
   SOLAR01:
-	.DB	X_SET6 + H'04
-	.DB	H'44, H'38, SUN, H'00	;sun
-	.DB	H'41, H'54, H'24, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'4c, H'5c, H'22, LOW
-	.DB	H'0a, H'62, H'23, INHAB + AVG
+	.byte	X_SET6 +  $04
+	.byte	 $44,  $38, SUN,  $00	;sun
+	.byte	 $41,  $54,  $24, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $4c,  $5c,  $22, LOW
+	.byte	 $0a,  $62,  $23, INHAB + AVG
 
   SOLAR02:
-	.DB	X_SET6 + H'0c
-	.DB	H'51, H'0c, H'24, INHAB + FRNDLY + AVG
-	.DB	H'1a, H'19, H'26, GAS
-	.DB	H'73, H'1a, H'24, GAS + INHAB + AVG
-	.DB	H'3c, H'43, SUN, H'00	;sun
-	.DB	H'45, H'48, H'24, INHAB + FRNDLY + HIGH
-	.DB	H'39, H'55, H'15, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'10, H'58, H'15, INHAB + LOW
-	.DB	H'61, H'5a, H'13, INHAB + HIGH
-	.DB	H'1c, H'62, H'24, INHAB + AVG
-	.DB	H'4e, H'6a, H'13, LOW
-	.DB	H'18, H'6f, H'24, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'58, H'78, H'14, INHAB + FRNDLY + HIGH
+	.byte	X_SET6 +  $0c
+	.byte	 $51,  $0c,  $24, INHAB + FRNDLY + AVG
+	.byte	 $1a,  $19,  $26, GAS
+	.byte	 $73,  $1a,  $24, GAS + INHAB + AVG
+	.byte	 $3c,  $43, SUN,  $00	;sun
+	.byte	 $45,  $48,  $24, INHAB + FRNDLY + HIGH
+	.byte	 $39,  $55,  $15, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $10,  $58,  $15, INHAB + LOW
+	.byte	 $61,  $5a,  $13, INHAB + HIGH
+	.byte	 $1c,  $62,  $24, INHAB + AVG
+	.byte	 $4e,  $6a,  $13, LOW
+	.byte	 $18,  $6f,  $24, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $58,  $78,  $14, INHAB + FRNDLY + HIGH
 
   SOLAR03:
-	.DB	X_SET7 + H'0c
-	.DB	H'10, H'25, H'26, GAS
-	.DB	H'33, H'2a, H'13, INHAB + AVG
-	.DB	H'19, H'2f, H'22, LOW
-	.DB	H'66, H'37, H'24, INHAB + FRNDLY + LOW
-	.DB	H'3a, H'38, SUN, H'00	;sun
-	.DB	H'43, H'38, H'26, GAS
-	.DB	H'31, H'3a, H'25, INHAB + FRNDLY + AVG
-	.DB	H'4b, H'46, H'26, GAS 
-	.DB	H'43, H'49, H'12, INHAB + FRNDLY + HIGH
-	.DB	H'3e, H'62, H'12, INHAB + HIGH
-	.DB	H'38, H'69, H'26, GAS 
-	.DB	H'07, H'6d, H'24, INHAB + AVG
+	.byte	X_SET7 +  $0c
+	.byte	 $10,  $25,  $26, GAS
+	.byte	 $33,  $2a,  $13, INHAB + AVG
+	.byte	 $19,  $2f,  $22, LOW
+	.byte	 $66,  $37,  $24, INHAB + FRNDLY + LOW
+	.byte	 $3a,  $38, SUN,  $00	;sun
+	.byte	 $43,  $38,  $26, GAS
+	.byte	 $31,  $3a,  $25, INHAB + FRNDLY + AVG
+	.byte	 $4b,  $46,  $26, GAS 
+	.byte	 $43,  $49,  $12, INHAB + FRNDLY + HIGH
+	.byte	 $3e,  $62,  $12, INHAB + HIGH
+	.byte	 $38,  $69,  $26, GAS 
+	.byte	 $07,  $6d,  $24, INHAB + AVG
 
   SOLAR04:
-	.DB	X_SET5 + H'0d
-	.DB	H'31, H'0a, H'22, INHAB + HIGH
-	.DB	H'0b, H'17, H'26, GAS 
-	.DB	H'3e, H'1A, H'22, INHAB + FRNDLY + HIGH
-	.DB	H'67, H'1F, H'15, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'36, H'21, H'24, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'40, H'32, SUN, H'00	;sun
-	.DB	H'3c, H'37, H'26, GAS 
-	.DB	H'71, H'38, H'24, INHAB + FRNDLY + AVG
-	.DB	H'67, H'41, H'12, LOW
-	.DB	H'74, H'50, H'23, INHAB + AVG
-	.DB	H'64, H'5a, H'24, LOW
-	.DB	H'78, H'5c, H'15, GAS + INHAB + LOW
-	.DB	H'2c, H'72, H'14, INHAB + FRNDLY + AVG
+	.byte	X_SET5 +  $0d
+	.byte	 $31,  $0a,  $22, INHAB + HIGH
+	.byte	 $0b,  $17,  $26, GAS 
+	.byte	 $3e,  $1A,  $22, INHAB + FRNDLY + HIGH
+	.byte	 $67,  $1F,  $15, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $36,  $21,  $24, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $40,  $32, SUN,  $00	;sun
+	.byte	 $3c,  $37,  $26, GAS 
+	.byte	 $71,  $38,  $24, INHAB + FRNDLY + AVG
+	.byte	 $67,  $41,  $12, LOW
+	.byte	 $74,  $50,  $23, INHAB + AVG
+	.byte	 $64,  $5a,  $24, LOW
+	.byte	 $78,  $5c,  $15, GAS + INHAB + LOW
+	.byte	 $2c,  $72,  $14, INHAB + FRNDLY + AVG
 
   SOLAR05:
-	.DB	X_SET4 + H'0f
-	.DB	H'07, H'1e, H'0A, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'65, H'07, H'26, GAS 
-	.DB	H'0d, H'1A, H'12, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'71, H'1F, H'15, GAS + INHAB + HIGH
-	.DB	H'43, H'2f, H'26, GAS 
-	.DB	H'22, H'30, H'22, GAS + INHAB + AVG
-	.DB	H'6b, H'36, H'13, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'52, H'3a, SUN, H'00	;sun
-	.DB	H'4f, H'3f, H'26, GAS 
-	.DB	H'23, H'42, H'15, GAS + INHAB + HIGH
-	.DB	H'3f, H'44, H'14, GAS + INHAB + AVG
-	.DB	H'14, H'4a, H'25, FRNDLY + LOW
-	.DB	H'2a, H'6e, H'12, GAS + INHAB + AVG
-	.DB	H'37, H'78, H'12, GAS + INHAB + V_HIGH
-	.DB	H'68, H'7F, H'22, FRNDLY + LOW
+	.byte	X_SET4 +  $0f
+	.byte	 $07,  $1e,  $0A, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $65,  $07,  $26, GAS 
+	.byte	 $0d,  $1A,  $12, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $71,  $1F,  $15, GAS + INHAB + HIGH
+	.byte	 $43,  $2f,  $26, GAS 
+	.byte	 $22,  $30,  $22, GAS + INHAB + AVG
+	.byte	 $6b,  $36,  $13, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $52,  $3a, SUN,  $00	;sun
+	.byte	 $4f,  $3f,  $26, GAS 
+	.byte	 $23,  $42,  $15, GAS + INHAB + HIGH
+	.byte	 $3f,  $44,  $14, GAS + INHAB + AVG
+	.byte	 $14,  $4a,  $25, FRNDLY + LOW
+	.byte	 $2a,  $6e,  $12, GAS + INHAB + AVG
+	.byte	 $37,  $78,  $12, GAS + INHAB + V_HIGH
+	.byte	 $68,  $7F,  $22, FRNDLY + LOW
 
   SOLAR06:
-	.DB	X_SET5 + H'04
-	.DB	H'22, H'30, H'12, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'40, H'3b, SUN, H'00	;sun
-	.DB	H'35, H'49, H'24, INHAB + FRNDLY + LOW
-	.DB	H'1a, H'65, H'13, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	X_SET5 +  $04
+	.byte	 $22,  $30,  $12, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $40,  $3b, SUN,  $00	;sun
+	.byte	 $35,  $49,  $24, INHAB + FRNDLY + LOW
+	.byte	 $1a,  $65,  $13, GAS + INHAB + FRNDLY + V_HIGH
 
   SOLAR07:
-	.DB	X_SET4 + H'0b
-	.DB	H'44, H'3e, H'09, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'28, H'0c, H'22, GAS + INHAB + HIGH
-	.DB	H'6f, H'0d, H'13, GAS + INHAB + AVG
-	.DB	H'20, H'12, H'26, GAS
-	.DB	H'07, H'17, H'22, GAS + INHAB + AVG
-	.DB	H'48, H'18, H'26, GAS
-	.DB	H'40, H'3b, SUN, H'00	;sun
-	.DB	H'3f, H'3c, H'15, GAS + INHAB + V_HIGH
-	.DB	H'2c, H'4f, H'23, FRNDLY + LOW
-	.DB	H'14, H'5b, H'14, GAS + INHAB + HIGH
-	.DB	H'50, H'67, H'26, GAS
+	.byte	X_SET4 +  $0b
+	.byte	 $44,  $3e,  $09, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $28,  $0c,  $22, GAS + INHAB + HIGH
+	.byte	 $6f,  $0d,  $13, GAS + INHAB + AVG
+	.byte	 $20,  $12,  $26, GAS
+	.byte	 $07,  $17,  $22, GAS + INHAB + AVG
+	.byte	 $48,  $18,  $26, GAS
+	.byte	 $40,  $3b, SUN,  $00	;sun
+	.byte	 $3f,  $3c,  $15, GAS + INHAB + V_HIGH
+	.byte	 $2c,  $4f,  $23, FRNDLY + LOW
+	.byte	 $14,  $5b,  $14, GAS + INHAB + HIGH
+	.byte	 $50,  $67,  $26, GAS
 
   SOLAR08:
   SOLAR09:
-	.DB	X_SET4 + H'0e
-	.DB	H'1f, H'0d, H'26, GAS
-	.DB	H'32, H'14, H'15, GAS + INHAB + AVG
-	.DB	H'48, H'19, H'26, GAS
-	.DB	H'37, H'2e, H'24, INHAB + FRNDLY + HIGH
-	.DB	H'73, H'35, H'14, GAS + INHAB + AVG
-	.DB	H'24, H'3b, H'12, FRNDLY + LOW
-	.DB	H'40, H'3e, SUN, H'00	;sun
-	.DB	H'4c, H'49, H'23, GAS + INHAB + FRNDLY + AVG
-	.DB	H'6b, H'50, H'12, INHAB + FRNDLY + LOW
-	.DB	H'76, H'59, H'14, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'77, H'5c, H'22, FRNDLY + LOW
-	.DB	H'69, H'61, H'13, INHAB + FRNDLY + V_HIGH
-	.DB	H'18, H'6c, H'22, FRNDLY + LOW
-	.DB	H'0e, H'72, H'26, GAS
+	.byte	X_SET4 +  $0e
+	.byte	 $1f,  $0d,  $26, GAS
+	.byte	 $32,  $14,  $15, GAS + INHAB + AVG
+	.byte	 $48,  $19,  $26, GAS
+	.byte	 $37,  $2e,  $24, INHAB + FRNDLY + HIGH
+	.byte	 $73,  $35,  $14, GAS + INHAB + AVG
+	.byte	 $24,  $3b,  $12, FRNDLY + LOW
+	.byte	 $40,  $3e, SUN,  $00	;sun
+	.byte	 $4c,  $49,  $23, GAS + INHAB + FRNDLY + AVG
+	.byte	 $6b,  $50,  $12, INHAB + FRNDLY + LOW
+	.byte	 $76,  $59,  $14, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $77,  $5c,  $22, FRNDLY + LOW
+	.byte	 $69,  $61,  $13, INHAB + FRNDLY + V_HIGH
+	.byte	 $18,  $6c,  $22, FRNDLY + LOW
+	.byte	 $0e,  $72,  $26, GAS
 
   SOLAR10:
   SOLAR11:
-	.DB	X_SET7 + H'0f
-	.DB	H'0d, H'18, H'25, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'55, H'18, H'13, GAS + INHAB + AVG
-	.DB	H'39, H'1e, H'26, GAS
-	.DB	H'10, H'2c, H'22, INHAB + FRNDLY + V_HIGH
-	.DB	H'56, H'2f, H'12, GAS + INHAB + HIGH
-	.DB	H'78, H'34, H'26, GAS
-	.DB	H'0a, H'35, H'12, GAS + INHAB + FRNDLY + AVG
-	.DB	H'24, H'37, H'25, INHAB + FRNDLY + AVG
-	.DB	H'41, H'38, SUN, H'00	;sun
-	.DB	H'0d, H'3a, H'14, GAS + INHAB + AVG
-	.DB	H'68, H'4f, H'24, INHAB + FRNDLY + AVG
-	.DB	H'4e, H'56, H'26, GAS
-	.DB	H'12, H'5d, H'12, GAS + INHAB + HIGH
-	.DB	H'6a, H'60, H'25, GAS + INHAB + FRNDLY + AVG
-	.DB	H'31, H'62, H'13, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0f
+	.byte	 $0d,  $18,  $25, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $55,  $18,  $13, GAS + INHAB + AVG
+	.byte	 $39,  $1e,  $26, GAS
+	.byte	 $10,  $2c,  $22, INHAB + FRNDLY + V_HIGH
+	.byte	 $56,  $2f,  $12, GAS + INHAB + HIGH
+	.byte	 $78,  $34,  $26, GAS
+	.byte	 $0a,  $35,  $12, GAS + INHAB + FRNDLY + AVG
+	.byte	 $24,  $37,  $25, INHAB + FRNDLY + AVG
+	.byte	 $41,  $38, SUN,  $00	;sun
+	.byte	 $0d,  $3a,  $14, GAS + INHAB + AVG
+	.byte	 $68,  $4f,  $24, INHAB + FRNDLY + AVG
+	.byte	 $4e,  $56,  $26, GAS
+	.byte	 $12,  $5d,  $12, GAS + INHAB + HIGH
+	.byte	 $6a,  $60,  $25, GAS + INHAB + FRNDLY + AVG
+	.byte	 $31,  $62,  $13, GAS + INHAB + AVG
 
   SOLAR12:
   SOLAR13:
-  	.DB	X_SET7 + H'09
-  	.DB	H'51, H'48, H'08, INHAB + V_HIGH ;space station (unfriendly)
-  	.DB	H'23, H'12, H'12, INHAB + V_HIGH
-  	.DB	H'4c, H'19, H'22, GAS + INHAB + HIGH
-  	.DB	H'10, H'25, H'26, GAS
-  	.DB	H'44, H'33, H'24, GAS + INHAB + LOW
-  	.DB	H'4c, H'37, H'12, FRNDLY + LOW
-  	.DB	H'31, H'38, H'25, GAS + INHAB + HIGH
-  	.DB	H'35, H'3c, H'12, GAS + INHAB + AVG
-  	.DB	H'46, H'43, SUN, H'00	;sun
+  	.byte	X_SET7 +  $09
+  	.byte	 $51,  $48,  $08, INHAB + V_HIGH ;space station (unfriendly)
+  	.byte	 $23,  $12,  $12, INHAB + V_HIGH
+  	.byte	 $4c,  $19,  $22, GAS + INHAB + HIGH
+  	.byte	 $10,  $25,  $26, GAS
+  	.byte	 $44,  $33,  $24, GAS + INHAB + LOW
+  	.byte	 $4c,  $37,  $12, FRNDLY + LOW
+  	.byte	 $31,  $38,  $25, GAS + INHAB + HIGH
+  	.byte	 $35,  $3c,  $12, GAS + INHAB + AVG
+  	.byte	 $46,  $43, SUN,  $00	;sun
   
   SOLAR14:
-	.DB	X_SET7 + H'06
-	.DB	H'61, H'4a, H'0C, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'0b, H'65, H'0D, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'2a, H'11, H'25, GAS + INHAB + HIGH
-	.DB	H'23, H'12, H'22, FRNDLY + LOW
-	.DB	H'4d, H'1e, H'24, GAS + INHAB + HIGH
-	.DB	H'3e, H'38, SUN, H'00	;sun
+	.byte	X_SET7 +  $06
+	.byte	 $61,  $4a,  $0C, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $0b,  $65,  $0D, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $2a,  $11,  $25, GAS + INHAB + HIGH
+	.byte	 $23,  $12,  $22, FRNDLY + LOW
+	.byte	 $4d,  $1e,  $24, GAS + INHAB + HIGH
+	.byte	 $3e,  $38, SUN,  $00	;sun
 
   SOLAR15:
-	.DB	X_SET4 + H'0a
-	.DB	H'20, H'17, H'02, INHAB + FRNDLY + V_HIGH ;space station
-	.DB	H'27, H'0a, H'12, INHAB + FRNDLY + HIGH
-	.DB	H'26, H'19, H'13, GAS + INHAB + FRNDLY + AVG
-	.DB	H'37, H'1e, H'26, GAS
-	.DB	H'33, H'23, H'23, INHAB + FRNDLY + LOW
-	.DB	H'37, H'27, H'22, FRNDLY + LOW
-	.DB	H'3e, H'3d, SUN, H'00	;sun
-	.DB	H'25, H'51, H'15, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'50, H'55, H'24, INHAB + FRNDLY + V_HIGH
-	.DB	H'63, H'5f, H'15, GAS + INHAB + AVG
+	.byte	X_SET4 +  $0a
+	.byte	 $20,  $17,  $02, INHAB + FRNDLY + V_HIGH ;space station
+	.byte	 $27,  $0a,  $12, INHAB + FRNDLY + HIGH
+	.byte	 $26,  $19,  $13, GAS + INHAB + FRNDLY + AVG
+	.byte	 $37,  $1e,  $26, GAS
+	.byte	 $33,  $23,  $23, INHAB + FRNDLY + LOW
+	.byte	 $37,  $27,  $22, FRNDLY + LOW
+	.byte	 $3e,  $3d, SUN,  $00	;sun
+	.byte	 $25,  $51,  $15, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $50,  $55,  $24, INHAB + FRNDLY + V_HIGH
+	.byte	 $63,  $5f,  $15, GAS + INHAB + AVG
 
   SOLAR16:
-	.DB	X_SET5 + H'03
-	.DB	H'20, H'17, H'0D, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'12, H'1f, H'26, GAS
-	.DB	H'32, H'35, SUN, H'00	;sun
+	.byte	X_SET5 +  $03
+	.byte	 $20,  $17,  $0D, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $12,  $1f,  $26, GAS
+	.byte	 $32,  $35, SUN,  $00	;sun
 
   SOLAR17:
-	.DB	X_SET7 + H'0c
-	.DB	H'61, H'64, H'0C, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'36, H'1C, H'0B, INHAB + V_HIGH ;space station (unfriendly)
-	.DB	H'1a, H'06, H'25, GAS + INHAB + V_HIGH
-	.DB	H'06, H'0c, H'25, GAS + INHAB + HIGH
-	.DB	H'48, H'11, H'12, GAS + INHAB + HIGH
-	.DB	H'28, H'1d, H'24, GAS + INHAB + AVG
-	.DB	H'33, H'22, H'26, GAS
-	.DB	H'14, H'36, H'23, GAS + INHAB + HIGH
-	.DB	H'5e, H'39, H'23, GAS + INHAB + AVG
-	.DB	H'3c, H'3c, SUN, H'00	;sun
-	.DB	H'09, H'51, H'25, GAS + INHAB + HIGH
-	.DB	H'58, H'51, H'14, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0c
+	.byte	 $61,  $64,  $0C, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $36,  $1C,  $0B, INHAB + V_HIGH ;space station (unfriendly)
+	.byte	 $1a,  $06,  $25, GAS + INHAB + V_HIGH
+	.byte	 $06,  $0c,  $25, GAS + INHAB + HIGH
+	.byte	 $48,  $11,  $12, GAS + INHAB + HIGH
+	.byte	 $28,  $1d,  $24, GAS + INHAB + AVG
+	.byte	 $33,  $22,  $26, GAS
+	.byte	 $14,  $36,  $23, GAS + INHAB + HIGH
+	.byte	 $5e,  $39,  $23, GAS + INHAB + AVG
+	.byte	 $3c,  $3c, SUN,  $00	;sun
+	.byte	 $09,  $51,  $25, GAS + INHAB + HIGH
+	.byte	 $58,  $51,  $14, GAS + INHAB + AVG
 
   SOLAR18:
   SOLAR19:
-	.DB	X_SET4 + H'04
-	.DB	H'0d, H'11, H'23, GAS + INHAB + FRNDLY + AVG
-	.DB	H'3e, H'2b, H'13, GAS + INHAB + FRNDLY + AVG
-	.DB	H'35, H'3c, SUN, H'00	;sun
-	.DB	H'1c, H'51, H'25, GAS + INHAB + FRNDLY + LOW
+	.byte	X_SET4 +  $04
+	.byte	 $0d,  $11,  $23, GAS + INHAB + FRNDLY + AVG
+	.byte	 $3e,  $2b,  $13, GAS + INHAB + FRNDLY + AVG
+	.byte	 $35,  $3c, SUN,  $00	;sun
+	.byte	 $1c,  $51,  $25, GAS + INHAB + FRNDLY + LOW
 
   SOLAR20:
-	.DB	X_SET4 + H'12
-	.DB	H'69, H'0c, H'05, INHAB + AVG ;space station (unfriendly)
-	.DB	H'46, H'09, H'23, FRNDLY + LOW
-	.DB	H'61, H'0a, H'22, GAS + INHAB + HIGH
-	.DB	H'4b, H'0d, H'26, GAS
-	.DB	H'40, H'1e, H'23, GAS + INHAB + V_HIGH
-	.DB	H'27, H'25, H'14, GAS + INHAB + HIGH
-	.DB	H'5f, H'29, H'25, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'3f, H'38, SUN, H'00	;sun
-	.DB	H'36, H'3f, H'14, INHAB + FRNDLY + HIGH
-	.DB	H'5c, H'49, H'26, GAS
-	.DB	H'51, H'4a, H'23, INHAB + FRNDLY + AVG
-	.DB	H'57, H'4e, H'22, GAS + INHAB + LOW
-	.DB	H'31, H'58, H'15, GAS + INHAB + AVG
-	.DB	H'23, H'59, H'24, GAS + INHAB + HIGH
-	.DB	H'3e, H'59, H'14, FRNDLY + LOW
-	.DB	H'09, H'5b, H'26, GAS
-	.DB	H'57, H'67, H'25, GAS + INHAB + AVG
-	.DB	H'5d, H'70, H'22, GAS + INHAB + HIGH
+	.byte	X_SET4 +  $12
+	.byte	 $69,  $0c,  $05, INHAB + AVG ;space station (unfriendly)
+	.byte	 $46,  $09,  $23, FRNDLY + LOW
+	.byte	 $61,  $0a,  $22, GAS + INHAB + HIGH
+	.byte	 $4b,  $0d,  $26, GAS
+	.byte	 $40,  $1e,  $23, GAS + INHAB + V_HIGH
+	.byte	 $27,  $25,  $14, GAS + INHAB + HIGH
+	.byte	 $5f,  $29,  $25, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $3f,  $38, SUN,  $00	;sun
+	.byte	 $36,  $3f,  $14, INHAB + FRNDLY + HIGH
+	.byte	 $5c,  $49,  $26, GAS
+	.byte	 $51,  $4a,  $23, INHAB + FRNDLY + AVG
+	.byte	 $57,  $4e,  $22, GAS + INHAB + LOW
+	.byte	 $31,  $58,  $15, GAS + INHAB + AVG
+	.byte	 $23,  $59,  $24, GAS + INHAB + HIGH
+	.byte	 $3e,  $59,  $14, FRNDLY + LOW
+	.byte	 $09,  $5b,  $26, GAS
+	.byte	 $57,  $67,  $25, GAS + INHAB + AVG
+	.byte	 $5d,  $70,  $22, GAS + INHAB + HIGH
 
   SOLAR21:
-	.DB	X_SET7 + H'03
-	.DB	H'46, H'09, H'13, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'2c, H'15, H'22, GAS + INHAB + FRNDLY + AVG
-	.DB	H'41, H'3e, SUN, H'00	;sun
+	.byte	X_SET7 +  $03
+	.byte	 $46,  $09,  $13, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $2c,  $15,  $22, GAS + INHAB + FRNDLY + AVG
+	.byte	 $41,  $3e, SUN,  $00	;sun
 
   SOLAR22:
   SOLAR23:
-	.DB	X_SET6 + H'09
-	.DB	H'1b, H'0f, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'5d, H'32, H'13, GAS + INHAB + FRNDLY + AVG
-	.DB	H'36, H'3a, SUN, H'00	;sun
-	.DB	H'1c, H'41, H'12, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'54, H'50, H'26, GAS
-	.DB	H'0e, H'54, H'13, INHAB + FRNDLY + HIGH
-	.DB	H'6f, H'63, H'25, INHAB + FRNDLY + HIGH
-	.DB	H'4a, H'6f, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'6e, H'76, H'22, GAS + INHAB + FRNDLY + LOW
+	.byte	X_SET6 +  $09
+	.byte	 $1b,  $0f,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $5d,  $32,  $13, GAS + INHAB + FRNDLY + AVG
+	.byte	 $36,  $3a, SUN,  $00	;sun
+	.byte	 $1c,  $41,  $12, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $54,  $50,  $26, GAS
+	.byte	 $0e,  $54,  $13, INHAB + FRNDLY + HIGH
+	.byte	 $6f,  $63,  $25, INHAB + FRNDLY + HIGH
+	.byte	 $4a,  $6f,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $6e,  $76,  $22, GAS + INHAB + FRNDLY + LOW
 
   SOLAR24:
-	.DB	X_SET6 + H'11
-	.DB	H'42, H'4d, H'03, INHAB + FRNDLY + V_HIGH ;space station
-	.DB	H'26, H'08, H'23, INHAB + FRNDLY + HIGH
-	.DB	H'39, H'0a, H'13, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'4c, H'0d, H'24, INHAB + FRNDLY + AVG
-	.DB	H'18, H'11, H'26, GAS
-	.DB	H'63, H'1c, H'25, GAS + INHAB + FRNDLY + LOW
-	.DB	H'34, H'26, H'15, INHAB + FRNDLY + HIGH
-	.DB	H'25, H'27, H'26, GAS
-	.DB	H'26, H'2e, H'13, INHAB + FRNDLY + AVG
-	.DB	H'3a, H'34, SUN, H'00	;sun
-	.DB	H'42, H'3f, H'13, INHAB + FRNDLY + LOW
-	.DB	H'73, H'51, H'26, GAS
-	.DB	H'3b, H'5c, H'13, FRNDLY + LOW
-	.DB	H'5d, H'68, H'23, GAS + INHAB + AVG
-	.DB	H'0a, H'6b, H'24, GAS + INHAB + HIGH
-	.DB	H'4f, H'72, H'26, GAS
-	.DB	H'59, H'74, H'23, GAS + INHAB + AVG
+	.byte	X_SET6 +  $11
+	.byte	 $42,  $4d,  $03, INHAB + FRNDLY + V_HIGH ;space station
+	.byte	 $26,  $08,  $23, INHAB + FRNDLY + HIGH
+	.byte	 $39,  $0a,  $13, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $4c,  $0d,  $24, INHAB + FRNDLY + AVG
+	.byte	 $18,  $11,  $26, GAS
+	.byte	 $63,  $1c,  $25, GAS + INHAB + FRNDLY + LOW
+	.byte	 $34,  $26,  $15, INHAB + FRNDLY + HIGH
+	.byte	 $25,  $27,  $26, GAS
+	.byte	 $26,  $2e,  $13, INHAB + FRNDLY + AVG
+	.byte	 $3a,  $34, SUN,  $00	;sun
+	.byte	 $42,  $3f,  $13, INHAB + FRNDLY + LOW
+	.byte	 $73,  $51,  $26, GAS
+	.byte	 $3b,  $5c,  $13, FRNDLY + LOW
+	.byte	 $5d,  $68,  $23, GAS + INHAB + AVG
+	.byte	 $0a,  $6b,  $24, GAS + INHAB + HIGH
+	.byte	 $4f,  $72,  $26, GAS
+	.byte	 $59,  $74,  $23, GAS + INHAB + AVG
 
   SOLAR25:
-	.DB	X_SET4 + H'0b
-	.DB	H'47, H'61, H'06, GAS + INHAB + HIGH ;space station (unfr.)
-	.DB	H'0d, H'09, H'07, GAS + INHAB + HIGH ;space station (unfr.)
-	.DB	H'30, H'0a, H'26, GAS
-	.DB	H'70, H'0d, H'24, GAS + INHAB + HIGH
-	.DB	H'3d, H'1f, H'13, GAS + INHAB + AVG
-	.DB	H'3c, H'23, H'22, GAS + INHAB + AVG
-	.DB	H'25, H'27, H'26, GAS
-	.DB	H'46, H'3c, H'22, GAS + INHAB + HIGH
-	.DB	H'42, H'46, SUN, H'00	;sun
-	.DB	H'63, H'52, H'15, GAS + INHAB + AVG
-	.DB	H'3b, H'6b, H'15, GAS + INHAB + AVG
+	.byte	X_SET4 +  $0b
+	.byte	 $47,  $61,  $06, GAS + INHAB + HIGH ;space station (unfr.)
+	.byte	 $0d,  $09,  $07, GAS + INHAB + HIGH ;space station (unfr.)
+	.byte	 $30,  $0a,  $26, GAS
+	.byte	 $70,  $0d,  $24, GAS + INHAB + HIGH
+	.byte	 $3d,  $1f,  $13, GAS + INHAB + AVG
+	.byte	 $3c,  $23,  $22, GAS + INHAB + AVG
+	.byte	 $25,  $27,  $26, GAS
+	.byte	 $46,  $3c,  $22, GAS + INHAB + HIGH
+	.byte	 $42,  $46, SUN,  $00	;sun
+	.byte	 $63,  $52,  $15, GAS + INHAB + AVG
+	.byte	 $3b,  $6b,  $15, GAS + INHAB + AVG
 
   SOLAR26:
-	.DB	X_SET4 + H'12
-	.DB	H'1c, H'74, H'00, INHAB + FRNDLY + AVG ;space station
-	.DB	H'5d, H'0A, H'24, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'0b, H'0E, H'12, INHAB + FRNDLY + AVG
-	.DB	H'0e, H'16, H'26, GAS
-	.DB	H'51, H'18, H'13, INHAB + FRNDLY + HIGH
-	.DB	H'30, H'1c, H'23, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'11, H'1f, H'15, INHAB + FRNDLY + AVG
-	.DB	H'47, H'25, H'26, GAS
-	.DB	H'25, H'2d, H'12, INHAB + FRNDLY + LOW
-	.DB	H'3b, H'2d, H'24, GAS + INHAB + FRNDLY + AVG
-	.DB	H'65, H'3e, H'13, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'3d, H'42, SUN, H'00	;sun
-	.DB	H'67, H'4e, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'31, H'50, H'24, INHAB + FRNDLY + LOW
-	.DB	H'4c, H'5b, H'12, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'06, H'62, H'24, INHAB + FRNDLY + AVG
-	.DB	H'1f, H'6c, H'26, GAS
-	.DB	H'4c, H'6d, H'25, FRNDLY + LOW
+	.byte	X_SET4 +  $12
+	.byte	 $1c,  $74,  $00, INHAB + FRNDLY + AVG ;space station
+	.byte	 $5d,  $0A,  $24, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $0b,  $0E,  $12, INHAB + FRNDLY + AVG
+	.byte	 $0e,  $16,  $26, GAS
+	.byte	 $51,  $18,  $13, INHAB + FRNDLY + HIGH
+	.byte	 $30,  $1c,  $23, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $11,  $1f,  $15, INHAB + FRNDLY + AVG
+	.byte	 $47,  $25,  $26, GAS
+	.byte	 $25,  $2d,  $12, INHAB + FRNDLY + LOW
+	.byte	 $3b,  $2d,  $24, GAS + INHAB + FRNDLY + AVG
+	.byte	 $65,  $3e,  $13, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $3d,  $42, SUN,  $00	;sun
+	.byte	 $67,  $4e,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $31,  $50,  $24, INHAB + FRNDLY + LOW
+	.byte	 $4c,  $5b,  $12, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $06,  $62,  $24, INHAB + FRNDLY + AVG
+	.byte	 $1f,  $6c,  $26, GAS
+	.byte	 $4c,  $6d,  $25, FRNDLY + LOW
 
   SOLAR27:
-	.DB	X_SET4 + H'04
-	.DB	H'5c, H'10, H'24, INHAB + FRNDLY + HIGH
-	.DB	H'11, H'1f, H'15, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'41, H'41, SUN, H'00	;sun
-	.DB	H'5d, H'5c, H'26, GAS
+	.byte	X_SET4 +  $04
+	.byte	 $5c,  $10,  $24, INHAB + FRNDLY + HIGH
+	.byte	 $11,  $1f,  $15, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $41,  $41, SUN,  $00	;sun
+	.byte	 $5d,  $5c,  $26, GAS
 
   SOLAR28:
   SOLAR29:
-	.DB	X_SET4 + H'0d
-	.DB	H'73, H'60, H'01, INHAB + FRNDLY + HIGH ;space station
-	.DB	H'09, H'0D, H'12, GAS + INHAB + HIGH
-	.DB	H'09, H'1D, H'26, GAS
-	.DB	H'47, H'1F, H'14,  INHAB + AVG
-	.DB	H'70, H'2c, H'15, GAS + INHAB + HIGH
-	.DB	H'0e, H'34, H'12, FRNDLY + LOW
-	.DB	H'3c, H'36, SUN, H'00	;sun
-	.DB	H'71, H'4e, H'15, GAS + INHAB + HIGH
-	.DB	H'38, H'58, H'22, GAS + INHAB + AVG
-	.DB	H'67, H'60, H'12, FRNDLY + LOW
-	.DB	H'78, H'68, H'25, INHAB + FRNDLY + LOW
-	.DB	H'78, H'71, H'15, INHAB + FRNDLY + AVG
-	.DB	H'6d, H'7A, H'13, GAS + INHAB + FRNDLY + AVG
+	.byte	X_SET4 +  $0d
+	.byte	 $73,  $60,  $01, INHAB + FRNDLY + HIGH ;space station
+	.byte	 $09,  $0D,  $12, GAS + INHAB + HIGH
+	.byte	 $09,  $1D,  $26, GAS
+	.byte	 $47,  $1F,  $14,  INHAB + AVG
+	.byte	 $70,  $2c,  $15, GAS + INHAB + HIGH
+	.byte	 $0e,  $34,  $12, FRNDLY + LOW
+	.byte	 $3c,  $36, SUN,  $00	;sun
+	.byte	 $71,  $4e,  $15, GAS + INHAB + HIGH
+	.byte	 $38,  $58,  $22, GAS + INHAB + AVG
+	.byte	 $67,  $60,  $12, FRNDLY + LOW
+	.byte	 $78,  $68,  $25, INHAB + FRNDLY + LOW
+	.byte	 $78,  $71,  $15, INHAB + FRNDLY + AVG
+	.byte	 $6d,  $7A,  $13, GAS + INHAB + FRNDLY + AVG
 
   SOLAR30:
   SOLAR31:
-	.DB	X_SET6 + H'05
-	.DB	H'56, H'0c, H'0D, GAS + INHAB + V_HIGH ;space station THUNDER BOLT
-	.DB	H'20, H'23, H'0C, GAS + INHAB + V_HIGH ;space station
-	.DB	H'57, H'06, H'24, GAS + INHAB + HIGH
-	.DB	H'63, H'1b, H'14, GAS + INHAB + V_HIGH
-	.DB	H'3c, H'36, SUN, H'00	;sun
+	.byte	X_SET6 +  $05
+	.byte	 $56,  $0c,  $0D, GAS + INHAB + V_HIGH ;space station THUNDER BOLT
+	.byte	 $20,  $23,  $0C, GAS + INHAB + V_HIGH ;space station
+	.byte	 $57,  $06,  $24, GAS + INHAB + HIGH
+	.byte	 $63,  $1b,  $14, GAS + INHAB + V_HIGH
+	.byte	 $3c,  $36, SUN,  $00	;sun
 
   SOLAR32:
-	.DB	X_SET7 + H'0e
-	.DB	H'3a, H'57, H'03, INHAB + FRNDLY + V_HIGH ;space station
-	.DB	H'6c, H'10, H'25, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'3e, H'11, H'12, INHAB + FRNDLY + LOW
-	.DB	H'09, H'15, H'26, GAS
-	.DB	H'52, H'29, H'25, INHAB + FRNDLY + AVG
-	.DB	H'0b, H'2b, H'25, INHAB + FRNDLY + AVG
-	.DB	H'6b, H'3d, H'24, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'39, H'43, SUN, H'00	;sun
-	.DB	H'56, H'5e, H'15, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'75, H'5e, H'24, INHAB + FRNDLY + LOW
-	.DB	H'51, H'61, H'13, FRNDLY + LOW
-	.DB	H'47, H'62, H'25, GAS + INHAB + AVG
-	.DB	H'75, H'6a, H'26, GAS
-	.DB	H'2d, H'6c, H'25, GAS + INHAB + HIGH
+	.byte	X_SET7 +  $0e
+	.byte	 $3a,  $57,  $03, INHAB + FRNDLY + V_HIGH ;space station
+	.byte	 $6c,  $10,  $25, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $3e,  $11,  $12, INHAB + FRNDLY + LOW
+	.byte	 $09,  $15,  $26, GAS
+	.byte	 $52,  $29,  $25, INHAB + FRNDLY + AVG
+	.byte	 $0b,  $2b,  $25, INHAB + FRNDLY + AVG
+	.byte	 $6b,  $3d,  $24, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $39,  $43, SUN,  $00	;sun
+	.byte	 $56,  $5e,  $15, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $75,  $5e,  $24, INHAB + FRNDLY + LOW
+	.byte	 $51,  $61,  $13, FRNDLY + LOW
+	.byte	 $47,  $62,  $25, GAS + INHAB + AVG
+	.byte	 $75,  $6a,  $26, GAS
+	.byte	 $2d,  $6c,  $25, GAS + INHAB + HIGH
 
   SOLAR33:
-  	.DB	X_SET7 + H'08
-  	.DB	H'56, H'51, H'0E, GAS + INHAB + V_HIGH ;space station  FREEM DRIVE
-  	.DB	H'66, H'36, H'0C, GAS + INHAB + V_HIGH ;space station
-  	.DB	H'1d, H'18, H'0C, GAS + INHAB + V_HIGH ;space station
-  	.DB	H'33, H'30, H'0C, GAS + INHAB + V_HIGH ;space station
-  	.DB	H'70, H'3c, H'0C, GAS + INHAB + V_HIGH ;space station
-  	.DB	H'3e, H'11, H'22, GAS + INHAB + V_HIGH
-  	.DB	H'33, H'3e, SUN, H'00	;sun
-  	.DB	H'61, H'6a, H'25, GAS + INHAB + V_HIGH
+  	.byte	X_SET7 +  $08
+  	.byte	 $56,  $51,  $0E, GAS + INHAB + V_HIGH ;space station  FREEM DRIVE
+  	.byte	 $66,  $36,  $0C, GAS + INHAB + V_HIGH ;space station
+  	.byte	 $1d,  $18,  $0C, GAS + INHAB + V_HIGH ;space station
+  	.byte	 $33,  $30,  $0C, GAS + INHAB + V_HIGH ;space station
+  	.byte	 $70,  $3c,  $0C, GAS + INHAB + V_HIGH ;space station
+  	.byte	 $3e,  $11,  $22, GAS + INHAB + V_HIGH
+  	.byte	 $33,  $3e, SUN,  $00	;sun
+  	.byte	 $61,  $6a,  $25, GAS + INHAB + V_HIGH
   
   SOLAR34:
   SOLAR35:
-	.DB	X_SET7 + H'0e
-	.DB	H'26, H'37, H'04, GAS + INHAB + AVG ;space station
-	.DB	H'77, H'0a, H'26, GAS
-	.DB	H'20, H'0c, H'15, GAS + INHAB + HIGH
-	.DB	H'67, H'0e, H'23, FRNDLY + LOW
-	.DB	H'5a, H'12, H'26, GAS
-	.DB	H'34, H'23, H'25, GAS + INHAB + LOW
-	.DB	H'62, H'30, H'22, GAS + INHAB + HIGH
-	.DB	H'78, H'31, H'14, GAS + INHAB + AVG
-	.DB	H'36, H'33, H'23, GAS + INHAB + LOW
-	.DB	H'6e, H'3d, H'24, GAS + INHAB + AVG
-	.DB	H'33, H'40, SUN, H'00	;sun
-	.DB	H'52, H'4f, H'14, GAS + INHAB + HIGH
-	.DB	H'70, H'62, H'26, GAS
-	.DB	H'20, H'69, H'13, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0e
+	.byte	 $26,  $37,  $04, GAS + INHAB + AVG ;space station
+	.byte	 $77,  $0a,  $26, GAS
+	.byte	 $20,  $0c,  $15, GAS + INHAB + HIGH
+	.byte	 $67,  $0e,  $23, FRNDLY + LOW
+	.byte	 $5a,  $12,  $26, GAS
+	.byte	 $34,  $23,  $25, GAS + INHAB + LOW
+	.byte	 $62,  $30,  $22, GAS + INHAB + HIGH
+	.byte	 $78,  $31,  $14, GAS + INHAB + AVG
+	.byte	 $36,  $33,  $23, GAS + INHAB + LOW
+	.byte	 $6e,  $3d,  $24, GAS + INHAB + AVG
+	.byte	 $33,  $40, SUN,  $00	;sun
+	.byte	 $52,  $4f,  $14, GAS + INHAB + HIGH
+	.byte	 $70,  $62,  $26, GAS
+	.byte	 $20,  $69,  $13, GAS + INHAB + AVG
 
   SOLAR36:
-	.DB	X_SET6 + H'0e
-	.DB	H'4c, H'20, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'78, H'07, H'14, GAS + INHAB + HIGH
-	.DB	H'40, H'09, H'15, GAS + INHAB + AVG
-	.DB	H'2f, H'0e, H'23, INHAB + FRNDLY + LOW
-	.DB	H'2b, H'15, H'26, GAS
-	.DB	H'4e, H'32, H'22, GAS + INHAB + HIGH
-	.DB	H'29, H'34, H'23, FRNDLY + LOW
-	.DB	H'3b, H'37, SUN, H'00	;sun
-	.DB	H'70, H'3a, H'14, GAS + INHAB + AVG
-	.DB	H'69, H'44, H'24, GAS + INHAB + HIGH
-	.DB	H'4a, H'46, H'14, GAS + INHAB + LOW
-	.DB	H'11, H'47, H'24, GAS + INHAB + HIGH
-	.DB	H'57, H'4d, H'15, GAS + INHAB + LOW
-	.DB	H'3d, H'63, H'24, GAS + INHAB + AVG
+	.byte	X_SET6 +  $0e
+	.byte	 $4c,  $20,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $78,  $07,  $14, GAS + INHAB + HIGH
+	.byte	 $40,  $09,  $15, GAS + INHAB + AVG
+	.byte	 $2f,  $0e,  $23, INHAB + FRNDLY + LOW
+	.byte	 $2b,  $15,  $26, GAS
+	.byte	 $4e,  $32,  $22, GAS + INHAB + HIGH
+	.byte	 $29,  $34,  $23, FRNDLY + LOW
+	.byte	 $3b,  $37, SUN,  $00	;sun
+	.byte	 $70,  $3a,  $14, GAS + INHAB + AVG
+	.byte	 $69,  $44,  $24, GAS + INHAB + HIGH
+	.byte	 $4a,  $46,  $14, GAS + INHAB + LOW
+	.byte	 $11,  $47,  $24, GAS + INHAB + HIGH
+	.byte	 $57,  $4d,  $15, GAS + INHAB + LOW
+	.byte	 $3d,  $63,  $24, GAS + INHAB + AVG
 
   SOLAR37:
-	.DB	X_SET4 + H'05
-	.DB	H'20, H'17, H'03, INHAB + FRNDLY + V_HIGH ;space station
-	.DB	H'75, H'09, H'26, GAS
-	.DB	H'55, H'0c, H'23, FRNDLY + LOW
-	.DB	H'3a, H'10, H'15, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'35, H'44, SUN, H'00	;sun
+	.byte	X_SET4 +  $05
+	.byte	 $20,  $17,  $03, INHAB + FRNDLY + V_HIGH ;space station
+	.byte	 $75,  $09,  $26, GAS
+	.byte	 $55,  $0c,  $23, FRNDLY + LOW
+	.byte	 $3a,  $10,  $15, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $35,  $44, SUN,  $00	;sun
 
   SOLAR38:
   SOLAR39:
-	.DB	X_SET4 + H'12
-	.DB	H'06, H'73, H'04, GAS + INHAB + AVG ;space station
-	.DB	H'51, H'0b, H'26, GAS
-	.DB	H'70, H'0b, H'14, GAS + INHAB + HIGH
-	.DB	H'66, H'11, H'12, GAS + INHAB + AVG
-	.DB	H'71, H'21, H'14, GAS + INHAB + LOW
-	.DB	H'30, H'2e, H'26, GAS
-	.DB	H'1b, H'35, H'23, GAS + INHAB + AVG
-	.DB	H'42, H'3a, H'25, GAS + INHAB + LOW
-	.DB	H'78, H'3d, H'15, GAS + INHAB + HIGH
-	.DB	H'3d, H'42, SUN, H'00	;sun
-	.DB	H'72, H'43, H'25, GAS + INHAB + AVG
-	.DB	H'61, H'5a, H'22, GAS + INHAB + HIGH
-	.DB	H'5a, H'5d, H'23, GAS + INHAB + LOW
-	.DB	H'59, H'61, H'13, FRNDLY + LOW
-	.DB	H'3c, H'62, H'26, GAS
-	.DB	H'44, H'63, H'24, GAS + INHAB + HIGH
-	.DB	H'72, H'64, H'15, GAS + INHAB + AVG
-	.DB	H'6c, H'6e, H'26, GAS
+	.byte	X_SET4 +  $12
+	.byte	 $06,  $73,  $04, GAS + INHAB + AVG ;space station
+	.byte	 $51,  $0b,  $26, GAS
+	.byte	 $70,  $0b,  $14, GAS + INHAB + HIGH
+	.byte	 $66,  $11,  $12, GAS + INHAB + AVG
+	.byte	 $71,  $21,  $14, GAS + INHAB + LOW
+	.byte	 $30,  $2e,  $26, GAS
+	.byte	 $1b,  $35,  $23, GAS + INHAB + AVG
+	.byte	 $42,  $3a,  $25, GAS + INHAB + LOW
+	.byte	 $78,  $3d,  $15, GAS + INHAB + HIGH
+	.byte	 $3d,  $42, SUN,  $00	;sun
+	.byte	 $72,  $43,  $25, GAS + INHAB + AVG
+	.byte	 $61,  $5a,  $22, GAS + INHAB + HIGH
+	.byte	 $5a,  $5d,  $23, GAS + INHAB + LOW
+	.byte	 $59,  $61,  $13, FRNDLY + LOW
+	.byte	 $3c,  $62,  $26, GAS
+	.byte	 $44,  $63,  $24, GAS + INHAB + HIGH
+	.byte	 $72,  $64,  $15, GAS + INHAB + AVG
+	.byte	 $6c,  $6e,  $26, GAS
 
   SOLAR40:
-	.DB	X_SET7 + H'0a
-	.DB	H'70, H'0c, H'23, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'1e, H'14, H'25, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'14, H'22, H'14, INHAB + FRNDLY + LOW
-	.DB	H'32, H'22, H'26, GAS
-	.DB	H'42, H'2c, H'22, INHAB + FRNDLY + HIGH
-	.DB	H'2a, H'2e, H'14, INHAB + FRNDLY + AVG
-	.DB	H'38, H'36, SUN, H'00	;sun
-	.DB	H'16, H'3e, H'24, INHAB + FRNDLY + HIGH
-	.DB	H'19, H'48, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'45, H'5c, H'26, GAS
+	.byte	X_SET7 +  $0a
+	.byte	 $70,  $0c,  $23, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $1e,  $14,  $25, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $14,  $22,  $14, INHAB + FRNDLY + LOW
+	.byte	 $32,  $22,  $26, GAS
+	.byte	 $42,  $2c,  $22, INHAB + FRNDLY + HIGH
+	.byte	 $2a,  $2e,  $14, INHAB + FRNDLY + AVG
+	.byte	 $38,  $36, SUN,  $00	;sun
+	.byte	 $16,  $3e,  $24, INHAB + FRNDLY + HIGH
+	.byte	 $19,  $48,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $45,  $5c,  $26, GAS
 
   SOLAR41:
-  	.DB	X_SET4 + H'11
-  	.DB	H'42, H'4c, H'04, GAS + INHAB + AVG ;space station
-  	.DB	H'10, H'07, H'24, GAS + INHAB + HIGH
-  	.DB	H'2d, H'09, H'15, GAS + INHAB + LOW
-  	.DB	H'72, H'18, H'26, GAS
-  	.DB	H'59, H'21, H'25, GAS + INHAB + HIGH
-  	.DB	H'13, H'22, H'26, GAS
-  	.DB	H'39, H'29, H'14, GAS + INHAB + AVG
-  	.DB	H'37, H'2c, H'23, GAS + INHAB + LOW
-  	.DB	H'2e, H'39, H'26, GAS
-  	.DB	H'0c, H'3a, H'12, GAS + INHAB + AVG
-  	.DB	H'3b, H'40, SUN, H'00	;sun
-  	.DB	H'3d, H'49, H'14, GAS + INHAB + HIGH
-  	.DB	H'49, H'4f, H'25, GAS + INHAB + LOW
-  	.DB	H'59, H'5a, H'26, GAS
-  	.DB	H'31, H'6d, H'12, FRNDLY + LOW
-  	.DB	H'33, H'6f, H'14, GAS + INHAB + AVG
-  	.DB	H'78, H'6f, H'22, GAS + INHAB + HIGH
+  	.byte	X_SET4 +  $11
+  	.byte	 $42,  $4c,  $04, GAS + INHAB + AVG ;space station
+  	.byte	 $10,  $07,  $24, GAS + INHAB + HIGH
+  	.byte	 $2d,  $09,  $15, GAS + INHAB + LOW
+  	.byte	 $72,  $18,  $26, GAS
+  	.byte	 $59,  $21,  $25, GAS + INHAB + HIGH
+  	.byte	 $13,  $22,  $26, GAS
+  	.byte	 $39,  $29,  $14, GAS + INHAB + AVG
+  	.byte	 $37,  $2c,  $23, GAS + INHAB + LOW
+  	.byte	 $2e,  $39,  $26, GAS
+  	.byte	 $0c,  $3a,  $12, GAS + INHAB + AVG
+  	.byte	 $3b,  $40, SUN,  $00	;sun
+  	.byte	 $3d,  $49,  $14, GAS + INHAB + HIGH
+  	.byte	 $49,  $4f,  $25, GAS + INHAB + LOW
+  	.byte	 $59,  $5a,  $26, GAS
+  	.byte	 $31,  $6d,  $12, FRNDLY + LOW
+  	.byte	 $33,  $6f,  $14, GAS + INHAB + AVG
+  	.byte	 $78,  $6f,  $22, GAS + INHAB + HIGH
   
   SOLAR42:
-	.DB	X_SET6 + H'0d
-	.DB	H'48, H'19, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'41, H'0b, H'08, GAS + INHAB + V_HIGH ;space station
-	.DB	H'5a, H'08, H'24, GAS + INHAB + V_HIGH
-	.DB	H'65, H'09, H'26, GAS
-	.DB	H'55, H'0f, H'23, GAS + INHAB + HIGH
-	.DB	H'66, H'13, H'25, GAS + INHAB + AVG
-	.DB	H'16, H'20, H'25, GAS + INHAB + HIGH
-	.DB	H'5a, H'31, H'23, GAS + INHAB + AVG
-	.DB	H'16, H'34, H'25, GAS + INHAB + LOW
-	.DB	H'1d, H'3c, H'12, GAS + INHAB + HIGH
-	.DB	H'3b, H'41, SUN, H'00	;sun
-	.DB	H'58, H'48, H'26, GAS
-	.DB	H'0f, H'4d, H'24, GAS + INHAB + AVG
+	.byte	X_SET6 +  $0d
+	.byte	 $48,  $19,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $41,  $0b,  $08, GAS + INHAB + V_HIGH ;space station
+	.byte	 $5a,  $08,  $24, GAS + INHAB + V_HIGH
+	.byte	 $65,  $09,  $26, GAS
+	.byte	 $55,  $0f,  $23, GAS + INHAB + HIGH
+	.byte	 $66,  $13,  $25, GAS + INHAB + AVG
+	.byte	 $16,  $20,  $25, GAS + INHAB + HIGH
+	.byte	 $5a,  $31,  $23, GAS + INHAB + AVG
+	.byte	 $16,  $34,  $25, GAS + INHAB + LOW
+	.byte	 $1d,  $3c,  $12, GAS + INHAB + HIGH
+	.byte	 $3b,  $41, SUN,  $00	;sun
+	.byte	 $58,  $48,  $26, GAS
+	.byte	 $0f,  $4d,  $24, GAS + INHAB + AVG
 
   SOLAR43:
-	.DB	X_SET4 + H'03
-	.DB	H'69, H'50, H'0B, GAS + INHAB + V_HIGH ;space station
-	.DB	H'5a, H'08, H'14, GAS + INHAB + V_HIGH
-	.DB	H'43, H'37, SUN, H'00	;sun
+	.byte	X_SET4 +  $03
+	.byte	 $69,  $50,  $0B, GAS + INHAB + V_HIGH ;space station
+	.byte	 $5a,  $08,  $14, GAS + INHAB + V_HIGH
+	.byte	 $43,  $37, SUN,  $00	;sun
 
   SOLAR44:
-  	.DB	X_SET5 + H'06
-  	.DB	H'3e, H'4f, H'01, INHAB + FRNDLY + HIGH ;space station
-  	.DB	H'2e, H'1a, H'22, GAS + INHAB + FRNDLY + HIGH
-  	.DB	H'56, H'25, H'14, INHAB + FRNDLY + LOW
-  	.DB	H'5a, H'31, H'23, GAS + INHAB + FRNDLY + HIGH
-  	.DB	H'35, H'41, SUN, H'00	;sun
-  	.DB	H'1F, H'5A, H'26, GAS
+  	.byte	X_SET5 +  $06
+  	.byte	 $3e,  $4f,  $01, INHAB + FRNDLY + HIGH ;space station
+  	.byte	 $2e,  $1a,  $22, GAS + INHAB + FRNDLY + HIGH
+  	.byte	 $56,  $25,  $14, INHAB + FRNDLY + LOW
+  	.byte	 $5a,  $31,  $23, GAS + INHAB + FRNDLY + HIGH
+  	.byte	 $35,  $41, SUN,  $00	;sun
+  	.byte	 $1F,  $5A,  $26, GAS
   
   SOLAR45:
-	.DB	X_SET4 + H'11
-	.DB	H'39, H'1f, H'0B, GAS + INHAB + V_HIGH ;space station
-	.DB	H'2e, H'07, H'23, GAS + INHAB + HIGH
-	.DB	H'53, H'14, H'26, GAS
-	.DB	H'31, H'17, H'25, GAS + INHAB + AVG
-	.DB	H'39, H'23, H'15, GAS + INHAB + HIGH
-	.DB	H'2f, H'33, H'23, GAS + INHAB + AVG
-	.DB	H'14, H'37, H'25, GAS + INHAB + LOW
-	.DB	H'3d, H'42, SUN, H'00	;sun
-	.DB	H'09, H'44, H'14, GAS + INHAB + AVG
-	.DB	H'29, H'4e, H'14, GAS + INHAB + AVG
-	.DB	H'2e, H'5c, H'24, GAS + INHAB + LOW
-	.DB	H'0e, H'5e, H'26, GAS
-	.DB	H'64, H'66, H'24, GAS + INHAB + AVG
-	.DB	H'57, H'6f, H'13, GAS + INHAB + LOW
-	.DB	H'3b, H'76, H'25, GAS + INHAB + HIGH
-	.DB	H'6d, H'77, H'24, GAS + INHAB + AVG
-	.DB	H'0d, H'7c, H'14, GAS + INHAB + HIGH
+	.byte	X_SET4 +  $11
+	.byte	 $39,  $1f,  $0B, GAS + INHAB + V_HIGH ;space station
+	.byte	 $2e,  $07,  $23, GAS + INHAB + HIGH
+	.byte	 $53,  $14,  $26, GAS
+	.byte	 $31,  $17,  $25, GAS + INHAB + AVG
+	.byte	 $39,  $23,  $15, GAS + INHAB + HIGH
+	.byte	 $2f,  $33,  $23, GAS + INHAB + AVG
+	.byte	 $14,  $37,  $25, GAS + INHAB + LOW
+	.byte	 $3d,  $42, SUN,  $00	;sun
+	.byte	 $09,  $44,  $14, GAS + INHAB + AVG
+	.byte	 $29,  $4e,  $14, GAS + INHAB + AVG
+	.byte	 $2e,  $5c,  $24, GAS + INHAB + LOW
+	.byte	 $0e,  $5e,  $26, GAS
+	.byte	 $64,  $66,  $24, GAS + INHAB + AVG
+	.byte	 $57,  $6f,  $13, GAS + INHAB + LOW
+	.byte	 $3b,  $76,  $25, GAS + INHAB + HIGH
+	.byte	 $6d,  $77,  $24, GAS + INHAB + AVG
+	.byte	 $0d,  $7c,  $14, GAS + INHAB + HIGH
 
   SOLAR46:
-	.DB	X_SET6 + H'05
-	.DB	H'71, H'0e, H'13, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'20, H'2a, H'13, INHAB + FRNDLY + AVG
-	.DB	H'3e, H'3b, SUN, H'00	;sun
-	.DB	H'2b, H'3f, H'26, GAS
-	.DB	H'41, H'52, H'23, GAS + INHAB + FRNDLY + HIGH
+	.byte	X_SET6 +  $05
+	.byte	 $71,  $0e,  $13, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $20,  $2a,  $13, INHAB + FRNDLY + AVG
+	.byte	 $3e,  $3b, SUN,  $00	;sun
+	.byte	 $2b,  $3f,  $26, GAS
+	.byte	 $41,  $52,  $23, GAS + INHAB + FRNDLY + HIGH
 
   SOLAR47:
   SOLAR48:
-  	.DB	X_SET4 + H'0c
-  	.DB	H'0b, H'09, H'24, GAS + INHAB + HIGH
-  	.DB	H'6b, H'1b, H'13, GAS + INHAB + HIGH
-  	.DB	H'30, H'21, H'26, GAS
-  	.DB	H'62, H'29, H'14, GAS + INHAB + AVG
-  	.DB	H'71, H'2b, H'15, GAS + INHAB + LOW
-  	.DB	H'70, H'31, H'14, GAS + INHAB + HIGH
-  	.DB	H'33, H'3b, SUN, H'00	;sun
-  	.DB	H'43, H'44, H'15, GAS + INHAB + HIGH
-  	.DB	H'34, H'4c, H'23, FRNDLY + LOW
-  	.DB	H'19, H'57, H'13, GAS + INHAB + AVG
-  	.DB	H'18, H'64, H'22, GAS + INHAB + LOW
-  	.DB	H'47, H'68, H'26, GAS
+  	.byte	X_SET4 +  $0c
+  	.byte	 $0b,  $09,  $24, GAS + INHAB + HIGH
+  	.byte	 $6b,  $1b,  $13, GAS + INHAB + HIGH
+  	.byte	 $30,  $21,  $26, GAS
+  	.byte	 $62,  $29,  $14, GAS + INHAB + AVG
+  	.byte	 $71,  $2b,  $15, GAS + INHAB + LOW
+  	.byte	 $70,  $31,  $14, GAS + INHAB + HIGH
+  	.byte	 $33,  $3b, SUN,  $00	;sun
+  	.byte	 $43,  $44,  $15, GAS + INHAB + HIGH
+  	.byte	 $34,  $4c,  $23, FRNDLY + LOW
+  	.byte	 $19,  $57,  $13, GAS + INHAB + AVG
+  	.byte	 $18,  $64,  $22, GAS + INHAB + LOW
+  	.byte	 $47,  $68,  $26, GAS
   
   SOLAR49:
   SOLAR50:
   SOLAR51:
-	.DB	X_SET7 + H'08
-	.DB	H'29, H'07, H'22, GAS + INHAB + HIGH
-	.DB	H'34, H'25, H'12, GAS + INHAB + LOW
-	.DB	H'49, H'2b, H'24, GAS + INHAB + HIGH
-	.DB	H'0f, H'3d, H'15, GAS + INHAB + AVG
-	.DB	H'1d, H'3e, H'26, GAS
-	.DB	H'42, H'44, SUN, H'00	;sun
-	.DB	H'24, H'46, H'15, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'32, H'5e, H'26, GAS
+	.byte	X_SET7 +  $08
+	.byte	 $29,  $07,  $22, GAS + INHAB + HIGH
+	.byte	 $34,  $25,  $12, GAS + INHAB + LOW
+	.byte	 $49,  $2b,  $24, GAS + INHAB + HIGH
+	.byte	 $0f,  $3d,  $15, GAS + INHAB + AVG
+	.byte	 $1d,  $3e,  $26, GAS
+	.byte	 $42,  $44, SUN,  $00	;sun
+	.byte	 $24,  $46,  $15, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $32,  $5e,  $26, GAS
 
   SOLAR52:
-	.DB	X_SET7 + H'0e
-	.DB	H'43, H'0f, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'34, H'16, H'25, GAS + INHAB + FRNDLY + LOW
-	.DB	H'47, H'21, H'26, GAS
-	.DB	H'6f, H'22, H'24, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'19, H'28, H'15, GAS + INHAB + FRNDLY + LOW
-	.DB	H'5d, H'2a, H'23, FRNDLY + LOW
-	.DB	H'16, H'30, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'64, H'3d, H'15, GAS + INHAB + FRNDLY + LOW
-	.DB	H'42, H'43, SUN, H'00	;sun
-	.DB	H'58, H'4e, H'12, GAS + INHAB + FRNDLY + AVG
-	.DB	H'56, H'51, H'26, GAS
-	.DB	H'0e, H'5c, H'24, GAS + INHAB + FRNDLY + AVG
-	.DB	H'5e, H'64, H'26, GAS
-	.DB	H'5b, H'6e, H'15, GAS + INHAB + FRNDLY + AVG
+	.byte	X_SET7 +  $0e
+	.byte	 $43,  $0f,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $34,  $16,  $25, GAS + INHAB + FRNDLY + LOW
+	.byte	 $47,  $21,  $26, GAS
+	.byte	 $6f,  $22,  $24, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $19,  $28,  $15, GAS + INHAB + FRNDLY + LOW
+	.byte	 $5d,  $2a,  $23, FRNDLY + LOW
+	.byte	 $16,  $30,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $64,  $3d,  $15, GAS + INHAB + FRNDLY + LOW
+	.byte	 $42,  $43, SUN,  $00	;sun
+	.byte	 $58,  $4e,  $12, GAS + INHAB + FRNDLY + AVG
+	.byte	 $56,  $51,  $26, GAS
+	.byte	 $0e,  $5c,  $24, GAS + INHAB + FRNDLY + AVG
+	.byte	 $5e,  $64,  $26, GAS
+	.byte	 $5b,  $6e,  $15, GAS + INHAB + FRNDLY + AVG
 
   SOLAR53:
   SOLAR54:
   SOLAR55:
-	.DB	X_SET6 + H'05
-	.DB	H'20, H'17, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'19, H'2a, H'26, GAS
-	.DB	H'3b, H'2a, H'24, GAS + INHAB + HIGH
-	.DB	H'39, H'3f, SUN, H'00	;sun
-	.DB	H'1c, H'54, H'22, GAS + INHAB + AVG
+	.byte	X_SET6 +  $05
+	.byte	 $20,  $17,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $19,  $2a,  $26, GAS
+	.byte	 $3b,  $2a,  $24, GAS + INHAB + HIGH
+	.byte	 $39,  $3f, SUN,  $00	;sun
+	.byte	 $1c,  $54,  $22, GAS + INHAB + AVG
 
   SOLAR56:
   SOLAR57:
-	.DB	X_SET4 + H'07
-	.DB	H'27, H'0b, H'22, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'0b, H'1c, H'15, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'39, H'29, H'25, GAS + INHAB + FRNDLY + AVG
-	.DB	H'32, H'44, SUN, H'00	;sun
-	.DB	H'2b, H'48, H'26, GAS
-	.DB	H'27, H'49, H'13, GAS + INHAB + AVG
-	.DB	H'31, H'5d, H'12, GAS + INHAB + LOW
+	.byte	X_SET4 +  $07
+	.byte	 $27,  $0b,  $22, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $0b,  $1c,  $15, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $39,  $29,  $25, GAS + INHAB + FRNDLY + AVG
+	.byte	 $32,  $44, SUN,  $00	;sun
+	.byte	 $2b,  $48,  $26, GAS
+	.byte	 $27,  $49,  $13, GAS + INHAB + AVG
+	.byte	 $31,  $5d,  $12, GAS + INHAB + LOW
 
   SOLAR58:
   SOLAR59:
-	.DB	X_SET7 + H'0a
-	.DB	H'53, H'5c, H'09, GAS + INHAB + V_HIGH ;space station  FREEM HINT
-	.DB	H'65, H'62, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'3e, H'09, H'22, GAS + INHAB + V_HIGH
-	.DB	H'6e, H'09, H'14, GAS + INHAB + HIGH
-	.DB	H'4c, H'0a, H'25, GAS + INHAB + AVG
-	.DB	H'1f, H'11, H'23, GAS + INHAB + HIGH
-	.DB	H'40, H'40, SUN, H'00	;sun
-	.DB	H'44, H'44, H'15, GAS + INHAB + HIGH
-	.DB	H'74, H'55, H'24, GAS + INHAB + V_HIGH
-	.DB	H'3c, H'5c, H'12, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0a
+	.byte	 $53,  $5c,  $09, GAS + INHAB + V_HIGH ;space station  FREEM HINT
+	.byte	 $65,  $62,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $3e,  $09,  $22, GAS + INHAB + V_HIGH
+	.byte	 $6e,  $09,  $14, GAS + INHAB + HIGH
+	.byte	 $4c,  $0a,  $25, GAS + INHAB + AVG
+	.byte	 $1f,  $11,  $23, GAS + INHAB + HIGH
+	.byte	 $40,  $40, SUN,  $00	;sun
+	.byte	 $44,  $44,  $15, GAS + INHAB + HIGH
+	.byte	 $74,  $55,  $24, GAS + INHAB + V_HIGH
+	.byte	 $3c,  $5c,  $12, GAS + INHAB + AVG
 
   SOLAR60:
-	.DB	X_SET6 + H'0b
-	.DB	H'24, H'12, H'05, GAS + INHAB + AVG ;space station
-	.DB	H'47, H'0f, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'12, H'12, H'23, GAS + INHAB + FRNDLY + LOW
-	.DB	H'67, H'26, H'24, GAS + INHAB + FRNDLY + AVG
-	.DB	H'3f, H'2d, H'26, GAS
-	.DB	H'06, H'35, H'25, GAS + INHAB + FRNDLY + AVG
-	.DB	H'44, H'3c, SUN, H'00	;sun
-	.DB	H'35, H'48, H'23, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'76, H'4c, H'13, GAS + INHAB + FRNDLY + AVG
-	.DB	H'34, H'61, H'14, GAS + INHAB + AVG
-	.DB	H'3d, H'78, H'26, GAS
+	.byte	X_SET6 +  $0b
+	.byte	 $24,  $12,  $05, GAS + INHAB + AVG ;space station
+	.byte	 $47,  $0f,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $12,  $12,  $23, GAS + INHAB + FRNDLY + LOW
+	.byte	 $67,  $26,  $24, GAS + INHAB + FRNDLY + AVG
+	.byte	 $3f,  $2d,  $26, GAS
+	.byte	 $06,  $35,  $25, GAS + INHAB + FRNDLY + AVG
+	.byte	 $44,  $3c, SUN,  $00	;sun
+	.byte	 $35,  $48,  $23, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $76,  $4c,  $13, GAS + INHAB + FRNDLY + AVG
+	.byte	 $34,  $61,  $14, GAS + INHAB + AVG
+	.byte	 $3d,  $78,  $26, GAS
 
   SOLAR61:
   SOLAR62:
-	.DB	X_SET7 + H'08
-	.DB	H'53, H'09, H'26, GAS
-	.DB	H'0a, H'0e, H'22, GAS + INHAB + HIGH
-	.DB	H'65, H'12, H'14, GAS + INHAB + LOW
-	.DB	H'68, H'36, H'24, GAS + INHAB + HIGH
-	.DB	H'32, H'45, SUN, H'00	;sun
-	.DB	H'24, H'50, H'15, GAS + INHAB + HIGH
-	.DB	H'14, H'5f, H'25, GAS + INHAB + AVG
-	.DB	H'15, H'6e, H'24, GAS + INHAB + AVG
+	.byte	X_SET7 +  $08
+	.byte	 $53,  $09,  $26, GAS
+	.byte	 $0a,  $0e,  $22, GAS + INHAB + HIGH
+	.byte	 $65,  $12,  $14, GAS + INHAB + LOW
+	.byte	 $68,  $36,  $24, GAS + INHAB + HIGH
+	.byte	 $32,  $45, SUN,  $00	;sun
+	.byte	 $24,  $50,  $15, GAS + INHAB + HIGH
+	.byte	 $14,  $5f,  $25, GAS + INHAB + AVG
+	.byte	 $15,  $6e,  $24, GAS + INHAB + AVG
 
   SOLAR63:
   SOLAR64:
-	.DB	X_SET7 + H'05
-	.DB	H'40, H'36, SUN, H'00	;sun
-	.DB	H'63, H'39, H'26, GAS
-	.DB	H'1e, H'4a, H'12, GAS + INHAB + HIGH
-	.DB	H'6b, H'53, H'24, GAS + INHAB + HIGH
-	.DB	H'6a, H'6d, H'13, GAS + INHAB + AVG
+	.byte	X_SET7 +  $05
+	.byte	 $40,  $36, SUN,  $00	;sun
+	.byte	 $63,  $39,  $26, GAS
+	.byte	 $1e,  $4a,  $12, GAS + INHAB + HIGH
+	.byte	 $6b,  $53,  $24, GAS + INHAB + HIGH
+	.byte	 $6a,  $6d,  $13, GAS + INHAB + AVG
 
   SOLAR65:
-	.DB	X_SET5 + H'07
-	.DB	H'44, H'53, H'04, GAS + INHAB + AVG ;space station
-	.DB	H'53, H'24, H'14, GAS + INHAB + HIGH
-	.DB	H'22, H'3a, H'25, GAS + INHAB + HIGH
-	.DB	H'46, H'43, SUN, H'00	;sun
-	.DB	H'5a, H'4a, H'12, GAS + INHAB + LOW
-	.DB	H'44, H'60, H'26, GAS
-	.DB	H'07, H'61, H'13, GAS + INHAB + AVG
+	.byte	X_SET5 +  $07
+	.byte	 $44,  $53,  $04, GAS + INHAB + AVG ;space station
+	.byte	 $53,  $24,  $14, GAS + INHAB + HIGH
+	.byte	 $22,  $3a,  $25, GAS + INHAB + HIGH
+	.byte	 $46,  $43, SUN,  $00	;sun
+	.byte	 $5a,  $4a,  $12, GAS + INHAB + LOW
+	.byte	 $44,  $60,  $26, GAS
+	.byte	 $07,  $61,  $13, GAS + INHAB + AVG
 
   SOLAR66:
-	.DB	X_SET5 + H'09
-	.DB	H'35, H'08, H'22, GAS + INHAB + HIGH
-	.DB	H'5a, H'19, H'22, GAS + INHAB + LOW
-	.DB	H'65, H'2e, H'15, GAS + INHAB + AVG
-	.DB	H'40, H'32, SUN, H'00	;sun
-	.DB	H'3a, H'36, H'22, GAS + INHAB + HIGH
-	.DB	H'2a, H'3e, H'26, GAS
-	.DB	H'36, H'48, H'25, GAS + INHAB + AVG
-	.DB	H'13, H'4c, H'14, GAS + INHAB + AVG
-	.DB	H'3e, H'5e, H'15, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $09
+	.byte	 $35,  $08,  $22, GAS + INHAB + HIGH
+	.byte	 $5a,  $19,  $22, GAS + INHAB + LOW
+	.byte	 $65,  $2e,  $15, GAS + INHAB + AVG
+	.byte	 $40,  $32, SUN,  $00	;sun
+	.byte	 $3a,  $36,  $22, GAS + INHAB + HIGH
+	.byte	 $2a,  $3e,  $26, GAS
+	.byte	 $36,  $48,  $25, GAS + INHAB + AVG
+	.byte	 $13,  $4c,  $14, GAS + INHAB + AVG
+	.byte	 $3e,  $5e,  $15, GAS + INHAB + HIGH
 
   SOLAR67:
-	.DB	X_SET6 + H'06
-	.DB	H'20, H'17, H'04, GAS + INHAB + AVG ;space station
-	.DB	H'62, H'22, H'24, GAS + INHAB + LOW
-	.DB	H'65, H'2e, H'15, GAS + INHAB + AVG
-	.DB	H'1d, H'3c, H'24, GAS + INHAB + HIGH
-	.DB	H'32, H'3e, H'13, GAS + INHAB + AVG
-	.DB	H'44, H'44, SUN, H'00	;sun
+	.byte	X_SET6 +  $06
+	.byte	 $20,  $17,  $04, GAS + INHAB + AVG ;space station
+	.byte	 $62,  $22,  $24, GAS + INHAB + LOW
+	.byte	 $65,  $2e,  $15, GAS + INHAB + AVG
+	.byte	 $1d,  $3c,  $24, GAS + INHAB + HIGH
+	.byte	 $32,  $3e,  $13, GAS + INHAB + AVG
+	.byte	 $44,  $44, SUN,  $00	;sun
 
   SOLAR68:
-	.DB	X_SET4 + H'0b
-	.DB	H'78, H'0c, H'26, GAS
-	.DB	H'70, H'0d, H'14, GAS + INHAB + LOW
-	.DB	H'1c, H'16, H'23, GAS + INHAB + AVG
-	.DB	H'6c, H'20, H'15, GAS + INHAB + LOW
-	.DB	H'51, H'22, H'23, GAS + INHAB + HIGH
-	.DB	H'73, H'2d, H'15, GAS + INHAB + AVG
-	.DB	H'57, H'32, H'25, GAS + INHAB + LOW
-	.DB	H'38, H'41, SUN, H'00	;sun
-	.DB	H'15, H'46, H'26, GAS
-	.DB	H'55, H'53, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'5d, H'69, H'13, GAS + INHAB + FRNDLY + HIGH
+	.byte	X_SET4 +  $0b
+	.byte	 $78,  $0c,  $26, GAS
+	.byte	 $70,  $0d,  $14, GAS + INHAB + LOW
+	.byte	 $1c,  $16,  $23, GAS + INHAB + AVG
+	.byte	 $6c,  $20,  $15, GAS + INHAB + LOW
+	.byte	 $51,  $22,  $23, GAS + INHAB + HIGH
+	.byte	 $73,  $2d,  $15, GAS + INHAB + AVG
+	.byte	 $57,  $32,  $25, GAS + INHAB + LOW
+	.byte	 $38,  $41, SUN,  $00	;sun
+	.byte	 $15,  $46,  $26, GAS
+	.byte	 $55,  $53,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $5d,  $69,  $13, GAS + INHAB + FRNDLY + HIGH
 
   SOLAR69:
   SOLAR70:
   SOLAR71:
-	.DB	X_SET7 + H'0F
-	.DB	H'76, H'15, H'0A, GAS + INHAB + V_HIGH ;space station
-	.DB	H'45, H'0d, H'25, GAS + INHAB + HIGH
-	.DB	H'2b, H'1b, H'14, GAS + INHAB + LOW
-	.DB	H'64, H'26, H'25, GAS + INHAB + AVG
-	.DB	H'24, H'30, H'13, GAS + INHAB + HIGH
-	.DB	H'41, H'35, SUN, H'00	;sun
-	.DB	H'0a, H'3b, H'22, GAS + INHAB + LOW
-	.DB	H'18, H'40, H'26, GAS
-	.DB	H'12, H'4e, H'23, GAS + INHAB + AVG
-	.DB	H'0b, H'4f, H'13, FRNDLY + LOW
-	.DB	H'1e, H'52, H'25, GAS + INHAB + AVG
-	.DB	H'5c, H'54, H'13, GAS + INHAB + HIGH
-	.DB	H'41, H'57, H'26, GAS
-	.DB	H'54, H'5e, H'14, GAS + INHAB + HIGH
-	.DB	H'26, H'74, H'26, GAS
+	.byte	X_SET7 +  $0F
+	.byte	 $76,  $15,  $0A, GAS + INHAB + V_HIGH ;space station
+	.byte	 $45,  $0d,  $25, GAS + INHAB + HIGH
+	.byte	 $2b,  $1b,  $14, GAS + INHAB + LOW
+	.byte	 $64,  $26,  $25, GAS + INHAB + AVG
+	.byte	 $24,  $30,  $13, GAS + INHAB + HIGH
+	.byte	 $41,  $35, SUN,  $00	;sun
+	.byte	 $0a,  $3b,  $22, GAS + INHAB + LOW
+	.byte	 $18,  $40,  $26, GAS
+	.byte	 $12,  $4e,  $23, GAS + INHAB + AVG
+	.byte	 $0b,  $4f,  $13, FRNDLY + LOW
+	.byte	 $1e,  $52,  $25, GAS + INHAB + AVG
+	.byte	 $5c,  $54,  $13, GAS + INHAB + HIGH
+	.byte	 $41,  $57,  $26, GAS
+	.byte	 $54,  $5e,  $14, GAS + INHAB + HIGH
+	.byte	 $26,  $74,  $26, GAS
 
   SOLAR72:
   SOLAR73:
-	.DB	X_SET5 + H'06
-	.DB	H'71, H'0b, H'26, GAS
-	.DB	H'0c, H'1e, H'25, GAS + INHAB + HIGH
-	.DB	H'31, H'2c, H'14, GAS + INHAB + AVG
-	.DB	H'37, H'2f, H'23, GAS + INHAB + LOW
-	.DB	H'36, H'3d, SUN, H'00	;sun
-	.DB	H'33, H'4b, H'12, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $06
+	.byte	 $71,  $0b,  $26, GAS
+	.byte	 $0c,  $1e,  $25, GAS + INHAB + HIGH
+	.byte	 $31,  $2c,  $14, GAS + INHAB + AVG
+	.byte	 $37,  $2f,  $23, GAS + INHAB + LOW
+	.byte	 $36,  $3d, SUN,  $00	;sun
+	.byte	 $33,  $4b,  $12, GAS + INHAB + HIGH
 
   SOLAR74:
   SOLAR75:
   SOLAR76:
-	.DB	X_SET7 + H'03
-	.DB	H'3a, H'41, SUN, H'00	;sun
-	.DB	H'1a, H'56, H'12, GAS + INHAB + V_HIGH
-	.DB	H'65, H'59, H'26, GAS
+	.byte	X_SET7 +  $03
+	.byte	 $3a,  $41, SUN,  $00	;sun
+	.byte	 $1a,  $56,  $12, GAS + INHAB + V_HIGH
+	.byte	 $65,  $59,  $26, GAS
 
   SOLAR77:
-	.DB	X_SET4 + H'07
-	.DB	H'61, H'0d, H'26, GAS
-	.DB	H'49, H'0f, H'25, GAS + INHAB + FRNDLY + AVG
-	.DB	H'0a, H'11, H'22, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'07, H'21, H'14, GAS + INHAB + FRNDLY + LOW
-	.DB	H'40, H'43, H'22, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'72, H'45, H'26, GAS
-	.DB	H'36, H'46, SUN, H'00	;sun
+	.byte	X_SET4 +  $07
+	.byte	 $61,  $0d,  $26, GAS
+	.byte	 $49,  $0f,  $25, GAS + INHAB + FRNDLY + AVG
+	.byte	 $0a,  $11,  $22, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $07,  $21,  $14, GAS + INHAB + FRNDLY + LOW
+	.byte	 $40,  $43,  $22, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $72,  $45,  $26, GAS
+	.byte	 $36,  $46, SUN,  $00	;sun
 
   SOLAR78:
-	.DB	X_SET5 + H'0a
-	.DB	H'71, H'2a, H'08, GAS + INHAB + V_HIGH ;space station
-	.DB	H'14, H'11, H'26, GAS
-	.DB	H'6c, H'1d, H'25, GAS + INHAB + HIGH
-	.DB	H'15, H'1f, H'15, GAS + INHAB + AVG
-	.DB	H'75, H'24, H'23, FRNDLY + LOW
-	.DB	H'71, H'27, H'26, GAS
-	.DB	H'57, H'35, H'23, GAS + INHAB + HIGH
-	.DB	H'39, H'3d, SUN, H'00	;sun
-	.DB	H'48, H'43, H'14, GAS + INHAB + HIGH
-	.DB	H'43, H'50, H'24, GAS + INHAB + AVG
+	.byte	X_SET5 +  $0a
+	.byte	 $71,  $2a,  $08, GAS + INHAB + V_HIGH ;space station
+	.byte	 $14,  $11,  $26, GAS
+	.byte	 $6c,  $1d,  $25, GAS + INHAB + HIGH
+	.byte	 $15,  $1f,  $15, GAS + INHAB + AVG
+	.byte	 $75,  $24,  $23, FRNDLY + LOW
+	.byte	 $71,  $27,  $26, GAS
+	.byte	 $57,  $35,  $23, GAS + INHAB + HIGH
+	.byte	 $39,  $3d, SUN,  $00	;sun
+	.byte	 $48,  $43,  $14, GAS + INHAB + HIGH
+	.byte	 $43,  $50,  $24, GAS + INHAB + AVG
 
   SOLAR79:
-	.DB	X_SET7 + H'07
-	.DB	H'73, H'46, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'39, H'0f, H'26, GAS
-	.DB	H'07, H'10, H'25, GAS + INHAB + HIGH
-	.DB	H'44, H'3b, SUN, H'00	;sun
-	.DB	H'41, H'4a, H'24, GAS + INHAB + FRNDLY + AVG
-	.DB	H'61, H'65, H'14, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'38, H'66, H'22, GAS + INHAB + FRNDLY + AVG
+	.byte	X_SET7 +  $07
+	.byte	 $73,  $46,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $39,  $0f,  $26, GAS
+	.byte	 $07,  $10,  $25, GAS + INHAB + HIGH
+	.byte	 $44,  $3b, SUN,  $00	;sun
+	.byte	 $41,  $4a,  $24, GAS + INHAB + FRNDLY + AVG
+	.byte	 $61,  $65,  $14, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $38,  $66,  $22, GAS + INHAB + FRNDLY + AVG
 
   SOLAR80:
-	.DB	X_SET5 + H'0e
-	.DB	H'67, H'08, H'15, GAS + INHAB + V_HIGH
-	.DB	H'24, H'0a, H'26, GAS
-	.DB	H'08, H'1b, H'25, GAS + INHAB + AVG
-	.DB	H'73, H'1e, H'13, FRNDLY + LOW
-	.DB	H'38, H'1f, H'25, GAS + INHAB + AVG
-	.DB	H'5e, H'24, H'25, GAS + INHAB + HIGH
-	.DB	H'6b, H'2a, H'14, GAS + INHAB + AVG
-	.DB	H'30, H'3a, H'26, GAS
-	.DB	H'3f, H'3c, SUN, H'00	;sun
-	.DB	H'70, H'41, H'25, GAS + INHAB + AVG
-	.DB	H'76, H'44, H'15, GAS + INHAB + HIGH
-	.DB	H'26, H'61, H'26, GAS
-	.DB	H'60, H'64, H'24, GAS + INHAB + HIGH
-	.DB	H'29, H'75, H'24, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $0e
+	.byte	 $67,  $08,  $15, GAS + INHAB + V_HIGH
+	.byte	 $24,  $0a,  $26, GAS
+	.byte	 $08,  $1b,  $25, GAS + INHAB + AVG
+	.byte	 $73,  $1e,  $13, FRNDLY + LOW
+	.byte	 $38,  $1f,  $25, GAS + INHAB + AVG
+	.byte	 $5e,  $24,  $25, GAS + INHAB + HIGH
+	.byte	 $6b,  $2a,  $14, GAS + INHAB + AVG
+	.byte	 $30,  $3a,  $26, GAS
+	.byte	 $3f,  $3c, SUN,  $00	;sun
+	.byte	 $70,  $41,  $25, GAS + INHAB + AVG
+	.byte	 $76,  $44,  $15, GAS + INHAB + HIGH
+	.byte	 $26,  $61,  $26, GAS
+	.byte	 $60,  $64,  $24, GAS + INHAB + HIGH
+	.byte	 $29,  $75,  $24, GAS + INHAB + HIGH
 
   SOLAR81:
-	.DB	X_SET5 + H'04
-	.DB	H'39, H'14, H'15, GAS + INHAB + LOW
-	.DB	H'44, H'40, SUN, H'00	;sun
-	.DB	H'09, H'6b, H'15, GAS + INHAB + AVG
-	.DB	H'4c, H'6f, H'12, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $04
+	.byte	 $39,  $14,  $15, GAS + INHAB + LOW
+	.byte	 $44,  $40, SUN,  $00	;sun
+	.byte	 $09,  $6b,  $15, GAS + INHAB + AVG
+	.byte	 $4c,  $6f,  $12, GAS + INHAB + HIGH
 
   SOLAR82:
-	.DB	X_SET4 + H'06
-	.DB	H'31, H'07, H'08, GAS + INHAB + V_HIGH ;space station
-	.DB	H'4f, H'21, H'13, GAS + INHAB + AVG
-	.DB	H'09, H'23, H'23, GAS + INHAB + HIGH
-	.DB	H'3d, H'37, SUN, H'00	;sun
-	.DB	H'6a, H'42, H'13, GAS + INHAB + V_HIGH
-	.DB	H'0f, H'57, H'25, GAS + INHAB + AVG
+	.byte	X_SET4 +  $06
+	.byte	 $31,  $07,  $08, GAS + INHAB + V_HIGH ;space station
+	.byte	 $4f,  $21,  $13, GAS + INHAB + AVG
+	.byte	 $09,  $23,  $23, GAS + INHAB + HIGH
+	.byte	 $3d,  $37, SUN,  $00	;sun
+	.byte	 $6a,  $42,  $13, GAS + INHAB + V_HIGH
+	.byte	 $0f,  $57,  $25, GAS + INHAB + AVG
 
   SOLAR83:
-	.DB	X_SET6 + H'05
-	.DB	H'60, H'6d, H'0C, GAS + INHAB + V_HIGH ;space station
-	.DB	H'09, H'23, H'23, GAS + INHAB + V_HIGH
-	.DB	H'2a, H'42, H'15, GAS + INHAB + AVG
-	.DB	H'44, H'46, SUN, H'00	;sun
-	.DB	H'61, H'63, H'22, GAS + INHAB + AVG
+	.byte	X_SET6 +  $05
+	.byte	 $60,  $6d,  $0C, GAS + INHAB + V_HIGH ;space station
+	.byte	 $09,  $23,  $23, GAS + INHAB + V_HIGH
+	.byte	 $2a,  $42,  $15, GAS + INHAB + AVG
+	.byte	 $44,  $46, SUN,  $00	;sun
+	.byte	 $61,  $63,  $22, GAS + INHAB + AVG
 
   SOLAR84:
-	.DB	X_SET5 + H'0c
-	.DB	H'60, H'0e, H'13, GAS + INHAB + HIGH
-	.DB	H'49, H'17, H'26, GAS
-	.DB	H'6e, H'26, H'13, FRNDLY + LOW
-	.DB	H'72, H'36, H'26, GAS
-	.DB	H'37, H'39, SUN, H'00	;sun
-	.DB	H'30, H'3a, H'25, GAS + INHAB + AVG
-	.DB	H'5c, H'49, H'12, GAS + INHAB + AVG
-	.DB	H'36, H'4a, H'26, GAS
-	.DB	H'41, H'59, H'13, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'36, H'5b, H'24, GAS + INHAB + FRNDLY + LOW
-	.DB	H'0d, H'5c, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'14, H'68, H'23, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $0c
+	.byte	 $60,  $0e,  $13, GAS + INHAB + HIGH
+	.byte	 $49,  $17,  $26, GAS
+	.byte	 $6e,  $26,  $13, FRNDLY + LOW
+	.byte	 $72,  $36,  $26, GAS
+	.byte	 $37,  $39, SUN,  $00	;sun
+	.byte	 $30,  $3a,  $25, GAS + INHAB + AVG
+	.byte	 $5c,  $49,  $12, GAS + INHAB + AVG
+	.byte	 $36,  $4a,  $26, GAS
+	.byte	 $41,  $59,  $13, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $36,  $5b,  $24, GAS + INHAB + FRNDLY + LOW
+	.byte	 $0d,  $5c,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $14,  $68,  $23, GAS + INHAB + HIGH
 
   SOLAR85:
   SOLAR86:
-	.DB	X_SET7 + H'0d
-	.DB	H'51, H'36, H'02, INHAB + FRNDLY + V_HIGH ;space station
-	.DB	H'26, H'0b, H'26, GAS 
-	.DB	H'44, H'0e, H'13, GAS + INHAB + FRNDLY + AVG
-	.DB	H'1d, H'17, H'22, FRNDLY + LOW
-	.DB	H'2d, H'22, H'14, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'3e, H'38, SUN, H'00	;sun
-	.DB	H'69, H'3a, H'26, GAS
-	.DB	H'35, H'4e, H'15, GAS + INHAB + HIGH
-	.DB	H'73, H'51, H'25, GAS + INHAB + AVG
-	.DB	H'39, H'52, H'15, GAS + INHAB + LOW
-	.DB	H'2e, H'6c, H'22, GAS + INHAB + HIGH
-	.DB	H'62, H'6d, H'13, GAS + INHAB + AVG
-	.DB	H'66, H'78, H'24, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0d
+	.byte	 $51,  $36,  $02, INHAB + FRNDLY + V_HIGH ;space station
+	.byte	 $26,  $0b,  $26, GAS 
+	.byte	 $44,  $0e,  $13, GAS + INHAB + FRNDLY + AVG
+	.byte	 $1d,  $17,  $22, FRNDLY + LOW
+	.byte	 $2d,  $22,  $14, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $3e,  $38, SUN,  $00	;sun
+	.byte	 $69,  $3a,  $26, GAS
+	.byte	 $35,  $4e,  $15, GAS + INHAB + HIGH
+	.byte	 $73,  $51,  $25, GAS + INHAB + AVG
+	.byte	 $39,  $52,  $15, GAS + INHAB + LOW
+	.byte	 $2e,  $6c,  $22, GAS + INHAB + HIGH
+	.byte	 $62,  $6d,  $13, GAS + INHAB + AVG
+	.byte	 $66,  $78,  $24, GAS + INHAB + AVG
 
   SOLAR87:
-	.DB	X_SET5 + H'11
-	.DB	H'10, H'36, H'06, GAS + INHAB + HIGH ;space station
-	.DB	H'59, H'06, H'14, GAS + INHAB + HIGH
-	.DB	H'36, H'10, H'24, GAS + INHAB + V_HIGH
-	.DB	H'48, H'11, H'22, FRNDLY + LOW
-	.DB	H'42, H'23, H'25, GAS + INHAB + AVG
-	.DB	H'73, H'29, H'26, GAS
-	.DB	H'0e, H'2e, H'15, GAS + INHAB + HIGH
-	.DB	H'37, H'35, SUN, H'00	;sun
-	.DB	H'57, H'47, H'22, GAS + INHAB + AVG
-	.DB	H'36, H'4e, H'26, GAS
-	.DB	H'25, H'54, H'25, GAS + INHAB + AVG
-	.DB	H'3c, H'57, H'12, FRNDLY + LOW
-	.DB	H'46, H'58, H'22, GAS + INHAB + HIGH
-	.DB	H'47, H'59, H'15, GAS + INHAB + AVG
-	.DB	H'15, H'5c, H'26, GAS
-	.DB	H'29, H'62, H'25, GAS + INHAB + HIGH
-	.DB	H'55, H'6c, H'14, GAS + INHAB + AVG
+	.byte	X_SET5 +  $11
+	.byte	 $10,  $36,  $06, GAS + INHAB + HIGH ;space station
+	.byte	 $59,  $06,  $14, GAS + INHAB + HIGH
+	.byte	 $36,  $10,  $24, GAS + INHAB + V_HIGH
+	.byte	 $48,  $11,  $22, FRNDLY + LOW
+	.byte	 $42,  $23,  $25, GAS + INHAB + AVG
+	.byte	 $73,  $29,  $26, GAS
+	.byte	 $0e,  $2e,  $15, GAS + INHAB + HIGH
+	.byte	 $37,  $35, SUN,  $00	;sun
+	.byte	 $57,  $47,  $22, GAS + INHAB + AVG
+	.byte	 $36,  $4e,  $26, GAS
+	.byte	 $25,  $54,  $25, GAS + INHAB + AVG
+	.byte	 $3c,  $57,  $12, FRNDLY + LOW
+	.byte	 $46,  $58,  $22, GAS + INHAB + HIGH
+	.byte	 $47,  $59,  $15, GAS + INHAB + AVG
+	.byte	 $15,  $5c,  $26, GAS
+	.byte	 $29,  $62,  $25, GAS + INHAB + HIGH
+	.byte	 $55,  $6c,  $14, GAS + INHAB + AVG
 
   SOLAR88:
-	.DB	X_SET7 + H'0a
-	.DB	H'76, H'39, H'07, GAS + INHAB + HIGH ;space station
-	.DB	H'1b, H'09, H'0A, GAS + INHAB + V_HIGH ;space station
-	.DB	H'50, H'12, H'26, GAS
-	.DB	H'17, H'22, H'14, GAS + INHAB + HIGH
-	.DB	H'42, H'23, H'25, GAS + INHAB + HIGH
-	.DB	H'39, H'33, SUN, H'00	;sun
-	.DB	H'2e, H'36, H'13, GAS + INHAB + HIGH
-	.DB	H'0e, H'3f, H'23, GAS + INHAB + AVG
-	.DB	H'34, H'75, H'22, GAS + INHAB + HIGH
-	.DB	H'55, H'76, H'14, GAS + INHAB + AVG
+	.byte	X_SET7 +  $0a
+	.byte	 $76,  $39,  $07, GAS + INHAB + HIGH ;space station
+	.byte	 $1b,  $09,  $0A, GAS + INHAB + V_HIGH ;space station
+	.byte	 $50,  $12,  $26, GAS
+	.byte	 $17,  $22,  $14, GAS + INHAB + HIGH
+	.byte	 $42,  $23,  $25, GAS + INHAB + HIGH
+	.byte	 $39,  $33, SUN,  $00	;sun
+	.byte	 $2e,  $36,  $13, GAS + INHAB + HIGH
+	.byte	 $0e,  $3f,  $23, GAS + INHAB + AVG
+	.byte	 $34,  $75,  $22, GAS + INHAB + HIGH
+	.byte	 $55,  $76,  $14, GAS + INHAB + AVG
 
   SOLAR89:
-	.DB	X_SET5 + H'05
-	.DB	H'71, H'62, H'0A, GAS + INHAB + V_HIGH ;space station
-	.DB	H'26, H'12, H'0B, GAS + INHAB + V_HIGH ;space station
-	.DB	H'40, H'33, SUN, H'00	;sun
-	.DB	H'07, H'34, H'25, GAS + INHAB + HIGH
-	.DB	H'2b, H'72, H'24, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $05
+	.byte	 $71,  $62,  $0A, GAS + INHAB + V_HIGH ;space station
+	.byte	 $26,  $12,  $0B, GAS + INHAB + V_HIGH ;space station
+	.byte	 $40,  $33, SUN,  $00	;sun
+	.byte	 $07,  $34,  $25, GAS + INHAB + HIGH
+	.byte	 $2b,  $72,  $24, GAS + INHAB + HIGH
 
   SOLAR90:
-	.DB	X_SET7 + H'0b
-	.DB	H'5a, H'06, H'26, GAS
-	.DB	H'0a, H'07, H'23, GAS + INHAB + FRNDLY + AVG
-	.DB	H'36, H'10, H'14, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'5f, H'12, H'25, GAS + INHAB + AVG
-	.DB	H'5c, H'25, H'24, GAS + INHAB + HIGH
-	.DB	H'38, H'2b, H'26, GAS
-	.DB	H'45, H'39, SUN, H'00	;sun
-	.DB	H'3e, H'3b, H'22, GAS + INHAB + HIGH
-	.DB	H'34, H'3f, H'26, GAS
-	.DB	H'6c, H'47, H'14, GAS + INHAB + AVG
-	.DB	H'43, H'57, H'23, GAS + INHAB + HIGH
+	.byte	X_SET7 +  $0b
+	.byte	 $5a,  $06,  $26, GAS
+	.byte	 $0a,  $07,  $23, GAS + INHAB + FRNDLY + AVG
+	.byte	 $36,  $10,  $14, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $5f,  $12,  $25, GAS + INHAB + AVG
+	.byte	 $5c,  $25,  $24, GAS + INHAB + HIGH
+	.byte	 $38,  $2b,  $26, GAS
+	.byte	 $45,  $39, SUN,  $00	;sun
+	.byte	 $3e,  $3b,  $22, GAS + INHAB + HIGH
+	.byte	 $34,  $3f,  $26, GAS
+	.byte	 $6c,  $47,  $14, GAS + INHAB + AVG
+	.byte	 $43,  $57,  $23, GAS + INHAB + HIGH
 
   SOLAR91:
-	.DB	X_SET5 + H'08
-	.DB	H'58, H'16, H'26, GAS
-	.DB	H'0d, H'22, H'25, GAS + INHAB + HIGH
-	.DB	H'40, H'35, SUN, H'00	;sun
-	.DB	H'29, H'3f, H'26, GAS
-	.DB	H'49, H'58, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'22, H'5b, H'23, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'65, H'77, H'22, GAS + INHAB + FRNDLY + LOW
-	.DB	H'69, H'79, H'14, GAS + INHAB + FRNDLY + AVG
+	.byte	X_SET5 +  $08
+	.byte	 $58,  $16,  $26, GAS
+	.byte	 $0d,  $22,  $25, GAS + INHAB + HIGH
+	.byte	 $40,  $35, SUN,  $00	;sun
+	.byte	 $29,  $3f,  $26, GAS
+	.byte	 $49,  $58,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $22,  $5b,  $23, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $65,  $77,  $22, GAS + INHAB + FRNDLY + LOW
+	.byte	 $69,  $79,  $14, GAS + INHAB + FRNDLY + AVG
 
   SOLAR92:
-	.DB	X_SET6 + H'08
-	.DB	H'3b, H'08, H'26, GAS
-	.DB	H'2a, H'11, H'13, GAS + INHAB + AVG
-	.DB	H'47, H'35, H'15, GAS + INHAB + LOW
-	.DB	H'43, H'38, SUN, H'00	;sun
-	.DB	H'0c, H'48, H'25, GAS + INHAB + HIGH
-	.DB	H'2f, H'4a, H'14, GAS + INHAB + AVG
-	.DB	H'45, H'58, H'25, GAS + INHAB + AVG
-	.DB	H'24, H'60, H'12, GAS + INHAB + AVG
+	.byte	X_SET6 +  $08
+	.byte	 $3b,  $08,  $26, GAS
+	.byte	 $2a,  $11,  $13, GAS + INHAB + AVG
+	.byte	 $47,  $35,  $15, GAS + INHAB + LOW
+	.byte	 $43,  $38, SUN,  $00	;sun
+	.byte	 $0c,  $48,  $25, GAS + INHAB + HIGH
+	.byte	 $2f,  $4a,  $14, GAS + INHAB + AVG
+	.byte	 $45,  $58,  $25, GAS + INHAB + AVG
+	.byte	 $24,  $60,  $12, GAS + INHAB + AVG
 
   SOLAR93:
-	.DB	X_SET4 + H'04
-	.DB	H'73, H'14, H'23, GAS + INHAB + FRNDLY + V_HIGH
-	.DB	H'39, H'42, SUN, H'00	;sun
-	.DB	H'16, H'53, H'15, GAS + INHAB + HIGH
-	.DB	H'0d, H'73, H'24, GAS + INHAB + AVG
+	.byte	X_SET4 +  $04
+	.byte	 $73,  $14,  $23, GAS + INHAB + FRNDLY + V_HIGH
+	.byte	 $39,  $42, SUN,  $00	;sun
+	.byte	 $16,  $53,  $15, GAS + INHAB + HIGH
+	.byte	 $0d,  $73,  $24, GAS + INHAB + AVG
 
   SOLAR94:
   SOLAR95:
   SOLAR96:
-	.DB	X_SET5 + H'08
-	.DB	H'5a, H'06, H'14, GAS + INHAB + HIGH
-	.DB	H'10, H'25, H'25, GAS + INHAB + HIGH
-	.DB	H'74, H'26, H'15, GAS + INHAB + FRNDLY + AVG
-	.DB	H'5c, H'2b, H'25, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'3a, H'32, SUN, H'00	;sun
-	.DB	H'1c, H'4a, H'14, GAS + INHAB + FRNDLY + AVG
-	.DB	H'11, H'4e, H'12, GAS + INHAB + AVG
-	.DB	H'18, H'57, H'25, GAS + INHAB + HIGH
+	.byte	X_SET5 +  $08
+	.byte	 $5a,  $06,  $14, GAS + INHAB + HIGH
+	.byte	 $10,  $25,  $25, GAS + INHAB + HIGH
+	.byte	 $74,  $26,  $15, GAS + INHAB + FRNDLY + AVG
+	.byte	 $5c,  $2b,  $25, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $3a,  $32, SUN,  $00	;sun
+	.byte	 $1c,  $4a,  $14, GAS + INHAB + FRNDLY + AVG
+	.byte	 $11,  $4e,  $12, GAS + INHAB + AVG
+	.byte	 $18,  $57,  $25, GAS + INHAB + HIGH
 
   SOLAR97:
   SOLAR98:
-	.DB	X_SET6 + H'09
-	.DB	H'54, H'07, H'24, GAS + INHAB + HIGH
-	.DB	H'3c, H'0e, H'26, GAS
-	.DB	H'0c, H'16, H'22, GAS + INHAB + AVG
-	.DB	H'32, H'1a, H'12, GAS + INHAB + HIGH
-	.DB	H'1d, H'24, H'23, GAS + INHAB + AVG
-	.DB	H'62, H'2f, H'26, GAS
-	.DB	H'42, H'33, SUN, H'00	;sun
-	.DB	H'54, H'47, H'23, GAS + INHAB + HIGH
-	.DB	H'24, H'6b, H'24, GAS + INHAB + AVG
+	.byte	X_SET6 +  $09
+	.byte	 $54,  $07,  $24, GAS + INHAB + HIGH
+	.byte	 $3c,  $0e,  $26, GAS
+	.byte	 $0c,  $16,  $22, GAS + INHAB + AVG
+	.byte	 $32,  $1a,  $12, GAS + INHAB + HIGH
+	.byte	 $1d,  $24,  $23, GAS + INHAB + AVG
+	.byte	 $62,  $2f,  $26, GAS
+	.byte	 $42,  $33, SUN,  $00	;sun
+	.byte	 $54,  $47,  $23, GAS + INHAB + HIGH
+	.byte	 $24,  $6b,  $24, GAS + INHAB + AVG
 
   SOLAR99:
-  	.DB	X_SET4 + H'09
-  	.DB	H'70, H'53, H'0B, GAS + INHAB + V_HIGH ;space station
-  	.DB	H'08, H'0a, H'26, GAS
-  	.DB	H'1e, H'0c, H'12, GAS + INHAB + AVG
-  	.DB	H'6b, H'20, H'22, GAS + INHAB + HIGH
-  	.DB	H'0c, H'3f, H'14, GAS + INHAB + HIGH
-  	.DB	H'77, H'45, H'22, GAS + INHAB + HIGH
-  	.DB	H'40, H'46, SUN, H'00	;sun
-  	.DB	H'2a, H'4e, H'14, GAS + INHAB + AVG
-  	.DB	H'4f, H'54, H'14, GAS + INHAB + HIGH
+  	.byte	X_SET4 +  $09
+  	.byte	 $70,  $53,  $0B, GAS + INHAB + V_HIGH ;space station
+  	.byte	 $08,  $0a,  $26, GAS
+  	.byte	 $1e,  $0c,  $12, GAS + INHAB + AVG
+  	.byte	 $6b,  $20,  $22, GAS + INHAB + HIGH
+  	.byte	 $0c,  $3f,  $14, GAS + INHAB + HIGH
+  	.byte	 $77,  $45,  $22, GAS + INHAB + HIGH
+  	.byte	 $40,  $46, SUN,  $00	;sun
+  	.byte	 $2a,  $4e,  $14, GAS + INHAB + AVG
+  	.byte	 $4f,  $54,  $14, GAS + INHAB + HIGH
 
 ;4632 bytes used for 100 systems.
 
 PRAD_SYS:				;the P'radikus system...
-	.DB	X_SET6 + H'0B		 
-	.DB	H'63, H'5D, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'5D, H'63, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'5D, H'5D, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'63, H'63, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'5C, H'60, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'64, H'60, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'60, H'64, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'60, H'5C, H'0F, GAS + INHAB + V_HIGH ;space station
-	.DB	H'2A, H'2A, H'A6, GAS	
-	.DB	H'3F, H'40, SUN, H'00	;sun	
-	.DB	H'60, H'60, H'26, GAS + INHAB + V_HIGH	;P'RADIKUS
+	.byte	X_SET6 +  $0B		 
+	.byte	 $63,  $5D,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $5D,  $63,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $5D,  $5D,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $63,  $63,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $5C,  $60,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $64,  $60,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $60,  $64,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $60,  $5C,  $0F, GAS + INHAB + V_HIGH ;space station
+	.byte	 $2A,  $2A,  $A6, GAS	
+	.byte	 $3F,  $40, SUN,  $00	;sun	
+	.byte	 $60,  $60,  $26, GAS + INHAB + V_HIGH	;P'RADIKUS
 
 ;	  s     s
 ;      s           s		     
@@ -1015,1089 +1015,1088 @@ PRAD_SYS:				;the P'radikus system...
 ;SECTOR DATA
 
 SECTOR11:
-	.DB	H'03
-	.DB	H'05, H'04
-	.DRW	SOLAR72
-	.DB	H'0C, H'09
-	.DRW	SOLAR25
-	.DB	H'02, H'0D
-	.DRW	SOLAR59	;CLUE TO FIND FREEM IN SECTOR88
+	.byte	 $03
+	.byte	 $05,  $04
+	.word	SOLAR72
+	.byte	 $0C,  $09
+	.word	SOLAR25
+	.byte	 $02,  $0D
+	.word	SOLAR59	;CLUE TO FIND FREEM IN SECTOR88
 SECTOR21:
-	.DB	H'04
-	.DB	H'05, H'01
-	.DRW	SOLAR41
-	.DB	H'0D, H'03
-	.DRW	SOLAR75
-	.DB	H'02, H'0B
-	.DRW	SOLAR05
-	.DB	H'09, H'0F
-	.DRW	SOLAR86
+	.byte	 $04
+	.byte	 $05,  $01
+	.word	SOLAR41
+	.byte	 $0D,  $03
+	.word	SOLAR75
+	.byte	 $02,  $0B
+	.word	SOLAR05
+	.byte	 $09,  $0F
+	.word	SOLAR86
 SECTOR31:
-	.DB	H'02
-	.DB	H'0E, H'04
-	.DRW	SOLAR62
-	.DB	H'04, H'07
-	.DRW	SOLAR37
+	.byte	 $02
+	.byte	 $0E,  $04
+	.word	SOLAR62
+	.byte	 $04,  $07
+	.word	SOLAR37
 SECTOR41:
-	.DB	H'03
-	.DB	H'03, H'03
-	.DRW	SOLAR12
-	.DB	H'09, H'07
-	.DRW	SOLAR87
-	.DB	H'0E, H'0F
-	.DRW	SOLAR51
+	.byte	 $03
+	.byte	 $03,  $03
+	.word	SOLAR12
+	.byte	 $09,  $07
+	.word	SOLAR87
+	.byte	 $0E,  $0F
+	.word	SOLAR51
 SECTOR51:
-	.DB	H'04
-	.DB	H'0F, H'04
-	.DRW	SOLAR17
-	.DB	H'08, H'08
-	.DRW	SOLAR54
-	.DB	H'02, H'0A
-	.DRW	SOLAR68
-	.DB	H'0E, H'0B
-	.DRW	SOLAR28
+	.byte	 $04
+	.byte	 $0F,  $04
+	.word	SOLAR17
+	.byte	 $08,  $08
+	.word	SOLAR54
+	.byte	 $02,  $0A
+	.word	SOLAR68
+	.byte	 $0E,  $0B
+	.word	SOLAR28
 SECTOR61:
-	.DB	H'06
-	.DB	H'05, H'03
-	.DRW	SOLAR75
-	.DB	H'06, H'07
-	.DRW	SOLAR47
-	.DB	H'0B, H'07
-	.DRW	SOLAR92
-	.DB	H'0B, H'0A
-	.DRW	SOLAR35
-	.DB	H'03, H'0B
-	.DRW	SOLAR70
-	.DB	H'07, H'0F
-	.DRW	SOLAR53
+	.byte	 $06
+	.byte	 $05,  $03
+	.word	SOLAR75
+	.byte	 $06,  $07
+	.word	SOLAR47
+	.byte	 $0B,  $07
+	.word	SOLAR92
+	.byte	 $0B,  $0A
+	.word	SOLAR35
+	.byte	 $03,  $0B
+	.word	SOLAR70
+	.byte	 $07,  $0F
+	.word	SOLAR53
 SECTOR71:
-	.DB	H'02
-	.DB	H'06, H'03
-	.DRW	SOLAR41
-	.DB	H'0D, H'0C
-	.DRW	SOLAR55
+	.byte	 $02
+	.byte	 $06,  $03
+	.word	SOLAR41
+	.byte	 $0D,  $0C
+	.word	SOLAR55
 SECTOR81:
-	.DB	H'03
-	.DB	H'0B, H'03
-	.DRW	SOLAR90
-	.DB	H'03, H'0A
-	.DRW	SOLAR61
-	.DB	H'0C, H'0B
-	.DRW	SOLAR14
+	.byte	 $03
+	.byte	 $0B,  $03
+	.word	SOLAR90
+	.byte	 $03,  $0A
+	.word	SOLAR61
+	.byte	 $0C,  $0B
+	.word	SOLAR14
 
 SECTOR12:
-	.DB	H'04
-	.DB	H'02, H'02
-	.DRW	SOLAR05
-	.DB	H'0C, H'04
-	.DRW	SOLAR53
-	.DB	H'07, H'07
-	.DRW	SOLAR68
-	.DB	H'0E, H'09
-	.DRW	SOLAR29
+	.byte	 $04
+	.byte	 $02,  $02
+	.word	SOLAR05
+	.byte	 $0C,  $04
+	.word	SOLAR53
+	.byte	 $07,  $07
+	.word	SOLAR68
+	.byte	 $0E,  $09
+	.word	SOLAR29
 SECTOR22:
-	.DB	H'07
-	.DB	H'10, H'02
-	.DRW	SOLAR88
-	.DB	H'07, H'03
-	.DRW	SOLAR61
-	.DB	H'02, H'06
-	.DRW	SOLAR07
-	.DB	H'0D, H'08
-	.DRW	SOLAR45
-	.DB	H'03, H'0A
-	.DRW	SOLAR97
-	.DB	H'0B, H'0E
-	.DRW	SOLAR12
-	.DB	H'09, H'0F
-	.DRW	SOLAR92
+	.byte	 $07
+	.byte	 $10,  $02
+	.word	SOLAR88
+	.byte	 $07,  $03
+	.word	SOLAR61
+	.byte	 $02,  $06
+	.word	SOLAR07
+	.byte	 $0D,  $08
+	.word	SOLAR45
+	.byte	 $03,  $0A
+	.word	SOLAR97
+	.byte	 $0B,  $0E
+	.word	SOLAR12
+	.byte	 $09,  $0F
+	.word	SOLAR92
 SECTOR32:
-	.DB	H'0B
-	.DB	H'04, H'01
-	.DRW	SOLAR65
-	.DB	H'0C, H'03
-	.DRW	SOLAR67
-	.DB	H'0F, H'04
-	.DRW	SOLAR07
-	.DB	H'08, H'06
-	.DRW	SOLAR22
-	.DB	H'02, H'07
-	.DRW	SOLAR16
-	.DB	H'0E, H'09
-	.DRW	SOLAR80
-	.DB	H'03, H'0A
-	.DRW	SOLAR20
-	.DB	H'0A, H'0B
-	.DRW	SOLAR48
-	.DB	H'05, H'0E
-	.DRW	SOLAR09
-	.DB	H'02, H'0F
-	.DRW	SOLAR53
-	.DB	H'0F, H'10
-	.DRW	SOLAR39
+	.byte	 $0B
+	.byte	 $04,  $01
+	.word	SOLAR65
+	.byte	 $0C,  $03
+	.word	SOLAR67
+	.byte	 $0F,  $04
+	.word	SOLAR07
+	.byte	 $08,  $06
+	.word	SOLAR22
+	.byte	 $02,  $07
+	.word	SOLAR16
+	.byte	 $0E,  $09
+	.word	SOLAR80
+	.byte	 $03,  $0A
+	.word	SOLAR20
+	.byte	 $0A,  $0B
+	.word	SOLAR48
+	.byte	 $05,  $0E
+	.word	SOLAR09
+	.byte	 $02,  $0F
+	.word	SOLAR53
+	.byte	 $0F,  $10
+	.word	SOLAR39
 SECTOR42:
-	.DB	H'11
-	.DB	H'09, H'01
-	.DRW	SOLAR42
-	.DB	H'02, H'02
-	.DRW	SOLAR25
-	.DB	H'0E, H'02
-	.DRW	SOLAR03
-	.DB	H'07, H'04
-	.DRW	SOLAR31		;THUNDER BOLT HERE
-	.DB	H'05, H'05
-	.DRW	SOLAR51
-	.DB	H'0F, H'05
-	.DRW	SOLAR36
-	.DB	H'0C, H'06
-	.DRW	SOLAR29
-	.DB	H'02, H'08
-	.DRW	SOLAR45
-	.DB	H'06, H'09
-	.DRW	SOLAR67
-	.DB	H'0F, H'09
-	.DRW	SOLAR86
-	.DB	H'08, H'0A
-	.DRW	SOLAR99
-	.DB	H'01, H'0C
-	.DRW	SOLAR05
-	.DB	H'0D, H'0C
-	.DRW	SOLAR60
-	.DB	H'02, H'0E
-	.DRW	SOLAR35
-	.DB	H'0A, H'0E
-	.DRW	SOLAR52
-	.DB	H'0C, H'0F
-	.DRW	SOLAR00
-	.DB	H'05, H'10
-	.DRW	SOLAR38
+	.byte	 $11
+	.byte	 $09,  $01
+	.word	SOLAR42
+	.byte	 $02,  $02
+	.word	SOLAR25
+	.byte	 $0E,  $02
+	.word	SOLAR03
+	.byte	 $07,  $04
+	.word	SOLAR31		;THUNDER BOLT HERE
+	.byte	 $05,  $05
+	.word	SOLAR51
+	.byte	 $0F,  $05
+	.word	SOLAR36
+	.byte	 $0C,  $06
+	.word	SOLAR29
+	.byte	 $02,  $08
+	.word	SOLAR45
+	.byte	 $06,  $09
+	.word	SOLAR67
+	.byte	 $0F,  $09
+	.word	SOLAR86
+	.byte	 $08,  $0A
+	.word	SOLAR99
+	.byte	 $01,  $0C
+	.word	SOLAR05
+	.byte	 $0D,  $0C
+	.word	SOLAR60
+	.byte	 $02,  $0E
+	.word	SOLAR35
+	.byte	 $0A,  $0E
+	.word	SOLAR52
+	.byte	 $0C,  $0F
+	.word	SOLAR00
+	.byte	 $05,  $10
+	.word	SOLAR38
 SECTOR52:
-	.DB	H'08
-	.DB	H'10, H'02
-	.DRW	SOLAR40
-	.DB	H'06, H'03
-	.DRW	SOLAR91
-	.DB	H'0D, H'03
-	.DRW	SOLAR44
-	.DB	H'02, H'07
-	.DRW	SOLAR37
-	.DB	H'08, H'07
-	.DRW	SOLAR19
-	.DB	H'0C, H'0B
-	.DRW	SOLAR58
-	.DB	H'01, H'0F
-	.DRW	SOLAR04
-	.DB	H'0F, H'0F
-	.DRW	SOLAR96
+	.byte	 $08
+	.byte	 $10,  $02
+	.word	SOLAR40
+	.byte	 $06,  $03
+	.word	SOLAR91
+	.byte	 $0D,  $03
+	.word	SOLAR44
+	.byte	 $02,  $07
+	.word	SOLAR37
+	.byte	 $08,  $07
+	.word	SOLAR19
+	.byte	 $0C,  $0B
+	.word	SOLAR58
+	.byte	 $01,  $0F
+	.word	SOLAR04
+	.byte	 $0F,  $0F
+	.word	SOLAR96
 SECTOR62:
-	.DB	H'05
-	.DB	H'05, H'05
-	.DRW	SOLAR28
-	.DB	H'0D, H'07
-	.DRW	SOLAR58
-	.DB	H'02, H'09
-	.DRW	SOLAR46
-	.DB	H'09, H'09
-	.DRW	SOLAR73
-	.DB	H'01, H'0E
-	.DRW	SOLAR00
+	.byte	 $05
+	.byte	 $05,  $05
+	.word	SOLAR28
+	.byte	 $0D,  $07
+	.word	SOLAR58
+	.byte	 $02,  $09
+	.word	SOLAR46
+	.byte	 $09,  $09
+	.word	SOLAR73
+	.byte	 $01,  $0E
+	.word	SOLAR00
 SECTOR72:
-	.DB	H'0E
-	.DB	H'10, H'01
-	.DRW	SOLAR07
-	.DB	H'09, H'02
-	.DRW	SOLAR44
-	.DB	H'01, H'03
-	.DRW	SOLAR01
-	.DB	H'0F, H'03
-	.DRW	SOLAR14
-	.DB	H'05, H'04
-	.DRW	SOLAR23
-	.DB	H'0D, H'05
-	.DRW	SOLAR39
-	.DB	H'0A, H'06
-	.DRW	SOLAR86
-	.DB	H'06, H'07
-	.DRW	SOLAR68
-	.DB	H'03, H'09
-	.DRW	SOLAR64
-	.DB	H'0E, H'0A
-	.DRW	SOLAR74
-	.DB	H'08, H'0C
-	.DRW	SOLAR98
-	.DB	H'05, H'0D
-	.DRW	SOLAR51
-	.DB	H'0D, H'0E
-	.DRW	SOLAR78
-	.DB	H'01, H'0F
-	.DRW	SOLAR97
+	.byte	 $0E
+	.byte	 $10,  $01
+	.word	SOLAR07
+	.byte	 $09,  $02
+	.word	SOLAR44
+	.byte	 $01,  $03
+	.word	SOLAR01
+	.byte	 $0F,  $03
+	.word	SOLAR14
+	.byte	 $05,  $04
+	.word	SOLAR23
+	.byte	 $0D,  $05
+	.word	SOLAR39
+	.byte	 $0A,  $06
+	.word	SOLAR86
+	.byte	 $06,  $07
+	.word	SOLAR68
+	.byte	 $03,  $09
+	.word	SOLAR64
+	.byte	 $0E,  $0A
+	.word	SOLAR74
+	.byte	 $08,  $0C
+	.word	SOLAR98
+	.byte	 $05,  $0D
+	.word	SOLAR51
+	.byte	 $0D,  $0E
+	.word	SOLAR78
+	.byte	 $01,  $0F
+	.word	SOLAR97
 SECTOR82:
-	.DB	H'09
-	.DB	H'03, H'02
-	.DRW	SOLAR77
-	.DB	H'0E, H'03
-	.DRW	SOLAR91
-	.DB	H'04, H'05
-	.DRW	SOLAR11
-	.DB	H'09, H'06
-	.DRW	SOLAR36
-	.DB	H'06, H'09
-	.DRW	SOLAR21
-	.DB	H'0F, H'0A
-	.DRW	SOLAR74
-	.DB	H'0B, H'0B
-	.DRW	SOLAR02
-	.DB	H'02, H'0D
-	.DRW	SOLAR38
-	.DB	H'08, H'0F
-	.DRW	SOLAR66
+	.byte	 $09
+	.byte	 $03,  $02
+	.word	SOLAR77
+	.byte	 $0E,  $03
+	.word	SOLAR91
+	.byte	 $04,  $05
+	.word	SOLAR11
+	.byte	 $09,  $06
+	.word	SOLAR36
+	.byte	 $06,  $09
+	.word	SOLAR21
+	.byte	 $0F,  $0A
+	.word	SOLAR74
+	.byte	 $0B,  $0B
+	.word	SOLAR02
+	.byte	 $02,  $0D
+	.word	SOLAR38
+	.byte	 $08,  $0F
+	.word	SOLAR66
 
 SECTOR13:
-	.DB	H'09
-	.DB	H'06, H'05
-	.DRW	SOLAR09
-	.DB	H'02, H'07
-	.DRW	SOLAR06
-	.DB	H'0E, H'09
-	.DRW	SOLAR27
-	.DB	H'09, H'0A
-	.DRW	SOLAR15
-	.DB	H'03, H'0C
-	.DRW	SOLAR47
-	.DB	H'0B, H'0C
-	.DRW	SOLAR80
-	.DB	H'0E, H'0D
-	.DRW	SOLAR48
-	.DB	H'0A, H'0E
-	.DRW	SOLAR07
-	.DB	H'08, H'0F
-	.DRW	SOLAR65
+	.byte	 $09
+	.byte	 $06,  $05
+	.word	SOLAR09
+	.byte	 $02,  $07
+	.word	SOLAR06
+	.byte	 $0E,  $09
+	.word	SOLAR27
+	.byte	 $09,  $0A
+	.word	SOLAR15
+	.byte	 $03,  $0C
+	.word	SOLAR47
+	.byte	 $0B,  $0C
+	.word	SOLAR80
+	.byte	 $0E,  $0D
+	.word	SOLAR48
+	.byte	 $0A,  $0E
+	.word	SOLAR07
+	.byte	 $08,  $0F
+	.word	SOLAR65
 SECTOR23:
-	.DB	H'0D
-	.DB	H'0D, H'01
-	.DRW	SOLAR70
-	.DB	H'03, H'02
-	.DRW	SOLAR19
-	.DB	H'0B, H'03
-	.DRW	SOLAR37
-	.DB	H'0C, H'05
-	.DRW	SOLAR43
-	.DB	H'0F, H'05
-	.DRW	SOLAR94
-	.DB	H'06, H'06
-	.DRW	SOLAR64
-	.DB	H'09, H'08
-	.DRW	SOLAR77
-	.DB	H'06, H'0A
-	.DRW	SOLAR78
-	.DB	H'0A, H'0A
-	.DRW	SOLAR94
-	.DB	H'03, H'0B
-	.DRW	SOLAR71
-	.DB	H'06, H'0D
-	.DRW	SOLAR34
-	.DB	H'0C, H'0E
-	.DRW	SOLAR69
-	.DB	H'04, H'0F
-	.DRW	SOLAR81
+	.byte	 $0D
+	.byte	 $0D,  $01
+	.word	SOLAR70
+	.byte	 $03,  $02
+	.word	SOLAR19
+	.byte	 $0B,  $03
+	.word	SOLAR37
+	.byte	 $0C,  $05
+	.word	SOLAR43
+	.byte	 $0F,  $05
+	.word	SOLAR94
+	.byte	 $06,  $06
+	.word	SOLAR64
+	.byte	 $09,  $08
+	.word	SOLAR77
+	.byte	 $06,  $0A
+	.word	SOLAR78
+	.byte	 $0A,  $0A
+	.word	SOLAR94
+	.byte	 $03,  $0B
+	.word	SOLAR71
+	.byte	 $06,  $0D
+	.word	SOLAR34
+	.byte	 $0C,  $0E
+	.word	SOLAR69
+	.byte	 $04,  $0F
+	.word	SOLAR81
 SECTOR33:
-	.DB	H'07
-	.DB	H'03, H'02
-	.DRW	SOLAR65
-	.DB	H'06, H'03
-	.DRW	SOLAR85
-	.DB	H'02, H'05
-	.DRW	SOLAR55
-	.DB	H'04, H'06
-	.DRW	SOLAR57
-	.DB	H'0D, H'0B
-	.DRW	SOLAR16
-	.DB	H'09, H'0D
-	.DRW	SOLAR94
-	.DB	H'0C, H'0F
-	.DRW	SOLAR13
+	.byte	 $07
+	.byte	 $03,  $02
+	.word	SOLAR65
+	.byte	 $06,  $03
+	.word	SOLAR85
+	.byte	 $02,  $05
+	.word	SOLAR55
+	.byte	 $04,  $06
+	.word	SOLAR57
+	.byte	 $0D,  $0B
+	.word	SOLAR16
+	.byte	 $09,  $0D
+	.word	SOLAR94
+	.byte	 $0C,  $0F
+	.word	SOLAR13
 SECTOR43:
-	.DB	H'0B
-	.DB	H'0B, H'01
-	.DRW	SOLAR70
-	.DB	H'09, H'02
-	.DRW	SOLAR01
-	.DB	H'0D, H'06
-	.DRW	SOLAR16
-	.DB	H'01, H'07
-	.DRW	SOLAR76
-	.DB	H'03, H'09
-	.DRW	SOLAR41
-	.DB	H'07, H'0B
-	.DRW	SOLAR46
-	.DB	H'04, H'0D
-	.DRW	SOLAR49
-	.DB	H'01, H'0E
-	.DRW	SOLAR27
-	.DB	H'09, H'0E
-	.DRW	SOLAR31
-	.DB	H'06, H'0F
-	.DRW	SOLAR05
-	.DB	H'02, H'10
-	.DRW	SOLAR16
+	.byte	 $0B
+	.byte	 $0B,  $01
+	.word	SOLAR70
+	.byte	 $09,  $02
+	.word	SOLAR01
+	.byte	 $0D,  $06
+	.word	SOLAR16
+	.byte	 $01,  $07
+	.word	SOLAR76
+	.byte	 $03,  $09
+	.word	SOLAR41
+	.byte	 $07,  $0B
+	.word	SOLAR46
+	.byte	 $04,  $0D
+	.word	SOLAR49
+	.byte	 $01,  $0E
+	.word	SOLAR27
+	.byte	 $09,  $0E
+	.word	SOLAR31
+	.byte	 $06,  $0F
+	.word	SOLAR05
+	.byte	 $02,  $10
+	.word	SOLAR16
 SECTOR53:
-	.DB	H'0A
-	.DB	H'0C, H'02
-	.DRW	SOLAR58
-	.DB	H'06, H'03
-	.DRW	SOLAR26
-	.DB	H'0C, H'05
-	.DRW	SOLAR13
-	.DB	H'07, H'06
-	.DRW	SOLAR88
-	.DB	H'01, H'07
-	.DRW	SOLAR24
-	.DB	H'05, H'08
-	.DRW	SOLAR51
-	.DB	H'09, H'09
-	.DRW	SOLAR71
-	.DB	H'02, H'0B
-	.DRW	SOLAR28
-	.DB	H'0A, H'0C
-	.DRW	SOLAR48
-	.DB	H'06, H'0E
-	.DRW	SOLAR09
+	.byte	 $0A
+	.byte	 $0C,  $02
+	.word	SOLAR58
+	.byte	 $06,  $03
+	.word	SOLAR26
+	.byte	 $0C,  $05
+	.word	SOLAR13
+	.byte	 $07,  $06
+	.word	SOLAR88
+	.byte	 $01,  $07
+	.word	SOLAR24
+	.byte	 $05,  $08
+	.word	SOLAR51
+	.byte	 $09,  $09
+	.word	SOLAR71
+	.byte	 $02,  $0B
+	.word	SOLAR28
+	.byte	 $0A,  $0C
+	.word	SOLAR48
+	.byte	 $06,  $0E
+	.word	SOLAR09
 SECTOR63:
-	.DB	H'0D
-	.DB	H'04, H'02
-	.DRW	SOLAR26
-	.DB	H'09, H'03
-	.DRW	SOLAR00
-	.DB	H'02, H'05
-	.DRW	SOLAR01
-	.DB	H'07, H'05
-	.DRW	SOLAR13
-	.DB	H'0B, H'07
-	.DRW	SOLAR76
-	.DB	H'06, H'08
-	.DRW	SOLAR69
-	.DB	H'05, H'0A
-	.DRW	SOLAR77
-	.DB	H'0A, H'0A
-	.DRW	SOLAR66
-	.DB	H'07, H'0C
-	.DRW	SOLAR25
-	.DB	H'0A, H'0D
-	.DRW	SOLAR75
-	.DB	H'0D, H'0D
-	.DRW	SOLAR39
-	.DB	H'06, H'0E
-	.DRW	SOLAR89
-	.DB	H'09, H'0F
-	.DRW	SOLAR54
+	.byte	 $0D
+	.byte	 $04,  $02
+	.word	SOLAR26
+	.byte	 $09,  $03
+	.word	SOLAR00
+	.byte	 $02,  $05
+	.word	SOLAR01
+	.byte	 $07,  $05
+	.word	SOLAR13
+	.byte	 $0B,  $07
+	.word	SOLAR76
+	.byte	 $06,  $08
+	.word	SOLAR69
+	.byte	 $05,  $0A
+	.word	SOLAR77
+	.byte	 $0A,  $0A
+	.word	SOLAR66
+	.byte	 $07,  $0C
+	.word	SOLAR25
+	.byte	 $0A,  $0D
+	.word	SOLAR75
+	.byte	 $0D,  $0D
+	.word	SOLAR39
+	.byte	 $06,  $0E
+	.word	SOLAR89
+	.byte	 $09,  $0F
+	.word	SOLAR54
 SECTOR73:
-	.DB	H'08
-	.DB	H'08, H'01
-	.DRW	SOLAR52
-	.DB	H'0F, H'01
-	.DRW	SOLAR91
-	.DB	H'0A, H'02
-	.DRW	SOLAR90
-	.DB	H'07, H'04
-	.DRW	SOLAR78
-	.DB	H'0E, H'05
-	.DRW	SOLAR02
-	.DB	H'0B, H'06
-	.DRW	SOLAR42
-	.DB	H'0F, H'07
-	.DRW	SOLAR58
-	.DB	H'06, H'0B
-	.DRW	SOLAR30
+	.byte	 $08
+	.byte	 $08,  $01
+	.word	SOLAR52
+	.byte	 $0F,  $01
+	.word	SOLAR91
+	.byte	 $0A,  $02
+	.word	SOLAR90
+	.byte	 $07,  $04
+	.word	SOLAR78
+	.byte	 $0E,  $05
+	.word	SOLAR02
+	.byte	 $0B,  $06
+	.word	SOLAR42
+	.byte	 $0F,  $07
+	.word	SOLAR58
+	.byte	 $06,  $0B
+	.word	SOLAR30
 SECTOR83:
-	.DB	H'03
-	.DB	H'03, H'05
-	.DRW	SOLAR98
-	.DB	H'0A, H'09
-	.DRW	SOLAR48
-	.DB	H'06, H'0D
-	.DRW	SOLAR14
+	.byte	 $03
+	.byte	 $03,  $05
+	.word	SOLAR98
+	.byte	 $0A,  $09
+	.word	SOLAR48
+	.byte	 $06,  $0D
+	.word	SOLAR14
 
 SECTOR14:
-	.DB	H'07
-	.DB	H'0A, H'03
-	.DRW	SOLAR13
-	.DB	H'0D, H'05
-	.DRW	SOLAR03
-	.DB	H'09, H'09
-	.DRW	SOLAR32
-	.DB	H'02, H'0A
-	.DRW	SOLAR63
-	.DB	H'0E, H'0B
-	.DRW	SOLAR39
-	.DB	H'0B, H'0D
-	.DRW	SOLAR04
-	.DB	H'0F, H'0F
-	.DRW	SOLAR65
+	.byte	 $07
+	.byte	 $0A,  $03
+	.word	SOLAR13
+	.byte	 $0D,  $05
+	.word	SOLAR03
+	.byte	 $09,  $09
+	.word	SOLAR32
+	.byte	 $02,  $0A
+	.word	SOLAR63
+	.byte	 $0E,  $0B
+	.word	SOLAR39
+	.byte	 $0B,  $0D
+	.word	SOLAR04
+	.byte	 $0F,  $0F
+	.word	SOLAR65
 SECTOR24:
-	.DB	H'02
-	.DB	H'06, H'03
-	.DRW	SOLAR36
-	.DB	H'0B, H'0B
-	.DRW	SOLAR38
+	.byte	 $02
+	.byte	 $06,  $03
+	.word	SOLAR36
+	.byte	 $0B,  $0B
+	.word	SOLAR38
 SECTOR34:
-	.DB	H'0A
-	.DB	H'0C, H'02
-	.DRW	SOLAR71
-	.DB	H'09, H'03
-	.DRW	SOLAR44
-	.DB	H'0B, H'06
-	.DRW	SOLAR18
-	.DB	H'0D, H'07
-	.DRW	SOLAR20
-	.DB	H'07, H'08
-	.DRW	SOLAR68
-	.DB	H'05, H'09
-	.DRW	SOLAR72
-	.DB	H'0A, H'0A
-	.DRW	SOLAR64
-	.DB	H'02, H'0B
-	.DRW	SOLAR69
-	.DB	H'06, H'0D
-	.DRW	SOLAR82
-	.DB	H'07, H'0F
-	.DRW	SOLAR95
+	.byte	 $0A
+	.byte	 $0C,  $02
+	.word	SOLAR71
+	.byte	 $09,  $03
+	.word	SOLAR44
+	.byte	 $0B,  $06
+	.word	SOLAR18
+	.byte	 $0D,  $07
+	.word	SOLAR20
+	.byte	 $07,  $08
+	.word	SOLAR68
+	.byte	 $05,  $09
+	.word	SOLAR72
+	.byte	 $0A,  $0A
+	.word	SOLAR64
+	.byte	 $02,  $0B
+	.word	SOLAR69
+	.byte	 $06,  $0D
+	.word	SOLAR82
+	.byte	 $07,  $0F
+	.word	SOLAR95
 SECTOR44:
-	.DB	H'13
-	.DB	H'0E, H'01
-	.DRW	SOLAR49
-	.DB	H'04, H'02
-	.DRW	SOLAR60
-	.DB	H'0A, H'03
-	.DRW	SOLAR46
-	.DB	H'0A, H'06
-	.DRW	SOLAR26
-	.DB	H'08, H'07
-	.DRW	SOLAR15
-	.DB	H'0D, H'07
-	.DRW	SOLAR21
-	.DB	H'10, H'09
-	.DRW	SOLAR40
-	.DB	H'0A, H'0A
-	.DRW	SOLAR11
-	.DB	H'0E, H'0B
-	.DRW	SOLAR23
-	.DB	H'0F, H'0C
-	.DRW	SOLAR19
-	.DB	H'0B, H'0D
-	.DRW	SOLAR03
-	.DB	H'0F, H'0D
-	.DRW	SOLAR24
-	.DB	H'0E, H'0E
-	.DRW	SOLAR91
-	.DB	H'0A, H'0F
-	.DRW	SOLAR18
-	.DB	H'0C, H'0F
-	.DRW	SOLAR06
-	.DB	H'0E, H'0F
-	.DRW	SOLAR27
-	.DB	H'0F, H'0F
-	.DRW	SOLAR52
-	.DB	H'0D, H'10
-	.DRW	SOLAR16
-	.DB	H'0F, H'10
-	.DRW	SOLAR44		;PLAYER STARTS IN HERE
+	.byte	 $13
+	.byte	 $0E,  $01
+	.word	SOLAR49
+	.byte	 $04,  $02
+	.word	SOLAR60
+	.byte	 $0A,  $03
+	.word	SOLAR46
+	.byte	 $0A,  $06
+	.word	SOLAR26
+	.byte	 $08,  $07
+	.word	SOLAR15
+	.byte	 $0D,  $07
+	.word	SOLAR21
+	.byte	 $10,  $09
+	.word	SOLAR40
+	.byte	 $0A,  $0A
+	.word	SOLAR11
+	.byte	 $0E,  $0B
+	.word	SOLAR23
+	.byte	 $0F,  $0C
+	.word	SOLAR19
+	.byte	 $0B,  $0D
+	.word	SOLAR03
+	.byte	 $0F,  $0D
+	.word	SOLAR24
+	.byte	 $0E,  $0E
+	.word	SOLAR91
+	.byte	 $0A,  $0F
+	.word	SOLAR18
+	.byte	 $0C,  $0F
+	.word	SOLAR06
+	.byte	 $0E,  $0F
+	.word	SOLAR27
+	.byte	 $0F,  $0F
+	.word	SOLAR52
+	.byte	 $0D,  $10
+	.word	SOLAR16
+	.byte	 $0F,  $10
+	.word	SOLAR44		;PLAYER STARTS IN HERE
 SECTOR54:
-	.DB	H'11
-	.DB	H'0C, H'04
-	.DRW	SOLAR82
-	.DB	H'06, H'06
-	.DRW	SOLAR96
-	.DB	H'01, H'07
-	.DRW	SOLAR01
-	.DB	H'0B, H'09
-	.DRW	SOLAR07
-	.DB	H'03, H'0A
-	.DRW	SOLAR56
-	.DB	H'01, H'0B
-	.DRW	SOLAR93
-	.DB	H'06, H'0B
-	.DRW	SOLAR50
-	.DB	H'04, H'0C
-	.DRW	SOLAR52
-	.DB	H'0E, H'0C
-	.DRW	SOLAR40
-	.DB	H'03, H'0D
-	.DRW	SOLAR23
-	.DB	H'08, H'0D
-	.DRW	SOLAR16
-	.DB	H'05, H'0E
-	.DRW	SOLAR06
-	.DB	H'09, H'0E
-	.DRW	SOLAR27
-	.DB	H'01, H'0F
-	.DRW	SOLAR00
-	.DB	H'04, H'0F
-	.DRW	SOLAR85
-	.DB	H'07, H'0F
-	.DRW	SOLAR18
-	.DB	H'02, H'10
-	.DRW	SOLAR91
+	.byte	 $11
+	.byte	 $0C,  $04
+	.word	SOLAR82
+	.byte	 $06,  $06
+	.word	SOLAR96
+	.byte	 $01,  $07
+	.word	SOLAR01
+	.byte	 $0B,  $09
+	.word	SOLAR07
+	.byte	 $03,  $0A
+	.word	SOLAR56
+	.byte	 $01,  $0B
+	.word	SOLAR93
+	.byte	 $06,  $0B
+	.word	SOLAR50
+	.byte	 $04,  $0C
+	.word	SOLAR52
+	.byte	 $0E,  $0C
+	.word	SOLAR40
+	.byte	 $03,  $0D
+	.word	SOLAR23
+	.byte	 $08,  $0D
+	.word	SOLAR16
+	.byte	 $05,  $0E
+	.word	SOLAR06
+	.byte	 $09,  $0E
+	.word	SOLAR27
+	.byte	 $01,  $0F
+	.word	SOLAR00
+	.byte	 $04,  $0F
+	.word	SOLAR85
+	.byte	 $07,  $0F
+	.word	SOLAR18
+	.byte	 $02,  $10
+	.word	SOLAR91
 SECTOR64:
-	.DB	H'0C
-	.DB	H'03, H'02
-	.DRW	SOLAR48
-	.DB	H'09, H'02
-	.DRW	SOLAR14
-	.DB	H'05, H'03
-	.DRW	SOLAR31
-	.DB	H'07, H'05
-	.DRW	SOLAR18
-	.DB	H'04, H'06
-	.DRW	SOLAR23
-	.DB	H'01, H'07
-	.DRW	SOLAR30
-	.DB	H'06, H'09
-	.DRW	SOLAR81
-	.DB	H'09, H'0A
-	.DRW	SOLAR66
-	.DB	H'05, H'0B
-	.DRW	SOLAR20
-	.DB	H'08, H'0D
-	.DRW	SOLAR62
-	.DB	H'07, H'0E
-	.DRW	SOLAR25
-	.DB	H'03, H'0F
-	.DRW	SOLAR67
+	.byte	 $0C
+	.byte	 $03,  $02
+	.word	SOLAR48
+	.byte	 $09,  $02
+	.word	SOLAR14
+	.byte	 $05,  $03
+	.word	SOLAR31
+	.byte	 $07,  $05
+	.word	SOLAR18
+	.byte	 $04,  $06
+	.word	SOLAR23
+	.byte	 $01,  $07
+	.word	SOLAR30
+	.byte	 $06,  $09
+	.word	SOLAR81
+	.byte	 $09,  $0A
+	.word	SOLAR66
+	.byte	 $05,  $0B
+	.word	SOLAR20
+	.byte	 $08,  $0D
+	.word	SOLAR62
+	.byte	 $07,  $0E
+	.word	SOLAR25
+	.byte	 $03,  $0F
+	.word	SOLAR67
 SECTOR74:
-	.DB	H'08
-	.DB	H'06, H'02
-	.DRW	SOLAR38
-	.DB	H'0D, H'03
-	.DRW	SOLAR81
-	.DB	H'0A, H'05
-	.DRW	SOLAR68
-	.DB	H'0C, H'09
-	.DRW	SOLAR58
-	.DB	H'08, H'0A
-	.DRW	SOLAR26
-	.DB	H'09, H'0C
-	.DRW	SOLAR05
-	.DB	H'0E, H'0D
-	.DRW	SOLAR24
-	.DB	H'0B, H'0F
-	.DRW	SOLAR52
+	.byte	 $08
+	.byte	 $06,  $02
+	.word	SOLAR38
+	.byte	 $0D,  $03
+	.word	SOLAR81
+	.byte	 $0A,  $05
+	.word	SOLAR68
+	.byte	 $0C,  $09
+	.word	SOLAR58
+	.byte	 $08,  $0A
+	.word	SOLAR26
+	.byte	 $09,  $0C
+	.word	SOLAR05
+	.byte	 $0E,  $0D
+	.word	SOLAR24
+	.byte	 $0B,  $0F
+	.word	SOLAR52
 SECTOR84:
-	.DB	H'04
-	.DB	H'0C, H'05
-	.DRW	SOLAR25
-	.DB	H'06, H'06
-	.DRW	SOLAR14
-	.DB	H'0B, H'0C
-	.DRW	SOLAR95
-	.DB	H'03, H'0E
-	.DRW	SOLAR20
+	.byte	 $04
+	.byte	 $0C,  $05
+	.word	SOLAR25
+	.byte	 $06,  $06
+	.word	SOLAR14
+	.byte	 $0B,  $0C
+	.word	SOLAR95
+	.byte	 $03,  $0E
+	.word	SOLAR20
 
 SECTOR15:
-	.DB	H'08
-	.DB	H'0F, H'02
-	.DRW	SOLAR86
-	.DB	H'0C, H'05
-	.DRW	SOLAR88
-	.DB	H'05, H'06
-	.DRW	SOLAR26
-	.DB	H'0E, H'08
-	.DRW	SOLAR91
-	.DB	H'10, H'09
-	.DRW	SOLAR94
-	.DB	H'0A, H'0A
-	.DRW	SOLAR59
-	.DB	H'0F, H'0C
-	.DRW	SOLAR48
-	.DB	H'0D, H'0E
-	.DRW	SOLAR99
+	.byte	 $08
+	.byte	 $0F,  $02
+	.word	SOLAR86
+	.byte	 $0C,  $05
+	.word	SOLAR88
+	.byte	 $05,  $06
+	.word	SOLAR26
+	.byte	 $0E,  $08
+	.word	SOLAR91
+	.byte	 $10,  $09
+	.word	SOLAR94
+	.byte	 $0A,  $0A
+	.word	SOLAR59
+	.byte	 $0F,  $0C
+	.word	SOLAR48
+	.byte	 $0D,  $0E
+	.word	SOLAR99
 SECTOR25:
-	.DB	H'04
-	.DB	H'05, H'03
-	.DRW	SOLAR80
-	.DB	H'0C, H'06
-	.DRW	SOLAR35
-	.DB	H'07, H'09
-	.DRW	SOLAR15
-	.DB	H'09, H'0E
-	.DRW	SOLAR42
+	.byte	 $04
+	.byte	 $05,  $03
+	.word	SOLAR80
+	.byte	 $0C,  $06
+	.word	SOLAR35
+	.byte	 $07,  $09
+	.word	SOLAR15
+	.byte	 $09,  $0E
+	.word	SOLAR42
 SECTOR35:
-	.DB	H'0A
-	.DB	H'09, H'02
-	.DRW	SOLAR11
-	.DB	H'0E, H'03
-	.DRW	SOLAR48
-	.DB	H'03, H'04
-	.DRW	SOLAR02
-	.DB	H'0C, H'05
-	.DRW	SOLAR56
-	.DB	H'0F, H'06
-	.DRW	SOLAR94
-	.DB	H'07, H'07
-	.DRW	SOLAR60
-	.DB	H'03, H'0A
-	.DRW	SOLAR86
-	.DB	H'0B, H'0B
-	.DRW	SOLAR85
-	.DB	H'05, H'0D
-	.DRW	SOLAR75
-	.DB	H'09, H'0F
-	.DRW	SOLAR16
+	.byte	 $0A
+	.byte	 $09,  $02
+	.word	SOLAR11
+	.byte	 $0E,  $03
+	.word	SOLAR48
+	.byte	 $03,  $04
+	.word	SOLAR02
+	.byte	 $0C,  $05
+	.word	SOLAR56
+	.byte	 $0F,  $06
+	.word	SOLAR94
+	.byte	 $07,  $07
+	.word	SOLAR60
+	.byte	 $03,  $0A
+	.word	SOLAR86
+	.byte	 $0B,  $0B
+	.word	SOLAR85
+	.byte	 $05,  $0D
+	.word	SOLAR75
+	.byte	 $09,  $0F
+	.word	SOLAR16
 SECTOR45:
-	.DB	H'0D
-	.DB	H'0F, H'01
-	.DRW	SOLAR70
-	.DB	H'08, H'02
-	.DRW	SOLAR14
-	.DB	H'0D, H'02
-	.DRW	SOLAR18
-	.DB	H'0A, H'03
-	.DRW	SOLAR15
-	.DB	H'0F, H'03
-	.DRW	SOLAR53
-	.DB	H'07, H'06
-	.DRW	SOLAR23
-	.DB	H'0D, H'06
-	.DRW	SOLAR35
-	.DB	H'09, H'07
-	.DRW	SOLAR03
-	.DB	H'0E, H'09
-	.DRW	SOLAR72
-	.DB	H'08, H'0A
-	.DRW	SOLAR66
-	.DB	H'0B, H'0A
-	.DRW	SOLAR11
-	.DB	H'0D, H'0C
-	.DRW	SOLAR50
-	.DB	H'0A, H'0E
-	.DRW	SOLAR61
+	.byte	 $0D
+	.byte	 $0F,  $01
+	.word	SOLAR70
+	.byte	 $08,  $02
+	.word	SOLAR14
+	.byte	 $0D,  $02
+	.word	SOLAR18
+	.byte	 $0A,  $03
+	.word	SOLAR15
+	.byte	 $0F,  $03
+	.word	SOLAR53
+	.byte	 $07,  $06
+	.word	SOLAR23
+	.byte	 $0D,  $06
+	.word	SOLAR35
+	.byte	 $09,  $07
+	.word	SOLAR03
+	.byte	 $0E,  $09
+	.word	SOLAR72
+	.byte	 $08,  $0A
+	.word	SOLAR66
+	.byte	 $0B,  $0A
+	.word	SOLAR11
+	.byte	 $0D,  $0C
+	.word	SOLAR50
+	.byte	 $0A,  $0E
+	.word	SOLAR61
 SECTOR55:
-	.DB	H'0C
-	.DB	H'03, H'01
-	.DRW	SOLAR04
-	.DB	H'06, H'01
-	.DRW	SOLAR00
-	.DB	H'01, H'03
-	.DRW	SOLAR07
-	.DB	H'05, H'04
-	.DRW	SOLAR63
-	.DB	H'02, H'05
-	.DRW	SOLAR45
-	.DB	H'04, H'05
-	.DRW	SOLAR44
-	.DB	H'07, H'06
-	.DRW	SOLAR06
-	.DB	H'03, H'07
-	.DRW	SOLAR42
-	.DB	H'05, H'08
-	.DRW	SOLAR77
-	.DB	H'01, H'0A
-	.DRW	SOLAR70
-	.DB	H'06, H'0A
-	.DRW	SOLAR01
-	.DB	H'04, H'0C
-	.DRW	SOLAR32
+	.byte	 $0C
+	.byte	 $03,  $01
+	.word	SOLAR04
+	.byte	 $06,  $01
+	.word	SOLAR00
+	.byte	 $01,  $03
+	.word	SOLAR07
+	.byte	 $05,  $04
+	.word	SOLAR63
+	.byte	 $02,  $05
+	.word	SOLAR45
+	.byte	 $04,  $05
+	.word	SOLAR44
+	.byte	 $07,  $06
+	.word	SOLAR06
+	.byte	 $03,  $07
+	.word	SOLAR42
+	.byte	 $05,  $08
+	.word	SOLAR77
+	.byte	 $01,  $0A
+	.word	SOLAR70
+	.byte	 $06,  $0A
+	.word	SOLAR01
+	.byte	 $04,  $0C
+	.word	SOLAR32
 SECTOR65:
-	.DB	H'0B
-	.DB	H'09, H'02
-	.DRW	SOLAR37
-	.DB	H'0D, H'03
-	.DRW	SOLAR40
-	.DB	H'0A, H'05
-	.DRW	SOLAR15
-	.DB	H'07, H'06
-	.DRW	SOLAR53
-	.DB	H'0C, H'07
-	.DRW	SOLAR26
-	.DB	H'06, H'09
-	.DRW	SOLAR99
-	.DB	H'0B, H'09
-	.DRW	SOLAR81
-	.DB	H'03, H'0B
-	.DRW	SOLAR56
-	.DB	H'08, H'0C
-	.DRW	SOLAR95
-	.DB	H'0A, H'0C
-	.DRW	SOLAR89
-	.DB	H'05, H'0F
-	.DRW	SOLAR53
+	.byte	 $0B
+	.byte	 $09,  $02
+	.word	SOLAR37
+	.byte	 $0D,  $03
+	.word	SOLAR40
+	.byte	 $0A,  $05
+	.word	SOLAR15
+	.byte	 $07,  $06
+	.word	SOLAR53
+	.byte	 $0C,  $07
+	.word	SOLAR26
+	.byte	 $06,  $09
+	.word	SOLAR99
+	.byte	 $0B,  $09
+	.word	SOLAR81
+	.byte	 $03,  $0B
+	.word	SOLAR56
+	.byte	 $08,  $0C
+	.word	SOLAR95
+	.byte	 $0A,  $0C
+	.word	SOLAR89
+	.byte	 $05,  $0F
+	.word	SOLAR53
 SECTOR75:
-	.DB	H'05
-	.DB	H'0C, H'02
-	.DRW	SOLAR14
-	.DB	H'0E, H'05
-	.DRW	SOLAR12
-	.DB	H'0D, H'0A
-	.DRW	SOLAR86
-	.DB	H'0C, H'0D
-	.DRW	SOLAR74
-	.DB	H'0F, H'0E
-	.DRW	SOLAR11
+	.byte	 $05
+	.byte	 $0C,  $02
+	.word	SOLAR14
+	.byte	 $0E,  $05
+	.word	SOLAR12
+	.byte	 $0D,  $0A
+	.word	SOLAR86
+	.byte	 $0C,  $0D
+	.word	SOLAR74
+	.byte	 $0F,  $0E
+	.word	SOLAR11
 SECTOR85:
-	.DB	H'03
-	.DB	H'0D, H'04
-	.DRW	SOLAR16
-	.DB	H'05, H'07
-	.DRW	SOLAR79
-	.DB	H'0B, H'09
-	.DRW	SOLAR29
+	.byte	 $03
+	.byte	 $0D,  $04
+	.word	SOLAR16
+	.byte	 $05,  $07
+	.word	SOLAR79
+	.byte	 $0B,  $09
+	.word	SOLAR29
 
 SECTOR16:
-	.DB	H'07
-	.DB	H'0C, H'01
-	.DRW	SOLAR20
-	.DB	H'0E, H'02
-	.DRW	SOLAR59
-	.DB	H'0B, H'03
-	.DRW	SOLAR60
-	.DB	H'0F, H'05
-	.DRW	SOLAR76
-	.DB	H'0D, H'07
-	.DRW	SOLAR51
-	.DB	H'09, H'08
-	.DRW	SOLAR62
-	.DB	H'05, H'09
-	.DRW	SOLAR22
+	.byte	 $07
+	.byte	 $0C,  $01
+	.word	SOLAR20
+	.byte	 $0E,  $02
+	.word	SOLAR59
+	.byte	 $0B,  $03
+	.word	SOLAR60
+	.byte	 $0F,  $05
+	.word	SOLAR76
+	.byte	 $0D,  $07
+	.word	SOLAR51
+	.byte	 $09,  $08
+	.word	SOLAR62
+	.byte	 $05,  $09
+	.word	SOLAR22
 SECTOR26:
-	.DB	H'06
-	.DB	H'0D, H'08
-	.DRW	SOLAR44
-	.DB	H'03, H'0A
-	.DRW	SOLAR07
-	.DB	H'02, H'0B
-	.DRW	SOLAR60
-	.DB	H'01, H'0D
-	.DRW	SOLAR90
-	.DB	H'04, H'0D
-	.DRW	SOLAR74
-	.DB	H'02, H'0F
-	.DRW	SOLAR92
+	.byte	 $06
+	.byte	 $0D,  $08
+	.word	SOLAR44
+	.byte	 $03,  $0A
+	.word	SOLAR07
+	.byte	 $02,  $0B
+	.word	SOLAR60
+	.byte	 $01,  $0D
+	.word	SOLAR90
+	.byte	 $04,  $0D
+	.word	SOLAR74
+	.byte	 $02,  $0F
+	.word	SOLAR92
 SECTOR36:
-	.DB	H'0A
-	.DB	H'05, H'02
-	.DRW	SOLAR15
-	.DB	H'0A, H'03
-	.DRW	SOLAR27
-	.DB	H'07, H'05
-	.DRW	SOLAR18
-	.DB	H'0C, H'05
-	.DRW	SOLAR22
-	.DB	H'0F, H'06
-	.DRW	SOLAR04
-	.DB	H'0B, H'07
-	.DRW	SOLAR91
-	.DB	H'07, H'09
-	.DRW	SOLAR99
-	.DB	H'0A, H'09
-	.DRW	SOLAR73
-	.DB	H'0D, H'0A
-	.DRW	SOLAR86
-	.DB	H'0C, H'0D
-	.DRW	SOLAR77
+	.byte	 $0A
+	.byte	 $05,  $02
+	.word	SOLAR15
+	.byte	 $0A,  $03
+	.word	SOLAR27
+	.byte	 $07,  $05
+	.word	SOLAR18
+	.byte	 $0C,  $05
+	.word	SOLAR22
+	.byte	 $0F,  $06
+	.word	SOLAR04
+	.byte	 $0B,  $07
+	.word	SOLAR91
+	.byte	 $07,  $09
+	.word	SOLAR99
+	.byte	 $0A,  $09
+	.word	SOLAR73
+	.byte	 $0D,  $0A
+	.word	SOLAR86
+	.byte	 $0C,  $0D
+	.word	SOLAR77
 SECTOR46:
-	.DB	H'09
-	.DB	H'05, H'02
-	.DRW	SOLAR78
-	.DB	H'0B, H'03
-	.DRW	SOLAR05
-	.DB	H'07, H'06
-	.DRW	SOLAR21
-	.DB	H'0C, H'07
-	.DRW	SOLAR85
-	.DB	H'03, H'08
-	.DRW	SOLAR48
-	.DB	H'0D, H'09
-	.DRW	SOLAR15
-	.DB	H'05, H'0A
-	.DRW	SOLAR37
-	.DB	H'0A, H'0B
-	.DRW	SOLAR54
-	.DB	H'09, H'0E
-	.DRW	SOLAR53
+	.byte	 $09
+	.byte	 $05,  $02
+	.word	SOLAR78
+	.byte	 $0B,  $03
+	.word	SOLAR05
+	.byte	 $07,  $06
+	.word	SOLAR21
+	.byte	 $0C,  $07
+	.word	SOLAR85
+	.byte	 $03,  $08
+	.word	SOLAR48
+	.byte	 $0D,  $09
+	.word	SOLAR15
+	.byte	 $05,  $0A
+	.word	SOLAR37
+	.byte	 $0A,  $0B
+	.word	SOLAR54
+	.byte	 $09,  $0E
+	.word	SOLAR53
 SECTOR56:
-	.DB	H'08
-	.DB	H'03, H'01
-	.DRW	SOLAR20
-	.DB	H'0B, H'02
-	.DRW	SOLAR63
-	.DB	H'07, H'03
-	.DRW	SOLAR39
-	.DB	H'04, H'04
-	.DRW	SOLAR90
-	.DB	H'0C, H'04
-	.DRW	SOLAR80
-	.DB	H'09, H'05
-	.DRW	SOLAR49
-	.DB	H'0D, H'0E
-	.DRW	SOLAR34
-	.DB	H'02, H'0F
-	.DRW	SOLAR86
+	.byte	 $08
+	.byte	 $03,  $01
+	.word	SOLAR20
+	.byte	 $0B,  $02
+	.word	SOLAR63
+	.byte	 $07,  $03
+	.word	SOLAR39
+	.byte	 $04,  $04
+	.word	SOLAR90
+	.byte	 $0C,  $04
+	.word	SOLAR80
+	.byte	 $09,  $05
+	.word	SOLAR49
+	.byte	 $0D,  $0E
+	.word	SOLAR34
+	.byte	 $02,  $0F
+	.word	SOLAR86
 SECTOR66:
-	.DB	H'07
-	.DB	H'07, H'02
-	.DRW	SOLAR69
-	.DB	H'03, H'05
-	.DRW	SOLAR84
-	.DB	H'0E, H'0A
-	.DRW	SOLAR40
-	.DB	H'0E, H'0C
-	.DRW	SOLAR15
-	.DB	H'0C, H'0D
-	.DRW	SOLAR44
-	.DB	H'0D, H'0E
-	.DRW	SOLAR09
-	.DB	H'09, H'0F
-	.DRW	SOLAR98
+	.byte	 $07
+	.byte	 $07,  $02
+	.word	SOLAR69
+	.byte	 $03,  $05
+	.word	SOLAR84
+	.byte	 $0E,  $0A
+	.word	SOLAR40
+	.byte	 $0E,  $0C
+	.word	SOLAR15
+	.byte	 $0C,  $0D
+	.word	SOLAR44
+	.byte	 $0D,  $0E
+	.word	SOLAR09
+	.byte	 $09,  $0F
+	.word	SOLAR98
 SECTOR76:
-	.DB	H'05
-	.DB	H'0C, H'03
-	.DRW	SOLAR63
-	.DB	H'0E, H'04
-	.DRW	SOLAR55
-	.DB	H'07, H'05
-	.DRW	SOLAR64
-	.DB	H'0B, H'06
-	.DRW	SOLAR82
-	.DB	H'02, H'07
-	.DRW	SOLAR92
+	.byte	 $05
+	.byte	 $0C,  $03
+	.word	SOLAR63
+	.byte	 $0E,  $04
+	.word	SOLAR55
+	.byte	 $07,  $05
+	.word	SOLAR64
+	.byte	 $0B,  $06
+	.word	SOLAR82
+	.byte	 $02,  $07
+	.word	SOLAR92
 SECTOR86:
-	.DB	H'03
-	.DB	H'05, H'05
-	.DRW	SOLAR26
-	.DB	H'0D, H'09
-	.DRW	SOLAR91
-	.DB	H'03, H'0D
-	.DRW	SOLAR83
+	.byte	 $03
+	.byte	 $05,  $05
+	.word	SOLAR26
+	.byte	 $0D,  $09
+	.word	SOLAR91
+	.byte	 $03,  $0D
+	.word	SOLAR83
 
 SECTOR17:
-	.DB	H'03
-	.DB	H'09, H'07
-	.DRW	SOLAR05
-	.DB	H'03, H'0B
-	.DRW	SOLAR07		;THUNDER BOLT HINT
-	.DB	H'0A, H'0E
-	.DRW	SOLAR53
+	.byte	 $03
+	.byte	 $09,  $07
+	.word	SOLAR05
+	.byte	 $03,  $0B
+	.word	SOLAR07		;THUNDER BOLT HINT
+	.byte	 $0A,  $0E
+	.word	SOLAR53
 SECTOR27:
-	.DB	H'08
-	.DB	H'06, H'02
-	.DRW	SOLAR19
-	.DB	H'09, H'03
-	.DRW	SOLAR55
-	.DB	H'0B, H'04
-	.DRW	SOLAR63
-	.DB	H'07, H'05
-	.DRW	SOLAR48
-	.DB	H'0E, H'06
-	.DRW	SOLAR07
-	.DB	H'0C, H'07
-	.DRW	SOLAR71
-	.DB	H'0A, H'08
-	.DRW	SOLAR31
-	.DB	H'0D, H'09
-	.DRW	SOLAR03
+	.byte	 $08
+	.byte	 $06,  $02
+	.word	SOLAR19
+	.byte	 $09,  $03
+	.word	SOLAR55
+	.byte	 $0B,  $04
+	.word	SOLAR63
+	.byte	 $07,  $05
+	.word	SOLAR48
+	.byte	 $0E,  $06
+	.word	SOLAR07
+	.byte	 $0C,  $07
+	.word	SOLAR71
+	.byte	 $0A,  $08
+	.word	SOLAR31
+	.byte	 $0D,  $09
+	.word	SOLAR03
 SECTOR37:
-	.DB	H'05
-	.DB	H'09, H'0A
-	.DRW	SOLAR74
-	.DB	H'02, H'0B
-	.DRW	SOLAR03
-	.DB	H'05, H'0C
-	.DRW	SOLAR73
-	.DB	H'03, H'0D
-	.DRW	SOLAR81
-	.DB	H'05, H'0F
-	.DRW	SOLAR95
+	.byte	 $05
+	.byte	 $09,  $0A
+	.word	SOLAR74
+	.byte	 $02,  $0B
+	.word	SOLAR03
+	.byte	 $05,  $0C
+	.word	SOLAR73
+	.byte	 $03,  $0D
+	.word	SOLAR81
+	.byte	 $05,  $0F
+	.word	SOLAR95
 SECTOR47:
-	.DB	H'0A
-	.DB	H'0A, H'01
-	.DRW	SOLAR68
-	.DB	H'0C, H'02
-	.DRW	SOLAR56
-	.DB	H'09, H'03
-	.DRW	SOLAR79
-	.DB	H'0F, H'03
-	.DRW	SOLAR17
-	.DB	H'0B, H'04
-	.DRW	SOLAR01
-	.DB	H'09, H'05
-	.DRW	SOLAR14
-	.DB	H'0E, H'05
-	.DRW	SOLAR26
-	.DB	H'0C, H'06
-	.DRW	SOLAR04
-	.DB	H'0D, H'07
-	.DRW	SOLAR82
-	.DB	H'04, H'0A
-	.DRW	SOLAR90
+	.byte	 $0A
+	.byte	 $0A,  $01
+	.word	SOLAR68
+	.byte	 $0C,  $02
+	.word	SOLAR56
+	.byte	 $09,  $03
+	.word	SOLAR79
+	.byte	 $0F,  $03
+	.word	SOLAR17
+	.byte	 $0B,  $04
+	.word	SOLAR01
+	.byte	 $09,  $05
+	.word	SOLAR14
+	.byte	 $0E,  $05
+	.word	SOLAR26
+	.byte	 $0C,  $06
+	.word	SOLAR04
+	.byte	 $0D,  $07
+	.word	SOLAR82
+	.byte	 $04,  $0A
+	.word	SOLAR90
 SECTOR57:
-	.DB	H'0B
-	.DB	H'0D, H'01
-	.DRW	SOLAR09
-	.DB	H'03, H'03
-	.DRW	SOLAR73
-	.DB	H'0B, H'03
-	.DRW	SOLAR82
-	.DB	H'06, H'04
-	.DRW	SOLAR86
-	.DB	H'0C, H'04
-	.DRW	SOLAR71
-	.DB	H'0A, H'05
-	.DRW	SOLAR45
-	.DB	H'02, H'06
-	.DRW	SOLAR14
-	.DB	H'08, H'06
-	.DRW	SOLAR62
-	.DB	H'04, H'07
-	.DRW	SOLAR21
-	.DB	H'07, H'08
-	.DRW	SOLAR83
-	.DB	H'01, H'0B
-	.DRW	SOLAR99
+	.byte	 $0B
+	.byte	 $0D,  $01
+	.word	SOLAR09
+	.byte	 $03,  $03
+	.word	SOLAR73
+	.byte	 $0B,  $03
+	.word	SOLAR82
+	.byte	 $06,  $04
+	.word	SOLAR86
+	.byte	 $0C,  $04
+	.word	SOLAR71
+	.byte	 $0A,  $05
+	.word	SOLAR45
+	.byte	 $02,  $06
+	.word	SOLAR14
+	.byte	 $08,  $06
+	.word	SOLAR62
+	.byte	 $04,  $07
+	.word	SOLAR21
+	.byte	 $07,  $08
+	.word	SOLAR83
+	.byte	 $01,  $0B
+	.word	SOLAR99
 SECTOR67:
-	.DB	H'08
-	.DB	H'08, H'02
-	.DRW	SOLAR76
-	.DB	H'05, H'03
-	.DRW	SOLAR40
-	.DB	H'06, H'04
-	.DRW	SOLAR29
-	.DB	H'03, H'05
-	.DRW	SOLAR69
-	.DB	H'0C, H'07
-	.DRW	SOLAR96
-	.DB	H'07, H'08
-	.DRW	SOLAR97
-	.DB	H'09, H'0A
-	.DRW	SOLAR41
-	.DB	H'0B, H'0D
-	.DRW	SOLAR47
+	.byte	 $08
+	.byte	 $08,  $02
+	.word	SOLAR76
+	.byte	 $05,  $03
+	.word	SOLAR40
+	.byte	 $06,  $04
+	.word	SOLAR29
+	.byte	 $03,  $05
+	.word	SOLAR69
+	.byte	 $0C,  $07
+	.word	SOLAR96
+	.byte	 $07,  $08
+	.word	SOLAR97
+	.byte	 $09,  $0A
+	.word	SOLAR41
+	.byte	 $0B,  $0D
+	.word	SOLAR47
 SECTOR77:	
-	.DB	H'05
-	.DB	H'06, H'03
-	.DRW	SOLAR84
-	.DB	H'08, H'06
-	.DRW	SOLAR31
-	.DB	H'03, H'07
-	.DRW	SOLAR13
-	.DB	H'0B, H'0B
-	.DRW	SOLAR99
-	.DB	H'07, H'0D
-	.DRW	SOLAR94
+	.byte	 $05
+	.byte	 $06,  $03
+	.word	SOLAR84
+	.byte	 $08,  $06
+	.word	SOLAR31
+	.byte	 $03,  $07
+	.word	SOLAR13
+	.byte	 $0B,  $0B
+	.word	SOLAR99
+	.byte	 $07,  $0D
+	.word	SOLAR94
 SECTOR87:
-	.DB	H'03
-	.DB	H'02, H'07
-	.DRW	SOLAR59
-	.DB	H'0D, H'0A
-	.DRW	SOLAR61
-	.DB	H'06, H'0F
-	.DRW	SOLAR92
+	.byte	 $03
+	.byte	 $02,  $07
+	.word	SOLAR59
+	.byte	 $0D,  $0A
+	.word	SOLAR61
+	.byte	 $06,  $0F
+	.word	SOLAR92
 
 SECTOR18:
-	.DB	H'02
-	.DB	H'09, H'06
-	.DRW	SOLAR14
-	.DB	H'0B, H'0C
-	.DRW	SOLAR31
+	.byte	 $02
+	.byte	 $09,  $06
+	.word	SOLAR14
+	.byte	 $0B,  $0C
+	.word	SOLAR31
 SECTOR28:
-	.DB	H'03
-	.DB	H'0B, H'06
-	.DRW	SOLAR20
-	.DB	H'06, H'0A
-	.DRW	SOLAR66
-	.DB	H'09, H'0E
-	.DRW	SOLAR27
+	.byte	 $03
+	.byte	 $0B,  $06
+	.word	SOLAR20
+	.byte	 $06,  $0A
+	.word	SOLAR66
+	.byte	 $09,  $0E
+	.word	SOLAR27
 SECTOR38:
-	.DB	H'04
-	.DB	H'0D, H'02
-	.DRW	SOLAR17
-	.DB	H'06, H'09
-	.DRW	SOLAR02
-	.DB	H'0B, H'0C
-	.DRW	SOLAR38
-	.DB	H'03, H'0E
-	.DRW	SOLAR65
+	.byte	 $04
+	.byte	 $0D,  $02
+	.word	SOLAR17
+	.byte	 $06,  $09
+	.word	SOLAR02
+	.byte	 $0B,  $0C
+	.word	SOLAR38
+	.byte	 $03,  $0E
+	.word	SOLAR65
 SECTOR48:
-	.DB	H'08
-	.DB	H'03, H'03
-	.DRW	SOLAR00
-	.DB	H'02, H'06
-	.DRW	SOLAR05
-	.DB	H'05, H'07
-	.DRW	SOLAR31
-	.DB	H'08, H'07
-	.DRW	SOLAR22
-	.DB	H'0D, H'08
-	.DRW	SOLAR17
-	.DB	H'09, H'0A
-	.DRW	SOLAR98
-	.DB	H'05, H'0C
-	.DRW	SOLAR38
-	.DB	H'0B, H'0D
-	.DRW	SOLAR78
+	.byte	 $08
+	.byte	 $03,  $03
+	.word	SOLAR00
+	.byte	 $02,  $06
+	.word	SOLAR05
+	.byte	 $05,  $07
+	.word	SOLAR31
+	.byte	 $08,  $07
+	.word	SOLAR22
+	.byte	 $0D,  $08
+	.word	SOLAR17
+	.byte	 $09,  $0A
+	.word	SOLAR98
+	.byte	 $05,  $0C
+	.word	SOLAR38
+	.byte	 $0B,  $0D
+	.word	SOLAR78
 SECTOR58:
-	.DB	H'06
-	.DB	H'03, H'07
-	.DRW	SOLAR90
-	.DB	H'04, H'0B
-	.DRW	SOLAR73
-	.DB	H'09, H'0C
-	.DRW	SOLAR84
-	.DB	H'05, H'0D
-	.DRW	SOLAR38
-	.DB	H'02, H'0E
-	.DRW	SOLAR46
-	.DB	H'08, H'0F
-	.DRW	SOLAR42
+	.byte	 $06
+	.byte	 $03,  $07
+	.word	SOLAR90
+	.byte	 $04,  $0B
+	.word	SOLAR73
+	.byte	 $09,  $0C
+	.word	SOLAR84
+	.byte	 $05,  $0D
+	.word	SOLAR38
+	.byte	 $02,  $0E
+	.word	SOLAR46
+	.byte	 $08,  $0F
+	.word	SOLAR42
 SECTOR68:
-	.DB	H'07
-	.DB	H'0A, H'08
-	.DRW	SOLAR72
-	.DB	H'05, H'09
-	.DRW	SOLAR60
-	.DB	H'0C, H'0A
-	.DRW	SOLAR70
-	.DB	H'02, H'0B
-	.DRW	SOLAR05
-	.DB	H'07, H'0C
-	.DRW	SOLAR20
-	.DB	H'04, H'0E
-	.DRW	SOLAR64
-	.DB	H'06, H'0F
-	.DRW	SOLAR80
+	.byte	 $07
+	.byte	 $0A,  $08
+	.word	SOLAR72
+	.byte	 $05,  $09
+	.word	SOLAR60
+	.byte	 $0C,  $0A
+	.word	SOLAR70
+	.byte	 $02,  $0B
+	.word	SOLAR05
+	.byte	 $07,  $0C
+	.word	SOLAR20
+	.byte	 $04,  $0E
+	.word	SOLAR64
+	.byte	 $06,  $0F
+	.word	SOLAR80
 SECTOR78:
-	.DB	H'03
-	.DB	H'0E, H'09
-	.DRW	SOLAR35
-	.DB	H'03, H'0B
-	.DRW	SOLAR03
-	.DB	H'0B, H'0D
-	.DRW	SOLAR64
+	.byte	 $03
+	.byte	 $0E,  $09
+	.word	SOLAR35
+	.byte	 $03,  $0B
+	.word	SOLAR03
+	.byte	 $0B,  $0D
+	.word	SOLAR64
 SECTOR88:
-	.DB	H'02
-	.DB	H'09, H'08
-	.DRW	SOLAR72
-	.DB	H'06, H'0D
-	.DRW	SOLAR33 	;freem drive is here
+	.byte	 $02
+	.byte	 $09,  $08
+	.word	SOLAR72
+	.byte	 $06,  $0D
+	.word	SOLAR33 	;freem drive is here
 
 ;**********************************************************
 
 
 GALAXY:
-	.DRW	SECTOR11, SECTOR21, SECTOR31, SECTOR41
-	.DRW	SECTOR51, SECTOR61, SECTOR71, SECTOR81
-	.DRW	SECTOR12, SECTOR22, SECTOR32, SECTOR42
-	.DRW	SECTOR52, SECTOR62, SECTOR72, SECTOR82
-	.DRW	SECTOR13, SECTOR23, SECTOR33, SECTOR43
-	.DRW	SECTOR53, SECTOR63, SECTOR73, SECTOR83
-	.DRW	SECTOR14, SECTOR24, SECTOR34, SECTOR44
-	.DRW	SECTOR54, SECTOR64, SECTOR74, SECTOR84
-	.DRW	SECTOR15, SECTOR25, SECTOR35, SECTOR45
-	.DRW	SECTOR55, SECTOR65, SECTOR75, SECTOR85
-	.DRW	SECTOR16, SECTOR26, SECTOR36, SECTOR46
-	.DRW	SECTOR56, SECTOR66, SECTOR76, SECTOR86
-	.DRW	SECTOR17, SECTOR27, SECTOR37, SECTOR47
-	.DRW	SECTOR57, SECTOR67, SECTOR77, SECTOR87
-	.DRW	SECTOR18, SECTOR28, SECTOR38, SECTOR48
-	.DRW	SECTOR58, SECTOR68, SECTOR78, SECTOR88
+	.word	SECTOR11, SECTOR21, SECTOR31, SECTOR41
+	.word	SECTOR51, SECTOR61, SECTOR71, SECTOR81
+	.word	SECTOR12, SECTOR22, SECTOR32, SECTOR42
+	.word	SECTOR52, SECTOR62, SECTOR72, SECTOR82
+	.word	SECTOR13, SECTOR23, SECTOR33, SECTOR43
+	.word	SECTOR53, SECTOR63, SECTOR73, SECTOR83
+	.word	SECTOR14, SECTOR24, SECTOR34, SECTOR44
+	.word	SECTOR54, SECTOR64, SECTOR74, SECTOR84
+	.word	SECTOR15, SECTOR25, SECTOR35, SECTOR45
+	.word	SECTOR55, SECTOR65, SECTOR75, SECTOR85
+	.word	SECTOR16, SECTOR26, SECTOR36, SECTOR46
+	.word	SECTOR56, SECTOR66, SECTOR76, SECTOR86
+	.word	SECTOR17, SECTOR27, SECTOR37, SECTOR47
+	.word	SECTOR57, SECTOR67, SECTOR77, SECTOR87
+	.word	SECTOR18, SECTOR28, SECTOR38, SECTOR48
+	.word	SECTOR58, SECTOR68, SECTOR78, SECTOR88
 
 ;**********************************************************
-

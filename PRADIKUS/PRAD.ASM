@@ -1,8 +1,8 @@
 
 ;DIFFICULTY SETTINGS!!
 
-.EQU	PLYR_MSL,	H'08	;or 09?
-.EQU	ENMY_MSL,	H'07	;should be slightly faster than the plyr.
+.define	PLYR_MSL 	 $08	;or 09?
+.define	ENMY_MSL 	 $07	;should be slightly faster than the plyr.
 
 
 
@@ -20,29 +20,31 @@
 ;Graphics and Code by:
 ;  Jim Treadway & Mike Hunley
 ;
+; ca65 version by Devin Acker (Revenant)
+; 7 November 2013
 ;
 ;"PRADIKUS.ASM" --- bank 0 code
 ;
 ;
 
-INCLUDE( RAMVARS.ASM)
-
+.scope bank0
+.segment "BANK0"
 
 ;****************************
 ; BOOT CODE
 ;****************************
 
 
-.ORG	h'8000
+.ORG	 $8000
 
 
 BOOT:		
 		SEI
 		CLD
-		LDX	#H'FF
+		LDX	#$FF
 		TXS
 	
-		LDA	#H'06
+		LDA	#$06
 		STA	VID_MODE
 	
 		JSR	VR_WAIT
@@ -51,7 +53,7 @@ BOOT:
 		LDA	ROM0
 		STA 	ROM0
 
-IFDEF( `RAM',	STA	ROMSELECT, )
+
 
 		JMP	BOOT2
 
@@ -68,7 +70,7 @@ COMPON:		STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 ;compoff:
 		LDY	T4
@@ -91,7 +93,7 @@ ROWXFER:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		NOP
@@ -113,7 +115,7 @@ COLXFER:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		NOP
@@ -135,7 +137,7 @@ FOBJECT:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	FINDOBJECT
@@ -157,7 +159,7 @@ GETOBJPTR:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		NOP
@@ -179,7 +181,7 @@ OBJ_NIL:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		NOP
@@ -201,7 +203,7 @@ GETBLOCK:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		NOP
@@ -223,7 +225,7 @@ SCAN:		STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	DOSCAN
@@ -245,7 +247,7 @@ ITEMCOST:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	GETCOST
@@ -267,7 +269,7 @@ BUYITEM:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	GETITEM
@@ -289,7 +291,7 @@ ITEMAVAIL:	STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	HASITEM
@@ -311,7 +313,7 @@ MAP:		STY	T4
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 		LDY	T4
 		JSR	DOMAP
@@ -323,9 +325,9 @@ IFDEF( `RAM', STA ROMSELECT, )
 
 ;***********************************
 
-ROM0:	.DB	H'00
-ROM1:	.DB	H'01
-ROMX:	.DB	H'01
+ROM0:	.byte	 $00
+ROM1:	.byte	 $01
+ROMX:	.byte	 $01
 
 
 XVIDEO:		
@@ -340,15 +342,15 @@ XVIDEO:
 		LDA	ROMTAB, Y
 		STA	ROMTAB, Y
 
-IFDEF( `RAM', STA ROMSELECT, )
+
 
 
 		RTS
 
-ROMTAB:		.DB	H'00, H'01, H'10, H'11 	;sets 0, 1
-		.DB	H'20, H'21, H'30, H'31  ;sets 2, 3
-		.DB	H'40, H'41, H'50, H'51	;sets 4, 5
-		.DB	H'60, H'61, H'70, H'71	;sets 6, 7
+ROMTAB:		.byte	 $00,  $01,  $10,  $11 	;sets 0, 1
+		.byte	 $20,  $21,  $30,  $31  ;sets 2, 3
+		.byte	 $40,  $41,  $50,  $51	;sets 4, 5
+		.byte	 $60,  $61,  $70,  $71	;sets 6, 7
 
 ;***********************************
 
@@ -359,14 +361,14 @@ BOOT2:
 
 	LDY	#0
 	LDA	#0
-B2:	STA	H'0000, Y
-	STA	H'0100, Y
-	STA	H'0200, Y
-	STA	H'0300, Y
-	STA	H'0400, Y
-	STA	H'0500, Y
-	STA	H'0600, Y
-	STA	H'0700, Y
+B2:	STA	 $0000, Y
+	STA	 $0100, Y
+	STA	 $0200, Y
+	STA	 $0300, Y
+	STA	 $0400, Y
+	STA	 $0500, Y
+	STA	 $0600, Y
+	STA	 $0700, Y
 	DEY
 	BNE	B2
 
@@ -430,7 +432,7 @@ B2A2_SHLD:
 ;********************************************
 ;********************************************
 
-.PAGE	;new code page boundary
+.align 256	;new code page boundary
 
 DANSSTUFF:		;wait to latch video circuit
 	JSR	DX12
@@ -463,9 +465,9 @@ DX15:
 	BNE	DX15
 	RTS
 
-ZERO:	.DB	0
-EIGHT:	.DB	8
-TWELVE:	.DB	12
+ZERO:	.byte	0
+EIGHT:	.byte	8
+TWELVE:	.byte	12
 
 DX20:	RTS
 
@@ -479,7 +481,7 @@ TITLEPAGE:
 		LDA	YPOS
 		PHA
 
-		LDA	#H'A0
+		LDA	#$A0
 		STA	XPOS
 		STA	YPOS		;fake out drawsystem to
 		JSR	DRAWSYSTEM	;draw starfield...
@@ -492,27 +494,27 @@ TITLEPAGE:
 		JSR	VR_WAIT
 		JSR	KILL_VID
 	 ;;	LDX	#1
-	 ;;	LDA	#H'FA
+	 ;;	LDA	#$FA
 	 ;;	JSR	CLEAR
 
 
 DRAWTITLE:	;display P'Radikus on screen
 
-	 	LDA	#PRAD_DATA &H'FF
+	 	LDA	#<(PRAD_DATA)
 	  	STA	OBJPTRL
-		LDA	#PRAD_DATA >>8
+		LDA	#>(PRAD_DATA)
 		STA	OBJPTRH
 	
-		LDA	#H'20		;pos. on page0
+		LDA	#$20		;pos. on page0
 		STA	CY
-		LDA	#H'81
+		LDA	#$81
 		STA	CX
 
 		LDY	#0
 		LDA	#10		;# of rows
 		STA	COUNT0
 DRT0:		LDX	#30		;# of cols.
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	CY
 		STA	VID_PTR
 		LDA	CX
@@ -537,28 +539,28 @@ DRT2:		DEX
 
 		
 
-		LDA	#COPYRIGHT & H'FF
+		LDA	#<(COPYRIGHT)
 	  	STA	OBJPTRL
-		LDA	#COPYRIGHT >>8
+		LDA	#>(COPYRIGHT)
 		STA	OBJPTRH
 	
-		LDA	#H'22		;pos. on page0
+		LDA	#$22		;pos. on page0
 		STA	CY
-		LDA	#H'24
+		LDA	#$24
 		STA	CX
 
 		LDY	#0
 		LDA	#12		;# of rows
 		STA	COUNT0
 TP0:		LDX	#24		;# of cols.
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	CY
 		STA	VID_PTR
 		LDA	CX
 		STA	VID_PTR
 TP1:		LDA	(OBJPTRL), Y
 		SEC
-		SBC	#H'20
+		SBC	#$20
 		STA	VID_DATA
 		INC	OBJPTRL
 		BNE	TP2
@@ -577,17 +579,17 @@ TP2:		DEX
 		BNE	TP0
 
 	
-		LDA	VID_RESET
-		LDA	#H'23
+		LDA	Vid_Reset
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'C0
+		LDA	#$C0
 		STA	VID_PTR
 	
 		LDY	#0
 TIP0C:		LDA	TITLEPD, Y
 		STA	VID_DATA
 		INY
-		CPY	#H'40
+		CPY	#$40
 		BNE	TIP0C
 
 
@@ -598,13 +600,13 @@ TITLE2:		JSR	ZAP_SPRITES
 
 ;;;"BUNCH GAMES" logo...
 ;;
-		LDY	#H'00		;base entry in SPRTBL0
+		LDY	#$00		;base entry in SPRTBL0
 ;;		LDX	#0
 ;;LOGOLOOP:	LDA	BUNCHLOGO, X
 ;;		STA	SPRTBL0, Y
 ;;		INX
 ;;		INY
-;;		CPY	#H'38  	
+;;		CPY	#$38  	
 ;;		BNE	LOGOLOOP
 
 ;"PRESS START"...
@@ -614,7 +616,7 @@ STARTLOOP:	LDA	PRESS_START, X
 		STA	SPRTBL0, Y
 		INX
 		INY
-		CPY	#H'28			;60
+		CPY	#$28			;60
 		BNE	STARTLOOP
 
 ;HIGH SCORE...
@@ -624,12 +626,12 @@ HSLOOP:		LDA	HSTABLE, X
 		STA	SPRTBL0, Y
 		INX
 		INY
-		CPY	#H'44			;7C
+		CPY	#$44			;7C
 		BNE	HSLOOP
 
 
 		LDX	H1M
-		LDY	#H'28			;60		
+		LDY	#$28			;60		
 		LDA	NUMTAB, X
 		STA	SPRTBL0+1, Y
 		LDX	H100K
@@ -651,35 +653,35 @@ HSLOOP:		LDA	HSTABLE, X
 		LDA	NUMTAB, X
 		STA	SPRTBL0+25, Y
 
-		LDX	#TITLEBPAL &H'FF
-		LDY	#TITLEBPAL >> 8
+		LDX	#<(TITLEBPAL)
+		LDY	#>(TITLEBPAL)
 		JSR	BACKPAL
-		LDX	#TITLESPAL &H'FF
-		LDY	#TITLESPAL >> 8
+		LDX	#<(TITLESPAL)
+		LDY	#>(TITLESPAL)
 		JSR	SPRITEPAL
 
-		LDA	#H'19	;make background use highset for title page only
+		LDA	#$19	;make background use highset for title page only
 		STA	V_SEL
-		LDA	#H'1E
+		LDA	#$1E
 		STA	V_MODE
 
-		LDA	#H'F8
+		LDA	#$F8
 		STA	XSCROLL
-		LDA	#H'08
+		LDA	#$08
 		STA	YSCROLL
 	
 		LDA	#-1
 		JSR	SILENCE
-		LDY	#THEME0 >> 8
-		LDX	#THEME0 & H'FF
+		LDY	#>(THEME0)
+		LDX	#<(THEME0)
 		LDA	#0
  		JSR	PLAY
-		LDY	#THEME1 >> 8
-		LDX	#THEME1 & H'FF
+		LDY	#>(THEME1)
+		LDX	#<(THEME1)
 		LDA	#1
 		JSR	PLAY
 	
-NMI_TITLE:	LDA	#H'80
+NMI_TITLE:	LDA	#$80
 		STA	GAMEMODE
 		JMP	DO_NMI
 
@@ -687,55 +689,55 @@ NMI_TITLE:	LDA	#H'80
 DOTITLE:	LDA	J1CHG
 		AND	#START
 		BEQ	DOT2
-		LDA	#H'81
+		LDA	#$81
 		STA	GAMEMODE
 DOT2:		RTS
 
-CONTSTR1:	.DB	"  NEW GAME",H'FF
-CONTSTR2:	.DB	"  CONTINUE ",H'FF
+CONTSTR1:	.byte	"  NEW GAME", $FF
+CONTSTR2:	.byte	"  CONTINUE ", $FF
 
 
-CONTINUE:	LDY	#H'0		;clear out unused sprites
-		LDA	#H'FA
+CONTINUE:	LDY	#$0		;clear out unused sprites
+		LDA	#$FA
 CONT0:		STA	SPRTBL0, Y
 		INY
 		BNE	CONT0
 
-		LDA	#CONTSTR1 >>8
+		LDA	#>(CONTSTR1)
 		STA	PTR3H
-		LDA	#CONTSTR1 &H'FF
+		LDA	#<(CONTSTR1)
 		STA	PTR3L
 		LDY	#16
 		LDX	#10
 		JSR	DRAWSTR
 	
-		LDA	#CONTSTR2 >>8
+		LDA	#>(CONTSTR2)
 		STA	PTR3H
-		LDA	#CONTSTR2 &H'FF
+		LDA	#<(CONTSTR2)
 		STA	PTR3L
 		LDY	#17
 		LDX	#10
 		JSR	DRAWSTR
 
-		LDY	#H'38		;base sprite
-		LDA	#H'78
+		LDY	#$38		;base sprite
+		LDA	#$78
 		STA	SPRTBL0+ 0, Y
-		LDA	#H'BD
+		LDA	#$BD
 		STA	SPRTBL0+ 1, Y
 		LDA	#0		;palette
 		STA	SPRTBL0+ 2, Y
-		LDA	#H'59
+		LDA	#$59
 		STA	SPRTBL0+ 3, Y
-		LDA	#H'80
+		LDA	#$80
 		STA	SPRTBL0+ 4, Y
-		LDA	#H'DD
+		LDA	#$DD
 		STA	SPRTBL0+ 5, Y
 		LDA	#0		;palette
 		STA	SPRTBL0+ 6, Y
-		LDA	#H'59
+		LDA	#$59
 		STA	SPRTBL0+ 7, Y
 
-NMI_CONT:	LDA	#H'82
+NMI_CONT:	LDA	#$82
 		STA	GAMEMODE
 		JSR	DO_NMI
 		LDA	J1CHG
@@ -764,7 +766,7 @@ DOCONT:		LDA	J1CHG
 		AND	#(B_BTN+A_BTN)
 		BEQ	DOC2
 
-		LDA	#H'83
+		LDA	#$83
 		STA	GAMEMODE
 
 DOC2:		RTS
@@ -773,119 +775,119 @@ DOC2:		RTS
 
 ;*****************************************************
 
-PRESS_START:	.DB	H'6C, H'94, H'03, H'74	;P
-		.DB	H'6C, H'95, H'03, H'7C	;R
-		.DB	H'6C, H'96, H'03, H'84	;E
-		.DB	H'6C, H'97, H'03, H'8C	;S
-		.DB	H'6C, H'97, H'03, H'94	;S
+PRESS_START:	.byte	 $6C,  $94,  $03,  $74	;P
+		.byte	 $6C,  $95,  $03,  $7C	;R
+		.byte	 $6C,  $96,  $03,  $84	;E
+		.byte	 $6C,  $97,  $03,  $8C	;S
+		.byte	 $6C,  $97,  $03,  $94	;S
 				       
-		.DB	H'74, H'97, H'03, H'74	;S
-		.DB	H'74, H'98, H'03, H'7C	;T
-		.DB	H'74, H'9A, H'03, H'84	;A
-		.DB	H'74, H'95, H'03, H'8C	;R
-		.DB	H'74, H'98, H'03, H'94	;T
+		.byte	 $74,  $97,  $03,  $74	;S
+		.byte	 $74,  $98,  $03,  $7C	;T
+		.byte	 $74,  $9A,  $03,  $84	;A
+		.byte	 $74,  $95,  $03,  $8C	;R
+		.byte	 $74,  $98,  $03,  $94	;T
 
-;;BUNCHLOGO:	.DB	H'BF, H'A1, H'03, H'6D		
-;;		.DB	H'BF, H'A2, H'03, H'75
-;;		.DB	H'BF, H'A3, H'03, H'7D
-;;		.DB	H'BF, H'A4, H'03, H'85
-;;		.DB	H'BF, H'A5, H'03, H'8D
-;;		.DB	H'BF, H'A6, H'03, H'95
-;;		.DB	H'BF, H'A7, H'03, H'9D
+;;BUNCHLOGO:	.byte	 $BF,  $A1,  $03,  $6D		
+;;		.byte	 $BF,  $A2,  $03,  $75
+;;		.byte	 $BF,  $A3,  $03,  $7D
+;;		.byte	 $BF,  $A4,  $03,  $85
+;;		.byte	 $BF,  $A5,  $03,  $8D
+;;		.byte	 $BF,  $A6,  $03,  $95
+;;		.byte	 $BF,  $A7,  $03,  $9D
 ;;
-;;		.DB	H'C7, H'C1, H'03, H'6D
-;;		.DB	H'C7, H'C2, H'03, H'75
-;;		.DB	H'C7, H'C3, H'03, H'7D
-;;		.DB	H'C7, H'C4, H'03, H'85
-;;		.DB	H'C7, H'C5, H'03, H'8D
-;;		.DB	H'C7, H'C6, H'03, H'95
-;;		.DB	H'C7, H'C7, H'03, H'9D
+;;		.byte	 $C7,  $C1,  $03,  $6D
+;;		.byte	 $C7,  $C2,  $03,  $75
+;;		.byte	 $C7,  $C3,  $03,  $7D
+;;		.byte	 $C7,  $C4,  $03,  $85
+;;		.byte	 $C7,  $C5,  $03,  $8D
+;;		.byte	 $C7,  $C6,  $03,  $95
+;;		.byte	 $C7,  $C7,  $03,  $9D
 			   
-HSTABLE:	.DB	H'8B, H'00, H'01, H'6C
-		.DB	H'8B, H'00, H'01, H'74		
-		.DB	H'8B, H'00, H'01, H'7C		
-		.DB	H'8B, H'00, H'01, H'84		
-		.DB	H'8B, H'00, H'01, H'8C		
-		.DB	H'8B, H'00, H'01, H'94		
-		.DB	H'8B, H'00, H'01, H'9C		
+HSTABLE:	.byte	 $8B,  $00,  $01,  $6C
+		.byte	 $8B,  $00,  $01,  $74		
+		.byte	 $8B,  $00,  $01,  $7C		
+		.byte	 $8B,  $00,  $01,  $84		
+		.byte	 $8B,  $00,  $01,  $8C		
+		.byte	 $8B,  $00,  $01,  $94		
+		.byte	 $8B,  $00,  $01,  $9C		
 
 
-TITLEBPAL:	.DB	H'01,H'30,H'08
-		.DB	H'0E,H'21,H'11,H'31	;background/stars
-		.DB	H'0E,H'37,H'37,H'26	;P'RADIKUS title logo
-		.DB	H'0E,H'10,H'10,H'10	;grid 
-		.DB	H'0E,H'01,H'0E,H'0E	;0
-		.DB	H'0E,H'02,H'0E,H'0E	;1
-		.DB	H'0E,H'03,H'0E,H'0E	;2
-		.DB	H'0E,H'04,H'0E,H'0E	;3
-		.DB	H'0E,H'05,H'0E,H'0E	;4
-		.DB	H'0E,H'06,H'0E,H'0E	;5
-		.DB	H'0E,H'07,H'0E,H'0E	;6
-		.DB	H'0E,H'08,H'0E,H'0E	;7
-		.DB	H'0E,H'09,H'0E,H'0E	;8
-		.DB	H'0E,H'0A,H'0E,H'0E	;9
-		.DB	H'0E,H'0B,H'0E,H'0E	;A
-		.DB	H'0E,H'0C,H'0E,H'0E	;B
-		.DB	H'0E,H'11,H'0E,H'0E	;C
-		.DB	H'0E,H'12,H'0E,H'0E	;D
-		.DB	H'0E,H'13,H'0E,H'0E	;E
-		.DB	H'0E,H'14,H'0E,H'0E	;F
-		.DB	H'0E,H'15,H'0E,H'0E	;10
-		.DB	H'0E,H'16,H'0E,H'0E	;11
-		.DB	H'0E,H'17,H'0E,H'0E	;12
-		.DB	H'0E,H'18,H'0E,H'0E	;13
-		.DB	H'0E,H'19,H'0E,H'0E	;14
-		.DB	H'0E,H'1A,H'0E,H'0E	;15
-		.DB	H'0E,H'1B,H'0E,H'0E	;16
-		.DB	H'0E,H'1C,H'0E,H'0E	;17
-		.DB	H'0E,H'21,H'0E,H'0E	;18
-		.DB	H'0E,H'22,H'0E,H'0E	;19
-		.DB	H'0E,H'23,H'0E,H'0E	;1A
-		.DB	H'0E,H'24,H'0E,H'0E	;1B
-		.DB	H'0E,H'25,H'0E,H'0E	;1C
-		.DB	H'0E,H'26,H'0E,H'0E	;1D
-		.DB	H'0E,H'27,H'0E,H'0E	;1E
-		.DB	H'0E,H'28,H'0E,H'0E	;1F
-		.DB	H'0E,H'29,H'0E,H'0E	;20
-		.DB	H'0E,H'2A,H'0E,H'0E	;21
-		.DB	H'0E,H'2B,H'0E,H'0E	;22
-		.DB	H'0E,H'2C,H'0E,H'0E	;23
-		.DB	H'0E,H'31,H'0E,H'0E	;24
-		.DB	H'0E,H'32,H'0E,H'0E	;25
-		.DB	H'0E,H'33,H'0E,H'0E	;26
-		.DB	H'0E,H'34,H'0E,H'0E	;27
-		.DB	H'0E,H'35,H'0E,H'0E	;28
-		.DB	H'0E,H'36,H'0E,H'0E	;29
-		.DB	H'0E,H'37,H'0E,H'0E	;2A
-		.DB	H'0E,H'38,H'0E,H'0E	;2B
-		.DB	H'0E,H'39,H'0E,H'0E	;2C
-		.DB	H'0E,H'3A,H'0E,H'0E	;2D
-		.DB	H'0E,H'3B,H'0E,H'0E	;2E
-		.DB	H'0E,H'3C,H'0E,H'0E	;2F
+TITLEBPAL:	.byte	 $01, $30, $08
+		.byte	 $0E, $21, $11, $31	;background/stars
+		.byte	 $0E, $37, $37, $26	;P'RADIKUS title logo
+		.byte	 $0E, $10, $10, $10	;grid 
+		.byte	 $0E, $01, $0E, $0E	;0
+		.byte	 $0E, $02, $0E, $0E	;1
+		.byte	 $0E, $03, $0E, $0E	;2
+		.byte	 $0E, $04, $0E, $0E	;3
+		.byte	 $0E, $05, $0E, $0E	;4
+		.byte	 $0E, $06, $0E, $0E	;5
+		.byte	 $0E, $07, $0E, $0E	;6
+		.byte	 $0E, $08, $0E, $0E	;7
+		.byte	 $0E, $09, $0E, $0E	;8
+		.byte	 $0E, $0A, $0E, $0E	;9
+		.byte	 $0E, $0B, $0E, $0E	;A
+		.byte	 $0E, $0C, $0E, $0E	;B
+		.byte	 $0E, $11, $0E, $0E	;C
+		.byte	 $0E, $12, $0E, $0E	;D
+		.byte	 $0E, $13, $0E, $0E	;E
+		.byte	 $0E, $14, $0E, $0E	;F
+		.byte	 $0E, $15, $0E, $0E	;10
+		.byte	 $0E, $16, $0E, $0E	;11
+		.byte	 $0E, $17, $0E, $0E	;12
+		.byte	 $0E, $18, $0E, $0E	;13
+		.byte	 $0E, $19, $0E, $0E	;14
+		.byte	 $0E, $1A, $0E, $0E	;15
+		.byte	 $0E, $1B, $0E, $0E	;16
+		.byte	 $0E, $1C, $0E, $0E	;17
+		.byte	 $0E, $21, $0E, $0E	;18
+		.byte	 $0E, $22, $0E, $0E	;19
+		.byte	 $0E, $23, $0E, $0E	;1A
+		.byte	 $0E, $24, $0E, $0E	;1B
+		.byte	 $0E, $25, $0E, $0E	;1C
+		.byte	 $0E, $26, $0E, $0E	;1D
+		.byte	 $0E, $27, $0E, $0E	;1E
+		.byte	 $0E, $28, $0E, $0E	;1F
+		.byte	 $0E, $29, $0E, $0E	;20
+		.byte	 $0E, $2A, $0E, $0E	;21
+		.byte	 $0E, $2B, $0E, $0E	;22
+		.byte	 $0E, $2C, $0E, $0E	;23
+		.byte	 $0E, $31, $0E, $0E	;24
+		.byte	 $0E, $32, $0E, $0E	;25
+		.byte	 $0E, $33, $0E, $0E	;26
+		.byte	 $0E, $34, $0E, $0E	;27
+		.byte	 $0E, $35, $0E, $0E	;28
+		.byte	 $0E, $36, $0E, $0E	;29
+		.byte	 $0E, $37, $0E, $0E	;2A
+		.byte	 $0E, $38, $0E, $0E	;2B
+		.byte	 $0E, $39, $0E, $0E	;2C
+		.byte	 $0E, $3A, $0E, $0E	;2D
+		.byte	 $0E, $3B, $0E, $0E	;2E
+		.byte	 $0E, $3C, $0E, $0E	;2F
 		
 
-TITLESPAL:	.DB	H'01,H'08,H'08
-		.DB	H'0E,H'16,H'16,H'16     ;A & B buttons for cont.
-		.DB	H'0E,H'31,H'31,H'31	;high score display
-		.DB	H'0E,H'11,H'21,H'31	;"Bunch Games" logo
-		.DB	H'0E,H'16,H'0E,H'0E	;"Press Start" / blinking
-		.DB	H'0E,H'16,H'0E,H'0E	;2
-		.DB	H'0E,H'16,H'0E,H'0E	;3
-		.DB	H'0E,H'16,H'0E,H'0E	;4
-		.DB	H'0E,H'0E,H'0E,H'0E	;5
-		.DB	H'0E,H'0E,H'0E,H'0E	;6
-		.DB	H'0E,H'0E,H'0E,H'0E	;7
-		.DB	H'0E,H'0E,H'0E,H'0E	;8
+TITLESPAL:	.byte	 $01, $08, $08
+		.byte	 $0E, $16, $16, $16     ;A & B buttons for cont.
+		.byte	 $0E, $31, $31, $31	;high score display
+		.byte	 $0E, $11, $21, $31	;"Bunch Games" logo
+		.byte	 $0E, $16, $0E, $0E	;"Press Start" / blinking
+		.byte	 $0E, $16, $0E, $0E	;2
+		.byte	 $0E, $16, $0E, $0E	;3
+		.byte	 $0E, $16, $0E, $0E	;4
+		.byte	 $0E, $0E, $0E, $0E	;5
+		.byte	 $0E, $0E, $0E, $0E	;6
+		.byte	 $0E, $0E, $0E, $0E	;7
+		.byte	 $0E, $0E, $0E, $0E	;8
 
 
-TITLEPD:	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
-		.DB	H'50,H'55,H'55,H'50,H'51,H'50,H'50,H'10
-		.DB	H'15,H'55,H'55,H'55,H'55,H'55,H'55,H'11
-		.DB	H'00,H'00,H'01,H'05,H'05,H'00,H'00,H'00
-		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
-		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
-		.DB	H'00,H'05,H'FD,H'FF,H'FF,H'F7,H'05,H'00
-		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+TITLEPD:	.byte	 $00, $00, $00, $00, $00, $00, $00, $00
+		.byte	 $50, $55, $55, $50, $51, $50, $50, $10
+		.byte	 $15, $55, $55, $55, $55, $55, $55, $11
+		.byte	 $00, $00, $01, $05, $05, $00, $00, $00
+		.byte	 $00, $00, $00, $00, $00, $00, $00, $00
+		.byte	 $00, $00, $00, $00, $00, $00, $00, $00
+		.byte	 $00, $05, $FD, $FF, $FF, $F7, $05, $00
+		.byte	 $00, $00, $00, $00, $00, $00, $00, $00
 
 ;********************************************
 
@@ -921,29 +923,29 @@ INIT:		LDA	H1M
 
 		LDA	HASPLAYED
 		BEQ	INIT_0
-		LDA	#H'DF
-		STA	H'0000
+		LDA	#$DF
+		STA	 $0000
 		JMP	INIT_1
 INIT_0:
-		LDA	#H'00
-		STA	H'0000
+		LDA	#$00
+		STA	 $0000
 INIT_1:
 
 	LDY	#1
 	LDA	#0
 INIT0:
-	STA	H'0000, Y
+	STA	 $0000, Y
 	INY
-	CPY	H'0000
+	CPY	 $0000
 	BNE	INIT0
 
-	STA	H'0000
+	STA	 $0000
 
 
 	LDY	#0
 	JSR	ZAP_SPRITES
 
-	LDA	#H'00
+	LDA	#$00
 	STA	VIDROM
 	STA	PROGROM
 
@@ -1013,20 +1015,20 @@ IG_A:
 	STA	TIME_DIFF
 	STA	CHEAT
 
-	LDA	#H'FF
+	LDA	#$FF
 	STA	HASBOLT		;HIGH IS BUYABLE, LOW IS FINDABLE (0 WHEN TAKEN)
 	STA	HASFREEM	;0 WHEN PLAYER TAKES ONLY FREEM DRIVE
 
 	LDA	#3
 	STA	GALAXY_X
 	STA	GALAXY_Y
-	LDA	#H'0F
+	LDA	#$0F
 	STA	SECTOR_X
-	LDA	#H'10
+	LDA	#$10
 	STA	SECTOR_Y
-	LDA	#H'3E
+	LDA	#$3E
 	STA	XPOS
-	LDA	#H'4F
+	LDA	#$4F
 	STA	YPOS
 
 	RTS
@@ -1037,11 +1039,11 @@ INITWARP:	LDA	PRADIKUS
 		LDA	CHEAT
 		BEQ	INITWP1
 ;cheater!
-		LDA	#H'FF
+		LDA	#$FF
 		STA	CHEATDIE
 
 INITWP1:	JSR	RANDOM
-	     	AND	#H'03
+	     	AND	#$03
 	     	STA	EMODE
 
 INITWP2:		
@@ -1051,7 +1053,7 @@ INITWP2:
 
 		LDY	#7		;index to 2nd elements' type byte
 		LDA	SYSTEM, Y
-		AND	#H'70
+		AND	#$70
 		BNE	COUNTOK
 ;we have more than one!
 		LDA	#4
@@ -1064,12 +1066,12 @@ COUNTOK:	LDY	EMODE
 		LDA	MAXSTBL, Y
 		STA	MAX_ESHOT
 
-	LDA	#H'7F		;space
+	LDA	#$7F		;space
 	STA	BKGRWIDTH
 
 ;set up	SYSPTR, XPOS, YPOS
 
-	LDA	#H'00
+	LDA	#$00
 	STA	WARP
 
 	LDA	ARMOR
@@ -1148,7 +1150,7 @@ INITWP3H:	STA	ITEM4CNT
 
 ;BUILDS THE ITEM LIST FOR THE COMPUTER AFTER DESTROYING A TOWER
 
-MKITMLST:	LDA	#H'FF
+MKITMLST:	LDA	#$FF
 		STA	COMPITEM
 		JSR	RANDOM
 		CMP	#128
@@ -1159,8 +1161,8 @@ MK_CASH:       	JSR	RANDOM
 		ASL	A
 		ASL	A
 		ASL	A
-		AND	#H'0F
-		ORA	#H'80
+		AND	#$0F
+		ORA	#$80
 		STA	COMPITEM
 		RTS
 	
@@ -1214,7 +1216,7 @@ VR_WAIT:			;wait for vertical retrace
 
 RANDOM:	LDA	RAND
 	ADC	TIMER0
-	ADC	#H'EA
+	ADC	#$EA
 	STA	RAND
 	RTS
 
@@ -1267,7 +1269,7 @@ BLOCKMOVE:
 
 ZAP_SPRITES:
 	LDY	#0
-	LDA	#H'F8
+	LDA	#$F8
 ZAP_S0:	STA	SPRTBL0, Y
 	STA	SPRTBL1, Y
 	INY
@@ -1288,19 +1290,19 @@ ZAP_S0:	STA	SPRTBL0, Y
 ;	0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
 
 P1:	 
-.DB	0,1,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte	0,1,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 P10:	 
-.DB	0,0,2,5,7,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte	0,0,2,5,7,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 P100:	 
-.DB	0,0,0,0,0,1,2,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+.byte	0,0,0,0,0,1,2,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 P1000:	 
-.DB	0,0,0,0,0,0,0,0,1,2,5,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,0,0,0,0,0,0
+.byte	0,0,0,0,0,0,0,0,1,2,5,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,0,0,0,0,0,0
 P10000:	 
-.DB	0,0,0,0,0,0,0,0,0,0,0,1,2,5,0,5,1,1,2,2,3,3,4,4,5,5,6,7,8,9,0,5
+.byte	0,0,0,0,0,0,0,0,0,0,0,1,2,5,0,5,1,1,2,2,3,3,4,4,5,5,6,7,8,9,0,5
 P100000: 
-.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+.byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
 
-ADDSCORE:	AND	#H'1F
+ADDSCORE:	AND	#$1F
 		TAY
 		LDA	P1, Y
 		STA	COUNT0
@@ -1469,13 +1471,13 @@ LOAD_STN:
 		LDX	#0
 LS_LOOP:
 		LDA	SYSTEM+3,X	;type/pal.
-		AND	#H'70
+		AND	#$70
 		BEQ	LS_SET		;space stn?
 LS_DONE:	RTS
 
 LS_SET:		STX	LOGIC_X
 		LDA	SYSTEM+3,X	;stn. index in lo. nyb.
-		AND	#H'0F
+		AND	#$0F
 		TAX
 		LDA	SDEF_WPN,X
 		STA	STN_WPN,Y
@@ -1494,12 +1496,12 @@ LS_SET:		STX	LOGIC_X
 		JMP	LS_LOOP
 
 		;------ 0  1  2  3  4  5  6  7
-STNGUNTAB:	.DB	1, 1, 2, 2, 3, 3, 4, 5
+STNGUNTAB:	.byte	1, 1, 2, 2, 3, 3, 4, 5
 
 
 
 LOAD_GUN:	LDA	DIFF
-		AND	#H'70
+		AND	#$70
 		LSR	A
 		LSR	A
 		LSR	A
@@ -1517,14 +1519,14 @@ LOAD_GUN:	LDA	DIFF
 		LDA	PRADIKUS
 		BEQ	L_G2
 		LDA	BKGRND
-		BPL	L_G2		;will have h'80 set if P'RADIKUS plnt
+		BPL	L_G2		;will have  $80 set if P'RADIKUS plnt
 		LDY	#68		;P'radikus PLANET has 68...
 		LDA	#16   		;...and 16 towers
 		STA	TOWERS
 L_G2:		STY	TWR_MAX
 
 		LDY	#51		;init all turrets
-L_G3:		LDA	#H'81		;Alive + 1 hp.
+L_G3:		LDA	#$81		;Alive + 1 hp.
 		STA	GUN_STAT, Y
 		LDA	#0	    	;Initialize "phase"
 		STA	GUN_PHASE, Y
@@ -1534,7 +1536,7 @@ L_G3:		LDA	#H'81		;Alive + 1 hp.
 		LDY	#52
 L_G4:		CPY	TWR_MAX
 		BCS	LG_5
-		LDA	#H'89		;Alive + 1 hp (& drones)
+		LDA	#$89		;Alive + 1 hp (& drones)
 		STA	GUN_STAT, Y
 		LDA	#0
 		STA	GUN_PHASE, Y
@@ -1598,7 +1600,7 @@ NEEDNEWE:
 		JSR	NEW_ENMY
 
 		LDA	RANDOM
-		CMP	#H'40
+		CMP	#$40
 		BCC	CNE_DONE
 
 		LDA	#0
@@ -1624,7 +1626,7 @@ ES_CHECK:
 
 		STY	CY
 	
-		CPY	#H'01
+		CPY	#$01
 		BCS	ES_SET
 
 		JMP	ES_CONT
@@ -1646,22 +1648,22 @@ NEW_ENMY:	LDA	ENMYWAIT
 NES_SET:
 		INC	ENEMIES
 		JSR	COND_YLW
-		LDA	#H'C0
+		LDA	#$C0
 		STA	ESHPSTAT,Y
 		JSR	RANDOM
 		STA	COUNT0
 
-		AND	#H'0F
+		AND	#$0F
 
 		CLC
 		ADC	DIFF
 	PHA
 
 		LDA	RAND
-		AND	#H'03
-		CMP	#H'03
+		AND	#$03
+		CMP	#$03
 		BNE	NES_2
-		LDA	#H'00		;palette 03 reserved for player
+		LDA	#$00		;palette 03 reserved for player
 NES_2:		STA	ESHPPAL, Y
 
 		JSR	GETESIZE
@@ -1673,7 +1675,7 @@ NES_2:		STA	ESHPPAL, Y
 ;planet or station....
 
 		JSR	RANDOM
-		AND	#H'0F		;0..15
+		AND	#$0F		;0..15
 		TAX
 		LDA	EDEFCHAR, X	;2x2 enemy...
 		JMP	NES_4
@@ -1681,12 +1683,12 @@ NES_2:		STA	ESHPPAL, Y
 ;space...
 
 NES_2A:		JSR	RANDOM
-		AND	#H'01		;0..1
+		AND	#$01		;0..1
 		TAX
 		LDA	EDEFCHAR, X	;2x2 enemy...
 		JMP	NES_4
 
-NES_3:		LDA	#H'0F		;3x3 enemy...
+NES_3:		LDA	#$0F		;3x3 enemy...
 
 NES_4:		STA	ESHPTYPE, Y
 
@@ -1712,7 +1714,7 @@ NES_4:		STA	ESHPTYPE, Y
 		LDA	EDEFPTS, X
 		STA	ESHPPTS, Y
 		LDA	COUNT0
-		AND	#H'F0		; H'F0 WHEN ALL ROTATIONS DONE
+		AND	#$F0		;  $F0 WHEN ALL ROTATIONS DONE
 		LSR	A
 		LSR	A
 		LSR	A
@@ -1727,7 +1729,7 @@ NES_4:		STA	ESHPTYPE, Y
 		LDA	#0	
 		STA	ESHP_XL, Y
 		STA	ESHP_YL, Y
-		LDA	#H'80
+		LDA	#$80
 		STA	ESHPXDST, Y
 		STA	ESHPYDST, Y
 
@@ -1765,12 +1767,12 @@ SHOOT_W1:
 		JSR	SW1_SET
 SW1_DONE:	RTS
 
-SW1_SET:	LDA	#H'C0
+SW1_SET:	LDA	#$C0
 		STA	PS_STAT,Y
 		LDA	WPN1
 		STA	PS_TYPE,Y
 
-		LDA	#H'7F
+		LDA	#$7F
 		STA	PS_XH,Y
 		STA	PS_YH,Y
 		LDA	#0
@@ -1812,8 +1814,8 @@ SW1_SET:	LDA	#H'C0
 		LDA	#SHOT
 		JSR	CHK_SLNC
 		BEQ	SW_2B0
-		LDY	#GUN_SHOT >> 8
-		LDX	#GUN_SHOT & H'FF
+		LDY	#>(GUN_SHOT)
+		LDX	#<(GUN_SHOT)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHOT
@@ -1821,13 +1823,13 @@ SW1_SET:	LDA	#H'C0
 SW_2B0:
 		PLA
 		TAX
-		LDA	#H'00
+		LDA	#$00
 		JMP	SW_2C
 SW_2B:
 		LDA	#1
 		JSR	SILENCE
-		LDY	#LASER_0 >> 8
-		LDX	#LASER_0 & H'FF
+		LDY	#>(LASER_0)
+		LDX	#<(LASER_0)
 		LDA	#1
 		JSR	PLAY
 		PLA
@@ -1842,7 +1844,7 @@ SW_2C:
 		RTS
 
 
-PSHT_SPC:	LDY	#H'03
+PSHT_SPC:	LDY	#$03
 PSS_LOOP:	LDA	PS_STAT,Y
 		BEQ	PSS_SET
 		DEY
@@ -1853,7 +1855,7 @@ PSS_SET:	LDA	#1
 		RTS
 
 W2_SPC:
-		LDY	#H'03
+		LDY	#$03
 W2S_LOOP:	LDA	W2_STAT,Y
 		BEQ	W2S_SET
 		DEY
@@ -1912,17 +1914,17 @@ SW2_E:
 ;an EMP Wave flash needs to be set
 
 		LDX	SCCNT
-		LDA	#H'3F		;high ptr.
+		LDA	#$3F		;high ptr.
 		STA	SCBUF, X
 		INX
-		LDA	#H'00		;low ptr.
+		LDA	#$00		;low ptr.
 		STA	SCBUF, X
 		INX
 		LDA	#32		;size
 		STA	SCBUF, X
 		INX
 		TAY
-SW2_E0:		LDA	#H'30		;temporarily turn everything white!
+SW2_E0:		LDA	#$30		;temporarily turn everything white!
 		STA	SCBUF, X
 		INX
 		DEY
@@ -1950,7 +1952,7 @@ SHOOTMSL:
 		JMP	SM_DONE
 SM_SET:
 		DEC	MISSILES
-		LDA	#H'C0
+		LDA	#$C0
 		STA	W2_STAT,Y
 		LDA	#MISSLE
 		STA	W2_TYPE,Y
@@ -1958,7 +1960,7 @@ SM_SET:
 		LDA	DIR
 		STA	W2_DIR,Y
 
-		LDA	#H'7F
+		LDA	#$7F
 		STA	W2_XH,Y
 		STA	W2_YH,Y
 		LDA	#0
@@ -2001,8 +2003,8 @@ SM_SET:
 		LDA	#SHOT
 		JSR	CHK_SLNC
 		BEQ	SM_DONE
-		LDY	#MISLSHOT >> 8
-		LDX	#MISLSHOT & H'FF
+		LDY	#>(MISLSHOT)
+		LDX	#<(MISLSHOT)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHOT
@@ -2016,12 +2018,12 @@ DROPMINE:
 		BEQ	DM_DONE
 		DEC	MINES
 DM_SET:
-		LDA	#H'C0
+		LDA	#$C0
 		STA	W2_STAT,Y
 		LDA	#MINE
 		STA	W2_TYPE,Y
 
-		LDA	#H'7F
+		LDA	#$7F
 		STA	W2_XH,Y
 		STA	W2_YH,Y
 		LDA	#0
@@ -2045,12 +2047,12 @@ DM_SET:
 		LDA	#2
 		STA	PSHTSPR0+18,X
 		
-		LDA	#H'D0
+		LDA	#$D0
 		STA	PSHTSPR0+17,X
 		LDA	#0
 		JSR	SILENCE
-		LDY	#MINE_1 >> 8
-		LDX	#MINE_1 & H'FF
+		LDY	#>(MINE_1)
+		LDX	#<(MINE_1)
 		LDA	#0
 		JSR	PLAY
 DM_DONE:			     
@@ -2064,7 +2066,7 @@ SB_SET:
 		DEC	THUNDER
 		LDA	#0
 		STA	P_THNDR
-		LDA	#H'C0
+		LDA	#$C0
 		STA	W2_STAT
 		STA	W2_STAT+1
 		STA	W2_STAT+2
@@ -2074,12 +2076,12 @@ SB_SET:
 		STA	W2_TYPE+1
 		STA	W2_TYPE+2
 		STA	W2_TYPE+3
-		LDA	#H'7E
+		LDA	#$7E
 		STA	W2_XH
 		STA	W2_XH+2
 		STA	W2_YH
 		STA	W2_YH+1
-		LDA	#H'80
+		LDA	#$80
 		STA	W2_XH+1
 		STA	W2_XH+3
 		STA	W2_YH+2
@@ -2095,7 +2097,7 @@ SB_SET:
 		STA	W2_YL+3
 
 		LDY	DIR
-		LDA	#H'0F
+		LDA	#$0F
 		JSR	NEWVEL
 
 		LDA	TVELX
@@ -2115,8 +2117,8 @@ SB_SET:
 		LDA	#SHOT
 		JSR	CHK_SLNC
 		BEQ	THNDR_DONE
-		LDY	#MISLSHOT >> 8
-		LDX	#MISLSHOT & H'FF
+		LDY	#>(MISLSHOT)
+		LDX	#<(MISLSHOT)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHOT
@@ -2129,16 +2131,16 @@ DISABLE:
 		DEC	S_WAVE
 		LDA	#0
 		JSR	SILENCE
-		LDY	#WAVE_1 >> 8
-		LDX	#WAVE_1 & H'FF
+		LDY	#>(WAVE_1)
+		LDX	#<(WAVE_1)
 		LDA	#0
 		JSR	PLAY
 DSBL_0:
 		LDY	#0
 DSBLLOOP:
 		LDA	ESHPSTAT,Y
-		AND	#H'C0
-		CMP	#H'C0
+		AND	#$C0
+		CMP	#$C0
 		BEQ	DSBL_SET
 DSBLCONT:
 		INY
@@ -2147,7 +2149,7 @@ DSBLCONT:
 		RTS
 DSBL_SET:
 		LDA	ESHPSTAT,Y
-		ORA	#H'10
+		ORA	#$10
 		STA	ESHPSTAT,Y
 		LDA	DIFF
 		LSR	A
@@ -2197,7 +2199,7 @@ COLLNO:		LDA	#0
 ;ACCUMULATOR HAS HIGH BYTE, X REG HAS LOW BYTE.  USES COUNT0 AS TEMP.
 GET_POS:
 		SEC	
-		SBC	#H'60
+		SBC	#$60
 		STX	COUNT0
 		ROL	COUNT0
 		ROL	A
@@ -2213,9 +2215,9 @@ GET_POS:
 ; EXPLOSION TABLE.
 
 
-PLYR_SHOT:	LDY	#H'07
+PLYR_SHOT:	LDY	#$07
 PS_LOOP:	LDA	PS_STAT,Y
-		AND	#H'80 
+		AND	#$80 
 		BNE	PS_CHECK
 		DEY
 		BPL	PS_LOOP
@@ -2262,7 +2264,7 @@ PSE0:
 		STA	VEL_Y		;USED FOR SETPEXPL
 		LDY	CY
 		LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		LDA	VEL_X
 		STA	PS_XVEL,Y
@@ -2288,7 +2290,7 @@ PS_STATN:	JSR	HITSTATN
 		LDA	PS_TYPE,Y
 		CMP	#T_BOLT
 		BNE	PSS0
-		LDA	#H'3F
+		LDA	#$3F
 		LDY	LOGIC_Y
 		JSR	DAMSTATN
 		LDY	#7
@@ -2302,7 +2304,7 @@ PSS0:
 		JSR	DAMSTATN
 		LDY	CY
 		LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		LDA	#0
 		STA	PS_XVEL,Y
@@ -2317,7 +2319,7 @@ PS_MISLS:	JSR	HITMISLS
 		BEQ	PS_GUN
 		LDY 	LOGIC_Y
 		LDA	ES_STAT,Y
-		AND	#H'7F
+		AND	#$7F
 		STA	ES_STAT,Y
 		JSR	ADDSEXPL
 
@@ -2349,7 +2351,7 @@ PS_GUN:		JSR	HITGUNS
 		JSR	DAM_GUN
 		LDY	CY
 		LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		LDA	#0
 		STA	PS_XVEL,Y
@@ -2375,14 +2377,14 @@ PS_ARMR:	; put ping sound here...
 
 		LDA	#2
 		JSR	SILENCE
-		LDY	#PING >> 8
-		LDX	#PING & H'FF
+		LDY	#>(PING)
+		LDX	#<(PING)
 		LDA	#2
 		JSR	PLAY
    
 		LDY	CY
 		LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		LDA	#0
 		STA	PS_XVEL,Y
@@ -2393,7 +2395,7 @@ PS_ARMR:	; put ping sound here...
 NUKETHNDR:	STY 	EXPL_Y
 		STX 	EXPL_X
 		LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		LDA	#0
 		STA	PS_XVEL,Y
@@ -2415,8 +2417,8 @@ NUKETHNDR:	STY 	EXPL_Y
 		LDA	#SHIP
 		JSR	CHK_SLNC
 		BEQ	NT_DONE
-		LDY	#SEXPL >> 8
-		LDX	#SEXPL & H'FF
+		LDY	#>(SEXPL)
+		LDX	#<(SEXPL)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHIP
@@ -2431,8 +2433,8 @@ HITENEMY:
 		
 		LDY	#0
 HE_LOOP:	LDA	ESHPSTAT,Y
-		AND	#H'C0 
-		CMP	#H'C0
+		AND	#$C0 
+		CMP	#$C0
 		BEQ	HE_CHECK
 HE_CONT:	INY
 		CPY	MAX_ENEMY
@@ -2473,8 +2475,8 @@ HS_DONE:
 HS_CHECK:	
 		STY	LOGIC_Y
 		LDA	STN_STAT,Y
-		AND	#H'D0		;ALIVE + ON SCREEN + FRIENDLY
-		CMP	#H'C0		;ALIVE + ON SCREEN
+		AND	#$D0		;ALIVE + ON SCREEN + FRIENDLY
+		CMP	#$C0		;ALIVE + ON SCREEN
 		BNE	HS_FALSE
 
 ;check only enemy stations that are alive and on screen
@@ -2486,16 +2488,16 @@ HS_CHECK:
 		ADC	#2
 		STA	OBJ1_LT
 		CLC
-		ADC	#H'14
+		ADC	#$14
 		STA	OBJ1_RT
 		LDA	STN_YH,Y
 		LDX	STN_YL,Y
 		JSR	GET_POS
 		CLC
-		ADC	#H'02
+		ADC	#$02
 		STA	OBJ1_TOP
 		CLC
-		ADC	#H'14
+		ADC	#$14
 		STA	OBJ1_BOT
 		JSR	COLLIDE
 		RTS
@@ -2507,8 +2509,8 @@ HITMISLS:
 
 		LDY	#0
 HM_LOOP:	LDA	ES_STAT,Y
-		AND	#H'C0 
-		CMP	#H'C0
+		AND	#$C0 
+		CMP	#$C0
 		BEQ	HM_CHECK
 HM_CONT:	INY
 		CPY	MAX_ESHOT
@@ -2568,8 +2570,8 @@ HG_CHK:
 		STY	LOGIC_Y
 		BMI	HG_FALSE
 		LDA	GUN_STAT,Y
-		AND	#H'C0		;alive + onscreen
-		CMP	#H'C0		;...must be both to hit
+		AND	#$C0		;alive + onscreen
+		CMP	#$C0		;...must be both to hit
 		BNE	HG_FALSE	
 		LDA	GUN_XH,Y
 		LDX	GUN_XL,Y
@@ -2612,7 +2614,7 @@ DAME2:
 		JSR	ADDEEXPL
 		LDX	LOGIC_Y
 		LDA	ESHPPTS,X		;POINT VALUE IN TABLE FOR SHIP
-		AND	#H'0F
+		AND	#$0F
 		JSR	ADDSCORE
 		JSR	INCSHIPS
 		RTS
@@ -2622,13 +2624,13 @@ DAME2:
 
 DAM_GUN:	; set the explosion...
 
-		LDA	#H'73	;onscreen + exploding + 19 expl. ticks
+		LDA	#$73	;onscreen + exploding + 19 expl. ticks
 		STA	GUN_STAT, Y
 		LDA	#SHIP
 		JSR	CHK_SLNC
 		BEQ	DG_DONE
-		LDY	#SEXPL >> 8
-		LDX	#SEXPL & H'FF
+		LDY	#>(SEXPL)
+		LDX	#<(SEXPL)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHIP
@@ -2650,8 +2652,8 @@ DAMSTATN:	STA	COUNT0
 DAMS2:	    	;a space station has been killed
 
 		LDA	STN_STAT,Y
-		ORA	#H'20		;H'20 = killed
-		AND	#H'7F		;remove	"alive" bit
+		ORA	#$20		; $20 = killed
+		AND	#$7F		;remove	"alive" bit
 		STA	STN_STAT,Y
 
 		LDA	#19
@@ -2659,10 +2661,10 @@ DAMS2:	    	;a space station has been killed
 		LDX	LOGIC_Y
 
 		LDA	STN_STAT, X	;POINT VALUE IN TABLE FOR STATION
-		AND	#H'06		;H'06 = points
+		AND	#$06		; $06 = points
 		LSR	A
 		CLC
-		ADC	#H'0A
+		ADC	#$0A
 		JSR	ADDSCORE
 		RTS
 
@@ -2693,19 +2695,19 @@ SI_LOOP:	INY
 		RTS
 
 BITMASK0:
-	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.byte	 $7F,  $BF,  $DF,  $EF,  $F7,  $FB,  $FD,  $FE
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
 
 BITMASK1:
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
-	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
+	.byte	 $7F,  $BF,  $DF,  $EF,  $F7,  $FB,  $FD,  $FE
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
 
 BITMASK2:
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
-	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
-	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
+	.byte	 $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF,  $FF
+	.byte	 $7F,  $BF,  $DF,  $EF,  $F7,  $FB,  $FD,  $FE
 
 ;*********************
 ; PLAYER ROUTINES
@@ -2733,8 +2735,8 @@ HP_DONE:	RTS
 
 SHIPCLD:	LDY 	#0
 SC_LOOP:	LDA	ESHPSTAT,Y
-		AND	#H'C0
-		CMP	#H'C0
+		AND	#$C0
+		CMP	#$C0
 		BEQ	SC_CHECK
 SC_CONT:	INY
 		CPY	MAX_ENEMY
@@ -2753,8 +2755,8 @@ SC_CHECK:	STY	LOGIC_Y
 		LDA	#COLLISION
 		JSR	CHK_SLNC
 		BEQ	SC_0
-		LDY	#SEXPL >> 8
-		LDX	#SEXPL & H'FF
+		LDY	#>(SEXPL)
+		LDX	#<(SEXPL)
 		LDA	#3
 		JSR	PLAY
 		LDA	#COLLISION
@@ -2767,7 +2769,7 @@ SC_0:
 ;SHT_PLYR CHECKS IF ANY ENEMY SHOTS HIT THE PLAYER
 SHT_PLYR:	LDY	#0
 SHT_P1:		LDA	ES_STAT,Y
-		AND	#H'80
+		AND	#$80
 		BNE	SHT_P2
 SHTPCONT:	INY
 		CPY	MAX_ESHOT
@@ -2801,7 +2803,7 @@ SHT_P2:
 		JSR	ADD_PDAM
 		LDY	CY
 		LDA	ES_STAT,Y
-		AND	#H'7F
+		AND	#$7F
 		STA	ES_STAT,Y
 		JSR	ADDSEXPL	
 		LDY	CY
@@ -2810,10 +2812,10 @@ SHT_P2:
 
 
 
-ADD_PDAM:	AND	#H'3F		;63 pts. max. per shot
+ADD_PDAM:	AND	#$3F		;63 pts. max. per shot
 		CLC
 		ADC	DAMAGE
-		AND	#H'7F		;128 pts. total max.
+		AND	#$7F		;128 pts. total max.
 		STA	DAMAGE
 		RTS
 		
@@ -2860,19 +2862,19 @@ KILLPLYR:	LDA	CHEAT
 		STA	SAVEPWR
 		LDA	#0
 		STA	PWRPLANT
-		LDA	#H'3F
+		LDA	#$3F
 		STA	DEATH
-		LDA	#H'00
+		LDA	#$00
 		STA	THRUST
 		STA	TSPD
 
-		LDA	#H'F8
+		LDA	#$F8
 		STA	FLMSPR0		;REMOVE THRUST FLAME
 
 		LDA	#-1
 		JSR	SILENCE
-		LDY	#SEXPL >> 8
-		LDX	#SEXPL & H'FF
+		LDY	#>(SEXPL)
+		LDX	#<(SEXPL)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHIP
@@ -2984,7 +2986,7 @@ DOPRINT:
 		STA	PR_Y
 		INY
 		STY	PR_INDEX
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		JSR	PR_ADDR
 		LDY	PR_INDEX
 PRINT_LOOP:	LDA	(PR_PTRL), Y
@@ -3024,8 +3026,8 @@ PR_ADDR2:	STA	VID_PTR
 
 ;******************
 
-STATCHEAT:	LDX	#ENDTXT6 &H'FF
-		LDY	#ENDTXT6 >> 8
+STATCHEAT:	LDX	#<(ENDTXT6)
+		LDY	#>(ENDTXT6)
 		JSR	DOPRINT
 		JMP	STATDONE
 
@@ -3043,22 +3045,22 @@ STATISTICS:	JSR	VR_WAIT
 		LDA	PWRPLANT
 		BNE	STAT2
 
-		LDX	#ENDTXT0 &H'FF
-		LDY	#ENDTXT0 >> 8
+		LDX	#<(ENDTXT0)
+		LDY	#>(ENDTXT0)
 		JSR	DOPRINT
 		JMP	STAT3
 
-STAT2:		LDX	#ENDTXT1 &H'FF
-		LDY	#ENDTXT1 >> 8
+STAT2:		LDX	#<(ENDTXT1)
+		LDY	#>(ENDTXT1)
 		JSR	DOPRINT
 
-STAT3:		LDX	#ENDTXT2 &H'FF
-		LDY	#ENDTXT2 >> 8
+STAT3:		LDX	#<(ENDTXT2)
+		LDY	#>(ENDTXT2)
 		JSR	DOPRINT
 
-		LDA	#SHIPS1 >>8
+		LDA	#>(SHIPS1)
 		STA	PTR3H
-		LDA	#SHIPS1 &H'FF
+		LDA	#<(SHIPS1)
 		STA	PTR3L
 		LDA	LNADDRH+ 9
 		STA	VID_PTR
@@ -3069,9 +3071,9 @@ STAT3:		LDX	#ENDTXT2 &H'FF
 		LDY	#4
 		JSR	SHOWVAL
 
-		LDA	#BASES1 >>8
+		LDA	#>(BASES1)
 		STA	PTR3H
-		LDA	#BASES1 &H'FF
+		LDA	#<(BASES1)
 		STA	PTR3L
 		LDA	LNADDRH+10
 		STA	VID_PTR
@@ -3082,9 +3084,9 @@ STAT3:		LDX	#ENDTXT2 &H'FF
 		LDY	#4
 		JSR	SHOWVAL
 
-		LDA	#SC1 >>8
+		LDA	#>(SC1)
 		STA	PTR3H
-		LDA	#SC1 &H'FF
+		LDA	#<(SC1)
 		STA	PTR3L
 		LDA	LNADDRH+13
 		STA	VID_PTR
@@ -3098,13 +3100,13 @@ STAT3:		LDX	#ENDTXT2 &H'FF
 		LDA	PWRPLANT
 		BEQ	STAT4
 ;Alive...
-		LDX	#ENDTXT4 &H'FF
-		LDY	#ENDTXT4 >> 8
+		LDX	#<(ENDTXT4)
+		LDY	#>(ENDTXT4)
 		JSR	DOPRINT
 		JMP	STAT5
 
-STAT4:		LDX	#ENDTXT7 &H'FF
-		LDY	#ENDTXT7 >>8
+STAT4:		LDX	#<(ENDTXT7)
+		LDY	#>(ENDTXT7)
 		JSR	DOPRINT
 
 STAT5:		JSR	STATTIME
@@ -3115,37 +3117,37 @@ STATDONE:	JSR	VR_WAIT
 		RTS
 
 
-ENDTXT0:	.DB	 4, 5, "YOU HAVE BEEN DESTROYED!", -1
-ENDTXT1:	.DB	 4, 5, "    CONGRATULATIONS!", -1
+ENDTXT0:	.byte	 4, 5, "YOU HAVE BEEN DESTROYED!", -1
+ENDTXT1:	.byte	 4, 5, "    CONGRATULATIONS!", -1
 
-ENDTXT2:	.DB	 4, 8, "YOU KILLED A TOTAL OF:", 0
-		.DB	       "        ENEMY SHIPS", 0
-		.DB	       "        ENEMY BASES", 0
-		.DB	 0
-		.DB	       "FOR A TOTAL OF:", 0
-		.DB	       "        POINTS", -1
+ENDTXT2:	.byte	 4, 8, "YOU KILLED A TOTAL OF:", 0
+		.byte	       "        ENEMY SHIPS", 0
+		.byte	       "        ENEMY BASES", 0
+		.byte	 0
+		.byte	       "FOR A TOTAL OF:", 0
+		.byte	       "        POINTS", -1
 
-ENDTXT4:	.DB	 4,17, "AND YOU HAVE VANQUISHED", 0
-		.DB	       "THE P*RADIKUS EMPIRE!", 0
-		.DB	       "THE ENTIRE GALAXY GIVES", 0
-		.DB	       "YOU ITS THANKS...", 0 
-		.DB	       "      THE END!", -1
+ENDTXT4:	.byte	 4,17, "AND YOU HAVE VANQUISHED", 0
+		.byte	       "THE P*RADIKUS EMPIRE!", 0
+		.byte	       "THE ENTIRE GALAXY GIVES", 0
+		.byte	       "YOU ITS THANKS...", 0 
+		.byte	       "      THE END!", -1
 
-ENDTXT6:	.DB	 3,14, "CHEATERS NEVER PROSPER...", -1
+ENDTXT6:	.byte	 3,14, "CHEATERS NEVER PROSPER...", -1
 
-ENDTXT7:	.DB	 4,17, "YOUR EFFORTS HAVE BEEN", 0
-		.DB	       "IN VAIN...THE P*RADIKUS", 0
-		.DB	       "FLEET HAS TRIUMPHED...", -1
+ENDTXT7:	.byte	 4,17, "YOUR EFFORTS HAVE BEEN", 0
+		.byte	       "IN VAIN...THE P*RADIKUS", 0
+		.byte	       "FLEET HAS TRIUMPHED...", -1
 
-ENDTXT8:	.DB	 2,24, "APPROX. PLAY TIME:   :  :", -1
+ENDTXT8:	.byte	 2,24, "APPROX. PLAY TIME:   :  :", -1
 
 
 
 
 STATTIME:	;show total game time...
 
-		LDX	#ENDTXT8 &H'FF
-		LDY	#ENDTXT8 >>8
+		LDX	#<(ENDTXT8)
+		LDY	#>(ENDTXT8)
 		JSR	DOPRINT
 
 		LDA	LNADDRH+24
@@ -3157,7 +3159,7 @@ STATTIME:	;show total game time...
 		LDA	T_HOUR
 		JSR	SHOWSM
 
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	LNADDRH+24
 		STA	VID_PTR
 		LDA	#24
@@ -3167,7 +3169,7 @@ STATTIME:	;show total game time...
 		LDA	T_MIN
 		JSR	SHOWSM
 
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	LNADDRH+24
 		STA	VID_PTR
 		LDA	#27
@@ -3191,12 +3193,12 @@ SHOWSM0:	CMP	#10
 SHOWSM1:	PHA
 		TXA
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_DATA
 
 		PLA
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_DATA
 		RTS
 
@@ -3211,7 +3213,7 @@ SHOWVAL:	LDA	(PTR3L), Y
 		RTS
 
 SV_A:		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_DATA
 		DEY
 		BMI	SV_B
@@ -3230,15 +3232,15 @@ ADDSEXPL:
 ;add an explosion to the enemy shot explosion list
 
 		LDA	ES_STAT,Y
-		ORA	#H'20
+		ORA	#$20
 		STA	ES_STAT,Y
 		LDA	#6
 		STA	SHOTEXPL,Y
 		LDA	#SHOT
 		JSR	CHK_SLNC
 		BEQ	ADDSDONE
-		LDY	#SBOOM >> 8
-		LDX	#SBOOM & H'FF
+		LDY	#>(SBOOM)
+		LDX	#<(SBOOM)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHOT
@@ -3253,8 +3255,8 @@ ADDEEXPL:
 ;add an explosion to the enemy ship explosion list
 
 		LDA	ESHPSTAT,Y
-		AND	#H'7F
-		ORA	#H'20
+		AND	#$7F
+		ORA	#$20
 		STA	ESHPSTAT,Y
 		LDA	#19
 		STA	SHIPEXPL,Y
@@ -3262,8 +3264,8 @@ ADDEEXPL:
 		LDA	#SHIP
 		JSR	CHK_SLNC
 		BEQ	ADDEDONE
-		LDY	#SEXPL >> 8
-		LDX	#SEXPL & H'FF
+		LDY	#>(SEXPL)
+		LDX	#<(SEXPL)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHIP
@@ -3279,15 +3281,15 @@ ADDPEXPL:
 ;add an explosion to the player shot explosion list
 
 		LDA	PS_STAT,Y
-		ORA	#H'20
+		ORA	#$20
 		STA	PS_STAT,Y
 		LDA	#6
 		STA	PLYREXPL,Y
 		LDA	#SHOT
 		JSR	CHK_SLNC
 		BEQ	ADDPDONE
-		LDY	#SBOOM >> 8
-		LDX	#SBOOM & H'FF
+		LDY	#>(SBOOM)
+		LDX	#<(SBOOM)
 		LDA	#3
 		JSR	PLAY
 		LDA	#SHOT
@@ -3304,7 +3306,7 @@ UPP_EXPL:
 		LDY	#7
 
 UPP_LOOP:      	LDA	PS_STAT,Y
-		AND	#H'20
+		AND	#$20
 		BEQ	UPP_CONT
 		LDA	PLYREXPL,Y
 		BNE	UPP_SET
@@ -3343,7 +3345,7 @@ UPS_EXPL:
 		LDY	#0
 
 UPS_LOOP:	LDA	ES_STAT, Y
-		AND	#H'20
+		AND	#$20
 		BEQ	UPS_CONT
 		LDA	SHOTEXPL, Y
 		BNE	UPS_SET
@@ -3382,7 +3384,7 @@ UPE_EXPL:
 		LDY	#0
 
 UPE_LOOP:	LDA	ESHPSTAT, Y
-		AND	#H'20
+		AND	#$20
 		BEQ	UPE_CONT
 		LDA	SHIPEXPL, Y
 		BEQ	UPE_CONT
@@ -3408,7 +3410,7 @@ FREEPSHT:
 		ASL 	A
 		ASL	A
 		TAY
-		LDA	#H'F8
+		LDA	#$F8
 		STA	PSHTSPR0,Y
 
 		LDY	EXPL_Y
@@ -3435,7 +3437,7 @@ FREESHOT:
 		ASL 	A
 		ASL	A
 		TAY
-		LDA	#H'F8
+		LDA	#$F8
 		STA	SHOTSPR0,Y	;remove sprite from screen
 
 		LDY	EXPL_Y
@@ -3553,7 +3555,7 @@ CHG_DIR:
 CD_LOOP:
 		INC	NEW_DIR
 		LDA	NEW_DIR
-		AND	#H'0F
+		AND	#$0F
 		STA	NEW_DIR
 		CMP	(PTR1L),Y
 		BEQ	CD_NEG
@@ -3571,7 +3573,7 @@ CD_NEG:
 		DEX
 		TXA
 CD_DONE:
-		AND	#H'0F
+		AND	#$0F
 		STA	(PTR1L),Y
 		RTS
 
@@ -3593,9 +3595,9 @@ SHIPSEEK:
 
 		JSR	GETNEWDIR
 		LDY	LOGIC_Y
-		LDA	#ESHPDIR >> 8
+		LDA	#>(ESHPDIR)
 		STA	PTR1H
-		LDA	#ESHPDIR & H'FF
+		LDA	#<(ESHPDIR)
 		STA	PTR1L
 		JSR	CHG_DIR
 		LDY	LOGIC_Y
@@ -3664,10 +3666,10 @@ TOOCLOSE:
 		STA	LOGIC_AY
 		JSR	LOAD_DISP
 		LDA	DX
-		CMP	#H'0C
+		CMP	#$0C
 		BCS	TC_FALSE
 		LDA	DY
-		CMP	#H'0C
+		CMP	#$0C
 		BCS	TC_FALSE
 		LDA	#1
 		RTS
@@ -3680,9 +3682,9 @@ TOOFAR:
 		LDA	SEEKING
 		BNE	TF_DONE
 		LDA	ESHPSTAT,Y
-		AND	#H'40
+		AND	#$40
 		BEQ	TF_TRUE
-		LDA	#H'80
+		LDA	#$80
 		STA	LOGIC_BX
 		STA	LOGIC_BY
 		LDA	ESHP_XH,Y
@@ -3695,23 +3697,23 @@ TOOFAR:
 		STA	LOGIC_AY
 		JSR	LOAD_DISP
 		LDA	DX
-		CMP	#H'15
+		CMP	#$15
 		BCS	TF_TRUE
 		LDA	DY
-		CMP	#H'15
+		CMP	#$15
 		BCS	TF_TRUE
 		LDX	DX
 		LDA	SQRTABLE,X
 		LDX	DY
 		CLC
 		ADC	SQRTABLE,X
-		CMP	#H'02
+		CMP	#$02
 		BCS	TF_TRUE
 TF_DONE:
 		RTS
 TF_TRUE:
 		LDY	LOGIC_Y
-		LDA	#H'80
+		LDA	#$80
 		STA	ESHPXDST,Y
 		STA	ESHPYDST,Y
 		LDA	#1
@@ -3720,7 +3722,7 @@ TF_TRUE:
 
 MOVERAND:
 		LDA	SEEKING
-		CMP	#H'04
+		CMP	#$04
 		BNE	MR_DONE
 		LDX	ESHPDIR,Y	
 		JSR	RANDOM
@@ -3736,7 +3738,7 @@ MR_SET:
 		TYA
 		PHA
 		TXA
-		AND	#H'0F
+		AND	#$0F
 		STA	ESHPDIR,Y
 		PHA
 		LDX	ESHPDRV,Y
@@ -3794,13 +3796,13 @@ VEER_RT:
 		LDA	ESHPDIR,Y
 		SEC
 		SBC	#4
-		AND	#H'0F
+		AND	#$0F
 		JMP	VEER_OFF
 VEER_LT:
 		LDA	ESHPDIR,Y
 		CLC
 		ADC	#4
-		AND	#H'0F
+		AND	#$0F
 VEER_OFF:
 		TAX
 		LDA	X_DEST,X
@@ -3827,17 +3829,17 @@ CHECKFIRE:	LDA	PWRPLANT
 		BEQ	CF_DONE
 
 		LDA	RAND
-		AND	#H'03
+		AND	#$03
 		BEQ	CF_DONE		;fire 75% of max.
 
 		LDA	SEEKING
 		BNE	CF_A
     		LDA	ESHPTYPE,Y
-    		CMP	#H'60
+    		CMP	#$60
 		BEQ	CF_A
 		RTS
 CF_A:
-		LDA	#H'80
+		LDA	#$80
 		STA	LOGIC_BX
 		STA	LOGIC_BY
 		LDA	ESHP_XH,Y
@@ -3862,7 +3864,7 @@ CF_B:
 		BCC	CF_TRUE
 CF_C:
 		INC	LASTFIRE
-		LDA	#H'9F		;was h'FF
+		LDA	#$9F		;was  $FF
 		SEC
 		SBC	DIFF
 		CMP	LASTFIRE
@@ -3899,16 +3901,16 @@ ESF_A:
 
 		LDA	#2
 		JSR	SILENCE
-		LDY	#E_LASER >> 8
-		LDX	#E_LASER &H'FF
+		LDY	#>(E_LASER)
+		LDX	#<(E_LASER)
 		LDA	#2
 		JSR	PLAY
 		JMP	ESF_BLT
 
 ESF_ALT:	LDA	#2
 		JSR	SILENCE
-		LDY	#E_LASER >> 8
-		LDX	#E_LASER &H'FF
+		LDY	#>(E_LASER)
+		LDX	#<(E_LASER)
 		LDA	#2
 		JSR	PLAY
 ESF_BLT:	LDY	TY
@@ -3951,12 +3953,12 @@ ON_TARGET:
 		BEQ	OT_TRUE
 		SEC
 		SBC	#1
-		AND	#H'0F
+		AND	#$0F
 		CMP	NEW_DIR
 		BEQ	OT_TRUE
 		CLC
 		ADC	#2
-		AND	#H'0F
+		AND	#$0F
 		CMP	NEW_DIR
 		BEQ	OT_TRUE
 		LDA	#0
@@ -3979,7 +3981,7 @@ ESS_TRUE:	LDA	#1
 
 FIRE:		STA	ES_TYPE,Y
 		STA	LOGIC_TEMP
-		LDA	#H'C0
+		LDA	#$C0
 		STA	ES_STAT,Y
 		TYA
 		PHA
@@ -4021,7 +4023,7 @@ FIRE:		STA	ES_TYPE,Y
 		BNE	FIRE_1A
 		LDA	#2
 		STA	SHOTSPR0+2,X
-		LDA	#H'00
+		LDA	#$00
 		JMP	FIRE_1C
 FIRE_1A:
 		PHA
@@ -4030,7 +4032,7 @@ FIRE_1A:
 		PLA
 		CMP	#CANNON
 		BNE	FIRE_1B
-		LDA	#H'00
+		LDA	#$00
 		JMP	FIRE_1C
 FIRE_1B:
 		LDY	LOGIC_X
@@ -4057,8 +4059,8 @@ SHIPLOGIC:
 		JSR	FIND_NEXT
 		LDY	NEXT_ENEMY
 		LDA	ESHPSTAT,Y
-		AND	#H'90
-		CMP	#H'80		;ONLY IF ALIVE AND NOT DISABLED
+		AND	#$90
+		CMP	#$80		;ONLY IF ALIVE AND NOT DISABLED
 		BEQ	ESL_SET
 ESL_DONE:
 		RTS
@@ -4123,8 +4125,8 @@ FN_STN:		LDY	NEXT_STN
 FNSTN_0:	STY	NEXT_STN
 
 		LDA	STN_STAT,Y
-		AND	#H'D8		;ALIVE+ONSCREEN+FRIENDLY+SHIELD DOWN
-		CMP	#H'C0		;ALIVE+ONSCREEN (+ENEMY+SHIELD UP)
+		AND	#$D8		;ALIVE+ONSCREEN+FRIENDLY+SHIELD DOWN
+		CMP	#$C0		;ALIVE+ONSCREEN (+ENEMY+SHIELD UP)
 		BEQ	SA_DO
 
 ;friendly and/or shield up
@@ -4135,7 +4137,7 @@ SA_DO:		STY	LOGIC_Y
 		JSR	RANDOM
 		STA	COUNT0
 		LDA	STN_STAT,Y
-		AND	#H'01
+		AND	#$01
 		BEQ	SADO_A
 
 ;;;has drones... (no longer used)
@@ -4152,7 +4154,7 @@ SADO_A:		LDA	DIFF
 		CMP	COUNT0
 		BCS	SA_FIRE
 		INC	LASTFIRE
-		LDA	#H'FE
+		LDA	#$FE
 		SEC
 		SBC	DIFF
 		LDY	LOGIC_Y
@@ -4176,8 +4178,8 @@ SA_1:		LDA	#0
 
 		LDA	#2
 		JSR	SILENCE
-		LDY	#E_LASER >> 8
-		LDX	#E_LASER &H'FF
+		LDY	#>(E_LASER)
+		LDX	#<(E_LASER)
 		LDA	#2
 		JSR	PLAY
 
@@ -4186,7 +4188,7 @@ SA_1:		LDA	#0
 		STA	LOGIC_AX
 		LDA	STN_YH,Y
 		STA	LOGIC_AY
-		LDA	#H'80
+		LDA	#$80
 		STA	LOGIC_BX
 		STA	LOGIC_BY
 		JSR	LOAD_DISP
@@ -4222,7 +4224,7 @@ MOVEMISL:
 		JSR	FN_SHOT
 		LDY	NEXT_SHOT
 		LDA	ES_STAT,Y
-		AND	#H'80
+		AND	#$80
 		BEQ	MM_DONE
 		LDA	ES_TYPE,Y
 		CMP	#MISSLE
@@ -4254,15 +4256,15 @@ MISLSEEK:
 		CLC
 		ADC	#1
 		STA	LOGIC_AY
-		LDA	#H'80
+		LDA	#$80
 		STA	LOGIC_BX
 		STA	LOGIC_BY
 		JSR	LOAD_DISP
 		JSR	GETNEWDIR
 		LDY	LOGIC_Y
-		LDA	#ES_DIR >> 8
+		LDA	#>(ES_DIR)
 		STA	PTR1H
-		LDA	#ES_DIR & H'FF
+		LDA	#<(ES_DIR)
 		STA	PTR1L
 		JSR	CHG_DIR
 		LDY	LOGIC_Y
@@ -4313,17 +4315,17 @@ FNPSDONE:
 		STY	NEXT_PSHT
 	
 		LDA	W2_STAT,Y
-		AND	#H'80
+		AND	#$80
 		BEQ	PM_CONT
 		LDA	W2_TYPE,Y
 		CMP	#MISSLE
 		BNE	PM_CONT
 
 		LDA	W2_TARG,Y
-		BMI	PM_CHECK	;not currently locked..dbl.check!
+		BMI	PM_CHECK	;not currently locked..bytel.check!
 		TAX
 		LDA	ESHPSTAT,X
-		AND	#H'80
+		AND	#$80
 		BNE	PM_SET		;enemy still alive...
 
 ;enemy not alive, try to find one that is
@@ -4368,9 +4370,9 @@ PLYRSEEK:
 		JSR	LOAD_DISP
 		JSR	GETNEWDIR
 		LDY	LOGIC_Y
-		LDA	#W2_DIR >> 8
+		LDA	#>(W2_DIR)
 		STA	PTR1H
-		LDA	#W2_DIR & H'FF
+		LDA	#<(W2_DIR)
 		STA	PTR1L
 		JSR	CHG_DIR
 		LDY	LOGIC_Y
@@ -4420,8 +4422,8 @@ PLYRSEEK:
 
 SEL_T2:		LDY	#0
 ST2_LOOP:	LDA	ESHPSTAT, Y
-		AND	#H'C0		;Alive & on screen
-		CMP	#H'C0
+		AND	#$C0		;Alive & on screen
+		CMP	#$C0
 		BEQ	ST2_END		;Found an active enemy!
 		INY
 		CPY	MAX_ENEMY
@@ -4442,7 +4444,7 @@ ST2_END:	TYA			;even though not in front,
 UPDTSHIP:	
 		LDY	#0
 US_LOOP:	LDA 	ESHPSTAT,Y
-		AND	#H'F0
+		AND	#$F0
 		BNE	US_SET
 US_CONT:	INY
 		CPY	MAX_ENEMY
@@ -4482,33 +4484,33 @@ US_SET:		STY	EXPL_Y
 		JSR	EXECTIME
 
 		LDA	ESHP_XH,Y
-		CMP	#H'20
+		CMP	#$20
 		BCC	US_REMX
-		CMP	#H'E0
+		CMP	#$E0
 		BCS	US_REMX
-		CMP	#H'60
+		CMP	#$60
 		BCC	US_CLRX
-		CMP	#H'9E
+		CMP	#$9E
 		BCS	US_CLRX
 		LDA	ESHP_YH,Y
-		CMP	#H'20
+		CMP	#$20
 		BCC	US_REMX
-		CMP	#H'E0
+		CMP	#$E0
 		BCS	US_REMX
-		CMP	#H'60
+		CMP	#$60
 		BCC	US_CLRX
-		CMP	#H'9E
+		CMP	#$9E
 		BCC	SPZ
 US_CLRX:	JMP	US_CLR
 US_REMX:	JMP	US_REM
 SPZ:
 
 		LDA	ESHPSTAT,Y
-		ORA	#H'40		;ON SCREEN 
+		ORA	#$40		;ON SCREEN 
 		STA	ESHPSTAT,Y
 
 		LDA	ESHPSTAT,Y
-		AND	#H'20		;Alive?
+		AND	#$20		;Alive?
 		BEQ	US_0
 		JMP	US_CONT
 
@@ -4525,14 +4527,14 @@ US_REM:
 
 US_CLR:
 		LDA	ESHPSTAT,Y
-		AND	#H'20
+		AND	#$20
 		BNE	US_REM
 		LDA	ESHPSTAT,Y
-		AND	#H'BF		;OFFSCREEN (ONSCREEN H'40 IS 0)
+		AND	#$BF		;OFFSCREEN (ONSCREEN  $40 IS 0)
 		STA	ESHPSTAT,Y
 		LDA	ESHPTIME,Y
 		BNE	USC_A
-		LDA	#H'60
+		LDA	#$60
 		STA	ESHPTIME,Y
 
 ;off-screen so remove sprites...
@@ -4548,17 +4550,17 @@ EXECTIME:	LDA	ESHPTIME,Y
 		STA	ESHPTIME,Y
 		BNE	ET_DONE
 		LDA	ESHPSTAT,Y
-		AND	#H'10
+		AND	#$10
 		BEQ	ET_A
 		LDA	ESHPSTAT,Y
-		AND	#H'EF
+		AND	#$EF
 		STA	ESHPSTAT,Y
 		JMP	ET_DONE
 ET_A:
 		LDA	ESHPSTAT,Y
-		AND	#H'40
+		AND	#$40
 		BNE	ET_DONE
-		LDA	#H'10
+		LDA	#$10
 		STA	ESHP_XH,Y	;ITS OFFSCREEN TOO LONG SO REMOVE IT
 ET_DONE:
 		RTS
@@ -4569,7 +4571,7 @@ ET_DONE:
 ;UPDTESHT UPDATES THE SCREEN POSITION OF ALL ENEMY SHOTS
 UPDTESHT:	LDY	#0
 UES_LOOP:	LDA	ES_STAT,Y
-		AND	#H'F0
+		AND	#$F0
 		BNE	UES_SET
 UES_CONT:	INY
 		CPY	MAX_ESHOT
@@ -4604,14 +4606,14 @@ UES_SET:
 		LDA	TPOSL
 		STA	ES_YL,Y
 		LDA	ES_XH,Y
-		CMP	#H'A0
+		CMP	#$A0
 		BCS	UES_REM
-		CMP	#H'60
+		CMP	#$60
 		BCC	UES_REM
 		LDA	ES_YH,Y
-		CMP	#H'A0
+		CMP	#$A0
 		BCS	UES_REM
-		CMP	#H'60
+		CMP	#$60
 		BCC	UES_REM
 		LDA	ES_XH,Y
 		LDX	ES_XL,Y
@@ -4641,9 +4643,9 @@ UES_REM:	LDY	EXPL_Y
 
 ;UPDTPSHT UPDATES THE SCREEN POSITION OF ALL PLAYER SHOTS
 
-UPDTPSHT:	LDY	#H'07
+UPDTPSHT:	LDY	#$07
 UPD_LOOP:	LDA	PS_STAT,Y
-		AND	#H'F0
+		AND	#$F0
 		BNE	UPD_SET
 UPD_CONT:	DEY
 		BPL	UPD_LOOP
@@ -4685,14 +4687,14 @@ UPDS_A:
 		LDA	TPOSL
 		STA	PS_YL,Y
 		LDA	PS_XH,Y
-		CMP	#H'A0
+		CMP	#$A0
 		BCS	UPD_REM
-		CMP	#H'60
+		CMP	#$60
 		BCC	UPD_REM
 		LDA	PS_YH,Y
-		CMP	#H'A0
+		CMP	#$A0
 		BCS	UPD_REM
-		CMP	#H'60
+		CMP	#$60
 		BCC	UPD_REM
 		LDA	PS_XH,Y
 		LDX	PS_XL,Y
@@ -4727,10 +4729,10 @@ SHOT_REF:	JSR	PS1_REF
 
 PS1_REF:       	LDY	#3
 PS1R_LOOP:	LDA	PS_STAT,Y
-		AND	#H'C0
-		CMP	#H'C0
+		AND	#$C0
+		CMP	#$C0
 	      	BEQ	PS1R_SET
-		LDA	#H'F8
+		LDA	#$F8
 		STA	TY
 		JMP	PS1R_E
 
@@ -4774,7 +4776,7 @@ PS1R_E:		TYA
 		ASL	A
 		ASL	A
 		CLC
-		ADC	#PSHTSPR0 &H'FF
+		ADC	#<(PSHTSPR0)
 		TAX
 
 		LDA	TY
@@ -4791,10 +4793,10 @@ PS1R_E:		TYA
 
 PS2_REF:	LDY	#3
 PS2R_LOOP:	LDA	W2_STAT,Y
-		AND	#H'C0
-		CMP	#H'C0
+		AND	#$C0
+		CMP	#$C0
 		BEQ	PS2R_SET
-		LDA	#H'F8
+		LDA	#$F8
 		STA	TY
 		JMP	PS2R_E
 
@@ -4820,7 +4822,7 @@ PS2R_SET:
 PS2R_B:		LDA	W2_TYPE,Y
 		CMP	#T_BOLT
 		BNE	PS2R_BA
-		LDA	#H'F8
+		LDA	#$F8
 		STA	TY
 		JMP	PS2R_E
 	
@@ -4844,7 +4846,7 @@ PS2R_E:		TYA
 		ASL	A
 		ASL	A
 		CLC
-		ADC	#PSHTSPR0 &H'FF
+		ADC	#<(PSHTSPR0)
 		ADC	#16
 		TAX
 		
@@ -4863,8 +4865,8 @@ PS2R_E:		TYA
 ES_REF:		LDY	#0
 ESR_LOOP:
 		LDA	ES_STAT,Y
-		AND	#H'C0
-		CMP	#H'C0
+		AND	#$C0
+		CMP	#$C0
 		BEQ	ESR_SET
 ESR_CONT:	INY
 		CPY	MAX_ESHOT
@@ -4911,13 +4913,13 @@ UPDTMINE:
 		ASL	A
 		TAX
 		LDA	TIMER0
-		AND	#H'08
+		AND	#$08
 		CLC
 		ROR	A
 		ROR	A
 		ROR	A
 		ROR	A
-		ADC	#H'D0
+		ADC	#$D0
 		STA	PSHTSPR0+1,X
 		LDA	#2
 		STA	PSHTSPR0+2,X
@@ -4930,7 +4932,7 @@ UPDTMINE:
 		RTS
 
 MINE_REM:	LDA	PS_STAT,Y
-		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		AND	#$7F		; SET THE SHOT TO NOT 'ALIVE'
 		STA	PS_STAT,Y
 		JSR	ADDPEXPL
 		RTS
@@ -4941,7 +4943,7 @@ UPDTBOLT:	LDA	W2_TYPE
 		RTS
 
 UB_SET:		LDA	W2_STAT
-		AND	#H'80
+		AND	#$80
 		BNE	UBS_CHAR
 		RTS
 
@@ -4965,7 +4967,7 @@ UBS_CHAR:	LDA	W2_TARG
 		STA	PSHTSPR0+26
 		STA	PSHTSPR0+30
 		LDA	W2_TARG
-		EOR	#H'01
+		EOR	#$01
 		STA	W2_TARG
 		RTS
 
@@ -4981,7 +4983,7 @@ UPDT_STN:	LDA	BKGRND
 
 ;update stations:
 
-USTN_0:		LDA	#H'9C
+USTN_0:		LDA	#$9C
 		STA	SPR0PTR
 
 		LDY	TURRET_1
@@ -4992,7 +4994,7 @@ USTN_0:		LDA	#H'9C
 
 ;do second station, if one exists...
 
-USTN_1:	      	LDA	#H'C0		
+USTN_1:	      	LDA	#$C0		
 		STA	SPR0PTR
 
 		LDY	TURRET_2
@@ -5035,20 +5037,20 @@ USTN_SET:
 		LDA	TPOSL
 		STA	STN_YL,Y
 		LDA	STN_XH,Y
-		CMP	#H'5D
+		CMP	#$5D
 		BCC	USTN_REM
-		CMP	#H'A1
+		CMP	#$A1
 		BCS	USTN_REM
 		LDA	STN_YH,Y
-		CMP	#H'5E		;5D
+		CMP	#$5E		;5D
 		BCC	USTN_REM
-		CMP	#H'A1
+		CMP	#$A1
 		BCC	USTN_A
 
 ;*** OFF SCREEN *********************************
 
 USTN_REM:    	LDA	STN_STAT,Y
-		AND	#H'BF		;set ON-SCREEN bit to 0 
+		AND	#$BF		;set ON-SCREEN bit to 0 
 		STA	STN_STAT,Y	;  i.e., not on screen
 		LDA	#-1
 		RTS
@@ -5056,22 +5058,22 @@ USTN_REM:    	LDA	STN_STAT,Y
 ;*** ON SREEN ***********************************
 
 USTN_A:		LDA	STN_STAT, Y
-		ORA	#H'40	   	;ON SCREEN
+		ORA	#$40	   	;ON SCREEN
 		STA	STN_STAT, Y
 
 		LDA	STN_XH, Y
-		CMP	#H'5F
+		CMP	#$5F
 		BCC	SRPOSREM
-		CMP	#H'9F	
+		CMP	#$9F	
 		BCS	SRPOSREM
 		LDX	STN_XL, Y
 		JSR	GET_POS
 		STA	TX		;X screen pos.
 
 		LDA	STN_YH, Y
-		CMP	#H'5F
+		CMP	#$5F
 		BCC	SRPOSREM
-		CMP	#H'9F	
+		CMP	#$9F	
 		BCS	SRPOSREM
 		LDX	STN_YL, Y
 		JSR	GET_POS
@@ -5084,17 +5086,17 @@ SRPOSREM:	JSR	REM3X3		;off screen - remove sprites & quit
 		RTS
 
 SR_A:		LDA	STN_STAT, Y
-		AND	#H'80		;Alive?
+		AND	#$80		;Alive?
 		BEQ	SR_EXPL	  	;---No!
 ;---Yes!
 		LDX	STN_ROTATE	;0, 1, or 2
-		LDA	#H'03
+		LDA	#$03
 		JSR	DRAWSTN		;Update "rotation"
 		LDA	LOGIC_Y
 		RTS
 
 SR_EXPL:	LDA	STN_STAT, Y
-		AND	#H'20
+		AND	#$20
 		BEQ	SR_DEAD
 ;exploding...
 		LDA	STN_DAM, Y	;explosion "tick"
@@ -5105,11 +5107,11 @@ SR_EXPL:	LDA	STN_STAT, Y
 ;done with explosion...make dead
 
 		LDA	STN_STAT, Y
-		ORA	#H'08
-		AND	#H'4F
+		ORA	#$08
+		AND	#$4F
 		STA	STN_STAT, Y
 
-SR_DEAD:	LDA	#H'03
+SR_DEAD:	LDA	#$03
 		JSR	DRAWSTNX
 ;dead...
 		LDA	LOGIC_Y
@@ -5159,15 +5161,15 @@ DRAWSTN:
 		RTS
 
 
-STNCH1:		.DB	H'6A,H'8D,H'73,H'96
-STNCH2:		.DB	H'6B,H'8E,H'74,H'97
-STNCH3:		.DB	H'6C,H'8F,H'75,H'98
-STNCH4:		.DB	H'8A,H'70,H'93,H'79
-STNCH5:		.DB	H'8B,H'71,H'94,H'7A
-STNCH6:		.DB	H'8C,H'72,H'95,H'7B
-STNCH7:		.DB	H'6D,H'90,H'76,H'99
-STNCH8:		.DB	H'6E,H'91,H'77,H'9A
-STNCH9:		.DB	H'6F,H'92,H'78,H'9B
+STNCH1:		.byte	 $6A, $8D, $73, $96
+STNCH2:		.byte	 $6B, $8E, $74, $97
+STNCH3:		.byte	 $6C, $8F, $75, $98
+STNCH4:		.byte	 $8A, $70, $93, $79
+STNCH5:		.byte	 $8B, $71, $94, $7A
+STNCH6:		.byte	 $8C, $72, $95, $7B
+STNCH7:		.byte	 $6D, $90, $76, $99
+STNCH8:		.byte	 $6E, $91, $77, $9A
+STNCH9:		.byte	 $6F, $92, $78, $9B
 
 
 
@@ -5203,8 +5205,8 @@ GUN_ACTN:
 FN_CHK:		LDA	TURRET_1, Y	;get proper index into GUN tables
 		TAY
 		LDA	GUN_STAT, Y
-		AND	#H'C0		;alive + onscreen
-		CMP	#H'C0		;must be both to fire 
+		AND	#$C0		;alive + onscreen
+		CMP	#$C0		;must be both to fire 
 		BEQ	GA_DO
 
 ;not on screen and/or dead.
@@ -5222,7 +5224,7 @@ GA_DO:		;check if turret open...if not, don't fire!
 ;turret is "open"...
 
 GA_CHK:		LDA 	TIMER0
-  		AND	#H'07		;only let fire once while open!
+  		AND	#$07		;only let fire once while open!
   		BNE	GA_DONE
   
 GA_FIRE:	STY	LOGIC_Y
@@ -5246,8 +5248,8 @@ GA_1:		LDA	#0
 
 		LDA	#2
 		JSR	SILENCE
-		LDY	#E_LASER >> 8
-		LDX	#E_LASER &H'FF
+		LDY	#>(E_LASER)
+		LDX	#<(E_LASER)
 		LDA	#2
 		JSR	PLAY
 
@@ -5256,7 +5258,7 @@ GA_1:		LDA	#0
 		STA	LOGIC_AX
 		LDA	GUN_YH, Y	;and y-pos.
 		STA	LOGIC_AY
-		LDA	#H'80
+		LDA	#$80
 		STA	LOGIC_BX
 		STA	LOGIC_BY
 		JSR	LOAD_DISP
@@ -5281,25 +5283,25 @@ GA_1:		LDA	#0
 UPDT_GUN:	LDA	BKGRND
 		BEQ	UGUN_DONE	;no guns if in space!
 
-		LDA	#H'C0
+		LDA	#$C0
 		STA	SPR0PTR
 		LDY	TURRET_1
 		JSR	UGUN_SET
 		STA	TURRET_1
 
-	    	LDA	#H'D0
+	    	LDA	#$D0
 	    	STA	SPR0PTR
 	    	LDY	TURRET_2
 	    	JSR	UGUN_SET
 	    	STA	TURRET_2
 	    
-	    	LDA	#H'E0
+	    	LDA	#$E0
 	    	STA	SPR0PTR
 	    	LDY	TURRET_3
 	    	JSR	UGUN_SET
 	    	STA	TURRET_3
 	    
-	    	LDA	#H'F0
+	    	LDA	#$F0
 	    	STA	SPR0PTR
 	    	LDY	TURRET_4
 	    	JSR	UGUN_SET
@@ -5341,20 +5343,20 @@ UGUN_SET:
 		LDA	TPOSL
 		STA	GUN_YL, Y
 		LDA	GUN_XH, Y
-		CMP	#H'5D
+		CMP	#$5D
 		BCC	UGUN_REM
-		CMP	#H'A1
+		CMP	#$A1
 		BCS	UGUN_REM
 		LDA	GUN_YH, Y
-		CMP	#H'5E
+		CMP	#$5E
 		BCC	UGUN_REM
-		CMP	#H'A1
+		CMP	#$A1
 		BCC	UGUN_A
 
 ;************** MOVED OFF-SCREEN ************************************
 
 UGUN_REM:	LDA	GUN_STAT, Y
-		AND	#H'BF		;clear onscreen bit
+		AND	#$BF		;clear onscreen bit
 		STA	GUN_STAT, Y
 		LDA	#-1
 		RTS
@@ -5362,22 +5364,22 @@ UGUN_REM:	LDA	GUN_STAT, Y
 ;************** STILL ON-SCREEN *************************************
 
 UGUN_A:		LDA	GUN_STAT, Y
-		ORA	#H'40		;set onscreen bit
+		ORA	#$40		;set onscreen bit
 		STA	GUN_STAT, Y
 
 		LDA	GUN_XH, Y
-		CMP	#H'5F
+		CMP	#$5F
 		BCC	GRPOSREM
-		CMP	#H'9F
+		CMP	#$9F
 		BCS	GRPOSREM
 		LDX	GUN_XL, Y
 		JSR	GET_POS		;get x screen pos.
 		STA	TX
 
 		LDA	GUN_YH, Y
-		CMP	#H'5F
+		CMP	#$5F
 		BCC	GRPOSREM
-		CMP	#H'9F
+		CMP	#$9F
 		BCS	GRPOSREM
 		LDX	GUN_YL, Y
 		JSR	GET_POS
@@ -5390,12 +5392,12 @@ GRPOSREM:	JSR	REM2X2		;off screen -- remove sprites & quit
 		RTS
 
 GR_A:		LDA	GUN_STAT, Y
-		AND	#H'80		;Alive?
+		AND	#$80		;Alive?
 		BEQ	GR_EXPL		;---No! See if exploding
 ;---Yes!
 		LDA	TIMER0
-		AND	#H'0F
-		CMP	#H'0F		;animate every 16 timer ticks
+		AND	#$0F
+		CMP	#$0F		;animate every 16 timer ticks
 		BEQ	GR_A1
       		LDX	GUN_PHASE, Y
 		JMP	GR_CHAR
@@ -5405,7 +5407,7 @@ GR_A1:		LDA	INVISO
 		JMP	GR_CHAR
 GR_A2:		LDX	GUN_PHASE, Y
 		INX
-		CPX	#H'0D
+		CPX	#$0D
 		BCC	GR_CHAR
 		LDX	#0
 GR_CHAR:	TXA
@@ -5415,18 +5417,18 @@ GR_CHAR:	TXA
 		RTS
 
 GR_EXPL:	LDA	GUN_STAT, Y
-		AND	#H'20		;Exploding?
+		AND	#$20		;Exploding?
 		BEQ	GR_DEAD
 ;---Exploding
 		LDA	GUN_STAT, Y
-		AND	#H'1F		;explosion "tick"
+		AND	#$1F		;explosion "tick"
 		SEC
 		SBC	#1
 		BNE	GR_E1
 
 ;done with explosion...make dead
 
-GR_DEAD:	LDA	#H'00	   	;remove the gun
+GR_DEAD:	LDA	#$00	   	;remove the gun
 		STA	GUN_STAT, Y
 		CPY	#52
 		BCC	GR_D0
@@ -5442,7 +5444,7 @@ GR_D1:		JSR	REM2X2
 GR_E1:		STA	COUNT0
 		JSR	EXPL2X2
 		LDA	GUN_STAT, Y
-		AND	#H'E0
+		AND	#$E0
 		ORA	COUNT0
 		STA	GUN_STAT, Y	;imbed expl. tick back into GUN_STAT
 		LDA	LOGIC_Y
@@ -5463,20 +5465,20 @@ DRAWGUN:
 		STA	SPRTBL0+ 5, Y
 		STA	SPRTBL0+ 9, Y
 		STA	SPRTBL0+13, Y
-		LDA	#H'01		;flip & palette
+		LDA	#$01		;flip & palette
 		STA	SPRTBL0+ 2, Y
-		LDA	#H'41
+		LDA	#$41
 		STA	SPRTBL0+ 6, Y
-		LDA	#H'81
+		LDA	#$81
 		STA	SPRTBL0+10, Y
-		LDA	#H'C1
+		LDA	#$C1
 		STA	SPRTBL0+14, Y
 
 		RTS
 
 
-GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
-		.DB	H'3F, H'3E, H'1F, H'1E, H'1E, H'1E
+GUN_CHR:	.byte	 $1E,  $1E,  $1E,  $1F,  $3E,  $3F,  $3F
+		.byte	 $3F,  $3E,  $1F,  $1E,  $1E,  $1E
 		
 
 ;;;UPDT_GUN:	LDA	#0
@@ -5484,7 +5486,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		LDY	TURRET_1
 ;;;		JSR	UG_CHECK
 ;;;		BNE	UG_1
-;;;		LDA	#H'FF
+;;;		LDA	#$FF
 ;;;		STA	TURRET_1
 ;;;UG_1:
 ;;;		LDA	#16
@@ -5492,7 +5494,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		LDY	TURRET_2
 ;;;		JSR	UG_CHECK
 ;;;		BNE	UG_2
-;;;		LDA	#H'FF
+;;;		LDA	#$FF
 ;;;		STA	TURRET_2
 ;;;UG_2:		
 ;;;		LDA	#32
@@ -5500,7 +5502,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		LDY	TURRET_3
 ;;;		JSR	UG_CHECK
 ;;;		BNE	UG_3
-;;;		LDA	#H'FF
+;;;		LDA	#$FF
 ;;;		STA	TURRET_3
 ;;;UG_3:		
 ;;;		LDA	#48
@@ -5508,7 +5510,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		LDY	TURRET_4
 ;;;		JSR	UG_CHECK
 ;;;		BNE	UG_DONE
-;;;		LDA	#H'FF
+;;;		LDA	#$FF
 ;;;		STA	TURRET_4
 ;;;UG_DONE:
 ;;;		LDA	#1
@@ -5516,7 +5518,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;UG_CHECK:
 ;;;		BMI	UG_DONE
 ;;;		LDA	GUN_STAT,Y
-;;;		AND	#H'40		;onscreen?
+;;;		AND	#$40		;onscreen?
 ;;;		BNE	UG_SET
 ;;;		LDA	#0
 ;;;		RTS
@@ -5545,34 +5547,34 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		BEQ	UG_P0B
 ;;;		BMI	UG_P0A
 ;;;		LDA	GUN_XH,Y
-;;;		CMP	#H'5E
+;;;		CMP	#$5E
 ;;;		BCC	UG_REM
 ;;;		JMP	UG_P0B
 ;;;UG_P0A:	 	
 ;;;		LDA	GUN_XH,Y
-;;;		CMP	#H'A0
+;;;		CMP	#$A0
 ;;;		BCS	UG_REM
 ;;;UG_P0B:		
 ;;;		LDA	PSHPYVEL
 ;;;		BEQ	UG_P0D
 ;;;		BMI	UG_P0C
 ;;;		LDA	GUN_YH,Y
-;;;		CMP	#H'5E
+;;;		CMP	#$5E
 ;;;		BCC	UG_REM
 ;;;		JMP	UG_P0D
 ;;;UG_P0C:
 ;;;		LDA	GUN_YH,Y
-;;;       		CMP	#H'A0
+;;;       		CMP	#$A0
 ;;;		BCS	UG_REM
 ;;;UG_P0D:
 ;;;		JSR	UG_POS
 ;;;		LDA	GUN_STAT,Y
-;;;		AND	#H'20		;exploding?
+;;;		AND	#$20		;exploding?
 ;;;		BEQ	UG_P0
 ;;;		JMP	UG_EXPL
 ;;;
 ;;;UG_REM:		LDA	GUN_STAT,Y
-;;;		AND	#H'80		;alive?
+;;;		AND	#$80		;alive?
 ;;;		BNE	UGR_1
 ;;;;---DEAD!
 ;;;UGE_REM:	LDA	#0
@@ -5584,24 +5586,24 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;UGR_0:		DEC	TURRETS
 ;;;
 ;;;UGR_1:		LDX	LOGIC_X
-;;;		LDA	#H'F8
+;;;		LDA	#$F8
 ;;;		STA	GUN_SPR0,X
 ;;;		STA	GUN_SPR0+4,X
 ;;;		STA	GUN_SPR0+8,X
 ;;;		STA	GUN_SPR0+12,X
 ;;;		LDA	GUN_STAT,Y
-;;;		AND	#H'BF		;kill onscreen bit?
+;;;		AND	#$BF		;kill onscreen bit?
 ;;;		STA	GUN_STAT,Y
 ;;;UGR_A:		LDA	#0
 ;;;		RTS
 ;;;
 ;;;UG_P0:		LDA	GUN_STAT,Y
-;;;		AND	#H'80		;alive?
+;;;		AND	#$80		;alive?
 ;;;		BEQ	UGR_A
 ;;;;ALIVE...
 ;;;		LDA	TIMER0
-;;;		AND	#H'0F
-;;;		CMP	#H'0F
+;;;		AND	#$0F
+;;;		CMP	#$0F
 ;;;		BEQ	UG_P1
 ;;;		LDX	GUN_PHASE,Y
 ;;;		JMP	UG_C1
@@ -5613,7 +5615,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;UG_P2:
 ;;;		LDX	GUN_PHASE,Y
 ;;;		INX
-;;;		CPX	#H'0D
+;;;		CPX	#$0D
 ;;;		BCC	UG_CHAR
 ;;;		LDX	#0
 ;;;UG_CHAR:
@@ -5626,8 +5628,8 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		CMP	#4
 ;;;		BNE	UG_F1
 ;;;		LDA 	TIMER0
-;;;		AND	#H'07
-;;;		CMP	#H'07
+;;;		AND	#$07
+;;;		CMP	#$07
 ;;;		BNE	UG_F1
 ;;;		JSR	UG_FIRE
 ;;;		JMP	UG_DONE
@@ -5639,8 +5641,8 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		JMP	UG_DONE
 ;;;UG_F1A:
 ;;;		LDA 	TIMER0
-;;;		AND	#H'07
-;;;		CMP	#H'07
+;;;		AND	#$07
+;;;		CMP	#$07
 ;;;		BEQ	UG_F2
 ;;;		JMP	UG_DONE
 ;;;UG_F2:
@@ -5648,12 +5650,12 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		JMP	UG_DONE
 ;;;
 ;;;UG_EXPL:	LDA	GUN_STAT, Y
-;;;		AND	#H'1F	   	;mask off explosion counter
+;;;		AND	#$1F	   	;mask off explosion counter
 ;;;		SEC
 ;;;		SBC	#1
 ;;;		STA	COUNT0
 ;;;		LDA	GUN_STAT, Y
-;;;		AND	#H'E0
+;;;		AND	#$E0
 ;;;		ORA	COUNT0
 ;;;		STA	GUN_STAT, Y
 ;;;		LDA	COUNT0
@@ -5667,17 +5669,17 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		RTS
 ;;;
 ;;;UG_POS:		LDA	GUN_XH,Y
-;;;		CMP	#H'5F
+;;;		CMP	#$5F
 ;;;		BCC	UGPOSREM
-;;;		CMP	#H'9E		;WAS H'9F
+;;;		CMP	#$9E		;WAS  $9F
 ;;;		BCS	UGPOSREM
 ;;;		LDX	GUN_XL,Y
 ;;;		JSR	GET_POS
 ;;;		STA	TX
 ;;;		LDA	GUN_YH,Y
-;;;		CMP	#H'5F
+;;;		CMP	#$5F
 ;;;		BCC	UGPOSREM
-;;;		CMP	#H'9E		;WAS H'9F
+;;;		CMP	#$9E		;WAS  $9F
 ;;;		BCS	UGPOSREM
 ;;;		LDX	GUN_YL,Y
 ;;;		JSR	GET_POS
@@ -5707,7 +5709,7 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;		STA	LOGIC_AX
 ;;;		LDA	GUN_YH,Y
 ;;;		STA	LOGIC_AY
-;;;		LDA	#H'80
+;;;		LDA	#$80
 ;;;		STA	LOGIC_BX
 ;;;		STA	LOGIC_BY
 ;;;		JSR	LOAD_DISP
@@ -5749,11 +5751,11 @@ GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
 ;;;
 ;;;		LDA	#1		;palette
 ;;;		STA	GUN_SPR0+2,X
-;;;		LDA	#H'41
+;;;		LDA	#$41
 ;;;		STA	GUN_SPR0+6,X
-;;;		LDA	#H'C1
+;;;		LDA	#$C1
 ;;;		STA	GUN_SPR0+10,X
-;;;		LDA	#H'81
+;;;		LDA	#$81
 ;;;		STA	GUN_SPR0+14,X
 ;;;		RTS
 ;;;
@@ -5816,14 +5818,14 @@ INITSPR:
 
 ;compass -------------------------------
 
-		LDA	#H'D0		;y pos.	(was $DC, 05-17-90)
+		LDA	#$D0		;y pos.	(was $DC, 05-17-90)
 		STA	CMPSPR0+0
-		LDA	#H'7C		;x pos.
+		LDA	#$7C		;x pos.
 		STA	CMPSPR0+3
 
 ;player ship ---------------------------
 
-		LDA	#H'74		;x & y coords of upper left
+		LDA	#$74		;x & y coords of upper left
 		STA	TX
 		STA	TY
 		JSR	PSHPPTR		;set pointers into SPRTBL
@@ -5847,7 +5849,7 @@ ESHPPTR:
 		TAY
 		LDA	EINDEX, Y	;get offset into SPRTBLs
 		CLC
-		ADC	#SHOTSPR0 & H'FF
+		ADC	#<(SHOTSPR0)
 		STA	SPR0PTR
 		LDY	TY
 		RTS
@@ -5858,11 +5860,11 @@ EINDEX:
 ;adjustments for max. no. of shots) for appropriate enemy no.
 ;add to SHOTSPR0 to adjust for SPRTBL...
 
-		.DB	H'30, H'40, H'50, H'60
-		.DB	H'1C, H'2C, H'3C, H'4C
-		.DB	H'2C, H'3C, H'4C, H'FF
-		.DB	H'28, H'4C, H'FF, H'FF
-		.DB	H'1C, H'2C, H'3C, H'4C
+		.byte	 $30,  $40,  $50,  $60
+		.byte	 $1C,  $2C,  $3C,  $4C
+		.byte	 $2C,  $3C,  $4C,  $FF
+		.byte	 $28,  $4C,  $FF,  $FF
+		.byte	 $1C,  $2C,  $3C,  $4C
 
 
 
@@ -5896,11 +5898,11 @@ ESIZE:
 ;A "size" of -1 means the enemy no. is invalid for the
 ;current EMODE...
 
-		.DB	0,  0,  0,  0	;4 small
-		.DB	0,  0,  0,  1	;3 small & 1 large
-		.DB	0,  0,  1, -1	;2 small & 1 large
-		.DB	1,  1, -1, -1	;2 large
-		.DB	0,  0,  0, -1	;3 small & extra space station
+		.byte	0,  0,  0,  0	;4 small
+		.byte	0,  0,  0,  1	;3 small & 1 large
+		.byte	0,  0,  1, -1	;2 small & 1 large
+		.byte	1,  1, -1, -1	;2 large
+		.byte	0,  0,  0, -1	;3 small & extra space station
 
 
 
@@ -5912,7 +5914,7 @@ PSHPPTR:
 
 ;sets (constant) pointers into SPRTBLs for player ship
 
-		LDA	#PLYRSPR0 & H'FF
+		LDA	#<(PLYRSPR0)
 		STA	SPR0PTR
 		RTS
 
@@ -5987,7 +5989,7 @@ EXPL3X3:
 		STA	SPRTBL0+12, Y	;y4
 		STA	SPRTBL0+16, Y	;y5
 
-		LDA	#H'F8		;place excess off-screen
+		LDA	#$F8		;place excess off-screen
 		STA	SPRTBL0+ 8, Y	;y3
 		STA	SPRTBL0+20, Y	;y6
 		STA	SPRTBL0+24, Y	;y7
@@ -6131,18 +6133,18 @@ EXPL2:		LDA	SHIPEXPL, Y	;explosion tick
 
 YPOSADJ:
 
-;given a Y-coord. (h'00..h'F8), add 8 and clip to
-;h'F8 or less...
+;given a Y-coord. ( $00.. $F8), add 8 and clip to
+; $F8 or less...
 
-		CMP 	#H'F8		;already off-screen?
+		CMP 	#$F8		;already off-screen?
 		BCS	YPOSFIX
 
 		CLC
 		ADC	#8
-		CMP	#H'F8
+		CMP	#$F8
 		BCC	YPOSEND		;ok!
 
-YPOSFIX:	LDA	#H'F8
+YPOSFIX:	LDA	#$F8
 
 YPOSEND:	RTS
 
@@ -6150,14 +6152,14 @@ YPOSEND:	RTS
 
 XPOSADJ:
 
-;give an X-coord. (h'00..h'FF), add 8 and clip
+;give an X-coord. ( $00.. $FF), add 8 and clip
 ;(i.e., no wrap...)
 
 		CLC
 		ADC	#8
 		BCC	XPOSEND
 
-		LDA	#H'FF
+		LDA	#$FF
 
 XPOSEND:	RTS
 
@@ -6477,24 +6479,24 @@ DRAW3X3:
 		RTS
 
 
-LGCH1:		.DB	H'00,H'03,H'06,H'09,H'0C,H'49,H'46,H'43
-		.DB	H'40,H'45,H'48,H'4B,H'4E,H'0B,H'08,H'05
-LGCH2:		.DB	H'01,H'04,H'07,H'0A,H'0D,H'4A,H'47,H'44
-		.DB	H'41,H'44,H'47,H'4A,H'4D,H'0A,H'07,H'04
-LGCH3:		.DB	H'02,H'05,H'08,H'0B,H'0E,H'4B,H'48,H'45
-		.DB	H'42,H'43,H'46,H'49,H'4C,H'09,H'06,H'03
-LGCH4:		.DB	H'20,H'23,H'26,H'29,H'2C,H'29,H'26,H'23
-		.DB	H'20,H'25,H'28,H'2B,H'2E,H'2B,H'28,H'25
-LGCH5:		.DB	H'21,H'24,H'27,H'2A,H'2D,H'2A,H'27,H'24
-		.DB	H'21,H'24,H'27,H'2A,H'2D,H'2A,H'27,H'24
-LGCH6:		.DB	H'22,H'25,H'28,H'2B,H'2E,H'2B,H'28,H'25
-		.DB	H'22,H'23,H'26,H'29,H'2C,H'29,H'26,H'23
-LGCH7:		.DB	H'40,H'43,H'46,H'49,H'4C,H'09,H'06,H'03
-		.DB	H'00,H'05,H'08,H'0B,H'0E,H'4B,H'48,H'45
-LGCH8:		.DB	H'41,H'44,H'47,H'4A,H'4D,H'0A,H'07,H'04
-		.DB	H'01,H'04,H'07,H'0A,H'0D,H'4A,H'47,H'44
-LGCH9:		.DB	H'42,H'45,H'48,H'4B,H'4E,H'0B,H'08,H'05
-		.DB	H'02,H'03,H'06,H'09,H'0C,H'49,H'46,H'43
+LGCH1:		.byte	 $00, $03, $06, $09, $0C, $49, $46, $43
+		.byte	 $40, $45, $48, $4B, $4E, $0B, $08, $05
+LGCH2:		.byte	 $01, $04, $07, $0A, $0D, $4A, $47, $44
+		.byte	 $41, $44, $47, $4A, $4D, $0A, $07, $04
+LGCH3:		.byte	 $02, $05, $08, $0B, $0E, $4B, $48, $45
+		.byte	 $42, $43, $46, $49, $4C, $09, $06, $03
+LGCH4:		.byte	 $20, $23, $26, $29, $2C, $29, $26, $23
+		.byte	 $20, $25, $28, $2B, $2E, $2B, $28, $25
+LGCH5:		.byte	 $21, $24, $27, $2A, $2D, $2A, $27, $24
+		.byte	 $21, $24, $27, $2A, $2D, $2A, $27, $24
+LGCH6:		.byte	 $22, $25, $28, $2B, $2E, $2B, $28, $25
+		.byte	 $22, $23, $26, $29, $2C, $29, $26, $23
+LGCH7:		.byte	 $40, $43, $46, $49, $4C, $09, $06, $03
+		.byte	 $00, $05, $08, $0B, $0E, $4B, $48, $45
+LGCH8:		.byte	 $41, $44, $47, $4A, $4D, $0A, $07, $04
+		.byte	 $01, $04, $07, $0A, $0D, $4A, $47, $44
+LGCH9:		.byte	 $42, $45, $48, $4B, $4E, $0B, $08, $05
+		.byte	 $02, $03, $06, $09, $0C, $49, $46, $43
 
 
 
@@ -6550,14 +6552,14 @@ DRAW2X2:
 		RTS
 
 
-SMCH1: 		.DB	H'00,H'02,H'04,H'06,H'08,H'26,H'24,H'22
-		.DB	H'20,H'23,H'25,H'27,H'29,H'07,H'05,H'03
-SMCH2:		.DB	H'01,H'03,H'05,H'07,H'09,H'27,H'25,H'23
-		.DB	H'21,H'22,H'24,H'26,H'28,H'06,H'04,H'02
-SMCH3:		.DB	H'20,H'22,H'24,H'26,H'28,H'06,H'04,H'02
-		.DB	H'00,H'03,H'05,H'07,H'09,H'27,H'25,H'23
-SMCH4:		.DB	H'21,H'23,H'25,H'27,H'29,H'07,H'05,H'03
-		.DB	H'01,H'02,H'04,H'06,H'08,H'26,H'24,H'22
+SMCH1: 		.byte	 $00, $02, $04, $06, $08, $26, $24, $22
+		.byte	 $20, $23, $25, $27, $29, $07, $05, $03
+SMCH2:		.byte	 $01, $03, $05, $07, $09, $27, $25, $23
+		.byte	 $21, $22, $24, $26, $28, $06, $04, $02
+SMCH3:		.byte	 $20, $22, $24, $26, $28, $06, $04, $02
+		.byte	 $00, $03, $05, $07, $09, $27, $25, $23
+SMCH4:		.byte	 $21, $23, $25, $27, $29, $07, $05, $03
+		.byte	 $01, $02, $04, $06, $08, $26, $24, $22
 
 
 
@@ -6615,7 +6617,7 @@ REM3X3:
 
 		LDY	SPR0PTR
 
-		LDA	#H'F8		;just off-screen
+		LDA	#$F8		;just off-screen
 		STA	SPRTBL0+ 0, Y	;y1
 		STA	SPRTBL0+ 4, Y	;y2
 		STA	SPRTBL0+ 8, Y	;y3
@@ -6650,7 +6652,7 @@ REM2X2:
 
 		LDY	SPR0PTR
 
-		LDA	#H'F8
+		LDA	#$F8
 		STA	SPRTBL0+ 0, Y	;y1
 		STA	SPRTBL0+ 4, Y	;y2
 		STA	SPRTBL0+ 8, Y	;y3
@@ -6675,7 +6677,7 @@ REMENEMY:
 
 		JSR	ESHPPTR		;set pointers
 
-		LDA	#H'F8		;set Y-coord. to off-screen
+		LDA	#$F8		;set Y-coord. to off-screen
 		STA	TY
 
 		JSR	GETESIZE
@@ -6708,17 +6710,17 @@ BOX2X2:
 ;screen pos. (A, Y)
 
 		CLC
-		ADC	#H'02
+		ADC	#$02
 		STA	OBJ1_LT
 		CLC
-		ADC	#H'0C
+		ADC	#$0C
 		STA	OBJ1_RT
 		TYA
 		CLC
-		ADC	#H'02
+		ADC	#$02
 		STA	OBJ1_TOP
 		CLC
-		ADC	#H'0C
+		ADC	#$0C
 		STA	OBJ1_BOT
 		RTS
 
@@ -6728,17 +6730,17 @@ BOX3X3:
 ;screen pos. (A, Y)
 
 		CLC
-		ADC	#H'04
+		ADC	#$04
 		STA	OBJ1_LT
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	OBJ1_RT
 		TYA
 		CLC
-		ADC	#H'04
+		ADC	#$04
 		STA	OBJ1_TOP
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	OBJ1_BOT
 		RTS
 
@@ -6804,98 +6806,98 @@ BOXPLYR:
 
 ;THE FOLLOWING EQUATES ARE USED TO MAKE MUSIC STRINGS.
 
-.EQU	LC,		H'00
-.EQU	LCs,		H'01
-.EQU	LDb,		H'01
-.EQU	LD,		H'02
-.EQU	LDs,		H'03
-.EQU	LEb,		H'03
-.EQU	LE,		H'04
-.EQU	LF,		H'05
-.EQU	LFs,		H'06
-.EQU	LGb,		H'06
-.EQU	LG,		H'07
-.EQU	LGs,		H'08
-.EQU	LAb,		H'08
-.EQU	LA,		H'09
-.EQU	LAs,		H'0A
-.EQU	LBb,		H'0A
-.EQU	LB,		H'0B
-.EQU	C,		H'0C
-.EQU	Cs,		H'0D
-.EQU	Db,		H'0D
-.EQU	D,		H'0E
-.EQU	Ds,		H'0F		
-.EQU	Eb,		H'0F
-.EQU	E,		H'10
-.EQU	F,		H'11
-.EQU	Fs,		H'12
-.EQU	Gb,		H'12
-.EQU	G,		H'13	;NOTES (center around instrument range)
-.EQU	Gs,		H'14
-.EQU	Ab,		H'14
-.EQU	Ax,		H'15	;Special Case.  'A' is register!
-.EQU	As,		H'16
-.EQU	Bb,		H'16
-.EQU	B,		H'17
-.EQU	HC,		H'18
-.EQU	HCs,		H'19	;s = sharp (#)
-.EQU	HDb,		H'19	;b = flat
-.EQU	HD,		H'1A
-.EQU	HDs,		H'1B
-.EQU	HEb,		H'1B
-.EQU	HE,		H'1C
-.EQU	HF,		H'1D
-.EQU	HFs,		H'1E
-.EQU	HGb,		H'1E
-.EQU	PAUSE,		H'1F
+.define	LC 		 $00
+.define	LCs 		 $01
+.define	LDb 		 $01
+.define	LD 		 $02
+.define	LDs 		 $03
+.define	LEb 		 $03
+.define	LE 		 $04
+.define	LF 		 $05
+.define	LFs 		 $06
+.define	LGb 		 $06
+.define	LG 		 $07
+.define	LGs 		 $08
+.define	LAb 		 $08
+.define	LA 		 $09
+.define	LAs 		 $0A
+.define	LBb 		 $0A
+.define	LB 		 $0B
+.define	C 		 $0C
+.define	Cs 		 $0D
+.define	Db 		 $0D
+.define	D 		 $0E
+.define	Ds 		 $0F		
+.define	Eb 		 $0F
+.define	E 		 $10
+.define	F 		 $11
+.define	Fs 		 $12
+.define	Gb 		 $12
+.define	G 		 $13	;NOTES (center around instrument range)
+.define	Gs 		 $14
+.define	Ab 		 $14
+.define	Ax 		 $15	;Special Case.  'A' is register!
+.define	As 		 $16
+.define	Bb 		 $16
+.define	B 		 $17
+.define	HC 		 $18
+.define	HCs 		 $19	;s = sharp (#)
+.define	HDb 		 $19	;b = flat
+.define	HD 		 $1A
+.define	HDs 		 $1B
+.define	HEb 		 $1B
+.define	HE 		 $1C
+.define	HF 		 $1D
+.define	HFs 		 $1E
+.define	HGb 		 $1E
+.define	PAUSE 		 $1F
 
-.EQU	N16,		B'00000000	;NOTE DURATIONS:
-.EQU	N8,		B'00100000	;  Use by adding (Gs+N16)
-.EQU	N4,		B'01000000
-.EQU	N2,		B'01100000
-.EQU	N1,		B'10000000
+.define	N16 		 %00000000	;NOTE DURATIONS:
+.define	N8 		 %00100000	;  Use by adding (Gs+N16)
+.define	N4 		 %01000000
+.define	N2 		 %01100000
+.define	N1 		 %10000000
 
-.EQU	BASE_HARPSI,	B'10100000
-.EQU	HARPSI,		B'10100001
-.EQU	HIGH_HARPSI,	B'10100010
-.EQU	BASE_STRING,	B'10100011
-.EQU	STRING,		B'10100100
-.EQU	HIGH_STRING,	B'10100101
-.EQU	BASE_ELECPIANO,	B'10100110
-.EQU	ELECPIANO,	B'10100111
-.EQU	HIGH_ELECPIANO,	B'10101000	;INSTRUMENT SELECT COMMANDS
-.EQU	BASE_SLIDER,	B'10101001
-.EQU	SLIDER,		B'10101010
-.EQU	HIGH_SLIDER,	B'10101011
-.EQU	BASE_BEE,	B'10101100
-.EQU	BEE,		B'10101101
-.EQU	HIGH_BEE,	B'10101110
-.EQU	BASE_PIANO,	B'10101111
-.EQU	PIANO,		B'10110000
-.EQU	HIGH_PIANO,	B'10110001
-.EQU	BASE_ARCADE,	B'10110010
-.EQU	ARCADE,		B'10110011
-.EQU	HIGH_ARCADE,	B'10110100
+.define	BASE_HARPSI 	 %10100000
+.define	HARPSI 		 %10100001
+.define	HIGH_HARPSI 	 %10100010
+.define	BASE_STRING 	 %10100011
+.define	STRING 		 %10100100
+.define	HIGH_STRING 	 %10100101
+.define	BASE_ELECPIANO 	 %10100110
+.define	ELECPIANO 	 %10100111
+.define	HIGH_ELECPIANO 	 %10101000	;INSTRUMENT SELECT COMMANDS
+.define	BASE_SLIDER 	 %10101001
+.define	SLIDER 		 %10101010
+.define	HIGH_SLIDER 	 %10101011
+.define	BASE_BEE 	 %10101100
+.define	BEE 		 %10101101
+.define	HIGH_BEE 	 %10101110
+.define	BASE_PIANO 	 %10101111
+.define	PIANO 		 %10110000
+.define	HIGH_PIANO 	 %10110001
+.define	BASE_ARCADE 	 %10110010
+.define	ARCADE 		 %10110011
+.define	HIGH_ARCADE 	 %10110100
 
 
-.EQU	VOICE0,		B'11100000	;used to select a register
-.EQU	VOICE1,		B'11100001	;set (voice).
-.EQU	VOICE2,		B'11100010
-.EQU	VOICE3,		B'11100011
+.define	VOICE0 		 %11100000	;used to select a register
+.define	VOICE1 		 %11100001	;set (voice).
+.define	VOICE2 		 %11100010
+.define	VOICE3 		 %11100011
 
-.EQU	REPLAY,		B'11100100	;used to repeat a sound string
-.EQU	ENDPLAY,	B'11101000	;used to end a sound string
+.define	REPLAY 		 %11100100	;used to repeat a sound string
+.define	ENDPLAY 	 %11101000	;used to end a sound string
 
-.EQU	LOADREG0,	B'11101100	;used to hard code loading
-.EQU	LOADREG1,	B'11101101	;of registers in currently
-.EQU	LOADREG2,	B'11101110	;selected register set (voice).
-.EQU	LOADREG3 ,	B'11101111
+.define	LOADREG0 	 %11101100	;used to hard code loading
+.define	LOADREG1 	 %11101101	;of registers in currently
+.define	LOADREG2 	 %11101110	;selected register set (voice).
+.define	LOADREG3  	 %11101111
 
-.EQU	STOPVOICE,	B'11110000	;silence a voice
-.EQU	STARTVOICE,	B'11110100 	;activate a voice
+.define	STOPVOICE 	 %11110000	;silence a voice
+.define	STARTVOICE 	 %11110100 	;activate a voice
 
-.EQU	COMPLEX,	B'11111100	;select the complex generator
+.define	COMPLEX 	 %11111100	;select the complex generator
 
 
 
@@ -6928,7 +6930,7 @@ PL20:	LDA	#1
 	LDA	SUBSVAR2
 	STA	SND_RAM+SBH,X
 	STA	SND_RAM+SOH,X	;SET HIGH OFFSET
-	LDA	#H'C0
+	LDA	#$C0
 	STA	SND_RAM+SF,X	;SET AS ACTIVE SOUND STRUCTURE BUT NO REG.
 	RTS
 
@@ -6967,7 +6969,7 @@ SL20:  	LDA	SND_RAM+SF,X	;GET THE FLAG BYTE
 ;WE FIND.
 
 	TAY			;SAVE A COPY
-	AND	#H'60		;SEE IF NOT ASSIGNED OR IF SUSPENDED
+	AND	#$60		;SEE IF NOT ASSIGNED OR IF SUSPENDED
 	BEQ	SL25		;SKIP IF TRULY ACTIVE
 	LDA	#0
 	STA	SND_RAM+SF,X	;IF INACTIVE, JUST FREE IT UP
@@ -6979,7 +6981,7 @@ SL25:  	JSR	DISABLE_VOICE	;IF ACTIVE, DISABLE IT'S VOICE
 	LDA	#0
 	STA	SND_RAM+SF,X	;FREE UP THIS SOUND STRUCTURE
 	PLA
-	AND	#H'1F		;KEEP BASE OF REGISTERS IN USE
+	AND	#$1F		;KEEP BASE OF REGISTERS IN USE
 	STA	SUBSVAR1	;SAVE HERE FOR COMPARE TO ONES WE FIND
 
 	LDX	#0		;START AT LOWEST SLOT
@@ -6989,16 +6991,16 @@ SL30:	TXA
 	LDA	SND_RAM+SF,X	;GET ITS FLAG BYTE
 	BPL	SL42		;IF NOT IN USE, SKIP IT
 
-	AND	#H'20		;SEE IF SUSPENDED
+	AND	#$20		;SEE IF SUSPENDED
 	BEQ	SL42		;WE DON'T CARE UNLESS IT IS
 	LDA	SND_RAM+SF,X
-	AND	#H'1F		;GET THE VOICE IT WAS USING
+	AND	#$1F		;GET THE VOICE IT WAS USING
 	EOR	SUBSVAR1	;SEE IF SAME AS OURS
 	BNE	SL42		;IF NOT, WE DON'T CARE
 	PLA			;IF IT WAS, DISCARD SLOT INDEX
 	JSR	INITSND		;AND INITIALIZE IT
 	LDA	SND_RAM+SF,X
-	AND	#H'DF
+	AND	#$DF
 	STA	SND_RAM+SF,X	;AND MARK AS NOT SUSPENDED ANY MORE
 	JMP	SL50
 
@@ -7018,27 +7020,27 @@ SL50:	LDA	#0
 
 
 INSTRUMENTS:	
-.DB	H'C0,H'00          		;BASE_HARPSI
-.DB	H'C0,H'00          		;HARPSI
-.DB	H'C0,H'00          		;HIGH_HARPSI    
-.DB	H'80,H'00          		;BASE_STRING
-.DB	H'80,H'00          		;STRING
-.DB	H'80,H'00          		;HIGH_STRING    
-.DB	H'00,H'00          		;BASE_ELECPIANO
-.DB	H'00,H'00          		;ELECPIANO
-.DB	H'00,H'00          		;HIGH_ELECPIANO
-.DB	H'80,H'FF          		;BASE_SLIDER
-.DB	H'80,H'FF          		;SLIDER
-.DB	H'80,H'FF          		;HIGH_SLIDER   
-.DB	H'00,H'D6          		;BASE_BEE
-.DB	H'00,H'D6          		;BEE
-.DB	H'00,H'D6          		;HIGH_BEE
-.DB	H'40,H'00          		;BASE_PIANO
-.DB	H'40,H'00          		;PIANO
-.DB	H'40,H'00          		;HIGH_PIANO
-.DB 	H'80,H'C9			;BASE_ARCADE
-.DB 	H'80,H'C9			;ARCADE
-.DB 	H'80,H'C9			;HIGH ARCADE
+.byte	 $C0, $00          		;BASE_HARPSI
+.byte	 $C0, $00          		;HARPSI
+.byte	 $C0, $00          		;HIGH_HARPSI    
+.byte	 $80, $00          		;BASE_STRING
+.byte	 $80, $00          		;STRING
+.byte	 $80, $00          		;HIGH_STRING    
+.byte	 $00, $00          		;BASE_ELECPIANO
+.byte	 $00, $00          		;ELECPIANO
+.byte	 $00, $00          		;HIGH_ELECPIANO
+.byte	 $80, $FF          		;BASE_SLIDER
+.byte	 $80, $FF          		;SLIDER
+.byte	 $80, $FF          		;HIGH_SLIDER   
+.byte	 $00, $D6          		;BASE_BEE
+.byte	 $00, $D6          		;BEE
+.byte	 $00, $D6          		;HIGH_BEE
+.byte	 $40, $00          		;BASE_PIANO
+.byte	 $40, $00          		;PIANO
+.byte	 $40, $00          		;HIGH_PIANO
+.byte 	 $80, $C9			;BASE_ARCADE
+.byte 	 $80, $C9			;ARCADE
+.byte 	 $80, $C9			;HIGH ARCADE
 
 ;THIS ROUTINE WILL GO THROUGH THE SOUND SLOTS AND WILL FEED THE NEXT
 ;CORRECT DATA TO THE SOUND CHIP ACCORDING TO THE ACTIVE SLOTS.  IT SHOULD
@@ -7077,8 +7079,8 @@ FS50:  	LDA	SND_RAM+SOL,X		;GET LOW OFFSET OF NEXT BYTE TO USE
 ;PROCESS NEXT COMMAND FOR THIS SOUND SLOT.
 
 FS60:	LDA	(SUBSVAR1),Y
-	AND	#B'11100000		;SEE IF JUST A NOTE
-	CMP	#B'10100000		;NOTES END BELOW THIS
+	AND	#%11100000		;SEE IF JUST A NOTE
+	CMP	#%10100000		;NOTES END BELOW THIS
 	BCS	FS200
 
 ;JUST ANOTHER NOTE TO PLAY.
@@ -7095,7 +7097,7 @@ FS60:	LDA	(SUBSVAR1),Y
 	STA	PTR3L+1		;MAKE POINTER TO FREQUENCY TABLE
 	LDY	#0
 	LDA	(SUBSVAR1),Y		;GET NOTE TO USE
-	AND	#H'1F
+	AND	#$1F
 	CMP	#PAUSE			;SILENCE?
 	BEQ	FS70
 	ASL	A			;MAKE INDEX FROM IT
@@ -7111,13 +7113,13 @@ FS70:  	JSR	INC_INDX
 	
 ;ITS A SPECIAL COMMAND.
 
-FS200:	CMP	#B'10100000	;SELECT INSTRUMENT?
+FS200:	CMP	#%10100000	;SELECT INSTRUMENT?
 	BNE	FS220
 	LDA	(SUBSVAR1),Y	;GET BACK INSTRUMENT
-	AND	#H'1F
+	AND	#$1F
 	STA	SND_RAM+SI,X	;PUT INTO SLOT
 	LDA	SND_RAM+SF,X	;SEE IF SUSPENDED OR NO BASE
-	AND	#H'60
+	AND	#$60
 	BNE	FS210
 	JSR	INITSND		;INITIALIZE FOR THIS INSTRUMENT
 
@@ -7130,7 +7132,7 @@ FS210:	JSR	INC_INDX
 	
 ;ABSOLUTE FREQUENCY LOAD?
 
-FS220:	CMP	#B'11000000	;LOAD FREQUENCY?
+FS220:	CMP	#%11000000	;LOAD FREQUENCY?
 	BNE	FS240
 
 	LDA	(SUBSVAR1),Y	;GET NOTE DURATION
@@ -7155,8 +7157,8 @@ FS220:	CMP	#B'11000000	;LOAD FREQUENCY?
 ;EXTENDED COMMAND.
 
 FS240:	LDA	(SUBSVAR1),Y	;GET THE EXTENDED BITS
-	AND	#B'00011111	;KEEP THEM AND THE DATA BITS TOO.
-	CMP	#B'00000011+1	;SEE IF SPECIFY VOICE COMMAND
+	AND	#%00011111	;KEEP THEM AND THE DATA BITS TOO.
+	CMP	#%00000011+1	;SEE IF SPECIFY VOICE COMMAND
 	BCS	FS260
 
 	AND	#3		;GET THE VOICE TO USE
@@ -7165,11 +7167,11 @@ FS240:	LDA	(SUBSVAR1),Y	;GET THE EXTENDED BITS
 
 FS245: 	PHA			;SAVE VOICE BASE BITS
 	LDA	SND_RAM+SF,X	;GET CURRENT VALUE
-	AND	#H'E0		;REMOVE THE BITS THAT SELECT THE BASE REG
+	AND	#$E0		;REMOVE THE BITS THAT SELECT THE BASE REG
 	STA	SND_RAM+SF,X
 	PLA
 	ORA	SND_RAM+SF,X	;PUT NEW REGISTER BASE INTO THE FLAG BYTE
-	AND	#H'9F		;REMOVE REGISTER NOT SELECTED BIT AND SUSPEND
+	AND	#$9F		;REMOVE REGISTER NOT SELECTED BIT AND SUSPEND
 	STA	TMP_NMI1	;SAVE HERE FOR CHECK FOR OTHER'S USING IT
 	STA	SND_RAM+SF,X
 	STX	TMP_NMI2	;SAVE OUR INDEX
@@ -7179,7 +7181,7 @@ FS250:	LDA	SND_RAM+SF,X	;GET A FLAG BYTE
 	EOR	TMP_NMI1	;SEE IF THAT SOUND SLOT IS USING THIS VOICE
 	BNE	FS255
       	LDA	SND_RAM+SF,X
-	ORA	#H'20		;IF SO, SUSPEND HIM
+	ORA	#$20		;IF SO, SUSPEND HIM
 	STA	SND_RAM+SF,X
 FS255:	TXA
 	CLC
@@ -7194,7 +7196,7 @@ FS255:	TXA
 	JSR	ENABLE_VOICE	;AND ENABLE OUR VOICE
 	JMP	FS210
 
-FS260:	CMP	#B'00000111+1	;REPEAT LIST?
+FS260:	CMP	#%00000111+1	;REPEAT LIST?
 	BCS	FS280
 	LDA	SND_RAM+SBL,X
 	STA	SND_RAM+SOL,X
@@ -7203,7 +7205,7 @@ FS260:	CMP	#B'00000111+1	;REPEAT LIST?
 	JMP	FS210		;AND SKIP THIS COMMAND.
 
 
-FS280:	CMP	#B'00001011+1	;END LIST?
+FS280:	CMP	#%00001011+1	;END LIST?
 	BCS	FS300
 	TXA
 	PHA
@@ -7212,16 +7214,16 @@ FS280:	CMP	#B'00001011+1	;END LIST?
 	TAX
 	JMP	FS210
 
-FS300:	CMP	#B'00001111+1	;ABSOLUTE REG LOAD?
+FS300:	CMP	#%00001111+1	;ABSOLUTE REG LOAD?
 	BCS	FS320
 
 	LDA	SND_RAM+SF,X
-	AND	#H'60
+	AND	#$60
 	BEQ	FS310
 	JMP	FS210		;SKIP IT IF NOT SELECTED OR SUSPENDED
 
 FS310:	LDA	SND_RAM+SF,X	;GET REG BASE FOR THIS VOICE
-	AND	#H'1F		;KEEP THE REG OFFSET
+	AND	#$1F		;KEEP THE REG OFFSET
 	STA	SUBSVAR3
 	LDY	#0
 	LDA	(SUBSVAR1),Y	;GET LOW 2 BITS OF REG TO USE
@@ -7229,7 +7231,7 @@ FS310:	LDA	SND_RAM+SF,X	;GET REG BASE FOR THIS VOICE
 	CLC
 	ADC	SUBSVAR3	;MAKE IT INTO A POINTER
 	STA	PTR3L
-	LDA	#H'40
+	LDA	#$40
 	STA	PTR3L+1	;AND POINT TO THE REG AT 40XX
 	LDY	#1
 	LDA	(SUBSVAR1),Y	;GET VALUE TO USE
@@ -7238,19 +7240,19 @@ FS310:	LDA	SND_RAM+SF,X	;GET REG BASE FOR THIS VOICE
 	JSR	INC_INDX		;SKIP THE EXTRA BYTE WE USED
 	JMP	FS210	
 
-FS320:	CMP	#B'00010011+1	;DISABLE SOUND?
+FS320:	CMP	#%00010011+1	;DISABLE SOUND?
 	BCS	FS340
 	JSR	DISABLE_VOICE
 	JMP	FS210
 
-FS340:	CMP	#B'00010111+1	;ENABLE SOUND?
+FS340:	CMP	#%00010111+1	;ENABLE SOUND?
 	BCS	FS360
 	JSR	ENABLE_VOICE
 	JMP	FS210
 
-FS360:	CMP	#B'000110111+1	;USE COMPLEX VOICE?
+FS360:	CMP	#%000110111+1	;USE COMPLEX VOICE?
 	BCS	FS380
-	LDA	#H'10		;ITS BASE IS HERE
+	LDA	#$10		;ITS BASE IS HERE
 	JMP	FS245		;SHARE CODE WITH THE OTHER VOICE LOGIC
 
 ;COMMAND NOT RECOGNIZED.  JUST SKIP IT.
@@ -7265,17 +7267,17 @@ ENABLE_VOICE:
 	JSR	ENABLE_BIT
 	ORA	REG4015
 	STA	REG4015
-	STA	H'4015		;ENABLE IT AND SAVE VALUE FOR OTHERS TO REF.
+	STA	 $4015		;ENABLE IT AND SAVE VALUE FOR OTHERS TO REF.
 	RTS
 
 ;THIS ROUTINE WILL DISABLE A VOICE SIMILAR TO ENABLE VOICE.
 
 DISABLE_VOICE:
 	JSR	ENABLE_BIT
-	EOR	#H'FF
+	EOR	#$FF
 	AND	REG4015
 	STA	REG4015
-	STA	H'4015		;DISABLE IT AND SAVE STATE	
+	STA	 $4015		;DISABLE IT AND SAVE STATE	
 	RTS
 
 ;THIS ROUTINE WILL PUT AN ENABLE REGISTER BIT VALUE INTO A FOR THE SOUND
@@ -7283,7 +7285,7 @@ DISABLE_VOICE:
 
 ENABLE_BIT:
 	LDA	SND_RAM+SF,X	;GET THE REGISTERS TO USE
-	AND	#H'1F
+	AND	#$1F
 	LSR	A
 	LSR	A		;MAKE INTO UNIQUE NUMBER 0-4
 	TAY
@@ -7301,17 +7303,17 @@ EB20:	RTS
 ;THE SECOND IS THE VALUE TO PUT INTO THE SOUND CHIP DURATION REGISTER BITS.
 
 TIME_BASE:
-.DB	8,1			;1/16 NOTE
-.DB	16,5			;1/8 NOTE
-.DB	32,8			;1/4 NOTE
-.DB	64,15			;1/2 NOTE
-.DB	128,31			;WHOLE NOTE
+.byte	8,1			;1/16 NOTE
+.byte	16,5			;1/8 NOTE
+.byte	32,8			;1/4 NOTE
+.byte	64,15			;1/2 NOTE
+.byte	128,31			;WHOLE NOTE
 
 ;THIS ROUTINE WILL TAKE A NOTE DURATION (1/16, 1/8, 1/4, ETC) AS SPECIFIED
 ;IN THE TOP 3 BITS OF A AND WILL SET THE TIME COUNTER VALUE IN
 ;THE SOUND SLOT AND WILL ALSO SET UP THE SOUND REGISTER RESPONSIBLE FOR
 ;THE TIME.  THE SLOT INDEX MUST BE IN X.  THE VALUES IN THE HIGH 3 BITS OF 
-;A SHOULD RANGE FROM B'000 TO B'100.  IF THE SLOT IS SUSPENDED OR THE
+;A SHOULD RANGE FROM  %000 TO  %100.  IF THE SLOT IS SUSPENDED OR THE
 ;REGISTERS ARE NOT SELECTED, THIS ROUTINE WILL SET UP ONLY THE TIME
 ;BASE AND WILL NOT DO AN ACTUAL LOAD.
 
@@ -7324,13 +7326,13 @@ SET_DURATION:
 	LSR	A
 	LSR	A
 	LSR	A		;MOVE BITS DOWN TO MAKE *2 INDEX
-	AND	#H'FE		;MAKE SURE INDEX IS EVEN
+	AND	#$FE		;MAKE SURE INDEX IS EVEN
 	TAY			;USE INDEX HERE
 	LDA	TIME_BASE,Y	;GET THE TIME BASE FOR OUR SOUND STRUCTURE
 	STA	SND_RAM+ST,X	;RELOAD THE TIMER
 
 	LDA	SND_RAM+SF,X	;GET BACK THE FLAG
-	AND	#H'60		;SEE IF SUSPENDED OR NO REGS SELECTED
+	AND	#$60		;SEE IF SUSPENDED OR NO REGS SELECTED
 	BNE	SD60
 
 	INY
@@ -7338,9 +7340,9 @@ SET_DURATION:
 	STA	TMP_NMI1	;SAVE IT HERE
 
 	LDA	SND_RAM+SF,X	;GET REGISTER BASE
-	AND	#H'1F		;MAKE BASE REG
+	AND	#$1F		;MAKE BASE REG
 	STA	PTR3L
-	LDA	#H'40
+	LDA	#$40
 	STA	PTR3L+1	;INTO A POINTER WE CAN USE
 
 	LDA	SND_RAM+SI,X	;GET INSTRUMENT
@@ -7358,83 +7360,83 @@ SD60:	RTS
 
 FREQBASES:
 
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
-.DRW	LOW_FREQ,MID_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.word	LOW_FREQ,MID_FREQ
 
 ;THIS TABLE CONTAINS THE FREQUENCIES TO USE FOR SPECIFIC NOTES IN
 ;A MULTI-OCTIVE RANGE.  THERE ARE 3 REFERENCE POINTS INTO THE TABLE
 ;FOR USE WITH THE VARIOUS INSTRUMENTS.
 
 LOW_FREQ:
-.DRW	H'352		;C	
-.DRW	H'325		;C#	
-.DRW	H'2FD		;D	
-.DRW	H'2CC		;Eb	
-.DRW	H'2A7		;E	
-.DRW	H'27C		;F	
-.DRW	H'25A		;F#	
-.DRW	H'23B		;G	
-.DRW	H'213		;Ab	
-.DRW	H'1FD		;A	
-.DRW	H'1DE		;Bb	
-.DRW	H'1C6		;B	
+.word	 $352		;C	
+.word	 $325		;C#	
+.word	 $2FD		;D	
+.word	 $2CC		;Eb	
+.word	 $2A7		;E	
+.word	 $27C		;F	
+.word	 $25A		;F#	
+.word	 $23B		;G	
+.word	 $213		;Ab	
+.word	 $1FD		;A	
+.word	 $1DE		;Bb	
+.word	 $1C6		;B	
 
 MID_FREQ:
-.DRW	H'1AB		;C	
-.DRW	H'191		;C#	
-.DRW	H'17A		;D	
-.DRW	H'167		;Eb	
-.DRW	H'151		;E	
-.DRW	H'13F		;F	
-.DRW	H'12C		;F#	
-.DRW	H'11C		;G	
-.DRW	H'10D		;Ab	
-.DRW	H'FE 		;A	
-.DRW	H'EF 		;Bb	
-.DRW	H'E2 		;B	
+.word	 $1AB		;C	
+.word	 $191		;C#	
+.word	 $17A		;D	
+.word	 $167		;Eb	
+.word	 $151		;E	
+.word	 $13F		;F	
+.word	 $12C		;F#	
+.word	 $11C		;G	
+.word	 $10D		;Ab	
+.word	 $FE 		;A	
+.word	 $EF 		;Bb	
+.word	 $E2 		;B	
 
 HIGH_FREQ:
-.DRW	H'D5  		;MIDDLE C	
-.DRW	H'C8		;C#	
-.DRW	H'BE		;D	
-.DRW	H'B3		;Eb	
-.DRW	H'A9		;E	
-.DRW	H'9F		;F	
-.DRW	H'96		;F#	
-.DRW	H'8E		;G	
-.DRW	H'86		;Ab	
-.DRW	H'7E		;A	
-.DRW	H'77		;Bb	
-.DRW	H'70		;B	
-.DRW	H'6A		;C	
-.DRW	H'64		;C#	
-.DRW	H'5E		;D	
-.DRW	H'59		;Eb	
-.DRW	H'54		;E	
-.DRW	H'4F		;F	
-.DRW	H'4B		;F#	
-.DRW	H'46		;G	
-.DRW	H'42		;Ab	
-.DRW	H'3F		;A	
-.DRW	H'3B		;Bb	
-.DRW	H'38		;B	
-.DRW	H'34		;C	
-.DRW	H'32		;C#	
-.DRW	H'2F		;D	
-.DRW	H'2C		;Eb	
-.DRW	H'29		;E	
-.DRW	H'27		;F	
-.DRW	H'24		;F#	
-.DRW	H'23		;G	
+.word	 $D5  		;MIDDLE C	
+.word	 $C8		;C#	
+.word	 $BE		;D	
+.word	 $B3		;Eb	
+.word	 $A9		;E	
+.word	 $9F		;F	
+.word	 $96		;F#	
+.word	 $8E		;G	
+.word	 $86		;Ab	
+.word	 $7E		;A	
+.word	 $77		;Bb	
+.word	 $70		;B	
+.word	 $6A		;C	
+.word	 $64		;C#	
+.word	 $5E		;D	
+.word	 $59		;Eb	
+.word	 $54		;E	
+.word	 $4F		;F	
+.word	 $4B		;F#	
+.word	 $46		;G	
+.word	 $42		;Ab	
+.word	 $3F		;A	
+.word	 $3B		;Bb	
+.word	 $38		;B	
+.word	 $34		;C	
+.word	 $32		;C#	
+.word	 $2F		;D	
+.word	 $2C		;Eb	
+.word	 $29		;E	
+.word	 $27		;F	
+.word	 $24		;F#	
+.word	 $23		;G	
 
 ;THIS ROUTINE WILL TAKE A FREQUENCY IN SUBSVAR3 AND 4 AND WILL LOAD
 ;IT INTO THE SOUND CHIP POINTED TO BY THE SLOT INDEX IN X.  IT JUST
@@ -7443,13 +7445,13 @@ HIGH_FREQ:
 SET_FREQUENCY:
 
 	LDA	SND_RAM+SF,X	;GET BACK THE FLAG
-	AND	#H'60		;SEE IF SUSPENDED OR NO REGS SELECTED
+	AND	#$60		;SEE IF SUSPENDED OR NO REGS SELECTED
 	BNE	SQ60
 
 	LDA	SND_RAM+SF,X	;GET REGISTER BASE
-	AND	#H'1F		;MAKE BASE REG
+	AND	#$1F		;MAKE BASE REG
 	STA	PTR3L
-	LDA	#H'40
+	LDA	#$40
 	STA	PTR3L+1	;INTO A POINTER WE CAN USE
 
 	LDY	#2		;START WITH LOW REG LOAD
@@ -7483,9 +7485,9 @@ INITSND:
 	ASL	A		;MAKE *2 POINTER FROM IT
 	STA	SUBSVAR4	;SAVE IT HERE
 	LDA	SND_RAM+SF,X	;GET BASE
-	AND	#H'1F
+	AND	#$1F
 	STA	SUBSVAR1
-	LDA	#H'40
+	LDA	#$40
 	STA	SUBSVAR2	;MAKE FULL POINTER TO IT IN MEMORY
 
  	LDY	SUBSVAR4
@@ -7505,7 +7507,7 @@ CHK_SLNC:
 	BCS	SLNC_IT
 	LDX	#21
 	LDA	SND_RAM+SF,X
-	AND	#H'80
+	AND	#$80
 	BEQ	SLNC_IT
 	LDA	#0
 	RTS
@@ -7593,21 +7595,21 @@ SET_DIFF:
 		STX	TIME_DIFF
 		JSR	MUL_ADD	
 	  	BCS	SD_FIX
-		CMP	#H'48
+		CMP	#$48
 		BCC	SD_OK
 		
-SD_FIX:		LDA	#H'48		;maximum diff.
+SD_FIX:		LDA	#$48		;maximum diff.
 
 SD_OK:		STA	DIFF
 		RTS
 
 
-SD_PRAD:	LDA	#H'58
+SD_PRAD:	LDA	#$58
 		STA	DIFF
 		RTS
 
-MAXETBL:	.DB	 4,  4,  3,  2,  3	;maximum no. of enemies
-MAXSTBL:	.DB	12,  7, 11, 10,  7	;maximum no. of shots
+MAXETBL:	.byte	 4,  4,  3,  2,  3	;maximum no. of enemies
+MAXSTBL:	.byte	12,  7, 11, 10,  7	;maximum no. of shots
 	;index of 4 is used when 2 or more space stations exist
 	;in the current solar system
 
@@ -7631,7 +7633,7 @@ SDENS_B:
 		STA	DENSCOUNT
 		RTS
 DENSPRAD:
-		LDA	#H'60
+		LDA	#$60
 		JMP	SDENS_B
 
 MUL_ADD:
@@ -7687,7 +7689,7 @@ NEWVEL2:
 		CMP	#17
 		BCC	NEWVEL3		;<17 is pos.
 		LDA	TVELX
-		EOR	#H'FF
+		EOR	#$FF
 		STA	TVELX
 		INC	TVELX		;make neg. in 2's comp.
 
@@ -7699,67 +7701,67 @@ NEWVEL3:	LDA	(PTR2L), Y
 		CMP	#25
 		BCC	NEWVEL5		;>=8 and <25 is pos.
 NEWVEL4:	LDA	TVELY
-		EOR	#H'FF
+		EOR	#$FF
 		STA	TVELY
 		INC	TVELY		;make neg. in 2's comp.
 
 NEWVEL5:	RTS
 
 
-AXTL:	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
-	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
-	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
-	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
+AXTL:	.byte	AT0 & $FF, AT1 & $FF, AT2 & $FF, AT3 & $FF
+	.byte	AT4 & $FF, AT5 & $FF, AT6 & $FF, AT7 & $FF
+	.byte	AT8 & $FF, AT7 & $FF, AT6 & $FF, AT5 & $FF
+	.byte	AT4 & $FF, AT3 & $FF, AT2 & $FF, AT1 & $FF
 
-	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
-	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
-	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
-	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
-
-
-AXTH:	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
-	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
-	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
-	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
-
-	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
-	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
-	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
-	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+	.byte	AT0 & $FF, AT1 & $FF, AT2 & $FF, AT3 & $FF
+	.byte	AT4 & $FF, AT5 & $FF, AT6 & $FF, AT7 & $FF
+	.byte	AT8 & $FF, AT7 & $FF, AT6 & $FF, AT5 & $FF
+	.byte	AT4 & $FF, AT3 & $FF, AT2 & $FF, AT1 & $FF
 
 
-AYTL:	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
-	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
-	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
-	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+AXTH:	.byte	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.byte	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+	.byte	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.byte	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+
+	.byte	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.byte	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+	.byte	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.byte	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+
+
+AYTL:	.byte	AT8 & $FF, AT7 & $FF, AT6 & $FF, AT5 & $FF
+	.byte	AT4 & $FF, AT3 & $FF, AT2 & $FF, AT1 & $FF
+	.byte	AT0 & $FF, AT1 & $FF, AT2 & $FF, AT3 & $FF
+	.byte	AT4 & $FF, AT5 & $FF, AT6 & $FF, AT7 & $FF
      
-	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
-	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
-	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
-	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+	.byte	AT8 & $FF, AT7 & $FF, AT6 & $FF, AT5 & $FF
+	.byte	AT4 & $FF, AT3 & $FF, AT2 & $FF, AT1 & $FF
+	.byte	AT0 & $FF, AT1 & $FF, AT2 & $FF, AT3 & $FF
+	.byte	AT4 & $FF, AT5 & $FF, AT6 & $FF, AT7 & $FF
 
 
-AYTH:	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
-	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
-	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
-	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+AYTH:	.byte	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.byte	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+	.byte	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.byte	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
      
-	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
-	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
-	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
-	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+	.byte	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.byte	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+	.byte	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.byte	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
 
 
 
-AT8:	.DB	0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96,104,112,120
-AT7:   	.DB	0, 8, 16, 24, 31, 39, 47, 55, 63, 70, 78, 86, 94,102,110,117
-AT6:	.DB	0, 7, 15, 22, 30, 37, 44, 52, 60, 65, 74, 81, 89, 94,102,108
-AT5:	.DB	0, 7, 13, 20, 27, 33, 40, 47, 54, 60, 67, 75, 80, 87, 94,100
-AT4:	.DB	0, 6, 11, 17, 23, 28, 34, 40, 42, 51, 57, 62, 68, 74, 79, 85
-AT3:	.DB	0, 4,  9, 13, 18, 22, 27, 31, 36, 40, 44, 49, 53, 58, 62, 67
-AT2:	.DB	0, 3,  6,  9, 12, 15, 18, 21, 24, 28, 31, 34, 37, 40, 43, 46
-AT1:	.DB	0, 2,  3,  5,  6,  8,  9, 11, 12, 14, 16, 17, 19, 20, 22, 23
-AT0:	.DB	0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+AT8:	.byte	0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96,104,112,120
+AT7:   	.byte	0, 8, 16, 24, 31, 39, 47, 55, 63, 70, 78, 86, 94,102,110,117
+AT6:	.byte	0, 7, 15, 22, 30, 37, 44, 52, 60, 65, 74, 81, 89, 94,102,108
+AT5:	.byte	0, 7, 13, 20, 27, 33, 40, 47, 54, 60, 67, 75, 80, 87, 94,100
+AT4:	.byte	0, 6, 11, 17, 23, 28, 34, 40, 42, 51, 57, 62, 68, 74, 79, 85
+AT3:	.byte	0, 4,  9, 13, 18, 22, 27, 31, 36, 40, 44, 49, 53, 58, 62, 67
+AT2:	.byte	0, 3,  6,  9, 12, 15, 18, 21, 24, 28, 31, 34, 37, 40, 43, 46
+AT1:	.byte	0, 2,  3,  5,  6,  8,  9, 11, 12, 14, 16, 17, 19, 20, 22, 23
+AT0:	.byte	0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
 
 
 ;*******************************************
@@ -7770,7 +7772,7 @@ CHK_ARC:
 ; A = 1/2 "width" of arc.
 ; Y = "angle" to check (-15..31)
 ;
-; Returns #h'FF if (X-A) <= Y <= (X+A)
+; Returns #$FF if (X-A) <= Y <= (X+A)
 ;  (i.e., Y is inside the arc...)
 
 		STA	COUNT3		;temp. storage
@@ -7817,7 +7819,7 @@ CHK_ARC3:	LDA	#0
 
 ;Yes...
 
-CHK_ARC4:	LDA	#H'FF
+CHK_ARC4:	LDA	#$FF
 		RTS
 
 
@@ -7901,7 +7903,7 @@ ADJ_V4:	   	STY	T0		;save dir. of thrust...
 	   ;	LDA	TDIR
 	   ;	CLC
 	   ;	ADC	#16
-	   ;	AND	#H'1F
+	   ;	AND	#$1F
 	   ;	TAX
 	   ;	LDY	TSPD
 	   ;	LDA	AVEL_M1T, Y
@@ -7912,8 +7914,8 @@ ADJ_V4:	   	STY	T0		;save dir. of thrust...
 	   	LDY	T0		;dir of thrust
 	   	LDA	TDIR
 	   	CLC
-	   	ADC	#H'08
-	   	AND	#H'1F
+	   	ADC	#$08
+	   	AND	#$1F
 	   	TAX
 	   	LDA	#8
 	   	JSR	CHK_ARC
@@ -7925,7 +7927,7 @@ ADJ_V4:	   	STY	T0		;save dir. of thrust...
 	   ;	LDA	AVEL_ROT, Y
 	   ;	CLC
 	   ;	ADC	TDIR
-	   ;	AND	#H'1F
+	   ;	AND	#$1F
 	   ;	STA	TDIR
 
 	INC	TDIR
@@ -7938,7 +7940,7 @@ ADJ_V4:	   	STY	T0		;save dir. of thrust...
 	   ;	LDA	T0		;dir of thrust
 	   ;	CLC
 	   ;	ADC	#(32-8)
-	   ;	AND	#H'1F
+	   ;	AND	#$1F
 	   ;	TAX
 	   ;	LDA	#8
 	   ;	LDY	TDIR
@@ -7955,7 +7957,7 @@ ADJ_V6:	   ;	LDY	TSPD
 	   ;	LDA	TDIR
 	   ;	SEC
 	   ;	SBC	AVEL_ROT, Y
-	   ;	AND	#H'1F
+	   ;	AND	#$1F
 	   ;	STA	TDIR
 
 	DEC	TDIR
@@ -7967,7 +7969,7 @@ ADJ_V6:	   ;	LDY	TSPD
 	   ;	LDA	T0		;dir of thrust
 	   ;	CLC
 	   ;	ADC	#8
-	   ;	AND	#H'1F
+	   ;	AND	#$1F
 	   ;	TAX
 	   ;	LDA	#8
 	   ;	LDY	TDIR
@@ -8002,7 +8004,7 @@ ADJ_V8:		LDX	TDIR
 ADJ_V9:		LDA	TDIR
 		CLC
 		ADC	#16
-		AND	#H'1F
+		AND	#$1F
 		TAX
 		LDY	TSPD
 		LDA	AVEL_DCT, Y
@@ -8023,19 +8025,19 @@ ADJ_V10:	LDY	TDIR
 
 ;-Valid ranges plyr -----|x1xx2xx3xx4xx5xx6x|-------------------------
 
-AVEL_ACT:	.DB	0, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5
+AVEL_ACT:	.byte	0, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5
 ;arc widths for pos. change in TSPD (centered on TDIR), indexed by TSPD
 
-AVEL_DCT:	.DB	0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+AVEL_DCT:	.byte	0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ;arc widths for neg. change in TSPD (centered on TDIR+16), index by TSPD
 
-AVEL_M0T:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+AVEL_M0T:	.byte	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ;arc widths for no change in dir (centered on TDIR), indexed by TSPD
 
-AVEL_M1T:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+AVEL_M1T:	.byte	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ;arc widths for no change in dir (centered on TDIR+16), indexed by TSPD
 
-AVEL_ROT:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+AVEL_ROT:	.byte	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 ;amount to add to (or sub. from) TDIR based on TSPD
 
 
@@ -8074,7 +8076,7 @@ ADDVEL:
 		RTS
 
 SUBVEL:	       	STA	T0
-		LDA	#H'00
+		LDA	#$00
 		SEC
 		SBC	T0		;make positive
 		CLC
@@ -8166,10 +8168,10 @@ DOPAL2:		LDA	NEW_PAL		;see if need to init. new
 		STA	BPAL_BASE+1
 
 		LDX	SCCNT
-		LDA	#H'3F		;high ptr.
+		LDA	#$3F		;high ptr.
 		STA	SCBUF, X
 		INX
-		LDA	#H'00		;low ptr.
+		LDA	#$00		;low ptr.
 		STA	SCBUF, X
 		INX
 		LDA	#16		;size
@@ -8218,10 +8220,10 @@ DP_SPR:		LDA	NEW_PAL
 		STA	SPAL_BASE+1
 
 		LDX	SCCNT		;get screen buffer count
-		LDA	#H'3F
+		LDA	#$3F
 		STA	SCBUF, X
 		INX
-		LDA	#H'11		;skip 0th 'color'
+		LDA	#$11		;skip 0th 'color'
 		STA	SCBUF, X
 		INX
 		LDA	#15		;number of bytes data
@@ -8271,7 +8273,7 @@ DPMAINT:		LDA	BPAL_BLINK
 		STA	PTR0H		;add base to pointer
 
 		LDX	SCCNT
-		LDA	#H'3F
+		LDA	#$3F
 		STA	SCBUF, X
 		INX
 		LDA	T1		;get first pal. reg. to fix
@@ -8329,12 +8331,12 @@ DPMSPR:		LDA	SPAL_BLINK
 		STA	PTR0H		;add base to ptr.
 
 		LDX	SCCNT
-		LDA	#H'3F
+		LDA	#$3F
 		STA	SCBUF, X
 		INX
 		LDA	T1
 		CLC
-		ADC	#H'10		;offset into sprite pals.
+		ADC	#$10		;offset into sprite pals.
 		STA	SCBUF, X
 		INX
 		LDA	T0		;count
@@ -8374,14 +8376,14 @@ WRITE_SCBUF:
 WS0:		TXA			;save count
 		PHA
 		LDA	V_SEL
-		AND	#H'7A		;default for horiz. write
+		AND	#$7A		;default for horiz. write
 		LDX	SCBUF, Y	;get high byte of addr.
 		BPL	WS1
 		ORA	#4		;set for Vert. write
 WS1:		STA	VID_SEL
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		TXA
-		AND	#H'7F
+		AND	#$7F
 		STA	VID_PTR		;high byte of addr.
 		INY
 		LDA	SCBUF, Y
@@ -8409,7 +8411,7 @@ WS2:		LDA	SCBUF, Y
 		LDA	#0
 		STA	SCCNT
 		LDA	V_SEL
-		AND	#H'7A
+		AND	#$7A
 		STA	V_SEL
 
 WSEND:		RTS
@@ -8423,7 +8425,7 @@ CONVERT:	LDA	HORZBUFFER
 		JMP	CONV_V		;check for vertical...
 
 CONV_H:		LDA	HORZBUFFER+1
-		AND	#H'1F
+		AND	#$1F
 		STA	T0
 		LDA	#32
 		SEC
@@ -8471,7 +8473,7 @@ CXH1:		LDA	HORZBUFFER, X
 		LDA	T1
 		CLC
 		ADC	HORZBUFFER+1
-		AND	#H'3F
+		AND	#$3F
 		TAX
 		LDA	DATCOUNT
 		CMP	#32
@@ -8513,7 +8515,7 @@ CXV0:		LDX	VERTBUFFER+1
 		PHA
 		LDY	SCCNT
 		TXA
-		ORA	#H'80		;force vertical write
+		ORA	#$80		;force vertical write
 		STA	SCBUF, Y
 		INY
 		PLA
@@ -8558,7 +8560,7 @@ CONVADDR:		LDA	LNADDRH, Y
 		ADC	#4
 CONVADD1:		PHA
 		TXA
-		AND	#H'1F
+		AND	#$1F
 		CLC
 		ADC	LNADDRL, Y
 		TAY			;low
@@ -8593,7 +8595,7 @@ SCROLL:		LDA	#0
 
 		STA	XSTAT
 	
-		LDA	#H'80
+		LDA	#$80
 		STA	VPALBUFFER
 		STA	HPALBUFFER
 		LDA	#0
@@ -8602,7 +8604,7 @@ SCROLL:		LDA	#0
 
 		LDA	#0
 		STA	COMPITEM
-		LDA	#H'FF
+		LDA	#$FF
 		STA	WARP
 		JSR	DOCOMP
 		JSR	VR_WAIT
@@ -8618,41 +8620,41 @@ SCROLL:		LDA	#0
 		JSR	INITSPR
 		JSR	CTRL1B0
 	
-		LDA	#H'18		;WAS H'1E (05-06-90)
+		LDA	#$18		;WAS  $1E (05-06-90)
 		STA	V_MODE
-		LDA	#H'08
+		LDA	#$08
 		STA	V_SEL
 	
-DO_NMI:		LDA	VID_RESET
+DO_NMI:		LDA	Vid_Reset
 		BMI	DO_NMI
 		
 		LDA	#0
 		STA	SCCNT
 
 		LDA	V_SEL
-		ORA	#H'80
+		ORA	#$80
 		STA	VID_SEL
 
 SCROLL_END:	LDA	GAMEMODE
-		CMP	#H'81
+		CMP	#$81
 		BNE	SC_E1
 
 ;just finished title...
 
 		LDA	V_SEL
-		AND	#H'7F		;turn off NMI interrupts
+		AND	#$7F		;turn off NMI interrupts
 		STA	V_SEL
 		STA	VID_SEL
 
 		RTS
 
-SC_E1:		CMP	#H'01
+SC_E1:		CMP	#$01
 		BNE	SC_E2
 
 ;just finished game...
 
 		LDA	V_SEL
-		AND	#H'7F		;turn off NMI interrupts
+		AND	#$7F		;turn off NMI interrupts
 		STA	V_SEL
 		STA	VID_SEL
 
@@ -8663,13 +8665,13 @@ SC_E1:		CMP	#H'01
 
 		RTS
 
-SC_E2:		CMP	#H'83
+SC_E2:		CMP	#$83
 		BNE	SC_E3
 
 ;just finished "continue"...
 
 		LDA	V_SEL
-		AND	#H'7F		;turn off NMI interrupts
+		AND	#$7F		;turn off NMI interrupts
 		STA	V_SEL
 		STA	VID_SEL
 
@@ -8691,11 +8693,11 @@ NMI:	     	PHA			;save registers
 	     	PHA	 		
 
 		LDA	V_SEL
-		AND	#H'7A		;turn off page select, nmi, vert.
+		AND	#$7A		;turn off page select, nmi, vert.
 		STA	VID_SEL
 
-		LDA	VID_RESET
-		AND	#H'20
+		LDA	Vid_Reset
+		AND	#$20
 		STA	TOOMANY
 
 		LDA	#6
@@ -8705,22 +8707,22 @@ NMI:	     	PHA			;save registers
             	JSR	PAL_XFER
 
 
-  	  	LDA	VID_RESET	;set-up for DMA xfer of sprites
+  	  	LDA	Vid_Reset	;set-up for DMA xfer of sprites
 	     	LDA	BASESPRITE
 	    	STA	SPR_PTR
-		LDA	#SPRTBL0 >>8
+		LDA	#>(SPRTBL0)
 		STA	DMA		;transfer sprite data table
 
 
 		LDA	V_SEL
-		AND	#H'FE		;kill 'page' bit
+		AND	#$FE		;kill 'page' bit
 		ORA	PAGE
 		STA	V_SEL
 		STA	VID_SEL
 	     	LDA	V_MODE
 	     	STA	VID_MODE
 
-      	     	LDA	VID_RESET
+      	     	LDA	Vid_Reset
       	     	LDA	XSCROLL
       	     	STA	SCR_REG
       	     	LDA	YSCROLL
@@ -8740,7 +8742,7 @@ NMI:	     	PHA			;save registers
 ;quick "jerk" in Y-axis can occur...
 
 
-VR_LOOP:	LDA	VID_RESET
+VR_LOOP:	LDA	Vid_Reset
 		BMI	VR_LOOP
 
 ;(see above)
@@ -8748,7 +8750,7 @@ VR_LOOP:	LDA	VID_RESET
 
 
 		LDA	V_SEL
-		ORA	#H'80
+		ORA	#$80
 		STA	VID_SEL
 
 	     	PLA
@@ -8823,7 +8825,7 @@ VERTOK:		STA	VID_PTR
 		STA	VID_DATA
 
 		LDA	VPALBUFFER
-		ORA	#H'80
+		ORA	#$80
 		STA	VPALBUFFER
 
 
@@ -8902,7 +8904,7 @@ HORZOK:
 		STA	VID_DATA
 
 		LDA	HPALBUFFER
-		ORA	#H'80
+		ORA	#$80
 		STA	HPALBUFFER
 
 NOHORZ:		RTS
@@ -8915,8 +8917,8 @@ DOSTUFF:	LDA	#0
 		BEQ	RSP
 		LDA	BASESPRITE
 		CLC
-		ADC	#H'40
-		AND	#H'C0
+		ADC	#$40
+		AND	#$C0
 RSP:		STA	BASESPRITE
 
 		JSR	FEED_SOUND
@@ -8927,7 +8929,7 @@ RSP:		STA	BASESPRITE
 		BMI	DOSTUFF1
 		JMP	DOPAUSE
 
-DOSTUFF1:	CMP	#H'80
+DOSTUFF1:	CMP	#$80
 		BNE	DOSTUFF2
 		JMP	DOTITLE
 DOSTUFF2:	JMP	DOCONT
@@ -8939,7 +8941,7 @@ DOSTUFF3:
 		JSR	CONTROL
 
 		LDA	TIMER0
-		AND	#H'03
+		AND	#$03
 		BNE	SN01
 	
 	   	JSR	PLYRMOVE	;just check to see what player wants
@@ -8950,7 +8952,7 @@ SN01:	   	JSR	SCROLL_MOVE
 ;***** UPDATE COMBAT ROUTINES ********************
 
 UPDATE:	   	LDA	TIMER0
-	   	AND	#H'03
+	   	AND	#$03
 	   	BNE	SN00
 	   
 	   	INC	DENSCOUNT
@@ -8994,7 +8996,7 @@ SN0C:		LDA	BKGRND
 		JMP	SN0D
 SN0C2:		JSR	INCBASES
 		LDA	BKGRND	
-		CMP	#H'80
+		CMP	#$80
 		BNE	SN0E
 		JMP	GAMEWON
 
@@ -9031,7 +9033,7 @@ SN0E0:		JSR	MKITMLST
 		JSR	CTRL1A
 
 SN0D:		LDA	GAMEMODE
-		CMP	#H'7F
+		CMP	#$7F
 		BNE	DO_DONE
 		JSR	SHOWPAUSE
 
@@ -9112,7 +9114,7 @@ SHS_1K:		LDA	SC1000
 GAMEWON:	LDY	#1
 		JSR	BIGDELAY
 
-		LDA	#H'0F
+		LDA	#$0F
 		JSR	ADDSCORE
 		LDA	#0
 		STA	HASPLAYED
@@ -9125,7 +9127,7 @@ GAMEWON:	LDY	#1
 		LDA	#0
 		STA	XREL
 		STA	YREL
-		LDA	#H'A0
+		LDA	#$A0
 		STA	XPOS
 		STA	YPOS		;fake out drawsystem to
 		JSR	DRAWSYSTEM	;draw starfield...
@@ -9160,7 +9162,7 @@ GAMEOVER:	LDA	DEATH
 		JSR	GO_3
 		RTS
 
-GO_A:		CMP	#H'3F
+GO_A:		CMP	#$3F
 		BNE	GO_A1
 		LDA	#0
 		STA	ARMOR
@@ -9169,7 +9171,7 @@ GO_A:		CMP	#H'3F
 		LDA	DEATH
 GO_A1:
 		SEC
-		SBC	#H'2C
+		SBC	#$2C
 		STA	COUNT0
 		CLC
 		ADC	#20
@@ -9181,18 +9183,18 @@ GO_A1:
 GO_C:		DEC	DEATH
 		BNE	GO_CONT
 		
-		LDA	#H'FF
+		LDA	#$FF
 		STA	DEATH
 		JSR	GO_SET
 GO_CONT:	
 		RTS
 		
-GO_D:		LDA	#H'01		;end of game
+GO_D:		LDA	#$01		;end of game
 		STA	GAMEMODE
 		RTS
 
 ENDGAME:	LDA	V_SEL
-		AND	#H'7F
+		AND	#$7F
 		STA	VID_SEL
 		STA	V_SEL
 
@@ -9211,7 +9213,7 @@ ENDGAME:	LDA	V_SEL
 		LDA	#0
 		STA	XREL
 		STA	YREL
-		LDA	#H'A0
+		LDA	#$A0
 		STA	XPOS
 		STA	YPOS
 	
@@ -9313,7 +9315,7 @@ GO_3:
 		RTS
 GO_3A:					;"GAME" on top line
 		LDA	PSHTSPR0	;Y pos
-		CMP	#H'78
+		CMP	#$78
 		BEQ	GO_3B
 		CLC
 		ADC	#2
@@ -9324,7 +9326,7 @@ GO_3A:					;"GAME" on top line
 
 GO_3B:					;"OVER" on bottom line
 		LDA	PSHTSPR0+16	;Y pos
-		CMP	#H'80
+		CMP	#$80
 		BEQ	GO_3C
 		SEC
 		SBC	#2
@@ -9335,7 +9337,7 @@ GO_3B:					;"OVER" on bottom line
 
 GO_3C:				   	;"GAME" on left side
 		LDA	PSHTSPR0+35	;X pos
-		CMP	#H'70
+		CMP	#$70
 		BEQ	GO_3D
 		CLC
 		ADC	#2
@@ -9352,7 +9354,7 @@ GO_3C:				   	;"GAME" on left side
 
 GO_3D:					;"OVER" on right side
 		LDA	PSHTSPR0+51	;X pos
-		CMP	#H'70
+		CMP	#$70
 		BEQ	GO_3DONE
 		SEC
 		SBC	#2
@@ -9382,13 +9384,13 @@ GO_SET:
 		STA	PSHTSPR0+8		
 		STA	PSHTSPR0+12	;"GAME" on top line
 		
-		LDA	#H'F0
+		LDA	#$F0
 		STA	PSHTSPR0+16
 		STA	PSHTSPR0+20
 		STA	PSHTSPR0+24
 		STA	PSHTSPR0+28	;"OVER" on bottom line
 
-		LDA	#H'78
+		LDA	#$78
 		STA	PSHTSPR0+32
 		STA	PSHTSPR0+36	
 		STA	PSHTSPR0+40	
@@ -9401,19 +9403,19 @@ GO_SET:
  		STA	PSHTSPR0+56
 		STA	PSHTSPR0+60	;"OVER" on right side
 
-		LDA	#H'88
+		LDA	#$88
 		STA	PSHTSPR0+15
 		STA	PSHTSPR0+31
 	
-		LDA	#H'80
+		LDA	#$80
 		STA	PSHTSPR0+11
 		STA	PSHTSPR0+27
 
-		LDA	#H'78
+		LDA	#$78
 		STA	PSHTSPR0+7
 		STA	PSHTSPR0+23
 
-		LDA	#H'70
+		LDA	#$70
 		STA	PSHTSPR0+3
 		STA	PSHTSPR0+19
 
@@ -9429,45 +9431,45 @@ GO_SET:
 		LDA	#24
 		STA	PSHTSPR0+47
 
-		LDA	#H'F6
+		LDA	#$F6
 		STA	PSHTSPR0+63
 
-		LDA	#H'EE
+		LDA	#$EE
 		STA	PSHTSPR0+59
 		
-		LDA	#H'E6
+		LDA	#$E6
 		STA	PSHTSPR0+55
 
-		LDA	#H'DE
+		LDA	#$DE
 		STA	PSHTSPR0+51
 
-		LDA	#H'7C		; G
+		LDA	#$7C		; G
 		STA	PSHTSPR0+1
 		STA	PSHTSPR0+33
 
-		LDA	#H'7D		; A
+		LDA	#$7D		; A
 		STA	PSHTSPR0+5
 		STA	PSHTSPR0+37
 
-		LDA	#H'9C		; M
+		LDA	#$9C		; M
 		STA	PSHTSPR0+9
 		STA	PSHTSPR0+41
 
-		LDA	#H'9D		; E
+		LDA	#$9D		; E
 		STA	PSHTSPR0+13
 		STA	PSHTSPR0+25
 		STA	PSHTSPR0+45
 		STA	PSHTSPR0+57
 
-		LDA	#H'AF		; O
+		LDA	#$AF		; O
 		STA	PSHTSPR0+17
 		STA	PSHTSPR0+49
 
-		LDA	#H'CF		; V
+		LDA	#$CF		; V
 		STA	PSHTSPR0+21
 		STA	PSHTSPR0+53
 
-		LDA	#H'EF		; R
+		LDA	#$EF		; R
 		STA	PSHTSPR0+29
 		STA	PSHTSPR0+61
 
@@ -9512,7 +9514,7 @@ GO_CHAR:	LDA	LEXPLCHR,Y
 
 ;remove excess since ship is 3x3 and explosion is only 2x2
 
-		LDA	#H'F8		;Y pos. off-screen
+		LDA	#$F8		;Y pos. off-screen
 		STA	PLYRSPR0+ 8
 		STA	PLYRSPR0+20
 		STA	PLYRSPR0+24
@@ -9583,7 +9585,7 @@ CTRLA:	LDA	J1CHG
 
 ;pause if START is pressed
 
-	LDA	#H'7F
+	LDA	#$7F
 	STA	GAMEMODE
 	LDA	#0
 	STA	CODE_INDX
@@ -9591,8 +9593,8 @@ CTRLA:	LDA	J1CHG
 	JSR 	SILENCE
 	LDA	#1
 	JSR	SILENCE
-	LDY	#BELL >>8
-	LDX	#BELL &H'FF
+	LDY	#>(BELL)
+	LDX	#<(BELL)
 	LDA	#1
 	JSR	PLAY
 	JMP	CTRL4
@@ -9629,7 +9631,8 @@ CTRL1B0:	LDA	WARP
 CTRL1B:		CMP	#1		;just landed!
 		BNE	CTRL1C
 		JSR	INITCMBT
-		JSR	LOAD_GUNS
+		; TODO FIX/FIND THIS - d
+		;JSR	LOAD_GUNS
 		LDA	XPOS
 		STA	SAVE_X
 		LDA	YPOS
@@ -9642,9 +9645,9 @@ CTRL1B:		CMP	#1		;just landed!
 
 ;space station
 
-		LDA	#STATION &H'FF
+		LDA	#<(STATION)
 		STA	BKGRPTRL
-		LDA	#STATION >> 8
+		LDA	#>(STATION)
 		STA	BKGRPTRH
 
 		LDA	#32
@@ -9656,7 +9659,7 @@ CTRL1B:		CMP	#1		;just landed!
 					;control tower.
 
 		LDA	RAND		;setup position on planet
-		AND	#H'07		;pick one of 8
+		AND	#$07		;pick one of 8
 		TAY
 		LDA	PLNTXPOS, Y
 		STA	XPOS
@@ -9664,8 +9667,8 @@ CTRL1B:		CMP	#1		;just landed!
 		STA	YPOS
 		JMP	CTRL1D
 
-PLNTXPOS:	.DB	1, 1, 15, 31, 31, 31, 15, 1
-PLNTYPOS:	.DB	15, 1, 1, 1, 15, 31, 31, 31
+PLNTXPOS:	.byte	1, 1, 15, 31, 31, 31, 15, 1
+PLNTYPOS:	.byte	15, 1, 1, 1, 15, 31, 31, 31
 
 ;planet
 
@@ -9677,9 +9680,9 @@ CTRL1B1:	LDA	#21
 		STA	XPOS
 		LDA	PRADIKUS
 		BEQ	CTRL1B2
-		LDA	#PRADMAP &H'FF
+		LDA	#<(PRADMAP)
 		STA	BKGRPTRL
-		LDA	#PRADMAP >> 8
+		LDA	#>(PRADMAP)
 		STA	BKGRPTRH
 	
 		LDA	#44
@@ -9687,9 +9690,9 @@ CTRL1B1:	LDA	#21
 	
 		JMP	CTRL1D
 	
-CTRL1B2:	LDA	#PLANET_1 &H'FF
+CTRL1B2:	LDA	#<(PLANET_1)
 		STA	BKGRPTRL
-		LDA	#PLANET_1 >> 8
+		LDA	#>(PLANET_1)
 		STA	BKGRPTRH
 	
 		LDA	#44
@@ -9700,7 +9703,7 @@ CTRL1B2:	LDA	#PLANET_1 &H'FF
 CTRL1C:		CMP	#2		;left orbit...
 		BNE	CTRL1D
 
-		LDA	#H'7F
+		LDA	#$7F
 		STA	BKGRWIDTH
 
 		JSR	INITCMBT
@@ -9739,10 +9742,10 @@ CTRL3A:	LDA	INVISO
 	BEQ	CTRL3B
 	
 
-	LDX	#H'1F
+	LDX	#$1F
 	LDA	BKGRND
 	BEQ	USECLK		;used up slower in space
-	LDX	#H'0F
+	LDX	#$0F
 
 USECLK:	TXA
         AND	TIMER0
@@ -9762,7 +9765,7 @@ DOCOMP:		LDA	#0
 		STA	COMPTIME
 
 		JSR	ZAP_SPRITES
-		LDA	#H'08
+		LDA	#$08
 		STA	V_MODE
 	
 		JSR	VR_WAIT
@@ -9774,27 +9777,27 @@ DOCOMP:		LDA	#0
 DOCOMP1:
 		
 		LDX	#1	;clear page 1
-	LDA	#H'FC		;fill w/solid blocks (md. blue) 04-20-90
+	LDA	#$FC		;fill w/solid blocks (md. blue) 04-20-90
 		JSR	CLEAR
 
 		JSR	VR_WAIT
 
-		LDA	#H'09
+		LDA	#$09
 		STA	V_SEL
 		STA	VID_SEL
 
-		LDA	VID_RESET
-		LDA	#H'3F
+		LDA	Vid_Reset
+		LDA	#$3F
 		STA	VID_PTR
-		LDA	#H'00
+		LDA	#$00
 		STA	VID_PTR
-		LDA	#H'0E
+		LDA	#$0E
 		STA	VID_DATA
-		LDA	#H'21
+		LDA	#$21
 		STA	VID_DATA
-		LDA	#H'11
+		LDA	#$11
 		STA	VID_DATA
-		LDA	#H'01
+		LDA	#$01
 		STA	VID_DATA
 
 
@@ -9818,45 +9821,45 @@ DCOMP2:		LDA	COMPPAL, Y
 
 ;do palettes for video page 0
 
-		LDA	VID_RESET
-		LDA	#H'23
+		LDA	Vid_Reset
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'C0
+		LDA	#$C0
 		STA	VID_PTR
 	
 		LDY	#0
 		LDA	#0
 PIC0C:		STA	VID_DATA
 		INY
-		CPY	#H'40
+		CPY	#$40
                
 		BNE	PIC0C
 
 ;do palettes for video page 1
 
-		LDA	VID_RESET
-		LDA	#H'27
+		LDA	Vid_Reset
+		LDA	#$27
 		STA	VID_PTR
-		LDA	#H'C0
+		LDA	#$C0
 		STA	VID_PTR
 	
 		LDY	#0
 		LDA	#0
 PIC0D:		STA	VID_DATA
 		INY
-		CPY	#H'40
+		CPY	#$40
                
 		BNE	PIC0D
 
-		LDA	VID_RESET
-		LDA	#H'20
+		LDA	Vid_Reset
+		LDA	#$20
 		STA	VID_PTR
-		LDA	#H'00
+		LDA	#$00
 		STA	VID_PTR
 
-		LDA	#CS_DATA &H'FF
+		LDA	#<(CS_DATA)
 		STA	PTR0L
-		LDA	#CS_DATA >>8
+		LDA	#>(CS_DATA)
 		STA	PTR0H
 	
 		LDY	#0
@@ -9869,11 +9872,11 @@ DC_LOOP:
 	
 DC_CHECK:
 		LDA	PTR0L
-		CMP	#CSD_END &H'FF
+		CMP	#<(CSD_END)
 		BNE	DC_LOOP
 	
 		LDA	PTR0H
-		CMP	#CSD_END >>8
+		CMP	#>(CSD_END)
 		BNE	DC_LOOP
 	
 		LDA	XSCROLL
@@ -9882,9 +9885,9 @@ DC_CHECK:
 		PHA
 	
 
-		LDA	#H'F8
+		LDA	#$F8
 		STA	XSCROLL
-		LDA	#H'F6
+		LDA	#$F6
 		STA	YSCROLL
 
 ;*************************************************
@@ -9896,7 +9899,7 @@ DC_CHECK:
 		PLA
 		STA	XSCROLL
 
-		LDA	#H'18		;WAS H'1E (05-06-90)
+		LDA	#$18		;WAS  $1E (05-06-90)
 		STA	V_MODE
 
 		JSR	VR_WAIT
@@ -9929,138 +9932,138 @@ STATCOLOR:
 
 ;0=critical (red); 1=green; 2=yellow; 3=red
 	
-		.DB	H'16,H'19,H'37,H'16
+		.byte	 $16, $19, $37, $16
 
 
-COMPPAL:	.DB	H'0E,H'36,H'26,H'37	;            
-		.DB	H'0E,H'21,H'24,H'01	;0E/21/23/01
-		.DB	H'0E,H'34,H'36,H'26	;--/30/COND/??
-		.DB	H'0E,H'16,H'26,H'37	;flashing
+COMPPAL:	.byte	 $0E, $36, $26, $37	;            
+		.byte	 $0E, $21, $24, $01	;0E/21/23/01
+		.byte	 $0E, $34, $36, $26	;--/30/COND/??
+		.byte	 $0E, $16, $26, $37	;flashing
 
 
 
 
-BPAL0:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
-		.DB	H'0E,H'20,H'10,H'00
-		.DB	H'0E,H'19,H'11,H'30
-		.DB	H'0E,H'04,H'29,H'21
-		.DB	H'0E,H'23,H'36,H'25	;blinking...
-		.DB	H'0E,H'37,H'25,H'23
-		.DB	H'0E,H'25,H'23,H'36
+BPAL0:		.byte	 $01, $03, $0F		;blink/frame/freq.
+		.byte	 $0E, $20, $10, $00
+		.byte	 $0E, $19, $11, $30
+		.byte	 $0E, $04, $29, $21
+		.byte	 $0E, $23, $36, $25	;blinking...
+		.byte	 $0E, $37, $25, $23
+		.byte	 $0E, $25, $23, $36
 
-BPAL2:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
-		.DB	H'0E,H'20,H'10,H'00
-		.DB	H'0E,H'26,H'16,H'35
-		.DB	H'0E,H'21,H'25,H'2B
-		.DB	H'0E,H'39,H'27,H'24	;blinking...
-		.DB	H'0E,H'27,H'24,H'37
-		.DB	H'0E,H'25,H'36,H'27
+BPAL2:		.byte	 $01, $03, $0F		;blink/frame/freq.
+		.byte	 $0E, $20, $10, $00
+		.byte	 $0E, $26, $16, $35
+		.byte	 $0E, $21, $25, $2B
+		.byte	 $0E, $39, $27, $24	;blinking...
+		.byte	 $0E, $27, $24, $37
+		.byte	 $0E, $25, $36, $27
 
-BPAL4:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
-		.DB	H'0E,H'20,H'10,H'00
-		.DB	H'0E,H'09,H'16,H'39
-		.DB	H'0E,H'11,H'36,H'15
-		.DB	H'0E,H'26,H'23,H'37	;blinking...
-		.DB	H'0E,H'23,H'38,H'28
-		.DB	H'0E,H'36,H'27,H'24
+BPAL4:		.byte	 $01, $03, $0F		;blink/frame/freq.
+		.byte	 $0E, $20, $10, $00
+		.byte	 $0E, $09, $16, $39
+		.byte	 $0E, $11, $36, $15
+		.byte	 $0E, $26, $23, $37	;blinking...
+		.byte	 $0E, $23, $38, $28
+		.byte	 $0E, $36, $27, $24
 
-BPAL6:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
-		.DB	H'0E,H'20,H'10,H'00
-		.DB	H'0E,H'16,H'11,H'30
-		.DB	H'0E,H'31,H'34,H'14
-		.DB	H'0E,H'38,H'26,H'14	;blinking...
-		.DB	H'0E,H'26,H'14,H'38
-		.DB	H'0E,H'14,H'35,H'25
+BPAL6:		.byte	 $01, $03, $0F		;blink/frame/freq.
+		.byte	 $0E, $20, $10, $00
+		.byte	 $0E, $16, $11, $30
+		.byte	 $0E, $31, $34, $14
+		.byte	 $0E, $38, $26, $14	;blinking...
+		.byte	 $0E, $26, $14, $38
+		.byte	 $0E, $14, $35, $25
 
-STNPAL:		.DB	H'01,H'04,H'08		;blink/frame/freq.
-		.DB	H'0E,H'10,H'00,H'0E
-		.DB	H'0E,H'21,H'11,H'01
-		.DB	H'0E,H'31,H'21,H'11
-		.DB	H'0E,H'0E,H'00,H'0E	;blinking...
-		.DB	H'0E,H'06,H'00,H'0E
-		.DB	H'0E,H'16,H'00,H'0E
-		.DB	H'0E,H'26,H'00,H'0E
+STNPAL:		.byte	 $01, $04, $08		;blink/frame/freq.
+		.byte	 $0E, $10, $00, $0E
+		.byte	 $0E, $21, $11, $01
+		.byte	 $0E, $31, $21, $11
+		.byte	 $0E, $0E, $00, $0E	;blinking...
+		.byte	 $0E, $06, $00, $0E
+		.byte	 $0E, $16, $00, $0E
+		.byte	 $0E, $26, $00, $0E
 
-PLNTPAL:	.DB	H'00,H'00,H'00		;blink/frame/freq.
-		.DB	H'01,H'19,H'09,H'37
-		.DB	H'01,H'10,H'00,H'0E
-		.DB	H'01,H'10,H'00,H'0E
-		.DB	H'01,H'21,H'11,H'01
+PLNTPAL:	.byte	 $00, $00, $00		;blink/frame/freq.
+		.byte	 $01, $19, $09, $37
+		.byte	 $01, $10, $00, $0E
+		.byte	 $01, $10, $00, $0E
+		.byte	 $01, $21, $11, $01
 
 
 ;Regular sprite palettes...
 
 
-SPALGRN:	.DB	H'01,H'03,H'0F		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'10,H'0A	;player ship
-		.DB	H'0E,H'30,H'10,H'1A
-		.DB	H'0E,H'30,H'10,H'2A
+SPALGRN:	.byte	 $01, $03, $0F		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $10, $0A	;player ship
+		.byte	 $0E, $30, $10, $1A
+		.byte	 $0E, $30, $10, $2A
 
-SPALYLW:	.DB	H'01,H'03,H'09		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'10,H'16	;player ship
-		.DB	H'0E,H'30,H'10,H'26
-		.DB	H'0E,H'30,H'10,H'36
+SPALYLW:	.byte	 $01, $03, $09		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $10, $16	;player ship
+		.byte	 $0E, $30, $10, $26
+		.byte	 $0E, $30, $10, $36
 
-SPALRED:	.DB	H'01,H'03,H'04		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'10,H'05	;player ship
-		.DB	H'0E,H'30,H'10,H'15
-		.DB	H'0E,H'30,H'10,H'25
+SPALRED:	.byte	 $01, $03, $04		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $10, $05	;player ship
+		.byte	 $0E, $30, $10, $15
+		.byte	 $0E, $30, $10, $25
 
 
 ;Sprite palettes to use when cloaking device is in use...
 
-SPCLKGRN:	.DB	H'01,H'03,H'0F		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'15,H'0A	;player ship
-		.DB	H'0E,H'30,H'05,H'1A
-		.DB	H'0E,H'30,H'15,H'2A
+SPCLKGRN:	.byte	 $01, $03, $0F		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $15, $0A	;player ship
+		.byte	 $0E, $30, $05, $1A
+		.byte	 $0E, $30, $15, $2A
 
-SPCLKYLW:	.DB	H'01,H'03,H'09		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'15,H'16	;player ship
-		.DB	H'0E,H'30,H'05,H'26
-		.DB	H'0E,H'30,H'15,H'36
+SPCLKYLW:	.byte	 $01, $03, $09		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $15, $16	;player ship
+		.byte	 $0E, $30, $05, $26
+		.byte	 $0E, $30, $15, $36
 
-SPCLKRED:	.DB	H'01,H'03,H'04		;blink/frame/freq.
-	.DB	H'0E,H'37,H'27,H'17	;enemy ships
-	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
-;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
-;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
-		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
-		.DB	H'0E,H'30,H'15,H'05	;player ship
-		.DB	H'0E,H'30,H'05,H'15
-		.DB	H'0E,H'30,H'15,H'25
+SPCLKRED:	.byte	 $01, $03, $04		;blink/frame/freq.
+	.byte	 $0E, $37, $27, $17	;enemy ships
+	.byte	 $0E, $32, $1C, $12	;enemy ships/turrets
+;	.byte	 $0E, $24, $14, $34	;enemy ships
+;	.byte	 $0E, $12, $21, $3C	;enemy ships/turrets
+		.byte	 $0E, $16, $26, $36	;explosions/shots
+		.byte	 $0E, $30, $15, $05	;player ship
+		.byte	 $0E, $30, $05, $15
+		.byte	 $0E, $30, $15, $25
 
 
 ;************************************************
 	
-.EQU		CODEDONE,	H'00
+.define		CODEDONE 	 $00
 
-CODE_1:		.DB	B_BTN, UP_BTN, RT_BTN, A_BTN
-		.DB	DN_BTN, LT_BTN, CODEDONE
+CODE_1:		.byte	B_BTN, UP_BTN, RT_BTN, A_BTN
+		.byte	DN_BTN, LT_BTN, CODEDONE
 
 DOPAUSE:	LDA	J1CHG
 		BEQ	NCODE2
@@ -10076,8 +10079,8 @@ DOPAUSE:	LDA	J1CHG
 
 PAUSEOFF:	LDA	#1
 		JSR	SILENCE
-		LDY	#BELL >>8
-		LDX	#BELL &H'FF
+		LDY	#>(BELL)
+		LDX	#<(BELL)
 		LDA	#1
 		JSR	PLAY
 		JSR	SHOT_REF
@@ -10091,7 +10094,7 @@ NEXTCODE:	INX
 		BNE	NCODE2
 
 SET_CHEAT:	LDA	CHEAT
-		EOR	#H'FF
+		EOR	#$FF
 		STA	CHEAT
 		LDA	#99
 		STA	FUEL	
@@ -10100,8 +10103,8 @@ SET_CHEAT:	LDA	CHEAT
 		JSR	WARNING
 		LDA	#1
 		JSR	SILENCE
-		LDY	#CODE_SND >>8
-		LDX	#CODE_SND &H'FF
+		LDY	#>(CODE_SND)
+		LDX	#<(CODE_SND)
 		LDA	#1
 		JSR	PLAY
 		LDA	#0
@@ -10109,7 +10112,7 @@ SET_CHEAT:	LDA	CHEAT
 NCODE2:		RTS
 
 
-SHOWPAUSE:	LDY	#PSHTSPR0 &H'FF
+SHOWPAUSE:	LDY	#<(PSHTSPR0)
 		LDX	#0
 SPLOOP:		LDA	PAUSESPR, X
 		STA	SPRTBL0, Y
@@ -10118,7 +10121,7 @@ SPLOOP:		LDA	PAUSESPR, X
 		CPX	#20
 		BNE	SPLOOP
 
-		LDA	#H'FA
+		LDA	#$FA
 SPL2:		STA	SPRTBL0, Y
 		INY
 		INX
@@ -10126,11 +10129,11 @@ SPL2:		STA	SPRTBL0, Y
 		BNE	SPL2
 		RTS
 
-PAUSESPR:	.DB	H'94, H'D2, H'03, H'6C	;P
-		.DB	H'94, H'7D, H'03, H'74	;A
-		.DB	H'94, H'D3, H'03, H'7C	;U
-		.DB	H'94, H'FE, H'03, H'84	;S
-		.DB	H'94, H'9D, H'03, H'8C	;E
+PAUSESPR:	.byte	 $94,  $D2,  $03,  $6C	;P
+		.byte	 $94,  $7D,  $03,  $74	;A
+		.byte	 $94,  $D3,  $03,  $7C	;U
+		.byte	 $94,  $FE,  $03,  $84	;S
+		.byte	 $94,  $9D,  $03,  $8C	;E
 
 ;************************************************
 
@@ -10145,7 +10148,7 @@ PLYRMOVE:
 PLYRMV0:
 	LDX	#21
 	LDA	SND_RAM+SF,X
-	AND	#H'80
+	AND	#$80
 	BNE	PLYRM0A
 	LDA	#0
 	STA	EFFECT
@@ -10157,8 +10160,8 @@ PLYRM0A:
 	LDA	EFFECT
 	CMP	#2
 	BCS	PLYRM0C
-	LDX	#ENG & H'FF
-	LDY	#ENG >> 8
+	LDX	#<(ENG)
+	LDY	#>(ENG)
        	LDA	#3
        	JSR	PLAY
        	LDA	#ENGINE
@@ -10211,13 +10214,13 @@ PLYRM3A:	LDY	#0
 
 
 PLYRM4:	TXA
-	AND	#H'0F
+	AND	#$0F
 PLYRM6:	STA	DIR
 	TYA
 	BMI	PLYRM8
-	CMP	#H'09
+	CMP	#$09
 	BCC	PLYRM7
-	LDA	#H'08
+	LDA	#$08
 PLYRM7:	STA	THRUST
 	RTS
 
@@ -10241,12 +10244,12 @@ PLYRDRAW:
 PD2:		LDX	DIR
 	
 		LDA	TIMER0
-		AND	#H'08		;rate of "flame flicker"
+		AND	#$08		;rate of "flame flicker"
 		ASL	A
 		ASL	A
 		CLC
 		ADC	CHOFFTBL, X	;flame shape #
-		ADC	#H'AA		;either $AA or $CA
+		ADC	#$AA		;either $AA or $CA
 		STA	FLMSPR0+1
 
 		LDA	FLIPTBL, X
@@ -10263,7 +10266,7 @@ PD2:		LDX	DIR
 		LDA	FLMYOFF, X	;flame Y-pos
 		BNE	PDF1
 	
-PDF0:		LDA	#H'F8		;no thrust...
+PDF0:		LDA	#$F8		;no thrust...
 	
 PDF1:		STA	FLMSPR0+0
 	
@@ -10407,7 +10410,7 @@ FIND130:	TAY
 COMPASS:	JSR	DOFIND
 		CMP	#-1
 		BNE	CMPS_A
-		LDA	#H'BC		;sm. ship char
+		LDA	#$BC		;sm. ship char
 		STA	CMPSPR0+1
 		LDA	#2
 		JMP	CMPS_B
@@ -10416,7 +10419,7 @@ CMPS_A:
 		TAX
 		LDA	CHOFFTBL, X
 		CLC
-		ADC	#H'B0		;char
+		ADC	#$B0		;char
 		STA	CMPSPR0+1
 		LDA	FLIPTBL, X
 		ORA	#2		;palette/flip
@@ -10436,52 +10439,52 @@ INITPLYR:
 ;	        7 8 9
 	                     
 
-		LDA	#H'74		;"PLYR_POS"	
-		STA	H'020C	;y1
-		STA	H'020F	;x1
-		STA	H'0210  ;y2
-		STA	H'0214  ;y3
-		STA	H'021B	;x4
-		STA	H'0227	;x7
+		LDA	#$74		;"PLYR_POS"	
+		STA	 $020C	;y1
+		STA	 $020F	;x1
+		STA	 $0210  ;y2
+		STA	 $0214  ;y3
+		STA	 $021B	;x4
+		STA	 $0227	;x7
 
-		STA	H'07D0	;y1
-		STA	H'07D3	;x1
-		STA	H'07D4  ;y2
-		STA	H'07D8  ;y3
-		STA	H'07DF	;x4
-		STA	H'07EB	;x7
-
-
-		LDA	#H'7C
-		STA	H'0213	;x2
-		STA	H'0218	;y4
-		STA	H'021C  ;y5
-		STA	H'021F  ;x5
-		STA	H'0220	;y6
-		STA	H'022B	;x8
-
-		STA	H'07D7	;x2
-		STA	H'07DC	;y4
-		STA	H'07E0  ;y5
-		STA	H'07E3  ;x5
-		STA	H'07E4	;y6
-		STA	H'07EF	;x8
+		STA	 $07D0	;y1
+		STA	 $07D3	;x1
+		STA	 $07D4  ;y2
+		STA	 $07D8  ;y3
+		STA	 $07DF	;x4
+		STA	 $07EB	;x7
 
 
-		LDA	#H'84
-		STA	H'0217	;x3
-		STA	H'0223	;x6
-		STA	H'0224	;y7
-		STA	H'0228	;y8
-		STA	H'022C  ;y9
-		STA	H'022F  ;x9
+		LDA	#$7C
+		STA	 $0213	;x2
+		STA	 $0218	;y4
+		STA	 $021C  ;y5
+		STA	 $021F  ;x5
+		STA	 $0220	;y6
+		STA	 $022B	;x8
 
-		STA	H'07DB	;x3
-		STA	H'07E7	;x6
-		STA	H'07E8	;y7
-		STA	H'07EC	;y8
-		STA	H'07F0  ;y9
-		STA	H'07F3  ;x9
+		STA	 $07D7	;x2
+		STA	 $07DC	;y4
+		STA	 $07E0  ;y5
+		STA	 $07E3  ;x5
+		STA	 $07E4	;y6
+		STA	 $07EF	;x8
+
+
+		LDA	#$84
+		STA	 $0217	;x3
+		STA	 $0223	;x6
+		STA	 $0224	;y7
+		STA	 $0228	;y8
+		STA	 $022C  ;y9
+		STA	 $022F  ;x9
+
+		STA	 $07DB	;x3
+		STA	 $07E7	;x6
+		STA	 $07E8	;y7
+		STA	 $07EC	;y8
+		STA	 $07F0  ;y9
+		STA	 $07F3  ;x9
 
 
 		RTS
@@ -10489,12 +10492,12 @@ INITPLYR:
 ;*************************************************
 
 MAXDRIVE:
-	.DB	H'00,H'03,H'03,H'04,H'04,H'05,H'06
-	.DB	H'07,H'08,H'08,H'08,H'08,H'08,H'08		
+	.byte	 $00, $03, $03, $04, $04, $05, $06
+	.byte	 $07, $08, $08, $08, $08, $08, $08		
 
 PMAXDRIVE:
-	.DB	H'00,H'03,H'03,H'04,H'05,H'06,H'07
-	.DB	H'07,H'00,H'00,H'00,H'00,H'00,H'00		
+	.byte	 $00, $03, $03, $04, $05, $06, $07
+	.byte	 $07, $00, $00, $00, $00, $00, $00		
 
 ;*************************************************
 
@@ -10514,7 +10517,7 @@ SCROLL_MOVE:
 		JSR	SCR_XY
 
 		LDA	XSTAT
-		AND	#H'01
+		AND	#$01
 		STA	XSTAT
 		ROR	A
 		BCC	SCRM_50		;do X first...
@@ -10641,7 +10644,7 @@ AS0:
 	LDA	YSCROLL
 	CLC
 	ADC 	YMOVE
-	CMP	#H'F0
+	CMP	#$F0
 	BCC	AS2
 	
 	PHA
@@ -10649,12 +10652,12 @@ AS0:
 	BMI	AS1
 
 	PLA
-	SBC	#H'F0
+	SBC	#$F0
 	JMP	AS2
 
 AS1:	PLA
 	CLC
-	ADC	#H'F0
+	ADC	#$F0
 
 AS2:	
 
@@ -10672,8 +10675,8 @@ AS2:
 
 SCR_XY:
 		LDA	TIMER0
-	   	AND	#H'07
-	   	CMP	#H'07
+	   	AND	#$07
+	   	CMP	#$07
 	   	BNE	SCRXY_0
 	
 		LDA	THRUST
@@ -10736,10 +10739,10 @@ SCRX_0:		LDA	TVELX
 		STA	PSHPXVEL
 	
 		BMI	SCRX_2
-		AND	#H'0F
+		AND	#$0F
 		STA	PXOFF
 		LDA	PSHPXVEL
-		AND	#H'70
+		AND	#$70
 		STA	PSHPXVEL
 		LSR	A
 		LSR	A
@@ -10752,7 +10755,7 @@ SCRX_2:		LDA	#0
 		SEC
 		SBC	PSHPXVEL
 		STA	PSHPXVEL
-		AND	#H'0F
+		AND	#$0F
 		STA	PXOFF
 		LDA	#0
 		SEC
@@ -10760,7 +10763,7 @@ SCRX_2:		LDA	#0
 		STA	PXOFF
 	
 		LDA	PSHPXVEL
-		AND	#H'F0
+		AND	#$F0
 		STA	PSHPXVEL
 		LSR	A
 		LSR	A
@@ -10785,10 +10788,10 @@ SCRY_0:		LDA	TVELY
 		STA	PSHPYVEL
 	
 		BMI	SCRY_2
-		AND	#H'0F
+		AND	#$0F
 		STA	PYOFF
 		LDA	PSHPYVEL
-		AND	#H'70
+		AND	#$70
 		STA	PSHPYVEL
 		LSR	A
 		LSR	A
@@ -10801,7 +10804,7 @@ SCRY_2:		LDA	#0
 		SEC
 		SBC	PSHPYVEL
 		STA	PSHPYVEL
-		AND	#H'0F
+		AND	#$0F
 		STA	PYOFF
 		LDA	#0
 		SEC
@@ -10809,7 +10812,7 @@ SCRY_2:		LDA	#0
 		STA	PYOFF
 	
 		LDA	PSHPYVEL
-		AND	#H'F0
+		AND	#$F0
 		STA	PSHPYVEL
 		LSR	A
 		LSR	A
@@ -10895,7 +10898,7 @@ SD3:		LDA	XPOS
 
        	JSR	ROWXFER
 
-		LDA	#H'81
+		LDA	#$81
 		STA	XSTAT
 
 		PLA
@@ -10953,7 +10956,7 @@ SU1:		LDA	XBLOCK
 
        	JSR	ROWXFER
 
-		LDA	#H'81
+		LDA	#$81
 		STA	XSTAT
 
 SU4:		RTS
@@ -11020,7 +11023,7 @@ SR3:		LDA	YREL
 
        	JSR	COLXFER
 
-		LDA	#H'80
+		LDA	#$80
 		STA	XSTAT
 
 		PLA
@@ -11076,7 +11079,7 @@ SL1:		LDX	XBLOCK
 
        	JSR	COLXFER
 
-		LDA	#H'80
+		LDA	#$80
 		STA	XSTAT
 
 		PLA
@@ -11094,7 +11097,7 @@ SL4:		RTS
 
 
 DMAXFER:	
-  	  	LDA	VID_RESET
+  	  	LDA	Vid_Reset
 	  	LDA	#0
 		STA	SPR_PTR
 		STA	SPR_PTR
@@ -11108,23 +11111,23 @@ DMAXFER:
 	BCS	DMAXF2
 
 
-DMAXF1:	LDA	#SPRTBL0 >>8
+DMAXF1:	LDA	#>(SPRTBL0)
 	STA	DMA
 	RTS
 
-DMAXF2:	LDA	#SPRTBL1 >>8
+DMAXF2:	LDA	#>(SPRTBL1)
 	STA	DMA
 	RTS
 
 
-PAL1:		.DB	H'36,H'36,H'36,H'36,H'37,H'37,H'37,H'37
-		.DB	H'36,H'36,H'36,H'36,H'37,H'37,H'37,H'37
+PAL1:		.byte	 $36, $36, $36, $36, $37, $37, $37, $37
+		.byte	 $36, $36, $36, $36, $37, $37, $37, $37
 
-PAL2:		.DB	H'26,H'27,H'26,H'27,H'26,H'27,H'26,H'27
-		.DB	H'26,H'27,H'26,H'27,H'26,H'27,H'26,H'27
+PAL2:		.byte	 $26, $27, $26, $27, $26, $27, $26, $27
+		.byte	 $26, $27, $26, $27, $26, $27, $26, $27
 
-PAL3:		.DB	H'06,H'06,H'16,H'16,H'16,H'16,H'26,H'26
-		.DB	H'26,H'26,H'16,H'16,H'16,H'16,H'06,H'06
+PAL3:		.byte	 $06, $06, $16, $16, $16, $16, $26, $26
+		.byte	 $26, $26, $16, $16, $16, $16, $06, $06
 
 
 
@@ -11166,7 +11169,7 @@ PTIME:         	LDA	GAMEMODE
 		INC	T_HOUR	
 	
 TICK1:		LDA	TIMER0
-		AND	#H'0F
+		AND	#$0F
 		BNE	TICKROT
 		INC	STN_ROTATE
 		LDA	STN_ROTATE
@@ -11180,8 +11183,8 @@ TICKROT:
 	BNE	TFAS_END	;do the rest only if in PLAY mode
 
 	LDA	TIMER1
-	AND	#H'0F
-	CMP	#H'07
+	AND	#$0F
+	CMP	#$07
 	BNE	TICK_FAS
 TICK_1A:
 	LDA	TIMER0
@@ -11242,15 +11245,15 @@ TFAS_END:
 	RTS
 	
 
-SHMAX:		.DB	0,  20,  40,  60,  80,  99
-SHRES:		.DB     0,  15,  12,  10,   7,   5
-FRES:		.DB     0,  30,  45,  60,  80, 100
+SHMAX:		.byte	0,  20,  40,  60,  80,  99
+SHRES:		.byte     0,  15,  12,  10,   7,   5
+FRES:		.byte     0,  30,  45,  60,  80, 100
 
 ;*************************************************
 
 
-WARNING:	LDX	#SPALGRN &H'FF	;assume normal...
-		LDY	#SPALGRN >>8
+WARNING:	LDX	#<(SPALGRN)	;assume normal...
+		LDY	#>(SPALGRN)
 		JSR	SPRITEPAL
 
 		LDA	PWRPLANT
@@ -11261,8 +11264,8 @@ WARNING:	LDX	#SPALGRN &H'FF	;assume normal...
 
 ;active cloaking device...      		
 
-		LDX	#SPCLKGRN &H'FF
-		LDY	#SPCLKGRN >>8
+		LDX	#<(SPCLKGRN)
+		LDY	#>(SPCLKGRN)
 		JSR	SPRITEPAL
 		
 WARN1:		LDX	#0		;assume condition is GREEN
@@ -11317,12 +11320,12 @@ WARN3:		TXA
 
 ;active cloaking device...      		
 
-       		LDX	#SPCLKYLW &H'FF
-		LDY	#SPCLKYLW >>8
+       		LDX	#<(SPCLKYLW)
+		LDY	#>(SPCLKYLW)
 		JMP	SPRITEPAL
 
-WARN3A:		LDX	#SPALYLW &H'FF
-		LDY	#SPALYLW >>8
+WARN3A:		LDX	#<(SPALYLW)
+		LDY	#>(SPALYLW)
 		JMP	SPRITEPAL
 
 ;condition RED
@@ -11333,12 +11336,12 @@ WARN_RED:
 
 ;active cloaking device...      		
 
-		LDX	#SPCLKRED &H'FF
-		LDY	#SPCLKRED >>8
+		LDX	#<(SPCLKRED)
+		LDY	#>(SPCLKRED)
 		JMP	SPRITEPAL
 
-WARNR1:		LDX	#SPALRED &H'FF
-		LDY	#SPALRED >>8
+WARNR1:		LDX	#<(SPALRED)
+		LDY	#>(SPALRED)
 		JMP	SPRITEPAL
 
 
@@ -11353,32 +11356,32 @@ BPALXFER:
 ;transfers new palettes info to video chip
 ;during NMI...
 
-		LDA	VID_RESET
-		LDA	#H'3F
+		LDA	Vid_Reset
+		LDA	#$3F
 		STA	VID_PTR
-		LDA	#H'00
+		LDA	#$00
 		STA	VID_PTR
 
 		LDY	#0
 BPALX0:		LDA	BPALREGS, Y
 		STA	VID_DATA
 		INY
-		CPY	#H'10
+		CPY	#$10
 		BNE	BPALX0
 		RTS
 
 
-SPALXFER:	LDA	VID_RESET
-		LDA	#H'3F
+SPALXFER:	LDA	Vid_Reset
+		LDA	#$3F
 		STA	VID_PTR
-		LDA	#H'11
+		LDA	#$11
 		STA	VID_PTR
 	
 		LDY	#1
 SPALX0:		LDA	SPALREGS, Y
 		STA	VID_DATA
 		INY
-		CPY	#H'10
+		CPY	#$10
 		BNE	SPALX0
 		RTS
 
@@ -11402,18 +11405,18 @@ RESETPALS:
 
 ;space station
 
-RESPAL1:	LDX	#STNPAL &H'FF
-		LDY	#STNPAL >>8
+RESPAL1:	LDX	#<(STNPAL)
+		LDY	#>(STNPAL)
 		JMP	BACKPAL
 
 ;planet
 
-RESPAL2:	LDX	#PLNTPAL &H'FF
-		LDY	#PLNTPAL >>8
+RESPAL2:	LDX	#<(PLNTPAL)
+		LDY	#>(PLNTPAL)
 		JMP	BACKPAL
 
-SYSPALL:	.DB	BPAL0 &H'FF, BPAL2 &H'FF, BPAL4 &H'FF, BPAL6 &H'FF
-SYSPALH:	.DB	BPAL0 >> 8,  BPAL2 >> 8,  BPAL4 >> 8,  BPAL6 >> 8
+SYSPALL:	.byte	BPAL0 & $FF, BPAL2 & $FF, BPAL4 & $FF, BPAL6 & $FF
+SYSPALH:	.byte	BPAL0 >> 8,  BPAL2 >> 8,  BPAL4 >> 8,  BPAL6 >> 8
 
 
 ;************************************************
@@ -11430,7 +11433,7 @@ SET_VID:
 	LDA	V_MODE
 	STA	VID_MODE
 
-	LDA	VID_RESET
+	LDA	Vid_Reset
 	LDA	XSCROLL
 	STA	SCR_REG
 	LDA	YSCROLL
@@ -11449,14 +11452,14 @@ SET_VID:
 
 
 BULLSYST:
-	LDA	#BS &H'FF
+	LDA	#<(BS)
 	STA	PTR2L
-	LDA	#BS >>8
+	LDA	#>(BS)
 	STA	PTR2H
 
-	LDA	#SYSTEM &H'FF
+	LDA	#<(SYSTEM)
 	STA	PTR1L
-	LDA	#SYSTEM >> 8
+	LDA	#>(SYSTEM)
 	STA	PTR1H
 
 	LDY	#25
@@ -11478,13 +11481,13 @@ BULLSYST:
 BS:		;**HEADER******
 
 ;----SOLAR44:
-	.DB	H'46	;X_SET5
-	.DB	H'3e, H'4f, H'01, INHAB + FRNDLY + HIGH ;space station
-	.DB	H'2e, H'1a, H'22, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'56, H'25, H'14, INHAB + FRNDLY + LOW
-	.DB	H'5a, H'31, H'23, GAS + INHAB + FRNDLY + HIGH
-	.DB	H'35, H'41, SUN, H'00	;sun
-	.DB	H'1F, H'5A, H'26, GAS
+	.byte	 $46	;X_SET5
+	.byte	 $3e,  $4f,  $01, INHAB + FRNDLY + HIGH ;space station
+	.byte	 $2e,  $1a,  $22, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $56,  $25,  $14, INHAB + FRNDLY + LOW
+	.byte	 $5a,  $31,  $23, GAS + INHAB + FRNDLY + HIGH
+	.byte	 $35,  $41, SUN,  $00	;sun
+	.byte	 $1F,  $5A,  $26, GAS
 
 
 
@@ -11537,7 +11540,7 @@ FO_3:		LDY	TX
 		LDA	(OBJPTRL), Y
 
 		PHA
-		AND	#H'C0
+		AND	#$C0
 		LSR	A
 		LSR	A
 		LSR	A
@@ -11546,7 +11549,7 @@ FO_3:		LDY	TX
 		LSR	A
 		STA	FLIP
 		PLA
-		AND	#H'3F
+		AND	#$3F
 		TAX
 
 		CPX	#0
@@ -11557,7 +11560,7 @@ FO_3:		LDY	TX
 FO_NO_OBJ:	LDA	BKGRND
 		BMI	FNOBJ2
 
-		LDA	#H'FF
+		LDA	#$FF
 		STA	FLIP
 		JMP	OBJ_NIL
 
@@ -11573,7 +11576,7 @@ BXADDR:
 
 ;X-reg, Y-reg = pos. on screen
 
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	LNADDRH, Y
 		CPX	#32
 		BCC	BXA0
@@ -11581,7 +11584,7 @@ BXADDR:
 		ADC	#4
 BXA0:		STA	VID_PTR
 		TXA
-		AND	#H'1F
+		AND	#$1F
 		CLC
 		ADC	LNADDRL, Y
 		STA	VID_PTR
@@ -11594,7 +11597,7 @@ BXA0:		STA	VID_PTR
 
 CLEAR:
 
-;A-reg = Fill character (#h'FA for blank screen)
+;A-reg = Fill character (#$FA for blank screen)
 ;X-reg = Video page # to clear
 ;
 ;***** Video MUST be disabled!
@@ -11604,19 +11607,19 @@ CLEAR:
 	JSR	VR_WAIT
 	JSR	KILL_VID
 
-		LDA	VID_RESET
-		LDA	#H'20
+		LDA	Vid_Reset
+		LDA	#$20
 		CPX	#0
 		BEQ	CLEAR0
 
 		CLC
-		ADC	#H'04
+		ADC	#$04
 
 CLEAR0:		STA	VID_PTR
-		LDA	#H'00
+		LDA	#$00
 		STA	VID_PTR
 
-			PLA		;was h'FA, 04-20-90
+			PLA		;was  $FA, 04-20-90
 		LDX	#24
 CLEAR1:		LDY	#40
 CLEAR2:		STA	VID_DATA
@@ -11628,22 +11631,22 @@ CLEAR2:		STA	VID_DATA
 		RTS
 
 
-SCRXTBL:	.DB	H'FC, H'04, H'0C, H'14, H'1C, H'24, H'2C, H'34
-SCRYTBL:	.DB	H'EB, H'F3, H'03, H'0B, H'13, H'1B, H'23, H'2B
+SCRXTBL:	.byte	 $FC,  $04,  $0C,  $14,  $1C,  $24,  $2C,  $34
+SCRYTBL:	.byte	 $EB,  $F3,  $03,  $0B,  $13,  $1B,  $23,  $2B
 
 DRAWSYSTEM:
 
 ;draws page0 & page1 -- 
 ;shows current section of solar system based on XPOS, YPOS
 		
-		LDA	#H'FA
+		LDA	#$FA
 		LDX	#0	;video page 0
 		JSR	CLEAR
-		LDA	#H'FA
+		LDA	#$FA
 		LDX	#1	;video page 1
 		JSR	CLEAR
 
-		LDA	#H'FF
+		LDA	#$FF
 		STA	TURRET_1
 		STA	TURRET_2
 		STA	TURRET_3
@@ -11656,7 +11659,7 @@ DRAWSYSTEM:
 ;;		LDA	#0
 ;;		STA	LOGIC_X
 ;;		JSR	UG_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_1
 ;;DS0A:
 ;;		LDY	TURRET_2
@@ -11664,7 +11667,7 @@ DRAWSYSTEM:
 ;;		LDA	#16
 ;;		STA	LOGIC_X
 ;;		JSR	UG_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_2
 ;;DS0B:
 ;;		LDY	TURRET_3
@@ -11672,7 +11675,7 @@ DRAWSYSTEM:
 ;;		LDA	#32
 ;;		STA	LOGIC_X
 ;;		JSR	UG_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_3
 ;;DS0C:
 ;;		LDY	TURRET_4
@@ -11680,25 +11683,25 @@ DRAWSYSTEM:
 ;;		LDA	#48
 ;;		STA	LOGIC_X
 ;;		JSR	UG_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_4
 ;;
 ;;
 ;;DS0D:
 ;;		LDY	TURRET_1
 ;;		BMI	DS0E
-;;	;;	LDA	#H'C0
+;;	;;	LDA	#$C0
 ;;	;;	STA	SPR0PTR
 ;;	;;	JSR	USTN_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_1
 ;;DS0E:
 ;;		LDY	TURRET_2
 ;;		BMI	DS0F
-;;	;;	LDA	#H'9C
+;;	;;	LDA	#$9C
 ;;	;;	STA	SPR0PTR
 ;;	;;	JSR	USTN_REM
-;;		LDA	#H'FF
+;;		LDA	#$FF
 ;;		STA	TURRET_2
 		
 DS0F:
@@ -11739,12 +11742,12 @@ SPAZZ3:		LDA	YBLOCK
 		ASL	A
 
 		CLC
-		ADC	#H'EB
+		ADC	#$EB
 		ADC	YBOFF
-		CMP	#H'F0
+		CMP	#$F0
 		BCC	DS0
 		SEC
-		SBC	#H'F0
+		SBC	#$F0
 DS0:		STA	YSCROLL
 
 		LDY	XREL
@@ -11764,7 +11767,7 @@ DS1:		STA	XSCROLL
 		
 		
 		LDA	V_SEL
-		AND	#H'FE
+		AND	#$FE
 		ORA	PAGE
 		STA	V_SEL
 
@@ -11814,7 +11817,7 @@ DRAWSYS1:	LDA	XBLOCK
 ;X, Y   = starting pos. on screen
 
 ;		LDA	V_SEL
-;		AND	#H'7B		;to inc. by column
+;		AND	#$7B		;to inc. by column
 ;		STA	VID_SEL
 
 		LDX	HORZBUFFER+1
@@ -11920,7 +11923,7 @@ DRSHOK:
 		STA	VID_DATA
 
 DRSHNO:		LDA	HPALBUFFER
-		ORA	#H'80
+		ORA	#$80
 		STA	HPALBUFFER
 
 ;*************************************************
@@ -12025,15 +12028,15 @@ DOMAP:
 		CPY	#0
 		BNE	DOMAP0
 
-		LDA	#GAL_MAP >> 8
+		LDA	#>(GAL_MAP)
 		STA	PTR3H
-		LDA	#GAL_MAP & H'FF
+		LDA	#<(GAL_MAP)
 		STA	PTR3L
 		JMP	DOMAP6
 
 DOMAP0:		LDA	BKGRND
 		SEC
-		SBC	#H'7F
+		SBC	#$7F
 		TAY
 
 		LDA	MAPADDRH, Y
@@ -12060,31 +12063,21 @@ DOMAP7:		LDA	#0
 
 		JSR	VR_WAIT
 		JSR	KILL_VID
-		LDA	VID_RESET
-		LDA	#H'23
+		LDA	Vid_Reset
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'C3
+		LDA	#$C3
 		STA	VID_PTR
 		LDA	COUNT0
-		AND	#H'F0
+		AND	#$F0
 		STA	VID_DATA
 		STA	VID_DATA
 		STA	VID_DATA
 		STA	VID_DATA
 
-		LDA	#H'23
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'CB
-		STA	VID_PTR
-		LDA	COUNT0
-		STA	VID_DATA
-		STA	VID_DATA
-		STA	VID_DATA
-		STA	VID_DATA
-
-		LDA	#H'23
-		STA	VID_PTR
-		LDA	#H'D3
+		LDA	#$CB
 		STA	VID_PTR
 		LDA	COUNT0
 		STA	VID_DATA
@@ -12092,9 +12085,19 @@ DOMAP7:		LDA	#0
 		STA	VID_DATA
 		STA	VID_DATA
 
-		LDA	#H'23
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'DB
+		LDA	#$D3
+		STA	VID_PTR
+		LDA	COUNT0
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#$23
+		STA	VID_PTR
+		LDA	#$DB
 		STA	VID_PTR
 		LDA	COUNT0
 		STA	VID_DATA
@@ -12102,29 +12105,29 @@ DOMAP7:		LDA	#0
 		STA	VID_DATA
 		STA	VID_DATA
 
-		LDA	#H'23
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'E3
+		LDA	#$E3
 		STA	VID_PTR
 		LDA	COUNT0
-		AND	#H'0F
+		AND	#$0F
 		STA	VID_DATA
 		STA	VID_DATA
 		STA	VID_DATA
 		STA	VID_DATA
 
 
-		LDA	#H'3F		;set colors
+		LDA	#$3F		;set colors
 		STA	VID_PTR
-		LDA	#H'08
+		LDA	#$08
 		STA	VID_PTR
-		LDA	#H'0E
+		LDA	#$0E
 		STA	VID_DATA
-		LDA	#H'19
+		LDA	#$19
 		STA	VID_DATA
-		LDA	#H'11
+		LDA	#$11
 		STA	VID_DATA
-		LDA	#H'37
+		LDA	#$37
 		STA	VID_DATA
 
 
@@ -12139,11 +12142,11 @@ DOMAP8:		LDY	#2
 DRAW_MAP:	STY	CY
 		JSR	VR_WAIT
 		JSR	KILL_VID
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDY	CY
 		LDA	LNADDRH,Y
 		STA	VID_PTR
-		LDA	#H'0C
+		LDA	#$0C
 		CLC
 		ADC	LNADDRL,Y
 		STA	VID_PTR
@@ -12153,7 +12156,7 @@ DM_0:		LDY	CX
 		INY
 		STY	CX
 		TYA
-		AND	#H'0F
+		AND	#$0F
 		BNE	DM_0
 		LDY	CY
 		INY
@@ -12162,161 +12165,161 @@ DM_0:		LDY	CX
 		JSR	DMAXFER
 		INC	LOGIC_Y
 		LDA	LOGIC_Y
-		AND	#H'0F
+		AND	#$0F
 		BNE	DRAW_MAP
 		RTS
 
 MAPADDRH:
-	.DB	STN_MAP >>8, PRAD_MAP >>8, P1_MAP >>8
+	.byte	STN_MAP >>8, PRAD_MAP >>8, P1_MAP >>8
 MAPADDRL:
-	.DB	STN_MAP &H'FF, PRAD_MAP &H'FF, P1_MAP &H'FF
+	.byte	STN_MAP & $FF, PRAD_MAP & $FF, P1_MAP & $FF
 
 
 ;THE GALAXY MAP BACKGROUND TABLE
 GAL_MAP:
-	.DB	H'06, H'00, H'06, H'07, H'00, H'06, H'03, H'00
-	.DB	H'00, H'04, H'03, H'05, H'06, H'00, H'00, H'06
-	.DB	H'05, H'06, H'06, H'05, H'05, H'00, H'06, H'07
-	.DB	H'06, H'06, H'03, H'06, H'00, H'05, H'06, H'06
-	.DB	H'03, H'07, H'04, H'03, H'02, H'03, H'20, H'1C
-	.DB	H'04, H'02, H'07, H'05, H'03, H'20, H'03, H'04
-	.DB	H'00, H'06, H'06, H'04, H'03, H'1C, H'0B, H'DD
-	.DB	H'05, H'03, H'04, H'06, H'1C, H'04, H'02, H'04
-	.DB	H'04, H'00, H'00, H'1C, H'20, H'00, H'05, H'02
-	.DB	H'02, H'00, H'04, H'00, H'00, H'1C, H'05, H'00
-	.DB	H'00, H'1C, H'02, H'03, H'00, H'02, H'1C, H'05
-	.DB	H'03, H'03, H'0B, H'03, H'06, H'00, H'07, H'00
-	.DB	H'00, H'03, H'06, H'00, H'07, H'20, H'03, H'04
-	.DB	H'05, H'06, H'03, H'00, H'06, H'06, H'07, H'05
-	.DB	H'00, H'02, H'00, H'00, H'DD, H'00, H'00, H'0B
-	.DB	H'DD, H'02, H'02, H'00, H'00, H'1C, H'05, H'06
+	.byte	 $06,  $00,  $06,  $07,  $00,  $06,  $03,  $00
+	.byte	 $00,  $04,  $03,  $05,  $06,  $00,  $00,  $06
+	.byte	 $05,  $06,  $06,  $05,  $05,  $00,  $06,  $07
+	.byte	 $06,  $06,  $03,  $06,  $00,  $05,  $06,  $06
+	.byte	 $03,  $07,  $04,  $03,  $02,  $03,  $20,  $1C
+	.byte	 $04,  $02,  $07,  $05,  $03,  $20,  $03,  $04
+	.byte	 $00,  $06,  $06,  $04,  $03,  $1C,  $0B,  $DD
+	.byte	 $05,  $03,  $04,  $06,  $1C,  $04,  $02,  $04
+	.byte	 $04,  $00,  $00,  $1C,  $20,  $00,  $05,  $02
+	.byte	 $02,  $00,  $04,  $00,  $00,  $1C,  $05,  $00
+	.byte	 $00,  $1C,  $02,  $03,  $00,  $02,  $1C,  $05
+	.byte	 $03,  $03,  $0B,  $03,  $06,  $00,  $07,  $00
+	.byte	 $00,  $03,  $06,  $00,  $07,  $20,  $03,  $04
+	.byte	 $05,  $06,  $03,  $00,  $06,  $06,  $07,  $05
+	.byte	 $00,  $02,  $00,  $00,  $DD,  $00,  $00,  $0B
+	.byte	 $DD,  $02,  $02,  $00,  $00,  $1C,  $05,  $06
 
-	.DB	H'05, H'02, H'06, H'07, H'03, H'20, H'03, H'DD
-	.DB	H'0B, H'00, H'07, H'02, H'00, H'03, H'07, H'06
-	.DB	H'00, H'02, H'06, H'05, H'03, H'04, H'06, H'03
-	.DB	H'02, H'00, H'02, H'06, H'00, H'02, H'00, H'00
-	.DB	H'00, H'20, H'00, H'00, H'04, H'1C, H'02, H'03
-	.DB	H'02, H'02, H'04, H'00, H'04, H'02, H'05, H'00
-	.DB	H'06, H'00, H'1C, H'06, H'00, H'02, H'03, H'03
-	.DB	H'07, H'05, H'00, H'02, H'00, H'00, H'00, H'06
-	.DB	H'05, H'00, H'04, H'03, H'00, H'00, H'00, H'0B
-	.DB	H'DD, H'0B, H'02, H'07, H'02, H'00, H'05, H'00
-	.DB	H'00, H'05, H'00, H'06, H'03, H'06, H'06, H'00
-	.DB	H'07, H'00, H'00, H'05, H'05, H'06, H'07, H'06
-	.DB	H'00, H'00, H'00, H'05, H'00, H'06, H'02, H'04
-	.DB	H'05, H'00, H'05, H'07, H'00, H'00, H'00, H'05
-	.DB	H'00, H'07, H'06, H'00, H'04, H'06, H'06, H'02
-	.DB	H'02, H'03, H'02, H'02, H'06, H'03, H'05, H'00
+	.byte	 $05,  $02,  $06,  $07,  $03,  $20,  $03,  $DD
+	.byte	 $0B,  $00,  $07,  $02,  $00,  $03,  $07,  $06
+	.byte	 $00,  $02,  $06,  $05,  $03,  $04,  $06,  $03
+	.byte	 $02,  $00,  $02,  $06,  $00,  $02,  $00,  $00
+	.byte	 $00,  $20,  $00,  $00,  $04,  $1C,  $02,  $03
+	.byte	 $02,  $02,  $04,  $00,  $04,  $02,  $05,  $00
+	.byte	 $06,  $00,  $1C,  $06,  $00,  $02,  $03,  $03
+	.byte	 $07,  $05,  $00,  $02,  $00,  $00,  $00,  $06
+	.byte	 $05,  $00,  $04,  $03,  $00,  $00,  $00,  $0B
+	.byte	 $DD,  $0B,  $02,  $07,  $02,  $00,  $05,  $00
+	.byte	 $00,  $05,  $00,  $06,  $03,  $06,  $06,  $00
+	.byte	 $07,  $00,  $00,  $05,  $05,  $06,  $07,  $06
+	.byte	 $00,  $00,  $00,  $05,  $00,  $06,  $02,  $04
+	.byte	 $05,  $00,  $05,  $07,  $00,  $00,  $00,  $05
+	.byte	 $00,  $07,  $06,  $00,  $04,  $06,  $06,  $02
+	.byte	 $02,  $03,  $02,  $02,  $06,  $03,  $05,  $00
 
 ;THE BACKGROUND MAP FOR A SPACE STATION IN COMPUTER MODE
 STN_MAP:
-	.DB	 SPC,   S1,  SPC,  SPC,  SPC,   S4,  SPC,  SPC
-	.DB	  S1,   S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;0
-	.DB	 SPC,  SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC
-	.DB	  S3,  SPC,  SPC,  SPC,   S2,  SPC,  SPC,  SPC	;1
-	.DB	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC
-	.DB	  S3,  SPC,  SPC,   S5,  SPC,  SPC,  SPC,  SPC	;2
-	.DB	 SPC,  SPC,  SPC,  SPC,   S1, H'C8, H'C1, H'FC	  
-	.DB	H'FC, H'5D, H'C6,   S1,  SPC,   S2,  SPC,  SPC	;3
-	.DB	 SPC,  SPC,  SPC,  SPC, H'3C, H'FC, H'4E, H'FC
-	.DB	H'FC, H'81, H'FC, H'3D,  SPC,  SPC,   S6,  SPC	;4
-	.DB	 SPC,  SPC,  SPC, H'C7, H'FC, H'EA,  SPC, H'FC
-	.DB	H'FC,  SPC, H'3F, H'FC, H'E7,  SPC,  SPC,  SPC	;5
-	.DB	 SPC,   S1,   S4, H'F3, H'80,  SPC, H'7D, H'FC
-	.DB	H'FC, H'7E,   S3, H'5E, H'53,   S2,  SPC,  SPC	;6
-	.DB	 SPC,  SPC,  SPC, H'FC, H'FC, H'FC, H'FC, H'EB
-	.DB	H'EC, H'FC, H'FC, H'FC, H'FC,  SPC,  SPC,  SPC	;7
+	.byte	 SPC,   S1,  SPC,  SPC,  SPC,   S4,  SPC,  SPC
+	.byte	  S1,   S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;0
+	.byte	 SPC,  SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC
+	.byte	  S3,  SPC,  SPC,  SPC,   S2,  SPC,  SPC,  SPC	;1
+	.byte	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC
+	.byte	  S3,  SPC,  SPC,   S5,  SPC,  SPC,  SPC,  SPC	;2
+	.byte	 SPC,  SPC,  SPC,  SPC,   S1,  $C8,  $C1,  $FC	  
+	.byte	 $FC,  $5D,  $C6,   S1,  SPC,   S2,  SPC,  SPC	;3
+	.byte	 SPC,  SPC,  SPC,  SPC,  $3C,  $FC,  $4E,  $FC
+	.byte	 $FC,  $81,  $FC,  $3D,  SPC,  SPC,   S6,  SPC	;4
+	.byte	 SPC,  SPC,  SPC,  $C7,  $FC,  $EA,  SPC,  $FC
+	.byte	 $FC,  SPC,  $3F,  $FC,  $E7,  SPC,  SPC,  SPC	;5
+	.byte	 SPC,   S1,   S4,  $F3,  $80,  SPC,  $7D,  $FC
+	.byte	 $FC,  $7E,   S3,  $5E,  $53,   S2,  SPC,  SPC	;6
+	.byte	 SPC,  SPC,  SPC,  $FC,  $FC,  $FC,  $FC,  $EB
+	.byte	 $EC,  $FC,  $FC,  $FC,  $FC,  SPC,  SPC,  SPC	;7
 
-	.DB	 SPC,  SPC,  SPC, H'FC, H'FC, H'FC, H'FC, H'ED
-	.DB	H'EE, H'FC, H'FC, H'FC, H'FC,  SPC,  SPC,  SPC	;8
-	.DB	 SPC,  SPC,  SPC, H'5E, H'53,  SPC, H'9D, H'FC
-	.DB	H'FC, H'9E,  SPC, H'F3, H'80,   S1,  SPC,  SPC	;9
-	.DB	 SPC,  SPC,  SPC, H'E8, H'FC, H'3D,  SPC, H'FC
-	.DB	H'FC,  SPC, H'3C, H'FC, H'EA,  SPC,   S6,  SPC	;A
-	.DB	 SPC,  SPC,   S2,  SPC, H'3F, H'FC, H'5D, H'FC
-	.DB	H'FC, H'C1, H'FC, H'3E,  SPC,  SPC,  SPC,  SPC	;B
-	.DB	 SPC,  SPC,  SPC,  SPC,  SPC, H'E6, H'81, H'FC
-	.DB	H'FC, H'4E, H'E9,  SPC,  SPC,  SPC,   S2,  SPC	;C
-	.DB	  S4,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC
-	.DB	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC	;D
-	.DB	 SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC,   S5
-	.DB	  S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;E
-	.DB	 SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC,  SPC
-	.DB	 SPC,  SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC	;F
+	.byte	 SPC,  SPC,  SPC,  $FC,  $FC,  $FC,  $FC,  $ED
+	.byte	 $EE,  $FC,  $FC,  $FC,  $FC,  SPC,  SPC,  SPC	;8
+	.byte	 SPC,  SPC,  SPC,  $5E,  $53,  SPC,  $9D,  $FC
+	.byte	 $FC,  $9E,  SPC,  $F3,  $80,   S1,  SPC,  SPC	;9
+	.byte	 SPC,  SPC,  SPC,  $E8,  $FC,  $3D,  SPC,  $FC
+	.byte	 $FC,  SPC,  $3C,  $FC,  $EA,  SPC,   S6,  SPC	;A
+	.byte	 SPC,  SPC,   S2,  SPC,  $3F,  $FC,  $5D,  $FC
+	.byte	 $FC,  $C1,  $FC,  $3E,  SPC,  SPC,  SPC,  SPC	;B
+	.byte	 SPC,  SPC,  SPC,  SPC,  SPC,  $E6,  $81,  $FC
+	.byte	 $FC,  $4E,  $E9,  SPC,  SPC,  SPC,   S2,  SPC	;C
+	.byte	  S4,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC
+	.byte	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC	;D
+	.byte	 SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC,   S5
+	.byte	  S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;E
+	.byte	 SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC,  SPC
+	.byte	 SPC,  SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC	;F
 
 
 ;THE BACKGROUND MAP FOR PRADIKUS IN COMPUTER MODE
 PRAD_MAP:
-	.DB	H'FB, H'FB, H'A7, H'A8, H'A9, H'FB, H'FB, H'FB
-	.DB	H'FB, H'FB, H'FB, H'FB, H'A7, H'88, H'A9, H'FB
-	.DB	H'A7, H'A8, H'89, H'FC, H'87, H'A8, H'A9, H'FB
-	.DB	H'FB, H'FB, H'A7, H'88, H'89, H'FC, H'87, H'A9
-	.DB	H'E7, H'49, H'47, H'E8, H'49, H'FC, H'67, H'FB
-	.DB	H'FB, H'FB, H'69, H'47, H'E8, H'49, H'FC, H'C9
-	.DB	H'A7, H'89, H'C9, H'68, H'69, H'FC, H'87, H'88
-	.DB	H'A8, H'88, H'89, H'67, H'68, H'69, H'47, H'E9
-	.DB	H'C7, H'FC, H'87, H'88, H'89, H'FC, H'FC, H'FC
-	.DB	H'FC, H'FC, H'FC, H'87, H'88, H'89, H'C9, H'FB
-	.DB	H'E7, H'48, H'49, H'FC, H'FC, H'47, H'48, H'E8
-	.DB	H'48, H'E8, H'49, H'FC, H'FC, H'47, H'E9, H'FB
-	.DB	H'FB, H'FB, H'E7, H'49, H'FC, H'67, H'8A, H'8B
-	.DB	H'8A, H'8B, H'69, H'47, H'48, H'E9, H'FB, H'FB
-	.DB	H'FB, H'FB, H'FB, H'E7, H'49, H'C9, H'AA, H'AB
-	.DB	H'AA, H'AB, H'C7, H'67, H'FB, H'FB, H'FB, H'FB
+	.byte	 $FB,  $FB,  $A7,  $A8,  $A9,  $FB,  $FB,  $FB
+	.byte	 $FB,  $FB,  $FB,  $FB,  $A7,  $88,  $A9,  $FB
+	.byte	 $A7,  $A8,  $89,  $FC,  $87,  $A8,  $A9,  $FB
+	.byte	 $FB,  $FB,  $A7,  $88,  $89,  $FC,  $87,  $A9
+	.byte	 $E7,  $49,  $47,  $E8,  $49,  $FC,  $67,  $FB
+	.byte	 $FB,  $FB,  $69,  $47,  $E8,  $49,  $FC,  $C9
+	.byte	 $A7,  $89,  $C9,  $68,  $69,  $FC,  $87,  $88
+	.byte	 $A8,  $88,  $89,  $67,  $68,  $69,  $47,  $E9
+	.byte	 $C7,  $FC,  $87,  $88,  $89,  $FC,  $FC,  $FC
+	.byte	 $FC,  $FC,  $FC,  $87,  $88,  $89,  $C9,  $FB
+	.byte	 $E7,  $48,  $49,  $FC,  $FC,  $47,  $48,  $E8
+	.byte	 $48,  $E8,  $49,  $FC,  $FC,  $47,  $E9,  $FB
+	.byte	 $FB,  $FB,  $E7,  $49,  $FC,  $67,  $8A,  $8B
+	.byte	 $8A,  $8B,  $69,  $47,  $48,  $E9,  $FB,  $FB
+	.byte	 $FB,  $FB,  $FB,  $E7,  $49,  $C9,  $AA,  $AB
+	.byte	 $AA,  $AB,  $C7,  $67,  $FB,  $FB,  $FB,  $FB
 
-	.DB	H'FB, H'FB, H'FB, H'FB, H'C7, H'67, H'8A, H'8B
-	.DB	H'8A, H'8B, H'69, H'87, H'A9, H'FB, H'FB, H'FB
-	.DB	H'FB, H'FB, H'FB, H'A7, H'89, H'C9, H'AA, H'AB
-	.DB	H'AA, H'AB, H'C7, H'FC, H'87, H'A9, H'FB, H'FB
-	.DB	H'FB, H'A7, H'88, H'89, H'FC, H'87, H'A8, H'88
-	.DB	H'88, H'A8, H'89, H'FC, H'FC, H'87, H'A9, H'FB
-	.DB	H'FB, H'69, H'47, H'48, H'49, H'FC, H'47, H'E8
-	.DB	H'49, H'FC, H'FC, H'47, H'48, H'49, H'C9, H'FB
-	.DB	H'A7, H'89, H'67, H'68, H'69, H'FC, H'C9, H'FB
-	.DB	H'69, H'FC, H'FC, H'C9, H'68, H'69, H'67, H'FB
-	.DB	H'69, H'FC, H'87, H'88, H'89, H'47, H'E9, H'FB
-	.DB	H'E7, H'49, H'FC, H'87, H'88, H'89, H'67, H'FB
-	.DB	H'E7, H'E8, H'48, H'E8, H'48, H'E9, H'FB, H'FB
-	.DB	H'FB, H'E7, H'48, H'49, H'47, H'E8, H'E9, H'FB
-	.DB	H'FB, H'FB, H'FB, H'FB, H'FB, H'FB, H'FB, H'FB
-	.DB	H'FB, H'FB, H'FB, H'E7, H'E9, H'FB, H'FB, H'FB
+	.byte	 $FB,  $FB,  $FB,  $FB,  $C7,  $67,  $8A,  $8B
+	.byte	 $8A,  $8B,  $69,  $87,  $A9,  $FB,  $FB,  $FB
+	.byte	 $FB,  $FB,  $FB,  $A7,  $89,  $C9,  $AA,  $AB
+	.byte	 $AA,  $AB,  $C7,  $FC,  $87,  $A9,  $FB,  $FB
+	.byte	 $FB,  $A7,  $88,  $89,  $FC,  $87,  $A8,  $88
+	.byte	 $88,  $A8,  $89,  $FC,  $FC,  $87,  $A9,  $FB
+	.byte	 $FB,  $69,  $47,  $48,  $49,  $FC,  $47,  $E8
+	.byte	 $49,  $FC,  $FC,  $47,  $48,  $49,  $C9,  $FB
+	.byte	 $A7,  $89,  $67,  $68,  $69,  $FC,  $C9,  $FB
+	.byte	 $69,  $FC,  $FC,  $C9,  $68,  $69,  $67,  $FB
+	.byte	 $69,  $FC,  $87,  $88,  $89,  $47,  $E9,  $FB
+	.byte	 $E7,  $49,  $FC,  $87,  $88,  $89,  $67,  $FB
+	.byte	 $E7,  $E8,  $48,  $E8,  $48,  $E9,  $FB,  $FB
+	.byte	 $FB,  $E7,  $48,  $49,  $47,  $E8,  $E9,  $FB
+	.byte	 $FB,  $FB,  $FB,  $FB,  $FB,  $FB,  $FB,  $FB
+	.byte	 $FB,  $FB,  $FB,  $E7,  $E9,  $FB,  $FB,  $FB
 
 
 ;THE BACKGROUND MAP FOR PLANET 1 IN COMPUTER MODE
 P1_MAP:
-	.DB	H'86, H'A6, H'A7, H'A9, H'46, H'66, H'A7, H'88
-	.DB	H'A9, H'86, H'A6, H'46, H'66, H'86, H'66, H'46
-	.DB	H'D1, H'A7, H'89, H'87, H'A9, H'D1, H'69, H'FC
-	.DB	H'67, H'A6, H'46, H'66, H'A7, H'88, H'A8, H'A9
-	.DB	H'86, H'E7, H'49, H'FC, H'87, H'A9, H'C7, H'47
-	.DB	H'E9, H'A6, H'68, H'66, H'C7, H'FC, H'FC, H'C9
-	.DB	H'86, H'A6, H'69, H'FC, H'FC, H'C9, H'E7, H'E9
-	.DB	H'46, H'68, H'86, H'A7, H'89, H'FC, H'FC, H'67
-	.DB	H'D1, H'A7, H'89, H'FC, H'47, H'E9, H'A7, H'A8
-	.DB	H'88, H'A9, H'A7, H'89, H'47, H'49, H'FC, H'C9
-	.DB	H'46, H'E7, H'49, H'FC, H'87, H'88, H'89, H'47
-	.DB	H'49, H'87, H'89, H'47, H'E9, H'E7, H'E8, H'E9
-	.DB	H'66, H'86, H'E7, H'49, H'47, H'E8, H'48, H'E9
-	.DB	H'E7, H'48, H'E8, H'E9, H'A6, H'46, H'66, H'46
-	.DB	H'A6, H'D1, H'A7, H'89, H'C9, H'66, H'68, H'8A
-	.DB	H'8B, H'A6, H'46, H'66, H'86, H'D1, H'46, H'68
+	.byte	 $86,  $A6,  $A7,  $A9,  $46,  $66,  $A7,  $88
+	.byte	 $A9,  $86,  $A6,  $46,  $66,  $86,  $66,  $46
+	.byte	 $D1,  $A7,  $89,  $87,  $A9,  $D1,  $69,  $FC
+	.byte	 $67,  $A6,  $46,  $66,  $A7,  $88,  $A8,  $A9
+	.byte	 $86,  $E7,  $49,  $FC,  $87,  $A9,  $C7,  $47
+	.byte	 $E9,  $A6,  $68,  $66,  $C7,  $FC,  $FC,  $C9
+	.byte	 $86,  $A6,  $69,  $FC,  $FC,  $C9,  $E7,  $E9
+	.byte	 $46,  $68,  $86,  $A7,  $89,  $FC,  $FC,  $67
+	.byte	 $D1,  $A7,  $89,  $FC,  $47,  $E9,  $A7,  $A8
+	.byte	 $88,  $A9,  $A7,  $89,  $47,  $49,  $FC,  $C9
+	.byte	 $46,  $E7,  $49,  $FC,  $87,  $88,  $89,  $47
+	.byte	 $49,  $87,  $89,  $47,  $E9,  $E7,  $E8,  $E9
+	.byte	 $66,  $86,  $E7,  $49,  $47,  $E8,  $48,  $E9
+	.byte	 $E7,  $48,  $E8,  $E9,  $A6,  $46,  $66,  $46
+	.byte	 $A6,  $D1,  $A7,  $89,  $C9,  $66,  $68,  $8A
+	.byte	 $8B,  $A6,  $46,  $66,  $86,  $D1,  $46,  $68
 
-	.DB	H'86, H'A7, H'89, H'47, H'E9, H'A6, H'46, H'AA
-	.DB	H'AB, H'66, H'86, H'66, H'46, H'A6, H'D1, H'A6
-	.DB	H'68, H'E7, H'48, H'E9, H'66, H'86, H'66, H'46
-	.DB	H'D1, H'CA, H'CB, H'CC, H'86, H'A6, H'46, H'A6
-	.DB	H'86, H'46, H'68, H'D1, H'CA, H'CB, H'F1, H'CC
-	.DB	H'A6, H'CD, H'EF, H'EC, H'68, H'CA, H'F1, H'CC
-	.DB	H'66, H'46, H'D1, H'86, H'EA, H'FD, H'ED, H'CF
-	.DB	H'66, H'46, H'CD, H'CF, H'CA, H'F2, H'FD, H'D0
-	.DB	H'A6, H'86, H'66, H'46, H'D2, H'FD, H'D0, H'A6
-	.DB	H'86, H'CA, H'F1, H'CC, H'D2, H'FD, H'FD, H'EC
-	.DB	H'66, H'46, H'A6, H'CA, H'F2, H'FD, H'F0, H'CC
-	.DB	H'CA, H'F2, H'FD, H'F0, H'F2, H'FD, H'FD, H'D0
-	.DB	H'68, H'66, H'D1, H'EA, H'ED, H'EE, H'CE, H'CF
-	.DB	H'CD, H'EF, H'FD, H'FD, H'FD, H'FD, H'ED, H'CF
-	.DB	H'A6, H'46, H'68, H'CD, H'CF, H'86, H'D1, H'46
-	.DB	H'66, H'CD, H'CE, H'EE, H'CE, H'EE, H'CF, H'68
+	.byte	 $86,  $A7,  $89,  $47,  $E9,  $A6,  $46,  $AA
+	.byte	 $AB,  $66,  $86,  $66,  $46,  $A6,  $D1,  $A6
+	.byte	 $68,  $E7,  $48,  $E9,  $66,  $86,  $66,  $46
+	.byte	 $D1,  $CA,  $CB,  $CC,  $86,  $A6,  $46,  $A6
+	.byte	 $86,  $46,  $68,  $D1,  $CA,  $CB,  $F1,  $CC
+	.byte	 $A6,  $CD,  $EF,  $EC,  $68,  $CA,  $F1,  $CC
+	.byte	 $66,  $46,  $D1,  $86,  $EA,  $FD,  $ED,  $CF
+	.byte	 $66,  $46,  $CD,  $CF,  $CA,  $F2,  $FD,  $D0
+	.byte	 $A6,  $86,  $66,  $46,  $D2,  $FD,  $D0,  $A6
+	.byte	 $86,  $CA,  $F1,  $CC,  $D2,  $FD,  $FD,  $EC
+	.byte	 $66,  $46,  $A6,  $CA,  $F2,  $FD,  $F0,  $CC
+	.byte	 $CA,  $F2,  $FD,  $F0,  $F2,  $FD,  $FD,  $D0
+	.byte	 $68,  $66,  $D1,  $EA,  $ED,  $EE,  $CE,  $CF
+	.byte	 $CD,  $EF,  $FD,  $FD,  $FD,  $FD,  $ED,  $CF
+	.byte	 $A6,  $46,  $68,  $CD,  $CF,  $86,  $D1,  $46
+	.byte	 $66,  $CD,  $CE,  $EE,  $CE,  $EE,  $CF,  $68
 
 ;****************************************
 
@@ -12324,15 +12327,15 @@ HASITEM:
 
 ;Y-reg. = item code
 
-		CPY	#H'10
+		CPY	#$10
 		BCS	HASITEM0
 		LDY	#0
 		RTS
 
 HASITEM0:	TYA
 		SEC
-		SBC	#H'10
-		CMP	#H'19
+		SBC	#$10
+		CMP	#$19
 		BEQ	HASITEM1
 		PHA
 	
@@ -12352,14 +12355,14 @@ HASITEM0:	TYA
 
 HASITEM1:	LDY	ORBIT
 		LDA	SYSTEM+2,Y	;type/pal.
-		AND	#H'70
+		AND	#$70
 		BNE	HASITEM2	;space stn?
 		LDA	SYSTEM+2,Y	;stn. index
-		AND	#H'0F
+		AND	#$0F
 		TAY
 		LDA	SDEF_OBJ,Y
-		AND	#H'03
-		CMP	#H'01
+		AND	#$03
+		CMP	#$01
 		LDA	#0
 		ROL	A
 		TAY
@@ -12368,24 +12371,24 @@ HASITEM1:	LDY	ORBIT
 HASITEM2:	LDY	#0
 		RTS
 
-ITEMTECH:	.DB	LOW, AVG, AVG, HIGH, V_HIGH	;drives
-		.DB	LOW, AVG, AVG, HIGH, V_HIGH	;power plants
-		.DB	LOW, AVG, AVG, HIGH, V_HIGH	;shields
-		.DB	0, 0				;armor, fuel
-		.DB	LOW, AVG, HIGH, V_HIGH		;wpn1
-		.DB	HIGH, LOW, AVG, V_HIGH, V_HIGH	;wpn2
+ITEMTECH:	.byte	LOW, AVG, AVG, HIGH, V_HIGH	;drives
+		.byte	LOW, AVG, AVG, HIGH, V_HIGH	;power plants
+		.byte	LOW, AVG, AVG, HIGH, V_HIGH	;shields
+		.byte	0, 0				;armor, fuel
+		.byte	LOW, AVG, HIGH, V_HIGH		;wpn1
+		.byte	HIGH, LOW, AVG, V_HIGH, V_HIGH	;wpn2
 
 
 ;*************************************************
 
-GETCOST:	CPY	#H'10
+GETCOST:	CPY	#$10
 		BCS	GETCOST0
 		LDY	#0
 		RTS
 
 GETCOST0:	TYA
 		SEC
-		SBC	#H'10
+		SBC	#$10
 		TAY
 		LDA	ITEMC6, Y
 		STA	C100000
@@ -12436,7 +12439,7 @@ SUBCR0:		LDA	C10
 		BCS	SUBCR1
 		LDA	C10
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	C10
 		JSR	MNSC1
 
@@ -12447,7 +12450,7 @@ SUBCR1:		LDA	C100
 		BCS	SUBCR2
 		LDA	C100
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	C100
 		JSR	MNSC2
 
@@ -12458,7 +12461,7 @@ SUBCR2:		LDA	C1000
 		BCS	SUBCR3
 		LDA	C1000
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	C1000
 		JSR	MNSC3
 
@@ -12469,7 +12472,7 @@ SUBCR3:		LDA	C10000
 		BCS	SUBCR4
 		LDA	C10000
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	C10000
 		JSR	MNSC4
 
@@ -12505,23 +12508,23 @@ MNSCRTS:	RTS
 		
 	;       DRIVES---  PWR/PL---  SHIELDS--  A F  WPN1     WPN2-----
 
-ITEMC6:	.DB	0,0,1,1,2, 0,0,1,1,2, 0,0,0,1,1, 0,0, 0,0,0,0, 0,0,0,0,5
-ITEMC5:	.DB	2,6,0,4,0, 2,6,0,4,0, 1,4,8,2,6, 0,0, 0,1,1,2, 0,0,0,0,0
-ITEMC4:	.DB	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 5,0,7,5, 2,1,1,3,0
-ITEMC3:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 1,0, 0,0,5,0, 5,0,7,2,0
-ITEMC2:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,5, 0,0,0,0, 0,0,5,5,0
+ITEMC6:	.byte	0,0,1,1,2, 0,0,1,1,2, 0,0,0,1,1, 0,0, 0,0,0,0, 0,0,0,0,5
+ITEMC5:	.byte	2,6,0,4,0, 2,6,0,4,0, 1,4,8,2,6, 0,0, 0,1,1,2, 0,0,0,0,0
+ITEMC4:	.byte	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 5,0,7,5, 2,1,1,3,0
+ITEMC3:	.byte	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 1,0, 0,0,5,0, 5,0,7,2,0
+ITEMC2:	.byte	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,5, 0,0,0,0, 0,0,5,5,0
 
-ITEMD5:	.DB	1,2,2,5,0, 1,2,2,5,0, 1,1,2,2,0, 0,0, 0,0,0,0, 0,0,0,0,0
-ITEMD4:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,1,2,0, 0,0,0,0,0
-ITEMD3:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 5,0,0,0, 2,1,2,0,0
-ITEMD2:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,0,0,0, 5,0,5,0,0
+ITEMD5:	.byte	1,2,2,5,0, 1,2,2,5,0, 1,1,2,2,0, 0,0, 0,0,0,0, 0,0,0,0,0
+ITEMD4:	.byte	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,1,2,0, 0,0,0,0,0
+ITEMD3:	.byte	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 5,0,0,0, 2,1,2,0,0
+ITEMD2:	.byte	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,0,0,0, 5,0,5,0,0
 
 ;THE CREDIT FOR RESALE & END SCORING
-ITEMCR6: .DB	0,0,0,1,1, 0,0,0,1,1, 0,0,0,0,1, 0,0, 0,0,0,0, 0,0,0,0,0
-ITEMCR5: .DB	1,4,7,0,5, 1,4,7,0,5, 1,3,6,9,2, 0,0, 0,0,0,1, 0,0,0,0,0
-ITEMCR4: .DB	5,5,5,5,0, 5,5,5,5,0, 1,0,0,0,0, 0,0, 2,5,8,2, 1,0,0,1,0
-ITEMCR3: .DB	0,0,0,0,0, 0,0,0,0,0, 2,0,0,0,0, 0,0, 5,0,7,5, 2,5,9,7,0
-ITEMCR2: .DB	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 0,0,5,0, 5,0,0,5,0
+ITEMCR6: .byte	0,0,0,1,1, 0,0,0,1,1, 0,0,0,0,1, 0,0, 0,0,0,0, 0,0,0,0,0
+ITEMCR5: .byte	1,4,7,0,5, 1,4,7,0,5, 1,3,6,9,2, 0,0, 0,0,0,1, 0,0,0,0,0
+ITEMCR4: .byte	5,5,5,5,0, 5,5,5,5,0, 1,0,0,0,0, 0,0, 2,5,8,2, 1,0,0,1,0
+ITEMCR3: .byte	0,0,0,0,0, 0,0,0,0,0, 2,0,0,0,0, 0,0, 5,0,7,5, 2,5,9,7,0
+ITEMCR2: .byte	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 0,0,5,0, 5,0,0,5,0
 		
 		
 
@@ -12549,7 +12552,7 @@ SUBCASH:	LDA	SC1M
 		BCS	SUBC0
 		LDA	SC1
 		SEC
-		SBC	#H'F6	;BORROW 10
+		SBC	#$F6	;BORROW 10
 		STA	SC1
 		JSR	SUBX0
 
@@ -12560,7 +12563,7 @@ SUBC0:		LDA	SC10
 		BCS	SUBC1
 		LDA	SC10
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	SC10
 		JSR	SUBX1
 
@@ -12571,7 +12574,7 @@ SUBC1:		LDA	SC100
 		BCS	SUBC2
 		LDA	SC100
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	SC100
 		JSR	SUBX2
 
@@ -12582,7 +12585,7 @@ SUBC2:		LDA	SC1000
 		BCS	SUBC3
 		LDA	SC1000
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	SC1000
 		JSR	SUBX3
 
@@ -12593,7 +12596,7 @@ SUBC3:		LDA	SC10000
 		BCS	SUBC4
 		LDA	SC10000
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	SC10000
 		JSR	SUBX4
 
@@ -12604,7 +12607,7 @@ SUBC4:		LDA	SC100000
 		BCS	SUBC5
 		LDA	SC100000
 		SEC
-		SBC	#H'F6
+		SBC	#$F6
 		STA	SC100000
 		JSR	SUBX5
 
@@ -12680,7 +12683,7 @@ SUBXRTS:	RTS
 DRAWSTR:	JSR	VR_WAIT
 		JSR	KILL_VID
 
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		STX	TX
 		LDA	LNADDRH, Y
 		STA	VID_PTR
@@ -12691,10 +12694,10 @@ DRAWSTR:	JSR	VR_WAIT
 
 		LDY	#0
 DRAWSTR0:	LDA	(PTR3L), Y
-		CMP	#H'FF
+		CMP	#$FF
 		BEQ	DRAWSTR1
 		SEC
-		SBC	#H'20
+		SBC	#$20
 		STA	VID_DATA
 		INY
 		JMP	DRAWSTR0
@@ -12711,16 +12714,16 @@ DRAWSHP:	LDY	#0
 DRAWSHP0:	JSR	VR_WAIT
 		JSR	KILL_VID
 
-		LDA	VID_RESET
+		LDA	Vid_Reset
 		LDA	T0
 		CLC
-		ADC	#H'08
+		ADC	#$08
 		TAX
 		LDA	LNADDRH, X
 		STA	VID_PTR
 		LDA	LNADDRL, X
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_PTR
 
 		LDA	#8
@@ -12744,7 +12747,7 @@ DRAWSHP1:	LDA	(PTR3L), Y
 		
 ;*************************************************
 
-PALCOLOR:	.DB	H'00,H'55,H'AA,H'FF
+PALCOLOR:	.byte	 $00, $55, $AA, $FF
 
 
 DOSCAN:		LDA	SYS_PAL
@@ -12755,11 +12758,11 @@ DOSCAN:		LDA	SYS_PAL
 
 		LDY	ORBIT
 		LDA	SYSTEM+2, Y	;type/pal.
-		AND	#H'70
+		AND	#$70
 		BEQ	DOSCP0		;space stn?
 
 		LDA	SYSTEM+2, Y	;pal.
-		AND	#H'70
+		AND	#$70
 		LSR	A
 		LSR	A
 		LSR	A
@@ -12774,19 +12777,19 @@ DOSCP0:		JSR	VR_WAIT
 	
 	JSR	RESETPALS
 
-	LDA	VID_RESET
+	LDA	Vid_Reset
 	LDY	#0
-	LDA	#H'3F
+	LDA	#$3F
 	STA	VID_PTR
-	LDA	#H'00
+	LDA	#$00
 	STA	VID_PTR
-	LDA	#H'0E
+	LDA	#$0E
 	STA	VID_DATA
-	LDA	#H'21
+	LDA	#$21
 	STA	VID_DATA
-	LDA	#H'11
+	LDA	#$11
 	STA	VID_DATA
-	LDA	#H'01
+	LDA	#$01
 	STA	VID_DATA
 
 
@@ -12799,58 +12802,58 @@ DOSCP0A:	LDA	(BPAL_BASE), Y
 
 
 
-		LDA	VID_RESET
-		LDA	#H'23
+		LDA	Vid_Reset
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'D4
+		LDA	#$D4
 		STA	VID_PTR
 		LDA	COUNT0
 		STA	VID_DATA
 		STA	VID_DATA
-		LDA	#H'23
+		LDA	#$23
 		STA	VID_PTR
-		LDA	#H'DC
+		LDA	#$DC
 		STA	VID_PTR
 		LDA	COUNT0
-		AND	#H'0F
+		AND	#$0F
 		STA	VID_DATA
 		STA	VID_DATA
 		JSR	VR_WAIT
 		JSR	DMAXFER
 		JSR	SET_VID
 
-		LDA	#STXT01 &H'FF
+		LDA	#<(STXT01)
 		STA	PTR3L
-		LDA	#STXT01 >>8
+		LDA	#>(STXT01)
 		STA	PTR3H
-		LDX	#H'10
-		LDY	#H'01
+		LDX	#$10
+		LDY	#$01
 		JSR	DRAWSTR		;"IN-ORBIT"
 
-		LDA	#STXT00 &H'FF
+		LDA	#<(STXT00)
 		STA	PTR3L
-		LDA	#STXT00 >>8
+		LDA	#>(STXT00)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'02
+		LDX	#$0C
+		LDY	#$02
 		JSR	DRAWSTR		;"SECTOR/SYSTEM"
 
 
 		JSR	VR_WAIT
 		JSR	KILL_VID
-		LDA	VID_RESET
-		LDY	#H'03
+		LDA	Vid_Reset
+		LDY	#$03
 		LDA	LNADDRH, Y
 		STA	VID_PTR
 		LDA	LNADDRL, Y
 		CLC
-		ADC	#H'0D
+		ADC	#$0D
 		STA	VID_PTR
 		LDA	GALAXY_X
 		CLC
 		ADC	#1
 		JSR	DRAWNUM
-		LDA	#H'0D
+		LDA	#$0D
 		STA	VID_DATA
 		LDA	GALAXY_Y
 		CLC
@@ -12861,17 +12864,17 @@ DOSCP0A:	LDA	(BPAL_BASE), Y
 		
 		JSR	VR_WAIT
 		JSR	KILL_VID
-		LDA	VID_RESET
-		LDY	#H'03
+		LDA	Vid_Reset
+		LDY	#$03
 		LDA	LNADDRH, Y
 		STA	VID_PTR
 		LDA	LNADDRL, Y
 		CLC
-		ADC	#H'16
+		ADC	#$16
 		STA	VID_PTR
 		LDA	SECTOR_X
 		JSR	DRAWNUM
-		LDA	#H'0D
+		LDA	#$0D
 		STA	VID_DATA
 		LDA	SECTOR_Y
 		JSR	DRAWNUM
@@ -12879,29 +12882,29 @@ DOSCP0A:	LDA	(BPAL_BASE), Y
 		JSR	SET_VID
 
 
-		LDA	#STXT02 &H'FF
+		LDA	#<(STXT02)
 		STA	PTR3L
-		LDA	#STXT02	>>8
+		LDA	#>(STXT02)
 		STA	PTR3H
-		LDX	#H'0E
-		LDY	#H'05
+		LDX	#$0E
+		LDY	#$05
 		JSR	DRAWSTR		;"COORDINATES"
 
 		JSR	VR_WAIT
 		JSR	KILL_VID
-		LDA	VID_RESET
-		LDY	#H'06
+		LDA	Vid_Reset
+		LDY	#$06
 		LDA	LNADDRH, Y
 		STA	VID_PTR
 		LDA	LNADDRL, Y
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_PTR
 		LDA	XPOS
 		CLC
 		ADC	#1
 		JSR	DRAWNUM3
-		LDA	#H'0D
+		LDA	#$0D
 		STA	VID_DATA
 		STA	VID_DATA
 		LDA	YPOS
@@ -12919,33 +12922,33 @@ DOSCP0A:	LDA	(BPAL_BASE), Y
 
 		LDY	ORBIT
 		LDA	SYSTEM+2, Y	;type/pal.
-		AND	#H'F0
-		CMP	#H'30		;sun?
+		AND	#$F0
+		CMP	#$30		;sun?
 		BNE	DOSC_0
 ;sun
-		LDA	#P6SHAPE &H'FF
+		LDA	#<(P6SHAPE)
 		STA	PTR3L
-		LDA	#P6SHAPE >>8
+		LDA	#>(P6SHAPE)
 		STA	PTR3H
 		JSR	DRAWSHP		;draw 6x6 "planet"
 
 		LDA	#3
 		STA	COUNT0
-		LDA	#STXT0D &H'FF
+		LDA	#<(STXT0D)
 		STA	PTR3L
-		LDA	#STXT0D >>8
+		LDA	#>(STXT0D)
 		STA	PTR3H
 		JMP	DOSC_LBL	;"STAR"
 
 DOSC_0:	
-		CMP	#H'00
+		CMP	#$00
 		BNE	DOSC_0A		;space station?
 		JMP	DOSC_7
 
 ;planet
 
 DOSC_0A:	LDA	SYSTEM+2, Y	;size (lo. nyb.)
-		AND	#H'0F
+		AND	#$0F
 		TAY
 		LDA	PSHPSL, Y
 		STA	PTR3L
@@ -12972,9 +12975,9 @@ DOSC_0A:	LDA	SYSTEM+2, Y	;size (lo. nyb.)
 ;enemy
 		LDA	#4		;msg. # for "ENEMY BASE DESTROYED.."
 		STA	COUNT0
-DOSC_1:		LDA	#STXT10 &H'FF	;"UNINHABITED"
+DOSC_1:		LDA	#<(STXT10)	;"UNINHABITED"
 		STA	PTR3L
-		LDA	#STXT10 >>8
+		LDA	#>(STXT10)
 		STA	PTR3H
 		JMP	DOSC_LBL
 
@@ -12982,9 +12985,9 @@ DOSC_1:		LDA	#STXT10 &H'FF	;"UNINHABITED"
 
 DOSC_2:		LDA	#3		;msg. # for "...NO INTELLIGENT LIFE.."
 		STA	COUNT3
-		LDA	#STXT0A &H'FF	;"GAS GIANT"
+		LDA	#<(STXT0A)	;"GAS GIANT"
 		STA	PTR3L
-		LDA	#STXT0A >>8
+		LDA	#>(STXT0A)
 		STA	PTR3H
 		JMP	DOSC_LBL
 
@@ -12998,9 +13001,9 @@ DOSC_3:		LDA	#1
 ;enemy base
 		LDA	#1
 		STA	COUNT0
-		LDA	#STXT0C &H'FF
+		LDA	#<(STXT0C)
 		STA	PTR3L
-		LDA	#STXT0C >>8
+		LDA	#>(STXT0C)
 		STA	PTR3H
 		JMP	DOSC_5
 
@@ -13008,9 +13011,9 @@ DOSC_3:		LDA	#1
 
 DOSC_4:		LDA	#2
 		STA	COUNT0
-		LDA	#STXT0B &H'FF
+		LDA	#<(STXT0B)
 		STA	PTR3L
-		LDA	#STXT0B >>8
+		LDA	#>(STXT0B)
 		STA	PTR3H
 
 ;inhabited...
@@ -13031,11 +13034,11 @@ DOSC_6:		LDA	SYSTEM+3, Y	;data bits
 
 ;space station!
 
-DOSC_7:		LDA	#H'D4
+DOSC_7:		LDA	#$D4
 		STA	SPR0PTR
-		LDA	#H'50
+		LDA	#$50
 		STA	TY
-		LDA	#H'9C
+		LDA	#$9C
 		STA	TX
 		JSR	POS3X3
 
@@ -13044,7 +13047,7 @@ DOSC_7:		LDA	#H'D4
 		BEQ	DOSC_7A
 ;alive...
  		LDX	#0
-		LDA	#H'01
+		LDA	#$01
 	 	JSR	DRAWSTN
 		LDA	#1
 		STA	COUNT1
@@ -13052,14 +13055,14 @@ DOSC_7:		LDA	#H'D4
 
 ;dead
 
-DOSC_7A:     	LDA	#H'01
+DOSC_7A:     	LDA	#$01
 		JSR	DRAWSTNX
 		LDA	#0
 		STA	COUNT1
 
 DOSC_7B:	;copy to SPRTBL1
 
-		LDY	#H'D4
+		LDY	#$D4
 DOSC_7BA:	LDA	SPRTBL0, Y
 		STA	SPRTBL1, Y
 		INY
@@ -13081,17 +13084,17 @@ DOSC_7C:	LDA	SYSTEM+3, Y	;data bits
 DOSC_8:		LDA	SYSTEM+3,Y	;data bits
 		AND	#FRNDLY
 		BEQ	DOSC_9
-		LDA	#STXT0E &H'FF
+		LDA	#<(STXT0E)
 		STA	PTR3L
-		LDA	#STXT0E >>8
+		LDA	#>(STXT0E)
 		STA	PTR3H
 		JMP	DOSC_LBL
 
 ;enemy...
 
-DOSC_9:		LDA	#STXT0F &H'FF
+DOSC_9:		LDA	#<(STXT0F)
 		STA	PTR3L
-		LDA	#STXT0F >>8
+		LDA	#>(STXT0F)
 		STA	PTR3H
 		JMP	DOSC_LBL
 
@@ -13099,39 +13102,39 @@ DOSC_9:		LDA	#STXT0F &H'FF
 DOSC_YN:	CMP	#0
 		BEQ	DOSC_NO
 ;yes
-		LDA	#STXT05 &H'FF
+		LDA	#<(STXT05)
 		STA	PTR3L
-		LDA	#STXT05 >>8
+		LDA	#>(STXT05)
 		STA	PTR3H
 		JMP	DRAWSTR
 
-DOSC_NO:	LDA	#STXT04 &H'FF
+DOSC_NO:	LDA	#<(STXT04)
 		STA	PTR3L
-		LDA	#STXT04 >>8
+		LDA	#>(STXT04)
 		STA	PTR3H
 		JMP	DRAWSTR
 
 
-DOSC_LBL:	LDX	#H'0C
-		LDY	#H'0E
+DOSC_LBL:	LDX	#$0C
+		LDY	#$0E
 		JSR	DRAWSTR
 
 		LDY	ORBIT
 		LDA	SYSTEM+2, Y	;type/pal.
-		AND	#H'70
-		CMP	#H'30		;sun?
+		AND	#$70
+		CMP	#$30		;sun?
 		BEQ	DOSC_MSG
 ;non-sun
-		LDA	#STXT03 &H'FF
+		LDA	#<(STXT03)
 		STA	PTR3L
-		LDA	#STXT03 >>8
+		LDA	#>(STXT03)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'10
+		LDX	#$0C
+		LDY	#$10
 		JSR	DRAWSTR
 
-		LDX	#H'0C
-		LDY	#H'11
+		LDX	#$0C
+		LDY	#$11
 		LDA	COUNT1		;life?
 		JSR	DOSC_YN
 
@@ -13140,12 +13143,12 @@ DOSC_LBL:	LDX	#H'0C
 		STA	PTR3L
 		LDA	TECHSTRH, Y
 		STA	PTR3H
-		LDX	#H'11
-		LDY	#H'11
+		LDX	#$11
+		LDY	#$11
 		JSR	DRAWSTR
 
-		LDX	#H'18
-		LDY	#H'11
+		LDX	#$18
+		LDY	#$11
 		LDA	COUNT3		;fuel?
 		JSR	DOSC_YN
 
@@ -13162,108 +13165,108 @@ DOSC_MSG:	LDA	COUNT0
 
 ;inhabited planet!
 
-DOSC_M0:	LDA	#STXT11 &H'FF	;"SENSORS INDICATE"
+DOSC_M0:	LDA	#<(STXT11)	;"SENSORS INDICATE"
 		STA	PTR3L
-		LDA	#STXT11 >>8
+		LDA	#>(STXT11)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'14
+		LDX	#$0C
+		LDY	#$14
 		JSR	DRAWSTR
 
 		LDA	COUNT0
 		CMP	#1
 		BNE	DOSC_M1
 ;enemy base
-		LDA	#STXT12 &H'FF	;"ENEMY ACTIVITY!!"
+		LDA	#<(STXT12)	;"ENEMY ACTIVITY!!"
 		STA	PTR3L
-		LDA	#STXT12 >>8
+		LDA	#>(STXT12)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'15
+		LDX	#$0C
+		LDY	#$15
 		JSR	DRAWSTR
 
-		LDA	#STXT14 &H'FF	;"PROCEED WITH"
+		LDA	#<(STXT14)	;"PROCEED WITH"
 		STA	PTR3L
-		LDA	#STXT14 >>8
+		LDA	#>(STXT14)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'17
+		LDX	#$0C
+		LDY	#$17
 		JSR	DRAWSTR
 
-		LDA	#STXT15 &H'FF	;"CAUTION!"
+		LDA	#<(STXT15)	;"CAUTION!"
 		STA	PTR3L
-		LDA	#STXT15 >>8
+		LDA	#>(STXT15)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'18
+		LDX	#$0C
+		LDY	#$18
 		JSR	DRAWSTR
 
 		RTS
 
 ;uninhabited!
 
-DOSC_M2:	LDA	#STXT18 &H'FF 	;"NO INTELLIGENT"
+DOSC_M2:	LDA	#<(STXT18) 	;"NO INTELLIGENT"
 		STA	PTR3L
-		LDA	#STXT18 >>8
+		LDA	#>(STXT18)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'14
+		LDX	#$0C
+		LDY	#$14
 		JSR	DRAWSTR
 
-		LDA	#STXT19 &H'FF	;"LIFE IS PRESENT!"
+		LDA	#<(STXT19)	;"LIFE IS PRESENT!"
 		STA	PTR3L
-		LDA	#STXT19 >>8
+		LDA	#>(STXT19)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'15
+		LDX	#$0C
+		LDY	#$15
 		JSR	DRAWSTR
 
 		RTS
 
 ;destroyed enemy base
 		
-DOSC_M3:	LDA	#STXT1A &H'FF	;"ENEMY BASE"
+DOSC_M3:	LDA	#<(STXT1A)	;"ENEMY BASE"
 		STA	PTR3L
-		LDA	#STXT1A >>8
+		LDA	#>(STXT1A)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'14
+		LDX	#$0C
+		LDY	#$14
 		JSR	DRAWSTR
 
-		LDA	#STXT1B &H'FF	;"IS DESTROYED!!"
+		LDA	#<(STXT1B)	;"IS DESTROYED!!"
 		STA	PTR3L
-		LDA	#STXT1B >>8
+		LDA	#>(STXT1B)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'15
+		LDX	#$0C
+		LDY	#$15
 		JSR	DRAWSTR
 
 		RTS
 		
 ;friendly base
 
-DOSC_M1:	LDA	#STXT13 &H'FF	;"A FRIENDLY BASE!"
+DOSC_M1:	LDA	#<(STXT13)	;"A FRIENDLY BASE!"
 		STA	PTR3L
-		LDA	#STXT13 >>8
+		LDA	#>(STXT13)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'15
+		LDX	#$0C
+		LDY	#$15
 		JSR	DRAWSTR
 
-		LDA	#STXT16 &H'FF	;"YOU ARE CLEARED"
+		LDA	#<(STXT16)	;"YOU ARE CLEARED"
 		STA	PTR3L
-		LDA	#STXT16 >>8
+		LDA	#>(STXT16)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'17
+		LDX	#$0C
+		LDY	#$17
 		JSR	DRAWSTR
 
-		LDA	#STXT17 &H'FF	;"FOR LANDING!"
+		LDA	#<(STXT17)	;"FOR LANDING!"
 		STA	PTR3L
-		LDA	#STXT17 >>8
+		LDA	#>(STXT17)
 		STA	PTR3H
-		LDX	#H'0C
-		LDY	#H'18
+		LDX	#$0C
+		LDY	#$18
 		JSR	DRAWSTR
 
 		RTS
@@ -13271,9 +13274,9 @@ DOSC_M1:	LDA	#STXT13 &H'FF	;"A FRIENDLY BASE!"
 
 HAS_GAS:
 		LDA	SYSTEM+2,Y	;type/pal.
-		AND	#H'F0
+		AND	#$F0
 		BEQ	HASGAS0		;space stn?
-		CMP	#H'30		;sun?
+		CMP	#$30		;sun?
 		BEQ	NO_GAS
 		LDA	SYSTEM+3,Y	;data bits
 		AND	#GAS
@@ -13292,7 +13295,7 @@ NO_GAS:
 
 
 DRAWNUM3:	PHA
-		LDA	#H'10
+		LDA	#$10
 		STA	COUNT1
 		PLA
 
@@ -13306,7 +13309,7 @@ DN3_100:	CMP	#100
 DN3_10:		PHA	                         
 		LDA	COUNT1
 		STA	VID_DATA
-		LDA	#H'10
+		LDA	#$10
 		STA	COUNT1
 		PLA
 
@@ -13322,18 +13325,18 @@ DN3_1:		PHA
 		STA	VID_DATA
 		PLA
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_DATA
 		RTS
 
 
 DRAWNUM:	PHA
-		LDA	#H'10
+		LDA	#$10
 		STA	COUNT1
 		PLA
 		CMP	#99
 		BCC	DN_10
-		LDA	#H'19
+		LDA	#$19
 		STA	VID_DATA
 		STA	VID_DATA
 		RTS
@@ -13350,98 +13353,98 @@ DN_1:		PHA
 		STA	VID_DATA
 		PLA
 		CLC
-		ADC	#H'10
+		ADC	#$10
 		STA	VID_DATA
 		RTS
 
 
 ;**** "SCAN" DATA TABLES *************************
 
-STXT00:	.DB	"SECTOR:  SYSTEM:",H'FF
-STXT01:	.DB	"IN",H'77,"ORBIT" ,H'FF
-STXT02:	.DB	"COORDINATES:"    ,H'FF
-STXT03:	.DB	"LIFE  TECH  FUEL",H'FF
-STXT04:	.DB	"NO"		  ,H'FF
-STXT05:	.DB	"YES"		  ,H'FF
-STXT06:	.DB	" LOW"		  ,H'FF
-STXT07:	.DB	" MED."		  ,H'FF
-STXT08:	.DB	" HIGH"		  ,H'FF
-STXT09:	.DB	"V.HIGH"	  ,H'FF
-STXT0A:	.DB	"   GAS GIANT"	  ,H'FF
-STXT0B:	.DB	"FRIENDLY PLANET" ,H'FF
-STXT0C:	.DB	"  ENEMY PLANET"  ,H'FF
-STXT0D:	.DB	"      STAR"	  ,H'FF
-STXT0E:	.DB	"FRIENDLY STATION",H'FF
-STXT0F:	.DB	" ENEMY STATION"  ,H'FF
-STXT10:	.DB	"  UNINHABITED"   ,H'FF
-STXT11:	.DB	"SENSORS INDICATE",H'FF
-STXT12:	.DB	"ENEMY ACTIVITY!!",H'FF
-STXT13:	.DB	"A FRIENDLY BASE!",H'FF
-STXT14:	.DB	"  PROCEED WITH"  ,H'FF
-STXT15:	.DB	"    CAUTION!"	  ,H'FF
-STXT16:	.DB	"YOU ARE CLEARED" ,H'FF
-STXT17:	.DB	"  FOR LANDING!"  ,H'FF
-STXT18:	.DB	" NO INTELLIGENT" ,H'FF
-STXT19:	.DB	"LIFE IS PRESENT!",H'FF
-STXT1A:	.DB	"   ENEMY BASE"	  ,H'FF
-STXT1B:	.DB	" IS DESTROYED!!" ,H'FF
-STXT1C:	.DB	" NONE"           ,H'FF
+STXT00:	.byte	"SECTOR:  SYSTEM:", $FF
+STXT01:	.byte	"IN", $77,"ORBIT" , $FF
+STXT02:	.byte	"COORDINATES:"    , $FF
+STXT03:	.byte	"LIFE  TECH  FUEL", $FF
+STXT04:	.byte	"NO"		  , $FF
+STXT05:	.byte	"YES"		  , $FF
+STXT06:	.byte	" LOW"		  , $FF
+STXT07:	.byte	" MED."		  , $FF
+STXT08:	.byte	" HIGH"		  , $FF
+STXT09:	.byte	"V.HIGH"	  , $FF
+STXT0A:	.byte	"   GAS GIANT"	  , $FF
+STXT0B:	.byte	"FRIENDLY PLANET" , $FF
+STXT0C:	.byte	"  ENEMY PLANET"  , $FF
+STXT0D:	.byte	"      STAR"	  , $FF
+STXT0E:	.byte	"FRIENDLY STATION", $FF
+STXT0F:	.byte	" ENEMY STATION"  , $FF
+STXT10:	.byte	"  UNINHABITED"   , $FF
+STXT11:	.byte	"SENSORS INDICATE", $FF
+STXT12:	.byte	"ENEMY ACTIVITY!!", $FF
+STXT13:	.byte	"A FRIENDLY BASE!", $FF
+STXT14:	.byte	"  PROCEED WITH"  , $FF
+STXT15:	.byte	"    CAUTION!"	  , $FF
+STXT16:	.byte	"YOU ARE CLEARED" , $FF
+STXT17:	.byte	"  FOR LANDING!"  , $FF
+STXT18:	.byte	" NO INTELLIGENT" , $FF
+STXT19:	.byte	"LIFE IS PRESENT!", $FF
+STXT1A:	.byte	"   ENEMY BASE"	  , $FF
+STXT1B:	.byte	" IS DESTROYED!!" , $FF
+STXT1C:	.byte	" NONE"           , $FF
 
 
-TECHSTRL:	.DB	STXT1C &H'FF, STXT06 &H'FF
-		.DB	STXT07 &H'FF, STXT08 &H'FF
-		.DB	STXT09 &H'FF
+TECHSTRL:	.byte	STXT1C & $FF, STXT06 & $FF
+		.byte	STXT07 & $FF, STXT08 & $FF
+		.byte	STXT09 & $FF
 
-TECHSTRH:	.DB	STXT1C >>8, STXT06 >>8
-		.DB	STXT07 >>8, STXT08 >>8
-		.DB	STXT09 >>8
+TECHSTRH:	.byte	STXT1C >>8, STXT06 >>8
+		.byte	STXT07 >>8, STXT08 >>8
+		.byte	STXT09 >>8
 
 
-PSHPSL:		.DB	S0SHAPE &H'FF, S0SHAPE &H'FF, P2SHAPE &H'FF
-		.DB	P3SHAPE &H'FF, P4SHAPE &H'FF, P5SHAPE &H'FF
-		.DB	P6SHAPE &H'FF
+PSHPSL:		.byte	S0SHAPE & $FF, S0SHAPE & $FF, P2SHAPE & $FF
+		.byte	P3SHAPE & $FF, P4SHAPE & $FF, P5SHAPE & $FF
+		.byte	P6SHAPE & $FF
 
-PSHPSH:		.DB	S0SHAPE >>8, S0SHAPE >>8, P2SHAPE >>8
-		.DB	P3SHAPE >>8, P4SHAPE >>8, P5SHAPE >>8
-		.DB	P6SHAPE >>8
+PSHPSH:		.byte	S0SHAPE >>8, S0SHAPE >>8, P2SHAPE >>8
+		.byte	P3SHAPE >>8, P4SHAPE >>8, P5SHAPE >>8
+		.byte	P6SHAPE >>8
 
 
 S0SHAPE:	
 
-P2SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'40,H'41,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'60,H'61,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+P2SHAPE:	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $40, $41, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $60, $61, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
 
-P3SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'42,H'43,H'44,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'62,H'63,H'64,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'82,H'83,H'84,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+P3SHAPE:	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $42, $43, $44, $FA, $FA
+		.byte	 $FA, $FA, $FA, $62, $63, $64, $FA, $FA
+		.byte	 $FA, $FA, $FA, $82, $83, $84, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
 
-P4SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-		.DB	H'FA,H'FA,H'45,H'46,H'47,H'48,H'FA,H'FA
-		.DB	H'FA,H'FA,H'65,H'66,H'67,H'68,H'FA,H'FA
-		.DB	H'FA,H'FA,H'85,H'86,H'87,H'88,H'FA,H'FA
-		.DB	H'FA,H'FA,H'A5,H'A6,H'A7,H'A8,H'FA,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+P4SHAPE:	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+		.byte	 $FA, $FA, $45, $46, $47, $48, $FA, $FA
+		.byte	 $FA, $FA, $65, $66, $67, $68, $FA, $FA
+		.byte	 $FA, $FA, $85, $86, $87, $88, $FA, $FA
+		.byte	 $FA, $FA, $A5, $A6, $A7, $A8, $FA, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
 
-P5SHAPE:	.DB	H'FA,H'FA,H'49,H'4A,H'4B,H'4C,H'4D,H'FA
-		.DB	H'FA,H'FA,H'69,H'6A,H'6B,H'6C,H'6D,H'FA
-		.DB	H'FA,H'FA,H'89,H'8A,H'8B,H'8C,H'8D,H'FA
-		.DB	H'FA,H'FA,H'A9,H'AA,H'AB,H'AC,H'AD,H'FA
-		.DB	H'FA,H'FA,H'C9,H'CA,H'CB,H'CC,H'CD,H'FA
-		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+P5SHAPE:	.byte	 $FA, $FA, $49, $4A, $4B, $4C, $4D, $FA
+		.byte	 $FA, $FA, $69, $6A, $6B, $6C, $6D, $FA
+		.byte	 $FA, $FA, $89, $8A, $8B, $8C, $8D, $FA
+		.byte	 $FA, $FA, $A9, $AA, $AB, $AC, $AD, $FA
+		.byte	 $FA, $FA, $C9, $CA, $CB, $CC, $CD, $FA
+		.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
 
-P6SHAPE:	.DB	H'FA,H'FA,H'4F,H'50,H'51,H'52,H'FA,H'FA
-		.DB	H'FA,H'6E,H'6F,H'70,H'71,H'72,H'73,H'FA
-		.DB	H'FA,H'8E,H'8F,H'90,H'91,H'92,H'93,H'FA
-		.DB	H'FA,H'AE,H'AF,H'B0,H'B1,H'B2,H'B3,H'FA
-		.DB	H'FA,H'CE,H'CF,H'D0,H'D1,H'D2,H'D3,H'FA
-		.DB	H'FA,H'FA,H'EF,H'F0,H'F1,H'F2,H'FA,H'FA
+P6SHAPE:	.byte	 $FA, $FA, $4F, $50, $51, $52, $FA, $FA
+		.byte	 $FA, $6E, $6F, $70, $71, $72, $73, $FA
+		.byte	 $FA, $8E, $8F, $90, $91, $92, $93, $FA
+		.byte	 $FA, $AE, $AF, $B0, $B1, $B2, $B3, $FA
+		.byte	 $FA, $CE, $CF, $D0, $D1, $D2, $D3, $FA
+		.byte	 $FA, $FA, $EF, $F0, $F1, $F2, $FA, $FA
 
 
 
@@ -13451,17 +13454,17 @@ P6SHAPE:	.DB	H'FA,H'FA,H'4F,H'50,H'51,H'52,H'FA,H'FA
 ;*************************************************
 
 
-FLMXOFF:	.DB	H'7C,H'77,H'72,H'6F,H'6F,H'6F,H'72,H'76
-		.DB	H'7C,H'81,H'86,H'89,H'89,H'89,H'86,H'81
+FLMXOFF:	.byte	 $7C, $77, $72, $6F, $6F, $6F, $72, $76
+		.byte	 $7C, $81, $86, $89, $89, $89, $86, $81
 
-FLMYOFF:	.DB	H'89,H'89,H'86,H'81,H'7C,H'77,H'72,H'6F
-		.DB	H'6F,H'6F,H'72,H'77,H'7C,H'81,H'86,H'89
+FLMYOFF:	.byte	 $89, $89, $86, $81, $7C, $77, $72, $6F
+		.byte	 $6F, $6F, $72, $77, $7C, $81, $86, $89
 
-FLIPTBL:	.DB	H'00,H'00,H'00,H'00,H'00,H'80,H'80,H'80
-		.DB	H'80,H'C0,H'C0,H'C0,H'C0,H'40,H'40,H'40
+FLIPTBL:	.byte	 $00, $00, $00, $00, $00, $80, $80, $80
+		.byte	 $80, $C0, $C0, $C0, $C0, $40, $40, $40
 
-CHOFFTBL:	.DB	H'00,H'01,H'02,H'03,H'04,H'03,H'02,H'01
-		.DB	H'00,H'01,H'02,H'03,H'04,H'03,H'02,H'01
+CHOFFTBL:	.byte	 $00, $01, $02, $03, $04, $03, $02, $01
+		.byte	 $00, $01, $02, $03, $04, $03, $02, $01
 
 
 ;*************************************************
@@ -13470,74 +13473,74 @@ CHOFFTBL:	.DB	H'00,H'01,H'02,H'03,H'04,H'03,H'02,H'01
 
 
 
-DAMTABLE:	.DB	   0,    5,    7,   10,   15,   15,   25,   10
-WPN_ACC:	.DB	   0,   11,   12,   15,   15,   15,    0,   15
-WPN_CHAR:	.DB	H'00, H'B5, H'5E, H'E0, H'E5, H'EA, H'D0
+DAMTABLE:	.byte	   0,    5,    7,   10,   15,   15,   25,   10
+WPN_ACC:	.byte	   0,   11,   12,   15,   15,   15,    0,   15
+WPN_CHAR:	.byte	 $00,  $B5,  $5E,  $E0,  $E5,  $EA,  $D0
 
-LNADDRL:	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
-		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
-		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
-		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+LNADDRL:	.byte	 $00,  $20,  $40,  $60,  $80,  $A0,  $C0,  $E0
+		.byte	 $00,  $20,  $40,  $60,  $80,  $A0,  $C0,  $E0
+		.byte	 $00,  $20,  $40,  $60,  $80,  $A0,  $C0,  $E0
+		.byte	 $00,  $20,  $40,  $60,  $80,  $A0,  $C0,  $E0
 
-LNADDRH:	.DB	H'20, H'20, H'20, H'20, H'20, H'20, H'20, H'20
-		.DB	H'21, H'21, H'21, H'21, H'21, H'21, H'21, H'21
-		.DB	H'22, H'22, H'22, H'22, H'22, H'22, H'22, H'22
-		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
+LNADDRH:	.byte	 $20,  $20,  $20,  $20,  $20,  $20,  $20,  $20
+		.byte	 $21,  $21,  $21,  $21,  $21,  $21,  $21,  $21
+		.byte	 $22,  $22,  $22,  $22,  $22,  $22,  $22,  $22
+		.byte	 $23,  $23,  $23,  $23,  $23,  $23,  $23,  $23
 
-SQRTABLE:	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
-		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'01
-		.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'02,H'02
-		.DB	H'02,H'02,H'02,H'03,H'03,H'03,H'03,H'03
-		.DB	H'04,H'04,H'04,H'05,H'05,H'05,H'05,H'06
-		.DB	H'06,H'06,H'07,H'07,H'07,H'08,H'08,H'08
-		.DB	H'09,H'09,H'0A,H'0A,H'0A,H'0B,H'0B,H'0C
-		.DB	H'0C,H'0D,H'0D,H'0E,H'0E,H'0F,H'0F,H'0F
-		.DB	H'10,H'11,H'11,H'12,H'12,H'13,H'13,H'14
-		.DB	H'14,H'15,H'15,H'16,H'17,H'17,H'18,H'18
-		.DB	H'19,H'1A,H'1A,H'1B,H'1C,H'1C,H'1D,H'1E
-		.DB	H'1E,H'1F,H'20,H'21,H'21,H'22,H'23,H'23
-		.DB	H'24,H'25,H'26,H'27,H'27,H'28,H'29,H'2A
-		.DB	H'2B,H'2B,H'2C,H'2D,H'2E,H'2F,H'30,H'30
-		.DB	H'31,H'32,H'33,H'34,H'35,H'36,H'37,H'38
-     		.DB	H'39,H'3A,H'3B,H'3C,H'3D,H'3E,H'3F,H'3F
+SQRTABLE:	.byte	 $00, $00, $00, $00, $00, $00, $00, $00
+		.byte	 $00, $00, $00, $00, $00, $00, $00, $01
+		.byte	 $01, $01, $01, $01, $01, $01, $02, $02
+		.byte	 $02, $02, $02, $03, $03, $03, $03, $03
+		.byte	 $04, $04, $04, $05, $05, $05, $05, $06
+		.byte	 $06, $06, $07, $07, $07, $08, $08, $08
+		.byte	 $09, $09, $0A, $0A, $0A, $0B, $0B, $0C
+		.byte	 $0C, $0D, $0D, $0E, $0E, $0F, $0F, $0F
+		.byte	 $10, $11, $11, $12, $12, $13, $13, $14
+		.byte	 $14, $15, $15, $16, $17, $17, $18, $18
+		.byte	 $19, $1A, $1A, $1B, $1C, $1C, $1D, $1E
+		.byte	 $1E, $1F, $20, $21, $21, $22, $23, $23
+		.byte	 $24, $25, $26, $27, $27, $28, $29, $2A
+		.byte	 $2B, $2B, $2C, $2D, $2E, $2F, $30, $30
+		.byte	 $31, $32, $33, $34, $35, $36, $37, $38
+     		.byte	 $39, $3A, $3B, $3C, $3D, $3E, $3F, $3F
 
 		
-SEXPLCHR:	.DB	H'FA
-		.DB	H'5E, H'5F, H'5E, H'5F, H'5E
+SEXPLCHR:	.byte	 $FA
+		.byte	 $5E,  $5F,  $5E,  $5F,  $5E
 
-LEXPLCHR:	.DB	H'FA, H'FA, H'FA, H'FA
-		.DB	H'5E, H'FA, H'FA, H'FA
-		.DB	H'5E, H'FA, H'FA, H'FA
-		.DB	H'5F, H'FA, H'FA, H'FA
-		.DB	H'5F, H'FA, H'FA, H'FA
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'BE, H'BF, H'DE, H'DF
-		.DB	H'BE, H'BF, H'DE, H'DF
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'BE, H'BF, H'DE, H'DF
-		.DB	H'BE, H'BF, H'DE, H'DF
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'7E, H'7F, H'9E, H'9F
-		.DB	H'5F, H'FA, H'FA, H'FA
-		.DB	H'5F, H'FA, H'FA, H'FA
-		.DB	H'5E, H'FA, H'FA, H'FA
-		.DB	H'5E, H'FA, H'FA, H'FA
+LEXPLCHR:	.byte	 $FA,  $FA,  $FA,  $FA
+		.byte	 $5E,  $FA,  $FA,  $FA
+		.byte	 $5E,  $FA,  $FA,  $FA
+		.byte	 $5F,  $FA,  $FA,  $FA
+		.byte	 $5F,  $FA,  $FA,  $FA
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $BE,  $BF,  $DE,  $DF
+		.byte	 $BE,  $BF,  $DE,  $DF
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $BE,  $BF,  $DE,  $DF
+		.byte	 $BE,  $BF,  $DE,  $DF
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $7E,  $7F,  $9E,  $9F
+		.byte	 $5F,  $FA,  $FA,  $FA
+		.byte	 $5F,  $FA,  $FA,  $FA
+		.byte	 $5E,  $FA,  $FA,  $FA
+		.byte	 $5E,  $FA,  $FA,  $FA
 
-E_SHPOFF:	.DB	H'00, H'04, H'04, H'04, H'04, H'00, H'00
-		.DB	H'00, H'00, H'00, H'00, H'00, H'00
-		.DB	H'00, H'00, H'04, H'04, H'04, H'04
+E_SHPOFF:	.byte	 $00,  $04,  $04,  $04,  $04,  $00,  $00
+		.byte	 $00,  $00,  $00,  $00,  $00,  $00
+		.byte	 $00,  $00,  $04,  $04,  $04,  $04
 
-DIRTABLE:	.DB	H'00, H'01, H'02, H'03, H'04
-		.DB	H'08, H'07, H'06, H'05, H'04
-		.DB	H'08, H'09, H'0A, H'0B, H'0C
-		.DB	H'00, H'0F, H'0E, H'0D, H'0C
+DIRTABLE:	.byte	 $00,  $01,  $02,  $03,  $04
+		.byte	 $08,  $07,  $06,  $05,  $04
+		.byte	 $08,  $09,  $0A,  $0B,  $0C
+		.byte	 $00,  $0F,  $0E,  $0D,  $0C
 
-NEWEPOS:	.DB	H'7E, H'A4, H'6C, H'A8, H'5C, H'A4, H'58, H'A4
-		.DB	H'5C, H'7E, H'58, H'6C, H'5C, H'5C, H'68, H'5C
-		.DB	H'7E, H'5C, H'8C, H'58, H'A4, H'5C, H'A8, H'6C
-		.DB	H'A4, H'7E, H'A8, H'8C, H'A4, H'A4, H'8C, H'A8
+NEWEPOS:	.byte	 $7E,  $A4,  $6C,  $A8,  $5C,  $A4,  $58,  $A4
+		.byte	 $5C,  $7E,  $58,  $6C,  $5C,  $5C,  $68,  $5C
+		.byte	 $7E,  $5C,  $8C,  $58,  $A4,  $5C,  $A8,  $6C
+		.byte	 $A4,  $7E,  $A8,  $8C,  $A4,  $A4,  $8C,  $A8
 
 
 ;**** ENEMY SHIP DATA TABLES ****
@@ -13546,8 +13549,8 @@ NEWEPOS:	.DB	H'7E, H'A4, H'6C, H'A8, H'5C, H'A4, H'58, H'A4
 ;index 0 or 1 ok for space
 ;index 0..15 ok for planet & spacestation
 
-EDEFCHAR:	.DB	H'60, H'A0, H'6A, H'60, H'A0, H'6A, H'60, H'A0
-		.DB	H'6A, H'60, H'A0, H'6A, H'60, H'A0, H'6A, H'60
+EDEFCHAR:	.byte	 $60,  $A0,  $6A,  $60,  $A0,  $6A,  $60,  $A0
+		.byte	 $6A,  $60,  $A0,  $6A,  $60,  $A0,  $6A,  $60
 
 
 
@@ -13557,100 +13560,100 @@ EDEFCHAR:	.DB	H'60, H'A0, H'6A, H'60, H'A0, H'6A, H'60, H'A0
 ;	03 = SEEK WITHOUT VEERING (suicidal)
 ;	04 = RANDOM
 
-EDEFSEEK:	.DB	H'03, H'04, H'03, H'04, H'04, H'03, H'04, H'03
-		.DB	H'02, H'03, H'04, H'03, H'04, H'04, H'03, H'02
-		.DB	H'03, H'04, H'03, H'04, H'03, H'03, H'03, H'04
-		.DB	H'01, H'02, H'04, H'03, H'04, H'04, H'03, H'01
-		.DB	H'04, H'03, H'03, H'02, H'03, H'04, H'02, H'03
-		.DB	H'04, H'02, H'01, H'03, H'04, H'03, H'03, H'04
-		.DB	H'03, H'03, H'01, H'02, H'03, H'04, H'02, H'01
-		.DB	H'01, H'04, H'04, H'03, H'01, H'04, H'03, H'01
-		.DB	H'03, H'03, H'01, H'03, H'01, H'04, H'01, H'01
-		.DB	H'01, H'01, H'03, H'01, H'03, H'03, H'01, H'03
-		.DB	H'01, H'03, H'01, H'03, H'01, H'01, H'01, H'01
-		.DB	H'03, H'01, H'01, H'03, H'01, H'01, H'03, H'01
-		.DB	H'01, H'01, H'03, H'01, H'03, H'03, H'01, H'01
+EDEFSEEK:	.byte	 $03,  $04,  $03,  $04,  $04,  $03,  $04,  $03
+		.byte	 $02,  $03,  $04,  $03,  $04,  $04,  $03,  $02
+		.byte	 $03,  $04,  $03,  $04,  $03,  $03,  $03,  $04
+		.byte	 $01,  $02,  $04,  $03,  $04,  $04,  $03,  $01
+		.byte	 $04,  $03,  $03,  $02,  $03,  $04,  $02,  $03
+		.byte	 $04,  $02,  $01,  $03,  $04,  $03,  $03,  $04
+		.byte	 $03,  $03,  $01,  $02,  $03,  $04,  $02,  $01
+		.byte	 $01,  $04,  $04,  $03,  $01,  $04,  $03,  $01
+		.byte	 $03,  $03,  $01,  $03,  $01,  $04,  $01,  $01
+		.byte	 $01,  $01,  $03,  $01,  $03,  $03,  $01,  $03
+		.byte	 $01,  $03,  $01,  $03,  $01,  $01,  $01,  $01
+		.byte	 $03,  $01,  $01,  $03,  $01,  $01,  $03,  $01
+		.byte	 $01,  $01,  $03,  $01,  $03,  $03,  $01,  $01
 ;SEEK FOR ON OR NEAR P'RADIKUS
-		.DB	H'01, H'03, H'01, H'01, H'03, H'01, H'01, H'01
-		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
-		.DB	H'01, H'03, H'01, H'01, H'03, H'01, H'01, H'01
-		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+		.byte	 $01,  $03,  $01,  $01,  $03,  $01,  $01,  $01
+		.byte	 $01,  $01,  $01,  $01,  $01,  $01,  $01,  $01
+		.byte	 $01,  $03,  $01,  $01,  $03,  $01,  $01,  $01
+		.byte	 $01,  $01,  $01,  $01,  $01,  $01,  $01,  $01
     
 
-EDEFDAM:	.DB	H'02, H'02, H'02, H'02, H'02, H'05, H'05, H'05
-		.DB	H'05, H'05, H'05, H'05, H'05, H'07, H'07, H'07
-		.DB	H'09, H'07, H'09, H'09, H'09, H'09, H'0A, H'09
-		.DB	H'0A, H'0A, H'0D, H'0D, H'0D, H'0D, H'0F, H'0F
-		.DB	H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F
-		.DB	H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F
-		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
-		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
-		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
-		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
-		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
-		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
+EDEFDAM:	.byte	 $02,  $02,  $02,  $02,  $02,  $05,  $05,  $05
+		.byte	 $05,  $05,  $05,  $05,  $05,  $07,  $07,  $07
+		.byte	 $09,  $07,  $09,  $09,  $09,  $09,  $0A,  $09
+		.byte	 $0A,  $0A,  $0D,  $0D,  $0D,  $0D,  $0F,  $0F
+		.byte	 $0F,  $0F,  $0F,  $0F,  $0F,  $0F,  $0F,  $0F
+		.byte	 $0F,  $0F,  $0F,  $0F,  $0F,  $0F,  $0F,  $0F
+		.byte	 $14,  $14,  $14,  $14,  $14,  $14,  $14,  $14
+		.byte	 $14,  $14,  $14,  $14,  $14,  $14,  $14,  $14
+		.byte	 $14,  $14,  $14,  $14,  $14,  $14,  $14,  $14
+		.byte	 $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E
+		.byte	 $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E
+		.byte	 $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E,  $1E
 ;ARMOR FOR ON OR NEAR P'RADIKUS
-		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
-		.DB	H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F
-		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
-		.DB	H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F
+		.byte	 $23,  $23,  $23,  $23,  $23,  $23,  $23,  $23
+		.byte	 $2F,  $2F,  $2F,  $2F,  $2F,  $2F,  $2F,  $2F
+		.byte	 $23,  $23,  $23,  $23,  $23,  $23,  $23,  $23
+		.byte	 $2F,  $2F,  $2F,  $2F,  $2F,  $2F,  $2F,  $2F
 
-EDEFDRV:	.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
-		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
-		.DB	H'02, H'01, H'01, H'01, H'02, H'01, H'02, H'01
-		.DB	H'02, H'01, H'02, H'02, H'01, H'02, H'02, H'01
-		.DB	H'02, H'02, H'01, H'02, H'02, H'03, H'02, H'02
-		.DB	H'02, H'03, H'03, H'02, H'02, H'02, H'03, H'02
-		.DB	H'03, H'02, H'02, H'02, H'03, H'02, H'02, H'03
-		.DB	H'03, H'02, H'03, H'03, H'02, H'03, H'03, H'03
-		.DB	H'04, H'03, H'03, H'04, H'04, H'03, H'03, H'04
-		.DB	H'03, H'04, H'03, H'03, H'03, H'04, H'04, H'03
-		.DB	H'04, H'03, H'04, H'04, H'04, H'03, H'04, H'05
-		.DB	H'04, H'04, H'04, H'04, H'04, H'04, H'04, H'04
-		.DB	H'04, H'04, H'04, H'04, H'04, H'04, H'04, H'05
+EDEFDRV:	.byte	 $01,  $01,  $01,  $01,  $01,  $01,  $01,  $01
+		.byte	 $01,  $01,  $01,  $01,  $01,  $01,  $01,  $01
+		.byte	 $02,  $01,  $01,  $01,  $02,  $01,  $02,  $01
+		.byte	 $02,  $01,  $02,  $02,  $01,  $02,  $02,  $01
+		.byte	 $02,  $02,  $01,  $02,  $02,  $03,  $02,  $02
+		.byte	 $02,  $03,  $03,  $02,  $02,  $02,  $03,  $02
+		.byte	 $03,  $02,  $02,  $02,  $03,  $02,  $02,  $03
+		.byte	 $03,  $02,  $03,  $03,  $02,  $03,  $03,  $03
+		.byte	 $04,  $03,  $03,  $04,  $04,  $03,  $03,  $04
+		.byte	 $03,  $04,  $03,  $03,  $03,  $04,  $04,  $03
+		.byte	 $04,  $03,  $04,  $04,  $04,  $03,  $04,  $05
+		.byte	 $04,  $04,  $04,  $04,  $04,  $04,  $04,  $04
+		.byte	 $04,  $04,  $04,  $04,  $04,  $04,  $04,  $05
 ;DRIVE TYPES FOR ON OR NEAR P'RADIKUS
-		.DB	H'04, H'05, H'04, H'05, H'05, H'05, H'05, H'05
-		.DB	H'05, H'05, H'05, H'05, H'05, H'05, H'05, H'05
-		.DB	H'04, H'05, H'04, H'05, H'05, H'05, H'05, H'05
-		.DB	H'05, H'05, H'05, H'05, H'05, H'05, H'05, H'05
+		.byte	 $04,  $05,  $04,  $05,  $05,  $05,  $05,  $05
+		.byte	 $05,  $05,  $05,  $05,  $05,  $05,  $05,  $05
+		.byte	 $04,  $05,  $04,  $05,  $05,  $05,  $05,  $05
+		.byte	 $05,  $05,  $05,  $05,  $05,  $05,  $05,  $05
 
-EDEFWPN:	.DB	H'00, H'01, H'01, H'01, H'01, H'01, H'01, H'01
-		.DB	H'01, H'01, H'01, H'02, H'01, H'01, H'01, H'00
-		.DB	H'01, H'02, H'01, H'01, H'01, H'02, H'01, H'01
-		.DB	H'02, H'01, H'02, H'02, H'02, H'02, H'02, H'01
-		.DB	H'02, H'01, H'03, H'02, H'02, H'03, H'02, H'02
-		.DB	H'03, H'02, H'02, H'01, H'03, H'02, H'01, H'02
-		.DB	H'03, H'03, H'03, H'03, H'02, H'02, H'03, H'03
-		.DB	H'02, H'02, H'03, H'02, H'02, H'03, H'02, H'03
-		.DB	H'03, H'03, H'02, H'03, H'03, H'02, H'03, H'02
-		.DB	H'04, H'03, H'03, H'04, H'03, H'04, H'03, H'04
-		.DB	H'03, H'04, H'04, H'03, H'03, H'04, H'05, H'04
-		.DB	H'05, H'04, H'03, H'04, H'05, H'05, H'04, H'05
-		.DB	H'04, H'04, H'05, H'04, H'04, H'05, H'05, H'04
+EDEFWPN:	.byte	 $00,  $01,  $01,  $01,  $01,  $01,  $01,  $01
+		.byte	 $01,  $01,  $01,  $02,  $01,  $01,  $01,  $00
+		.byte	 $01,  $02,  $01,  $01,  $01,  $02,  $01,  $01
+		.byte	 $02,  $01,  $02,  $02,  $02,  $02,  $02,  $01
+		.byte	 $02,  $01,  $03,  $02,  $02,  $03,  $02,  $02
+		.byte	 $03,  $02,  $02,  $01,  $03,  $02,  $01,  $02
+		.byte	 $03,  $03,  $03,  $03,  $02,  $02,  $03,  $03
+		.byte	 $02,  $02,  $03,  $02,  $02,  $03,  $02,  $03
+		.byte	 $03,  $03,  $02,  $03,  $03,  $02,  $03,  $02
+		.byte	 $04,  $03,  $03,  $04,  $03,  $04,  $03,  $04
+		.byte	 $03,  $04,  $04,  $03,  $03,  $04,  $05,  $04
+		.byte	 $05,  $04,  $03,  $04,  $05,  $05,  $04,  $05
+		.byte	 $04,  $04,  $05,  $04,  $04,  $05,  $05,  $04
 ;SHIPS WEAPONS ON OR NEAR P'RADIKUS
-		.DB	H'04, H'05, H'04, H'05, H'04, H'05, H'05, H'04
-		.DB	H'05, H'04, H'05, H'05, H'04, H'05, H'04, H'05
-		.DB	H'04, H'05, H'04, H'05, H'04, H'05, H'05, H'04
-		.DB	H'05, H'04, H'05, H'05, H'04, H'05, H'04, H'05
+		.byte	 $04,  $05,  $04,  $05,  $04,  $05,  $05,  $04
+		.byte	 $05,  $04,  $05,  $05,  $04,  $05,  $04,  $05
+		.byte	 $04,  $05,  $04,  $05,  $04,  $05,  $05,  $04
+		.byte	 $05,  $04,  $05,  $05,  $04,  $05,  $04,  $05
 
-EDEFPTS:	.DB	H'06, H'06, H'07, H'06, H'06, H'06, H'07, H'07
-		.DB	H'06, H'07, H'06, H'06, H'07, H'08, H'07, H'06
-		.DB	H'06, H'07, H'07, H'08, H'07, H'07, H'08, H'07
-		.DB	H'07, H'07, H'08, H'07, H'07, H'08, H'08, H'07
-		.DB	H'08, H'07, H'07, H'08, H'08, H'09, H'08, H'08
-		.DB	H'08, H'08, H'08, H'08, H'09, H'08, H'08, H'09
-		.DB	H'09, H'08, H'08, H'09, H'08, H'09, H'08, H'09
-		.DB	H'09, H'09, H'08, H'09, H'09, H'08, H'08, H'09
-		.DB	H'09, H'0A, H'09, H'09, H'09, H'09, H'0A, H'09
-		.DB	H'09, H'09, H'0A, H'09, H'09, H'0A, H'0A, H'09
-		.DB	H'09, H'0A, H'09, H'0A, H'0A, H'0A, H'0B, H'0A
-		.DB	H'0A, H'0A, H'0B, H'0A, H'0A, H'0B, H'0B, H'0A
-		.DB	H'0B, H'0B, H'0A, H'0B, H'0A, H'0B, H'0B, H'0B
+EDEFPTS:	.byte	 $06,  $06,  $07,  $06,  $06,  $06,  $07,  $07
+		.byte	 $06,  $07,  $06,  $06,  $07,  $08,  $07,  $06
+		.byte	 $06,  $07,  $07,  $08,  $07,  $07,  $08,  $07
+		.byte	 $07,  $07,  $08,  $07,  $07,  $08,  $08,  $07
+		.byte	 $08,  $07,  $07,  $08,  $08,  $09,  $08,  $08
+		.byte	 $08,  $08,  $08,  $08,  $09,  $08,  $08,  $09
+		.byte	 $09,  $08,  $08,  $09,  $08,  $09,  $08,  $09
+		.byte	 $09,  $09,  $08,  $09,  $09,  $08,  $08,  $09
+		.byte	 $09,  $0A,  $09,  $09,  $09,  $09,  $0A,  $09
+		.byte	 $09,  $09,  $0A,  $09,  $09,  $0A,  $0A,  $09
+		.byte	 $09,  $0A,  $09,  $0A,  $0A,  $0A,  $0B,  $0A
+		.byte	 $0A,  $0A,  $0B,  $0A,  $0A,  $0B,  $0B,  $0A
+		.byte	 $0B,  $0B,  $0A,  $0B,  $0A,  $0B,  $0B,  $0B
 ;POINT VALUES FOR SHIPS ON OR NEAR P'RADIKUS
-		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
-		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
-		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
-		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
+		.byte	 $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D
+		.byte	 $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D
+		.byte	 $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D
+		.byte	 $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D,  $0D
 
 
 ;**** SPACE STATION TABLES ********************************
@@ -13658,376 +13661,376 @@ EDEFPTS:	.DB	H'06, H'06, H'07, H'06, H'06, H'06, H'07, H'07
 ;index #s 0-4 = friendly...
 
 
-SDEF_WPN:	.DB	H'00, H'00, H'00, H'00
-		.DB	H'02, H'03, H'02, H'03
-		.DB	H'03, H'04, H'04, H'04
-		.DB	H'05, H'05, H'05
+SDEF_WPN:	.byte	 $00,  $00,  $00,  $00
+		.byte	 $02,  $03,  $02,  $03
+		.byte	 $03,  $04,  $04,  $04
+		.byte	 $05,  $05,  $05
 ;the P'Radikus station weapon
-		.DB	H'05
+		.byte	 $05
 
-SDEF_DAM:	.DB	H'00, H'00, H'00, H'00
-		.DB	H'7F, H'8F, H'9F, H'AF
-		.DB	H'BF, H'BF, H'CF, H'CF
-		.DB	H'DF, H'EF, H'FF
+SDEF_DAM:	.byte	 $00,  $00,  $00,  $00
+		.byte	 $7F,  $8F,  $9F,  $AF
+		.byte	 $BF,  $BF,  $CF,  $CF
+		.byte	 $DF,  $EF,  $FF
 ;the P'Radikus station shield
-		.DB	H'FF
+		.byte	 $FF
 
-;H'80 	    alive
-;H'10 	    friendly
-;H'04 & 02  point value
-;H'01 	    has drones (no longer used)
+; $80 	    alive
+; $10 	    friendly
+; $04 & 02  point value
+; $01 	    has drones (no longer used)
 ;
-SDEFSTAT:	.DB	H'90, H'90, H'90, H'90
-		.DB	H'80, H'80, H'82, H'83
-		.DB	H'83, H'85, H'85, H'85
-		.DB	H'87, H'87, H'87
+SDEFSTAT:	.byte	 $90,  $90,  $90,  $90
+		.byte	 $80,  $80,  $82,  $83
+		.byte	 $83,  $85,  $85,  $85
+		.byte	 $87,  $87,  $87
 ;the P'Radikus station stat
-		.DB	H'87
+		.byte	 $87
 
-SDEF_OBJ:	.DB	H'A8, H'CC, H'FE, H'FD
-		.DB	H'A0, H'A0, H'C0, H'C0
-		.DB	H'E2, H'E0, H'E0, H'E2
-		.DB	H'E0, H'E1, H'E3
+SDEF_OBJ:	.byte	 $A8,  $CC,  $FE,  $FD
+		.byte	 $A0,  $A0,  $C0,  $C0
+		.byte	 $E2,  $E0,  $E0,  $E2
+		.byte	 $E0,  $E1,  $E3
 ;the P'Radikus station obj.
-		.DB	H'00
+		.byte	 $00
 
 ;**********************************************************
 
 
 
-;;GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
-;;		.DB	H'3F, H'3E, H'1F, H'1E, H'1E, H'1E
+;;GUN_CHR:	.byte	 $1E,  $1E,  $1E,  $1F,  $3E,  $3F,  $3F
+;;		.byte	 $3F,  $3E,  $1F,  $1E,  $1E,  $1E
 
 
 
-DIFF_TBL:	.DB	5, 4, 4, 4, 4, 4, 4, 5
-		.DB	4, 4, 3, 3, 3, 3, 4, 4
-		.DB	4, 3, 2, 2, 2, 2, 3, 4
-		.DB	4, 3, 2, 1, 1, 2, 3, 4
-		.DB	4, 3, 2, 1, 1, 2, 3, 4
-		.DB	4, 3, 2, 2, 2, 2, 3, 4
-		.DB	4, 4, 3, 3, 3, 3, 4, 4
-		.DB	5, 4, 4, 4, 4, 4, 4, 5
+DIFF_TBL:	.byte	5, 4, 4, 4, 4, 4, 4, 5
+		.byte	4, 4, 3, 3, 3, 3, 4, 4
+		.byte	4, 3, 2, 2, 2, 2, 3, 4
+		.byte	4, 3, 2, 1, 1, 2, 3, 4
+		.byte	4, 3, 2, 1, 1, 2, 3, 4
+		.byte	4, 3, 2, 2, 2, 2, 3, 4
+		.byte	4, 4, 3, 3, 3, 3, 4, 4
+		.byte	5, 4, 4, 4, 4, 4, 4, 5
 
-DENS_TBL:	.DB	H'17, H'1C, H'1C, H'1C, H'1C, H'1C, H'1C, H'17
-		.DB	H'1C, H'1C, H'21, H'21, H'21, H'21, H'1C, H'1C
-		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
-		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
-		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
-		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
-		.DB	H'1C, H'1C, H'21, H'21, H'21, H'21, H'1C, H'1C
-		.DB	H'17, H'1C, H'1C, H'1C, H'1C, H'1C, H'1C, H'17
+DENS_TBL:	.byte	 $17,  $1C,  $1C,  $1C,  $1C,  $1C,  $1C,  $17
+		.byte	 $1C,  $1C,  $21,  $21,  $21,  $21,  $1C,  $1C
+		.byte	 $1C,  $21,  $28,  $28,  $28,  $28,  $21,  $1C
+		.byte	 $1C,  $21,  $28,  $28,  $28,  $28,  $21,  $1C
+		.byte	 $1C,  $21,  $28,  $28,  $28,  $28,  $21,  $1C
+		.byte	 $1C,  $21,  $28,  $28,  $28,  $28,  $21,  $1C
+		.byte	 $1C,  $1C,  $21,  $21,  $21,  $21,  $1C,  $1C
+		.byte	 $17,  $1C,  $1C,  $1C,  $1C,  $1C,  $1C,  $17
 
 
 ;PRADIKUS SOUND DATA
 
 THEME0:
-	.DB	VOICE0, STRING
-	.DB	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
-	.DB	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
-	.DB	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
-	.DB	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
-	.DB	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
-	.DB	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
-	.DB	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
-	.DB	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
-	.DB	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
-	.DB	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
-	.DB	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
-	.DB	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
-	.DB	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
-	.DB	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
-	.DB	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
-	.DB	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
-	.DB	REPLAY
+	.byte	VOICE0, STRING
+	.byte	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
+	.byte	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
+	.byte	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
+	.byte	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
+	.byte	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
+	.byte	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
+	.byte	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.byte	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.byte	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
+	.byte	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
+	.byte	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
+	.byte	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
+	.byte	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
+	.byte	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
+	.byte	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
+	.byte	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
+	.byte	REPLAY
 
 THEME1:
-	.DB	VOICE1, BASE_STRING
-	.DB	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
-	.DB	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
-	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
-	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
-	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
-	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
-	.DB	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
-	.DB	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
-	.DB	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
-	.DB	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
-	.DB	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
-	.DB	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
-	.DB	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
-	.DB	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
-	.DB	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
-	.DB	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
-	.DB	REPLAY
+	.byte	VOICE1, BASE_STRING
+	.byte	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.byte	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.byte	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.byte	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.byte	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.byte	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.byte	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
+	.byte	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
+	.byte	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
+	.byte	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
+	.byte	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
+	.byte	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
+	.byte	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
+	.byte	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
+	.byte	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
+	.byte	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
+	.byte	REPLAY
 
 BELL:
-	.DB	VOICE1
-	.DB	LOADREG0,H'A0,LOADREG1,H'77,LOADREG2,H'3E,LOADREG3,H'00
-	.DB	LOADREG0,H'9F,LOADREG1,H'77,LOADREG2,H'3E,LOADREG3,H'00
-	.DB	PAUSE+N16, ENDPLAY
+	.byte	VOICE1
+	.byte	LOADREG0, $A0,LOADREG1, $77,LOADREG2, $3E,LOADREG3, $00
+	.byte	LOADREG0, $9F,LOADREG1, $77,LOADREG2, $3E,LOADREG3, $00
+	.byte	PAUSE+N16, ENDPLAY
 
 CODE_SND:
-	.DB	VOICE1
-	.DB	LOADREG0,H'FF,LOADREG1,H'AB,LOADREG2,H'00,LOADREG3,H'01
-	.DB	LOADREG0,H'FF,LOADREG1,H'AB,LOADREG2,H'00,LOADREG3,H'01
-	.DB	PAUSE+N16, ENDPLAY
+	.byte	VOICE1
+	.byte	LOADREG0, $FF,LOADREG1, $AB,LOADREG2, $00,LOADREG3, $01
+	.byte	LOADREG0, $FF,LOADREG1, $AB,LOADREG2, $00,LOADREG3, $01
+	.byte	PAUSE+N16, ENDPLAY
 
 ENG:
-	.DB	VOICE3
-	.DB	LOADREG0,H'79,LOADREG1,H'7B,LOADREG2,H'1E,LOADREG3,H'70
-	.DB	STARTVOICE
-	.DB	REPLAY
+	.byte	VOICE3
+	.byte	LOADREG0, $79,LOADREG1, $7B,LOADREG2, $1E,LOADREG3, $70
+	.byte	STARTVOICE
+	.byte	REPLAY
 
 PING:
-	.DB	VOICE2
-	.DB	LOADREG0,H'07,LOADREG1,H'16,LOADREG2,H'21,LOADREG3,H'20
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE2
+	.byte	LOADREG0, $07,LOADREG1, $16,LOADREG2, $21,LOADREG3, $20
+	.byte	PAUSE+N8, ENDPLAY
 
 SBOOM:
-	.DB	VOICE3
-	.DB	LOADREG0,H'05,LOADREG1,H'F1,LOADREG2,H'5E,LOADREG3,H'D7
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE3
+	.byte	LOADREG0, $05,LOADREG1, $F1,LOADREG2, $5E,LOADREG3, $D7
+	.byte	PAUSE+N8, ENDPLAY
 
 MINE_1:
-	.DB	VOICE1
-	.DB	LOADREG0,H'3B,LOADREG1,H'8A,LOADREG2,H'4E,LOADREG3,H'B9
-	.DB	PAUSE+N16, ENDPLAY
+	.byte	VOICE1
+	.byte	LOADREG0, $3B,LOADREG1, $8A,LOADREG2, $4E,LOADREG3, $B9
+	.byte	PAUSE+N16, ENDPLAY
 
 LASER_0:
-	.DB	VOICE0
-	.DB	LOADREG0,H'28,LOADREG1,H'A3,LOADREG2,H'C2,LOADREG3,H'50
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE0
+	.byte	LOADREG0, $28,LOADREG1, $A3,LOADREG2, $C2,LOADREG3, $50
+	.byte	PAUSE+N8, ENDPLAY
 
 E_LASER:
-	.DB	VOICE1
-	.DB	LOADREG0,H'7F,LOADREG1,H'CA,LOADREG2,H'FF,LOADREG3,H'98
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE1
+	.byte	LOADREG0, $7F,LOADREG1, $CA,LOADREG2, $FF,LOADREG3, $98
+	.byte	PAUSE+N8, ENDPLAY
 
 WAVE_1:
-	.DB	VOICE1
-	.DB	LOADREG0,H'3B,LOADREG1,H'8A,LOADREG2,H'4E,LOADREG3,H'B9
-	.DB	PAUSE+N16, ENDPLAY
+	.byte	VOICE1
+	.byte	LOADREG0, $3B,LOADREG1, $8A,LOADREG2, $4E,LOADREG3, $B9
+	.byte	PAUSE+N16, ENDPLAY
 
 GUN_SHOT:
-	.DB	VOICE3
-	.DB	LOADREG0,H'44,LOADREG1,H'4D,LOADREG2,H'5D,LOADREG3,H'08
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE3
+	.byte	LOADREG0, $44,LOADREG1, $4D,LOADREG2, $5D,LOADREG3, $08
+	.byte	PAUSE+N8, ENDPLAY
 
 MISLSHOT:
-	.DB	VOICE3
-	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'24,LOADREG3,H'70
-	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'26,LOADREG3,H'70
-	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'28,LOADREG3,H'70
-	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'2A,LOADREG3,H'70
-	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'2C,LOADREG3,H'70
-	.DB	PAUSE+N8, ENDPLAY
+	.byte	VOICE3
+	.byte	LOADREG0, $7F,LOADREG1, $96,LOADREG2, $24,LOADREG3, $70
+	.byte	LOADREG0, $7F,LOADREG1, $96,LOADREG2, $26,LOADREG3, $70
+	.byte	LOADREG0, $7F,LOADREG1, $96,LOADREG2, $28,LOADREG3, $70
+	.byte	LOADREG0, $7F,LOADREG1, $96,LOADREG2, $2A,LOADREG3, $70
+	.byte	LOADREG0, $7F,LOADREG1, $96,LOADREG2, $2C,LOADREG3, $70
+	.byte	PAUSE+N8, ENDPLAY
 
 SEXPL:
-	.DB	VOICE3
-	.DB	LOADREG0,H'18,LOADREG1,H'4C,LOADREG2,H'5C,LOADREG3,H'2A
-	.DB	LOADREG0,H'42,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'41,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'40,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1F,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1E,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1D,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1C,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1B,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'1A,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'19,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'18,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'17,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'16,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'15,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'14,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	LOADREG0,H'13,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
-	.DB	ENDPLAY
+	.byte	VOICE3
+	.byte	LOADREG0, $18,LOADREG1, $4C,LOADREG2, $5C,LOADREG3, $2A
+	.byte	LOADREG0, $42,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $41,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $40,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1F,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1E,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1D,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1C,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1B,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $1A,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $19,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $18,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $17,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $16,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $15,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $14,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	LOADREG0, $13,LOADREG1, $4C,LOADREG2, $5F,LOADREG3, $73
+	.byte	ENDPLAY
 
 
-X_DEST:	.DB	H'80, H'78, H'70, H'68, H'60, H'68, H'70, H'78
-	.DB	H'80, H'88, H'90, H'98, H'A0, H'98, H'90, H'88
+X_DEST:	.byte	 $80,  $78,  $70,  $68,  $60,  $68,  $70,  $78
+	.byte	 $80,  $88,  $90,  $98,  $A0,  $98,  $90,  $88
 
-Y_DEST:	.DB	H'A0, H'98, H'90, H'88, H'80, H'78, H'70, H'68
-	.DB	H'60, H'68, H'70, H'78, H'80, H'88, H'90, H'98
+Y_DEST:	.byte	 $A0,  $98,  $90,  $88,  $80,  $78,  $70,  $68
+	.byte	 $60,  $68,  $70,  $78,  $80,  $88,  $90,  $98
 
 
-COPYRIGHT:	.DB	"       HIGH SCORE       "	;12 lines x 24
-		.DB	"                        "
-		.DB	"                        "   
-		.DB	"     BY JIM TREADWAY    "
-		.DB	"     AND MIKE HUNLEY    "
-		.DB	" ADDITIONAL GRAPHICS BY "
-		.DB	"  JON AND NANCY VALESH  "
-		.DB	"        "
-		.DB	H'AD,H'AE,H'AE,H'AE,H'AE,H'AE,H'AE,H'AF
-		.DB	"        "
-		.DB	H'0F	;(C) symbol
-		.DB	"1990 COLOR DREAMS, INC."
-	        .DB	"        ",H'CD,"      ",H'CF,"        "
-		.DB	"        "
-		.DB	H'ED,H'EE,H'EE,H'EE,H'EE,H'EE,H'EE,H'EF
-		.DB	"        "
-		.DB	"  ALL RIGHTS RESERVED!	 "
+COPYRIGHT:	.byte	"       HIGH SCORE       "	;12 lines x 24
+		.byte	"                        "
+		.byte	"                        "   
+		.byte	"     BY JIM TREADWAY    "
+		.byte	"     AND MIKE HUNLEY    "
+		.byte	" ADDITIONAL GRAPHICS BY "
+		.byte	"  JON AND NANCY VALESH  "
+		.byte	"        "
+		.byte	 $AD, $AE, $AE, $AE, $AE, $AE, $AE, $AF
+		.byte	"        "
+		.byte	 $0F	;(C) symbol
+		.byte	"1990 COLOR DREAMS, INC."
+	        .byte	"        ", $CD,"      ", $CF,"        "
+		.byte	"        "
+		.byte	 $ED, $EE, $EE, $EE, $EE, $EE, $EE, $EF
+		.byte	"        "
+		.byte	"  ALL RIGHTS RESERVED!	 "
 
-NUMTAB:		.DB	H'F0, H'F1, H'F2, H'F3, H'F4
-		.DB	H'F5, H'F6, H'F7, H'F8, H'F9
+NUMTAB:		.byte	 $F0,  $F1,  $F2,  $F3,  $F4
+		.byte	 $F5,  $F6,  $F7,  $F8,  $F9
 
 
 CS_DATA:	     
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#0
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC	;#0
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
 
-	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#1
-	.DB	H'57,H'57,H'78,H'77,H'57,H'57,H'57,H'57
-	.DB	H'57,H'57,H'57,H'57,H'57,H'57,H'57,H'57 
-	.DB	H'57,H'57,H'57,H'57,H'78,H'FC,H'FC,H'FC
+	.byte	 $FC, $77, $57, $57, $57, $57, $57, $57	;#1
+	.byte	 $57, $57, $78, $77, $57, $57, $57, $57
+	.byte	 $57, $57, $57, $57, $57, $57, $57, $57 
+	.byte	 $57, $57, $57, $57, $78, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'23,H'2F,H'2E,H'24,H'FA,H'FA	;#2
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $23, $2F, $2E, $24, $FA, $FA	;#2
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'D8,H'B7,H'B7,H'B7,H'B7,H'B7,H'B7	;#3
-	.DB	H'B7,H'B7,H'D7,H'58,H'FA,H'FA,H'FA,H'FA	   
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC                   
+	.byte	 $FC, $D8, $B7, $B7, $B7, $B7, $B7, $B7	;#3
+	.byte	 $B7, $B7, $D7, $58, $FA, $FA, $FA, $FA	   
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC                   
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#4
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#4
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#5
-	.DB	H'F7,H'F7,H'98,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $97, $F7, $F7, $F7, $F7, $F7, $F7	;#5
+	.byte	 $F7, $F7, $98, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'D9,H'59,H'5C,H'5C,H'5C,H'5C,H'5A	;#6
-	.DB	H'FA,H'FA,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $D9, $59, $5C, $5C, $5C, $5C, $5A	;#6
+	.byte	 $FA, $FA, $DA, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'BE,H'79,H'5C,H'5C,H'5C,H'5C,H'5A	;#7
-	.DB	H'FA,H'FA,H'BE,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $BE, $79, $5C, $5C, $5C, $5C, $5A	;#7
+	.byte	 $FA, $FA, $BE, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'BA,H'99,H'5C,H'5C,H'5C,H'5C,H'5A	;#8
-	.DB	H'FA,H'FA,H'BB,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $BA, $99, $5C, $5C, $5C, $5C, $5A	;#8
+	.byte	 $FA, $FA, $BB, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#9
-	.DB	H'57,H'57,H'78,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $77, $57, $57, $57, $57, $57, $57	;#9
+	.byte	 $57, $57, $78, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'24,H'32,H'29,H'36,H'25,H'FA	;#10
-	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $24, $32, $29, $36, $25, $FA	;#10
+	.byte	 $0D, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'30,H'37,H'32,H'0F,H'30,H'2C	;#11
-	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $30, $37, $32, $0F, $30, $2C	;#11
+	.byte	 $0D, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'33,H'28,H'29,H'25,H'2C,H'24	;#12
-	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $33, $28, $29, $25, $2C, $24	;#12
+	.byte	 $0D, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#13
-	.DB	H'F7,H'F7,H'98,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $97, $F7, $F7, $F7, $F7, $F7, $F7	;#13
+	.byte	 $F7, $F7, $98, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'D9,H'7A,H'7B,H'9A,H'9C,H'9C,H'9C	;#14
-	.DB	H'9C,H'5B,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $D9, $7A, $7B, $9A, $9C, $9C, $9C	;#14
+	.byte	 $9C, $5B, $DA, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'BA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#15
-	.DB	H'FA,H'FA,H'BB,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $BA, $FA, $FA, $FA, $FA, $FA, $FA	;#15
+	.byte	 $FA, $FA, $BB, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'D9,H'7A,H'7B,H'9B,H'9C,H'9C,H'9C	;#16
-	.DB	H'9C,H'5B,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $D9, $7A, $7B, $9B, $9C, $9C, $9C	;#16
+	.byte	 $9C, $5B, $DA, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'BE,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#17
-	.DB	H'FA,H'FA,H'BE,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $BE, $FA, $FA, $FA, $FA, $FA, $FA	;#17
+	.byte	 $FA, $FA, $BE, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'BA,H'FA,H'08,H'FA,H'1D,H'FA,H'FA	;#18
-	.DB	H'09,H'FA,H'BB,H'97,H'F7,H'F7,H'F7,H'F7
-	.DB	H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7
-	.DB	H'F7,H'F7,H'F7,H'F7,H'98,H'FC,H'FC,H'FC
+	.byte	 $FC, $BA, $FA, $08, $FA, $1D, $FA, $FA	;#18
+	.byte	 $09, $FA, $BB, $97, $F7, $F7, $F7, $F7
+	.byte	 $F7, $F7, $F7, $F7, $F7, $F7, $F7, $F7
+	.byte	 $F7, $F7, $F7, $F7, $98, $FC, $FC, $FC
 
-	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#19
-	.DB	H'57,H'57,H'78,H'77,H'57,H'57,H'57,H'57
-	.DB	H'57,H'57,H'57,H'57,H'57,H'57,H'57,H'57
-	.DB	H'57,H'57,H'57,H'57,H'78,H'FC,H'FC,H'FC
+	.byte	 $FC, $77, $57, $57, $57, $57, $57, $57	;#19
+	.byte	 $57, $57, $78, $77, $57, $57, $57, $57
+	.byte	 $57, $57, $57, $57, $57, $57, $57, $57
+	.byte	 $57, $57, $57, $57, $78, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#20
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#20
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#21
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#21
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#22
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#22
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#23
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#23
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#24
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#24
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 			       
-	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#25
-	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
-	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+	.byte	 $FC, $58, $FA, $FA, $FA, $FA, $FA, $FA	;#25
+	.byte	 $FA, $FA, $F8, $58, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
+	.byte	 $FA, $FA, $FA, $FA, $F8, $FC, $FC, $FC
 
-	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#26
-	.DB	H'F7,H'F7,H'98,H'97,H'F7,H'F7,H'F7,H'F7
-	.DB	H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7
-	.DB	H'F7,H'F7,H'F7,H'F7,H'98,H'FC,H'FC,H'FC
+	.byte	 $FC, $97, $F7, $F7, $F7, $F7, $F7, $F7	;#26
+	.byte	 $F7, $F7, $98, $97, $F7, $F7, $F7, $F7
+	.byte	 $F7, $F7, $F7, $F7, $F7, $F7, $F7, $F7
+	.byte	 $F7, $F7, $F7, $F7, $98, $FC, $FC, $FC
 
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#27
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC	;#27
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
 							   
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#28
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC	;#28
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
 
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#29
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
-	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC	;#29
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
+	.byte	 $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
 CSD_END:
 
 
-INCLUDE( PLNTMAPS.ASM)
+.include "PLNTMAPS.ASM"
 
 ;
 ;*************************************************
@@ -14037,15 +14040,14 @@ INCLUDE( PLNTMAPS.ASM)
 IRQ:	JMP	BOOT		;power up or reset
 	RTI
 
-.ORG	h'FFFA
+.segment "VECTOR0"
 
-.DRW	NMI
-.DRW	BOOT
-.DRW	IRQ
-
-.END
+.word	NMI
+.word	BOOT
+.word	IRQ
 
 ;*************************************************
 ; END
 ;*************************************************
-
+
+.endscope
