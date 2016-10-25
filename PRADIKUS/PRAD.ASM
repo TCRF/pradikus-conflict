@@ -1,0 +1,14051 @@
+
+;DIFFICULTY SETTINGS!!
+
+.EQU	PLYR_MSL,	H'08	;or 09?
+.EQU	ENMY_MSL,	H'07	;should be slightly faster than the plyr.
+
+
+
+
+
+;the P'Radikus Conflict
+;
+;6502 source code for use with Nintendo (TM)
+;Entertainment System.
+;
+;
+;	SAT 17 JULY 90
+;	   Ver 2.0
+;
+;Graphics and Code by:
+;  Jim Treadway & Mike Hunley
+;
+;
+;"PRADIKUS.ASM" --- bank 0 code
+;
+;
+
+INCLUDE( RAMVARS.ASM)
+
+
+;****************************
+; BOOT CODE
+;****************************
+
+
+.ORG	h'8000
+
+
+BOOT:		
+		SEI
+		CLD
+		LDX	#H'FF
+		TXS
+	
+		LDA	#H'06
+		STA	VID_MODE
+	
+		JSR	VR_WAIT
+		JSR	VR_WAIT
+		
+		LDA	ROM0
+		STA 	ROM0
+
+IFDEF( `RAM',	STA	ROMSELECT, )
+
+		JMP	BOOT2
+
+
+;***********************************
+
+COMPON:		STY	T4
+		
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+;compoff:
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+ROWXFER:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+COLXFER:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+FOBJECT:	STY	T4
+		
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	FINDOBJECT
+		JMP	FOBJECT
+
+
+
+
+
+;***********************************
+
+GETOBJPTR:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+OBJ_NIL:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+GETBLOCK:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+ 
+SCAN:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	DOSCAN
+		JMP	SCAN
+
+
+
+
+
+;***********************************
+
+ITEMCOST:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	GETCOST
+		JMP	ITEMCOST
+
+
+
+
+
+;***********************************
+
+BUYITEM:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	GETITEM
+		JMP	BUYITEM
+
+
+
+
+
+;***********************************
+
+ITEMAVAIL:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	HASITEM
+		JMP	ITEMAVAIL
+
+
+
+
+
+;***********************************
+
+MAP:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	DOMAP
+		JMP	MAP
+
+
+
+
+
+;***********************************
+
+ROM0:	.DB	H'00
+ROM1:	.DB	H'01
+ROMX:	.DB	H'01
+
+
+XVIDEO:		
+
+;Acc. = video page #
+
+		ASL	A
+		STA	VIDROM
+		CLC
+		ADC	ROM0
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+
+		RTS
+
+ROMTAB:		.DB	H'00, H'01, H'10, H'11 	;sets 0, 1
+		.DB	H'20, H'21, H'30, H'31  ;sets 2, 3
+		.DB	H'40, H'41, H'50, H'51	;sets 4, 5
+		.DB	H'60, H'61, H'70, H'71	;sets 6, 7
+
+;***********************************
+
+
+BOOT2:		
+
+		JSR	DANSSTUFF
+
+	LDY	#0
+	LDA	#0
+B2:	STA	H'0000, Y
+	STA	H'0100, Y
+	STA	H'0200, Y
+	STA	H'0300, Y
+	STA	H'0400, Y
+	STA	H'0500, Y
+	STA	H'0600, Y
+	STA	H'0700, Y
+	DEY
+	BNE	B2
+
+
+		LDA	#0
+		STA	H1M
+		STA	H100K
+		STA	H10K
+		STA	H1K
+		STA	H100
+		STA	H10
+		STA	H1
+		STA	HASPLAYED
+
+BOOT2A0:	JSR	INITGAME	
+		JSR	TITLEPAGE
+
+		LDA	HASPLAYED
+		BEQ	BOOT2A3
+
+		JSR	CONTINUE
+
+  		CMP	#0
+		BNE	BOOT2A2		;continue if non-zero!
+
+BOOT2A3:	LDA	#0
+		STA	HASPLAYED
+		
+		JSR	INITGAME
+
+		LDA	#1
+		STA	HASPLAYED
+
+		JSR	BULLSYST
+		JSR	INITWARP
+
+		LDA	#0
+		STA	SC1M
+		STA	SC100000
+		STA	SC10000
+		STA	SC1000
+		STA	SC100
+		STA	SC10
+		STA	SC1
+
+BOOT2A2:	LDA	#99		;give full armor to be nice
+		STA	ARMOR
+		STA	FUEL		;...and full fuel too...
+
+		LDA	SHLDTYPE
+		BNE	B2A2_SHLD
+		LDA	#1		;make sure has at least type 1
+		STA	SHLDTYPE	;  shield... (05/13/90)
+		LDA	#20
+		STA	SHIELD		;...regen. the shield
+B2A2_SHLD:				
+
+		JSR	SCROLL
+		JMP	BOOT2A0
+
+;********************************************
+;********************************************
+
+.PAGE	;new code page boundary
+
+DANSSTUFF:		;wait to latch video circuit
+	JSR	DX12
+	LDX	#83
+	JSR	DX15
+	LDY	#4
+DX10:	JSR	DX12
+	DEY
+	BNE	DX10
+	LDX	#83
+	JSR	DX15
+	JSR	DX12
+	LDA	#12
+	STA	TWELVE
+	JMP	DX20
+
+DX12:
+	LDA	#8
+	STA	EIGHT
+	LDA	#0
+	PHA
+	PLA
+	NOP
+	NOP
+	STA	ZERO
+
+	LDX	#80
+DX15:
+	DEX
+	BNE	DX15
+	RTS
+
+ZERO:	.DB	0
+EIGHT:	.DB	8
+TWELVE:	.DB	12
+
+DX20:	RTS
+
+;********************************************
+;********************************************
+
+TITLEPAGE:	
+
+		LDA	XPOS
+		PHA
+		LDA	YPOS
+		PHA
+
+		LDA	#H'A0
+		STA	XPOS
+		STA	YPOS		;fake out drawsystem to
+		JSR	DRAWSYSTEM	;draw starfield...
+
+		PLA
+		STA	YPOS
+		PLA
+		STA	XPOS
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+	 ;;	LDX	#1
+	 ;;	LDA	#H'FA
+	 ;;	JSR	CLEAR
+
+
+DRAWTITLE:	;display P'Radikus on screen
+
+	 	LDA	#PRAD_DATA &H'FF
+	  	STA	OBJPTRL
+		LDA	#PRAD_DATA >>8
+		STA	OBJPTRH
+	
+		LDA	#H'20		;pos. on page0
+		STA	CY
+		LDA	#H'81
+		STA	CX
+
+		LDY	#0
+		LDA	#10		;# of rows
+		STA	COUNT0
+DRT0:		LDX	#30		;# of cols.
+		LDA	VID_RESET
+		LDA	CY
+		STA	VID_PTR
+		LDA	CX
+		STA	VID_PTR
+DRT1:		LDA	(OBJPTRL), Y
+		STA	VID_DATA
+		INC	OBJPTRL
+		BNE	DRT2
+		INC	OBJPTRH
+DRT2:		DEX
+		BNE	DRT1
+	
+		LDA	CX
+		CLC
+		ADC	#32
+		STA	CX
+		LDA	CY
+		ADC	#0
+		STA	CY
+		DEC	COUNT0
+		BNE	DRT0
+
+		
+
+		LDA	#COPYRIGHT & H'FF
+	  	STA	OBJPTRL
+		LDA	#COPYRIGHT >>8
+		STA	OBJPTRH
+	
+		LDA	#H'22		;pos. on page0
+		STA	CY
+		LDA	#H'24
+		STA	CX
+
+		LDY	#0
+		LDA	#12		;# of rows
+		STA	COUNT0
+TP0:		LDX	#24		;# of cols.
+		LDA	VID_RESET
+		LDA	CY
+		STA	VID_PTR
+		LDA	CX
+		STA	VID_PTR
+TP1:		LDA	(OBJPTRL), Y
+		SEC
+		SBC	#H'20
+		STA	VID_DATA
+		INC	OBJPTRL
+		BNE	TP2
+		INC	OBJPTRH
+TP2:		DEX
+		BNE	TP1
+	
+		LDA	CX
+		CLC
+		ADC	#32
+		STA	CX
+		LDA	CY
+		ADC	#0
+		STA	CY
+		DEC	COUNT0
+		BNE	TP0
+
+	
+		LDA	VID_RESET
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'C0
+		STA	VID_PTR
+	
+		LDY	#0
+TIP0C:		LDA	TITLEPD, Y
+		STA	VID_DATA
+		INY
+		CPY	#H'40
+		BNE	TIP0C
+
+
+TITLE2:		JSR	ZAP_SPRITES
+		LDA	#0
+		STA	TIMER0		;force only one sprite set
+
+
+;;;"BUNCH GAMES" logo...
+;;
+		LDY	#H'00		;base entry in SPRTBL0
+;;		LDX	#0
+;;LOGOLOOP:	LDA	BUNCHLOGO, X
+;;		STA	SPRTBL0, Y
+;;		INX
+;;		INY
+;;		CPY	#H'38  	
+;;		BNE	LOGOLOOP
+
+;"PRESS START"...
+
+		LDX	#0
+STARTLOOP:	LDA	PRESS_START, X
+		STA	SPRTBL0, Y
+		INX
+		INY
+		CPY	#H'28			;60
+		BNE	STARTLOOP
+
+;HIGH SCORE...
+
+		LDX	#0
+HSLOOP:		LDA	HSTABLE, X
+		STA	SPRTBL0, Y
+		INX
+		INY
+		CPY	#H'44			;7C
+		BNE	HSLOOP
+
+
+		LDX	H1M
+		LDY	#H'28			;60		
+		LDA	NUMTAB, X
+		STA	SPRTBL0+1, Y
+		LDX	H100K
+		LDA	NUMTAB, X
+		STA	SPRTBL0+5, Y
+		LDX	H10K
+		LDA	NUMTAB, X
+		STA	SPRTBL0+9, Y
+		LDX	H1K
+		LDA	NUMTAB, X
+		STA	SPRTBL0+13, Y
+		LDX	H100
+		LDA	NUMTAB, X
+		STA	SPRTBL0+17, Y
+		LDX	H10
+		LDA	NUMTAB, X
+		STA	SPRTBL0+21, Y
+		LDX	H1
+		LDA	NUMTAB, X
+		STA	SPRTBL0+25, Y
+
+		LDX	#TITLEBPAL &H'FF
+		LDY	#TITLEBPAL >> 8
+		JSR	BACKPAL
+		LDX	#TITLESPAL &H'FF
+		LDY	#TITLESPAL >> 8
+		JSR	SPRITEPAL
+
+		LDA	#H'19	;make background use highset for title page only
+		STA	V_SEL
+		LDA	#H'1E
+		STA	V_MODE
+
+		LDA	#H'F8
+		STA	XSCROLL
+		LDA	#H'08
+		STA	YSCROLL
+	
+		LDA	#-1
+		JSR	SILENCE
+		LDY	#THEME0 >> 8
+		LDX	#THEME0 & H'FF
+		LDA	#0
+ 		JSR	PLAY
+		LDY	#THEME1 >> 8
+		LDX	#THEME1 & H'FF
+		LDA	#1
+		JSR	PLAY
+	
+NMI_TITLE:	LDA	#H'80
+		STA	GAMEMODE
+		JMP	DO_NMI
+
+
+DOTITLE:	LDA	J1CHG
+		AND	#START
+		BEQ	DOT2
+		LDA	#H'81
+		STA	GAMEMODE
+DOT2:		RTS
+
+CONTSTR1:	.DB	"  NEW GAME",H'FF
+CONTSTR2:	.DB	"  CONTINUE ",H'FF
+
+
+CONTINUE:	LDY	#H'0		;clear out unused sprites
+		LDA	#H'FA
+CONT0:		STA	SPRTBL0, Y
+		INY
+		BNE	CONT0
+
+		LDA	#CONTSTR1 >>8
+		STA	PTR3H
+		LDA	#CONTSTR1 &H'FF
+		STA	PTR3L
+		LDY	#16
+		LDX	#10
+		JSR	DRAWSTR
+	
+		LDA	#CONTSTR2 >>8
+		STA	PTR3H
+		LDA	#CONTSTR2 &H'FF
+		STA	PTR3L
+		LDY	#17
+		LDX	#10
+		JSR	DRAWSTR
+
+		LDY	#H'38		;base sprite
+		LDA	#H'78
+		STA	SPRTBL0+ 0, Y
+		LDA	#H'BD
+		STA	SPRTBL0+ 1, Y
+		LDA	#0		;palette
+		STA	SPRTBL0+ 2, Y
+		LDA	#H'59
+		STA	SPRTBL0+ 3, Y
+		LDA	#H'80
+		STA	SPRTBL0+ 4, Y
+		LDA	#H'DD
+		STA	SPRTBL0+ 5, Y
+		LDA	#0		;palette
+		STA	SPRTBL0+ 6, Y
+		LDA	#H'59
+		STA	SPRTBL0+ 7, Y
+
+NMI_CONT:	LDA	#H'82
+		STA	GAMEMODE
+		JSR	DO_NMI
+		LDA	J1CHG
+		AND	#B_BTN
+		BNE	CONT_YES
+CONT_NO:
+		LDA	#0
+		RTS
+CONT_YES:
+		LDY	SHLDTYPE
+		LDA	SHMAX,Y
+		STA	SHIELD
+		LDA	#99
+		STA	FUEL
+		LDA	ARMOR
+		CMP	#40
+		BCS	CONTY0
+		LDA	#40
+		STA	ARMOR
+CONTY0:		LDA	#1
+		RTS
+
+
+
+DOCONT:		LDA	J1CHG
+		AND	#(B_BTN+A_BTN)
+		BEQ	DOC2
+
+		LDA	#H'83
+		STA	GAMEMODE
+
+DOC2:		RTS
+
+
+
+;*****************************************************
+
+PRESS_START:	.DB	H'6C, H'94, H'03, H'74	;P
+		.DB	H'6C, H'95, H'03, H'7C	;R
+		.DB	H'6C, H'96, H'03, H'84	;E
+		.DB	H'6C, H'97, H'03, H'8C	;S
+		.DB	H'6C, H'97, H'03, H'94	;S
+				       
+		.DB	H'74, H'97, H'03, H'74	;S
+		.DB	H'74, H'98, H'03, H'7C	;T
+		.DB	H'74, H'9A, H'03, H'84	;A
+		.DB	H'74, H'95, H'03, H'8C	;R
+		.DB	H'74, H'98, H'03, H'94	;T
+
+;;BUNCHLOGO:	.DB	H'BF, H'A1, H'03, H'6D		
+;;		.DB	H'BF, H'A2, H'03, H'75
+;;		.DB	H'BF, H'A3, H'03, H'7D
+;;		.DB	H'BF, H'A4, H'03, H'85
+;;		.DB	H'BF, H'A5, H'03, H'8D
+;;		.DB	H'BF, H'A6, H'03, H'95
+;;		.DB	H'BF, H'A7, H'03, H'9D
+;;
+;;		.DB	H'C7, H'C1, H'03, H'6D
+;;		.DB	H'C7, H'C2, H'03, H'75
+;;		.DB	H'C7, H'C3, H'03, H'7D
+;;		.DB	H'C7, H'C4, H'03, H'85
+;;		.DB	H'C7, H'C5, H'03, H'8D
+;;		.DB	H'C7, H'C6, H'03, H'95
+;;		.DB	H'C7, H'C7, H'03, H'9D
+			   
+HSTABLE:	.DB	H'8B, H'00, H'01, H'6C
+		.DB	H'8B, H'00, H'01, H'74		
+		.DB	H'8B, H'00, H'01, H'7C		
+		.DB	H'8B, H'00, H'01, H'84		
+		.DB	H'8B, H'00, H'01, H'8C		
+		.DB	H'8B, H'00, H'01, H'94		
+		.DB	H'8B, H'00, H'01, H'9C		
+
+
+TITLEBPAL:	.DB	H'01,H'30,H'08
+		.DB	H'0E,H'21,H'11,H'31	;background/stars
+		.DB	H'0E,H'37,H'37,H'26	;P'RADIKUS title logo
+		.DB	H'0E,H'10,H'10,H'10	;grid 
+		.DB	H'0E,H'01,H'0E,H'0E	;0
+		.DB	H'0E,H'02,H'0E,H'0E	;1
+		.DB	H'0E,H'03,H'0E,H'0E	;2
+		.DB	H'0E,H'04,H'0E,H'0E	;3
+		.DB	H'0E,H'05,H'0E,H'0E	;4
+		.DB	H'0E,H'06,H'0E,H'0E	;5
+		.DB	H'0E,H'07,H'0E,H'0E	;6
+		.DB	H'0E,H'08,H'0E,H'0E	;7
+		.DB	H'0E,H'09,H'0E,H'0E	;8
+		.DB	H'0E,H'0A,H'0E,H'0E	;9
+		.DB	H'0E,H'0B,H'0E,H'0E	;A
+		.DB	H'0E,H'0C,H'0E,H'0E	;B
+		.DB	H'0E,H'11,H'0E,H'0E	;C
+		.DB	H'0E,H'12,H'0E,H'0E	;D
+		.DB	H'0E,H'13,H'0E,H'0E	;E
+		.DB	H'0E,H'14,H'0E,H'0E	;F
+		.DB	H'0E,H'15,H'0E,H'0E	;10
+		.DB	H'0E,H'16,H'0E,H'0E	;11
+		.DB	H'0E,H'17,H'0E,H'0E	;12
+		.DB	H'0E,H'18,H'0E,H'0E	;13
+		.DB	H'0E,H'19,H'0E,H'0E	;14
+		.DB	H'0E,H'1A,H'0E,H'0E	;15
+		.DB	H'0E,H'1B,H'0E,H'0E	;16
+		.DB	H'0E,H'1C,H'0E,H'0E	;17
+		.DB	H'0E,H'21,H'0E,H'0E	;18
+		.DB	H'0E,H'22,H'0E,H'0E	;19
+		.DB	H'0E,H'23,H'0E,H'0E	;1A
+		.DB	H'0E,H'24,H'0E,H'0E	;1B
+		.DB	H'0E,H'25,H'0E,H'0E	;1C
+		.DB	H'0E,H'26,H'0E,H'0E	;1D
+		.DB	H'0E,H'27,H'0E,H'0E	;1E
+		.DB	H'0E,H'28,H'0E,H'0E	;1F
+		.DB	H'0E,H'29,H'0E,H'0E	;20
+		.DB	H'0E,H'2A,H'0E,H'0E	;21
+		.DB	H'0E,H'2B,H'0E,H'0E	;22
+		.DB	H'0E,H'2C,H'0E,H'0E	;23
+		.DB	H'0E,H'31,H'0E,H'0E	;24
+		.DB	H'0E,H'32,H'0E,H'0E	;25
+		.DB	H'0E,H'33,H'0E,H'0E	;26
+		.DB	H'0E,H'34,H'0E,H'0E	;27
+		.DB	H'0E,H'35,H'0E,H'0E	;28
+		.DB	H'0E,H'36,H'0E,H'0E	;29
+		.DB	H'0E,H'37,H'0E,H'0E	;2A
+		.DB	H'0E,H'38,H'0E,H'0E	;2B
+		.DB	H'0E,H'39,H'0E,H'0E	;2C
+		.DB	H'0E,H'3A,H'0E,H'0E	;2D
+		.DB	H'0E,H'3B,H'0E,H'0E	;2E
+		.DB	H'0E,H'3C,H'0E,H'0E	;2F
+		
+
+TITLESPAL:	.DB	H'01,H'08,H'08
+		.DB	H'0E,H'16,H'16,H'16     ;A & B buttons for cont.
+		.DB	H'0E,H'31,H'31,H'31	;high score display
+		.DB	H'0E,H'11,H'21,H'31	;"Bunch Games" logo
+		.DB	H'0E,H'16,H'0E,H'0E	;"Press Start" / blinking
+		.DB	H'0E,H'16,H'0E,H'0E	;2
+		.DB	H'0E,H'16,H'0E,H'0E	;3
+		.DB	H'0E,H'16,H'0E,H'0E	;4
+		.DB	H'0E,H'0E,H'0E,H'0E	;5
+		.DB	H'0E,H'0E,H'0E,H'0E	;6
+		.DB	H'0E,H'0E,H'0E,H'0E	;7
+		.DB	H'0E,H'0E,H'0E,H'0E	;8
+
+
+TITLEPD:	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+		.DB	H'50,H'55,H'55,H'50,H'51,H'50,H'50,H'10
+		.DB	H'15,H'55,H'55,H'55,H'55,H'55,H'55,H'11
+		.DB	H'00,H'00,H'01,H'05,H'05,H'00,H'00,H'00
+		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+		.DB	H'00,H'05,H'FD,H'FF,H'FF,H'F7,H'05,H'00
+		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+
+;********************************************
+
+
+INIT:		LDA	H1M
+		PHA
+		LDA	H100K
+		PHA
+		LDA	H10K
+		PHA
+		LDA	H1K
+		PHA
+		LDA	H100
+		PHA
+		LDA	H10
+		PHA
+		LDA	H1
+		PHA
+
+		LDA	SC1M
+		PHA
+		LDA	SC100000
+		PHA
+		LDA	SC10000
+		PHA
+		LDA	SC1000
+		PHA
+
+		LDA	#0
+		STA	SC100
+		STA	SC10
+		STA	SC1
+
+		LDA	HASPLAYED
+		BEQ	INIT_0
+		LDA	#H'DF
+		STA	H'0000
+		JMP	INIT_1
+INIT_0:
+		LDA	#H'00
+		STA	H'0000
+INIT_1:
+
+	LDY	#1
+	LDA	#0
+INIT0:
+	STA	H'0000, Y
+	INY
+	CPY	H'0000
+	BNE	INIT0
+
+	STA	H'0000
+
+
+	LDY	#0
+	JSR	ZAP_SPRITES
+
+	LDA	#H'00
+	STA	VIDROM
+	STA	PROGROM
+
+		PLA
+		STA	SC1000
+		PLA
+		STA	SC10000
+		PLA
+		STA	SC100000
+		PLA
+		STA	SC1M
+
+		PLA
+		STA	H1
+		PLA
+		STA	H10
+		PLA
+		STA	H100
+		PLA
+		STA	H1K
+		PLA
+		STA	H10K
+		PLA
+		STA	H100K
+		PLA
+		STA	H1M
+
+	RTS
+
+INITGAME:
+	JSR	INIT
+	LDA	HASPLAYED
+	BEQ	IG_A
+	RTS
+
+;player has not yet played the game...
+
+IG_A:
+	LDA	#99
+	STA	FUEL
+	LDA	#99
+	STA	ARMOR
+	LDA	#20			;...
+	STA	SHIELD
+	LDA	#1			;be nice and start with type 1
+	STA	SHLDTYPE		; shield... (05/13/90)
+
+	LDA	#1
+	STA	DRIVE
+	STA	PWRPLANT
+
+	LDA	#1
+	STA	WPN1		;CANNON
+	STA	MISSION
+
+	LDA	#0
+	STA	WPN2
+	STA	GOAL0
+	STA	GOAL1
+	STA	GOAL2
+	STA	GOAL3
+	STA	GOAL4
+	STA	GOAL5
+	STA	GOAL6
+	STA	GOAL7
+	STA	GOAL8
+	STA	TIME_DIFF
+	STA	CHEAT
+
+	LDA	#H'FF
+	STA	HASBOLT		;HIGH IS BUYABLE, LOW IS FINDABLE (0 WHEN TAKEN)
+	STA	HASFREEM	;0 WHEN PLAYER TAKES ONLY FREEM DRIVE
+
+	LDA	#3
+	STA	GALAXY_X
+	STA	GALAXY_Y
+	LDA	#H'0F
+	STA	SECTOR_X
+	LDA	#H'10
+	STA	SECTOR_Y
+	LDA	#H'3E
+	STA	XPOS
+	LDA	#H'4F
+	STA	YPOS
+
+	RTS
+
+
+INITWARP:	LDA	PRADIKUS
+		BEQ	INITWP1
+		LDA	CHEAT
+		BEQ	INITWP1
+;cheater!
+		LDA	#H'FF
+		STA	CHEATDIE
+
+INITWP1:	JSR	RANDOM
+	     	AND	#H'03
+	     	STA	EMODE
+
+INITWP2:		
+
+;force to EMODE = 4 if more than one space station exists
+;since the extra station must use a 3x3 enemy slot...
+
+		LDY	#7		;index to 2nd elements' type byte
+		LDA	SYSTEM, Y
+		AND	#H'70
+		BNE	COUNTOK
+;we have more than one!
+		LDA	#4
+		STA	EMODE
+
+COUNTOK:	LDY	EMODE
+
+		LDA	MAXETBL, Y
+		STA	MAX_ENEMY
+		LDA	MAXSTBL, Y
+		STA	MAX_ESHOT
+
+	LDA	#H'7F		;space
+	STA	BKGRWIDTH
+
+;set up	SYSPTR, XPOS, YPOS
+
+	LDA	#H'00
+	STA	WARP
+
+	LDA	ARMOR
+	STA	SAVEARMR
+
+;init enemy player/tables
+
+	JSR	INITCMBT
+	JSR	INIT_STN
+
+	LDA	#0
+	STA	REG4015
+	STA	EFFECT
+
+
+INITWP3:
+	JSR	SET_DIFF
+	JSR	SET_DENS
+	
+	JSR	LOAD_STN
+
+   ;;	JSR	SET_FUEL
+
+
+		JSR	RANDOM
+INITWP3A:	CMP	#100
+		BCC	INITWP3B
+		ROL	RAND
+		SEC
+		SBC	#100
+		JMP	INITWP3A
+		
+INITWP3B:	STA	ITEM1CNT
+		JSR	RANDOM
+INITWP3C:	CMP	#100
+		BCC	INITWP3D
+		ROL	RAND
+		SEC
+		SBC	#100
+		JMP	INITWP3C
+
+INITWP3D:	STA	ITEM2CNT
+		JSR	RANDOM
+INITWP3E:	CMP	#100
+		BCC	INITWP3F
+		ROR	RAND
+		SEC
+		SBC	#100
+		JMP	INITWP3E
+
+INITWP3F:	STA	ITEM3CNT
+		JSR	RANDOM
+INITWP3G:	CMP	#100
+		BCC	INITWP3H
+		ROR	RAND
+		SEC
+		SBC	#100
+		JMP	INITWP3G
+
+INITWP3H:	STA	ITEM4CNT
+
+
+
+	LDY	#0
+	JSR	ZAP_SPRITES
+	JSR	INITSPR
+
+;get new system & palettes
+
+	LDA	#-1
+	JSR	SILENCE
+
+	RTS	
+
+
+
+;BUILDS THE ITEM LIST FOR THE COMPUTER AFTER DESTROYING A TOWER
+
+MKITMLST:	LDA	#H'FF
+		STA	COMPITEM
+		JSR	RANDOM
+		CMP	#128
+		BCC    	MK_CASH
+		RTS
+
+MK_CASH:       	JSR	RANDOM
+		ASL	A
+		ASL	A
+		ASL	A
+		AND	#H'0F
+		ORA	#H'80
+		STA	COMPITEM
+		RTS
+	
+
+
+;************************************************
+;read joystick 1 -- returns w/ X=new joystick val.,
+;		    A=undefined, Y is unchanged...
+;04/26/89
+
+JSTICK1:	LDA	#1
+		STA	Jport1
+		LDA	#0
+		STA	Jport1		;latch joystick
+
+		LDX	#8
+JS1A:		PHA			;save current status byte
+		LDA	Jport1
+		ROR	A		;rotate bit into carry
+		PLA
+		ROL	A		;rotate carry into status byte
+		DEX
+		BNE	JS1A		;read all 8 "buttons"
+	
+		TAX			;save new val.
+		EOR	J1VAL
+		STA	J1CHG
+		TXA
+		STA	J1VAL
+		AND	J1CHG		;find what buttons were just pressed
+		STA	J1CHG
+
+		BEQ	JS1B		;no buttons were just pressed
+		LDA	TIMER0
+		ADC	J1VAL
+		STA	RAND		;player just selected new seed
+
+JS1B:		RTS
+
+;******************
+
+VR_WAIT:			;wait for vertical retrace
+	LDA	Vid_Reset
+	BPL	VR_WAIT
+	RTS
+
+
+
+;******************
+
+
+RANDOM:	LDA	RAND
+	ADC	TIMER0
+	ADC	#H'EA
+	STA	RAND
+	RTS
+
+
+
+ABSVAL:		STA	ABS
+		LDA	ABS
+		BPL	ABSVAL1
+		LDA	#0
+		SEC
+		SBC	ABS
+		STA	ABS
+ABSVAL1:	RTS
+
+
+
+DELAY:	LDX	#0
+DELAY0: DEX
+	BNE	DELAY0
+	DEY
+	BNE	DELAY
+	RTS
+
+
+BIGDELAY:
+	TYA
+	PHA
+	LDY	#0
+	JSR	DELAY
+	PLA
+	TAY
+	DEY
+	BNE	BIGDELAY
+	RTS
+
+
+BLOCKMOVE:
+
+;source at PTR2, dest at PTR1, Y-reg = # of bytes
+;(neither can cross a page boundary!)
+
+	LDA	(PTR2L), Y
+	STA	(PTR1L), Y
+	DEY
+	BPL	BLOCKMOVE
+	RTS
+
+
+
+
+ZAP_SPRITES:
+	LDY	#0
+	LDA	#H'F8
+ZAP_S0:	STA	SPRTBL0, Y
+	STA	SPRTBL1, Y
+	INY
+	BNE	ZAP_S0
+	RTS
+
+
+;*******************************
+
+;*********************************
+; SCORE ROUTINES
+;*********************************
+
+
+;ADDSCORE USES THE ACCUMULATOR AS OFFSET INTO POINT TABLE.  ADDS TO SCORE
+
+;SCORE TABLE
+;	0 1 2 3 4 5 6 7 8 9 A B C D E F 0 1 2 3 4 5 6 7 8 9 A B C D E F
+
+P1:	 
+.DB	0,1,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P10:	 
+.DB	0,0,2,5,7,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P100:	 
+.DB	0,0,0,0,0,1,2,5,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P1000:	 
+.DB	0,0,0,0,0,0,0,0,1,2,5,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,0,0,0,0,0,0
+P10000:	 
+.DB	0,0,0,0,0,0,0,0,0,0,0,1,2,5,0,5,1,1,2,2,3,3,4,4,5,5,6,7,8,9,0,5
+P100000: 
+.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+
+ADDSCORE:	AND	#H'1F
+		TAY
+		LDA	P1, Y
+		STA	COUNT0
+		LDA	SC1
+		JSR	ADDIT
+		STA	SC1
+
+		LDA	COUNT0
+		CLC
+		ADC	P10, Y
+		STA	COUNT0
+		LDA	SC10
+		JSR	ADDIT
+		STA	SC10
+
+		LDA	COUNT0
+		CLC
+		ADC	P100, Y
+		STA	COUNT0
+		LDA	SC100
+		JSR	ADDIT
+		STA	SC100
+
+		LDA	COUNT0
+		CLC
+		ADC	P1000, Y
+		STA	COUNT0
+		LDA	SC1000
+		JSR	ADDIT
+		STA	SC1000
+
+		LDA	COUNT0
+		CLC
+		ADC	P10000, Y
+		STA	COUNT0
+		LDA	SC10000
+		JSR	ADDIT
+		STA	SC10000
+
+		LDA	COUNT0
+		CLC
+		ADC	P100000, Y
+		STA	COUNT0
+		LDA	SC100000
+		JSR	ADDIT
+		STA	SC100000
+
+		LDA	SC1M
+		JSR	ADDIT
+		STA	SC1M		
+		
+		LDA	COUNT0
+		BEQ	ADDSRTS
+
+		LDA	#9
+		STA	SC1M
+		STA	SC100000
+		STA	SC10000
+		STA	SC1000
+		STA	SC100
+		STA	SC10
+		STA	SC1
+
+ADDSRTS:	RTS
+
+ADDIT:		CLC
+		ADC	COUNT0
+		PHA
+		LDA	#0
+		STA	COUNT0
+		PLA
+
+ADDIT1:		CMP	#10
+		BCC	ADDIT2
+		SBC	#10
+		INC	COUNT0
+		BNE	ADDIT1		;Always!
+
+ADDIT2:		RTS
+
+
+
+;*********************************
+; COMBAT INITIALIZATION ROUTINES
+;*********************************
+
+INITCMBT:
+		JSR	INITEXPL
+		JSR	INITPSHT
+		JSR	INITESHP
+		JSR	INITESHT
+		LDA	#0
+		STA	TOWERS
+		STA	TURRETS
+		STA	NEXT_STN
+		STA	NEXT_GUN
+		LDA	#-1
+		STA	TURRET_1
+		STA	TURRET_2
+		STA	TURRET_3
+		STA	TURRET_4
+		RTS
+
+INITEXPL:	LDY	#27
+		LDA	#0
+IE_LOOP:	STA	PLYREXPL,Y
+		DEY
+		BPL	IE_LOOP
+		RTS
+
+INITPSHT:	LDY	#7
+		LDA	#0
+IPS_LOOP:	STA	PS_STAT,Y
+		DEY
+		BPL	IPS_LOOP
+		LDA	#1	
+		STA	P_THNDR
+		LDA	#0
+		STA	NEXT_PSHT
+		STA	INVISO
+		RTS
+
+INITESHP:	LDY	#0
+		LDA	#0
+IES_LOOP:	STA	ESHPSTAT,Y
+		INY
+		CPY	#4
+		BNE	IES_LOOP
+
+		LDA	#0
+		STA	ENMYWAIT
+		STA	NEXT_ENEMY
+		STA	STATUS		;green
+		STA	ENEMIES
+		RTS	    
+
+
+INITESHT:	LDY	#11
+		LDA	#0
+IS_LOOP:	STA	ES_STAT,Y
+		DEY
+		BPL	IS_LOOP
+		LDA	#0
+		STA	NEXT_SHOT
+		STA	E_MISLS
+		RTS
+
+INIT_STN:	LDY	#7
+		LDA	#0
+ISTNLOOP:	STA	STN_STAT, Y
+		STA	STN_WPN, Y
+		STA	STN_XH, Y
+		STA	STN_XL, Y
+		STA	STN_YH, Y
+		STA	STN_YL, Y
+		STA	STN_DAM, Y
+
+		DEY
+		BPL	ISTNLOOP
+		LDA	#0
+		STA	NEXT_STN
+		RTS
+
+LOAD_STN:
+		LDY	#0
+		LDX	#0
+LS_LOOP:
+		LDA	SYSTEM+3,X	;type/pal.
+		AND	#H'70
+		BEQ	LS_SET		;space stn?
+LS_DONE:	RTS
+
+LS_SET:		STX	LOGIC_X
+		LDA	SYSTEM+3,X	;stn. index in lo. nyb.
+		AND	#H'0F
+		TAX
+		LDA	SDEF_WPN,X
+		STA	STN_WPN,Y
+		LDA	SDEF_DAM,X
+		STA	STN_DAM,Y
+		LDA	SDEFSTAT,X
+		STA	STN_STAT,Y
+		INY
+		CPY	#8
+		BCS	LS_DONE
+		LDX	LOGIC_X
+		TXA
+		CLC
+		ADC	#4
+		TAX
+		JMP	LS_LOOP
+
+		;------ 0  1  2  3  4  5  6  7
+STNGUNTAB:	.DB	1, 1, 2, 2, 3, 3, 4, 5
+
+
+
+LOAD_GUN:	LDA	DIFF
+		AND	#H'70
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A		;force 0..7
+		TAY
+		LDA	STNGUNTAB, Y
+		STA	GUN_WPN
+
+		LDA	#0
+		STA	NEXT_GUN
+
+		LDA	#4
+		STA	TOWERS		;default to 4 towers
+		LDY	#56		;default to 56 turrets
+		LDA	PRADIKUS
+		BEQ	L_G2
+		LDA	BKGRND
+		BPL	L_G2		;will have h'80 set if P'RADIKUS plnt
+		LDY	#68		;P'radikus PLANET has 68...
+		LDA	#16   		;...and 16 towers
+		STA	TOWERS
+L_G2:		STY	TWR_MAX
+
+		LDY	#51		;init all turrets
+L_G3:		LDA	#H'81		;Alive + 1 hp.
+		STA	GUN_STAT, Y
+		LDA	#0	    	;Initialize "phase"
+		STA	GUN_PHASE, Y
+		DEY
+		BPL	L_G3		;loop to do all
+
+		LDY	#52
+L_G4:		CPY	TWR_MAX
+		BCS	LG_5
+		LDA	#H'89		;Alive + 1 hp (& drones)
+		STA	GUN_STAT, Y
+		LDA	#0
+		STA	GUN_PHASE, Y
+		INY
+		JMP	L_G4
+
+LG_5:		LDA	#0
+LG_6:		CPY	#68		;too many?
+		BCS	LG_7
+		STA	GUN_STAT, Y	;DEAD!
+		STA	GUN_PHASE, Y
+		INY
+		JMP	LG_6
+
+LG_7:		RTS		
+
+
+;************************************************
+
+COND_CRT:
+	LDA	#CRITIC
+	STA	STATUS
+	RTS
+
+COND_RED:
+	LDA	STATUS
+	CMP	#RED
+	BCS	CR_END
+	LDA	#RED
+	STA	STATUS
+CR_END:
+	RTS
+
+COND_YLW:
+	LDA	STATUS
+	CMP	#YELLOW
+	BCS	CY_END
+	LDA	#YELLOW
+	STA	STATUS
+CY_END:
+	RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; THE FOLLOWING ROUTINES ARE FOR CREATING NEW ENEMY SHIPS
+
+;THE FOLLOWING ROUTINES CREATE AND PLACE NEW ENEMY SHIPS
+
+;CHK_NEWE DETERMINES IF THERE SHOULD BE A NEW ENEMY AND FINDS A SPACE FOR IT
+
+CHK_NEWE:	LDA	PWRPLANT
+		BEQ	CNE_DONE	;NO NEW SHIPS IF PLAYER IS DEAD
+
+	   	LDA	ENMYWAIT
+	   	BNE	NEEDNEWE
+	   	LDA	DENSCOUNT
+	   	CMP	DENS
+	   	BCC	CNE_DONE
+NEEDNEWE:	
+		JSR	ENMYSPACE
+		JSR	NEW_ENMY
+
+		LDA	RANDOM
+		CMP	#H'40
+		BCC	CNE_DONE
+
+		LDA	#0
+		STA	DENSCOUNT
+		
+CNE_DONE:	RTS
+
+
+;ENMYSPACE FINDS A SPACE FOR THE NEW ENEMY AND RETURNS ITS OFFSET IN Y
+
+ENMYSPACE:	LDY	#0
+ES_LOOP:	LDA	ESHPSTAT,Y
+		BEQ	ES_CHECK
+ES_CONT:	INY
+		CPY	MAX_ENEMY
+		BNE	ES_LOOP
+
+ES_FALSE:	LDA	#1		;no room for an enemy!
+		STA	ENMYWAIT
+		RTS
+
+ES_CHECK:	
+
+		STY	CY
+	
+		CPY	#H'01
+		BCS	ES_SET
+
+		JMP	ES_CONT
+
+ES_SET:		LDY	CY
+		LDA	#0
+		STA	ENMYWAIT	;need an enemy!
+		RTS
+
+
+
+
+
+
+;NEW_ENMY CREATES AND PLACES THE NEW ENEMY
+NEW_ENMY:	LDA	ENMYWAIT
+		BEQ	NES_SET
+		RTS
+NES_SET:
+		INC	ENEMIES
+		JSR	COND_YLW
+		LDA	#H'C0
+		STA	ESHPSTAT,Y
+		JSR	RANDOM
+		STA	COUNT0
+
+		AND	#H'0F
+
+		CLC
+		ADC	DIFF
+	PHA
+
+		LDA	RAND
+		AND	#H'03
+		CMP	#H'03
+		BNE	NES_2
+		LDA	#H'00		;palette 03 reserved for player
+NES_2:		STA	ESHPPAL, Y
+
+		JSR	GETESIZE
+		BNE	NES_3
+
+		LDA	BKGRND
+		BEQ	NES_2A
+
+;planet or station....
+
+		JSR	RANDOM
+		AND	#H'0F		;0..15
+		TAX
+		LDA	EDEFCHAR, X	;2x2 enemy...
+		JMP	NES_4
+
+;space...
+
+NES_2A:		JSR	RANDOM
+		AND	#H'01		;0..1
+		TAX
+		LDA	EDEFCHAR, X	;2x2 enemy...
+		JMP	NES_4
+
+NES_3:		LDA	#H'0F		;3x3 enemy...
+
+NES_4:		STA	ESHPTYPE, Y
+
+;     Enemy movement types in ESHPSEEK
+;	01 = Seek & Veer
+;	02 = Straigt 
+;	03 = Seek without veering (i.e., suicidal)
+;	04 = Random movement
+
+	PLA
+	TAX
+
+		LDA	EDEFSEEK, X
+		STA	ESHPSEEK, Y
+
+
+		LDA	EDEFDAM, X
+		STA	ESHPDAM, Y
+		LDA	EDEFDRV, X
+		STA	ESHPDRV, Y
+		LDA	EDEFWPN, X
+		STA	ESHPWPN, Y
+		LDA	EDEFPTS, X
+		STA	ESHPPTS, Y
+		LDA	COUNT0
+		AND	#H'F0		; H'F0 WHEN ALL ROTATIONS DONE
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A		; ADDED WHEN ROTATIONS DONE
+		STA	ESHPDIR, Y
+		ASL	A
+		TAX
+		LDA	NEWEPOS+0, X
+		STA	ESHP_XH,   Y
+		LDA	NEWEPOS+1, X
+		STA	ESHP_YH,   Y
+		LDA	#0	
+		STA	ESHP_XL, Y
+		STA	ESHP_YL, Y
+		LDA	#H'80
+		STA	ESHPXDST, Y
+		STA	ESHPYDST, Y
+
+		TYA
+		PHA
+		LDX	ESHPDRV, Y
+		LDA	ESHPDIR, Y
+		TAY
+		LDA	MAXDRIVE, X
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	ESHPXVEL, Y
+		LDA	TVELY
+		STA	ESHPYVEL, Y
+
+		RTS
+
+
+
+
+
+
+;************************************
+; PLAYER SHOT ROUTINES
+;************************************
+
+;SHOOT WEAPON 1
+SHOOT_W1:
+		LDA	WPN1
+		JSR	PSHT_SPC
+		BEQ	SW1_DONE
+		JSR	SW1_SET
+SW1_DONE:	RTS
+
+SW1_SET:	LDA	#H'C0
+		STA	PS_STAT,Y
+		LDA	WPN1
+		STA	PS_TYPE,Y
+
+		LDA	#H'7F
+		STA	PS_XH,Y
+		STA	PS_YH,Y
+		LDA	#0
+		STA	PS_XL,Y
+		STA	PS_YL,Y
+
+		TYA
+		PHA
+		LDA	DIR
+		STA	PS_DIR,Y
+		TAY	
+		LDX	WPN1
+		LDA	WPN_ACC,X
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	PS_XVEL, Y
+		LDA	TVELY
+		STA	PS_YVEL, Y
+		
+		TYA
+		ASL 	A
+		ASL	A
+		TAX
+
+		LDY	DIR
+		LDA	FLIPTBL, Y
+		ORA	#2
+		STA	PSHTSPR0+2,X
+
+		TXA
+		PHA
+		
+		LDA	WPN1
+		CMP	#L_LASER
+		BCS	SW_2B
+		LDA	#SHOT
+		JSR	CHK_SLNC
+		BEQ	SW_2B0
+		LDY	#GUN_SHOT >> 8
+		LDX	#GUN_SHOT & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHOT
+		STA	EFFECT
+SW_2B0:
+		PLA
+		TAX
+		LDA	#H'00
+		JMP	SW_2C
+SW_2B:
+		LDA	#1
+		JSR	SILENCE
+		LDY	#LASER_0 >> 8
+		LDX	#LASER_0 & H'FF
+		LDA	#1
+		JSR	PLAY
+		PLA
+		TAX
+		LDY	DIR
+		LDA	CHOFFTBL, Y
+SW_2C:
+		LDY	WPN1
+		CLC
+		ADC	WPN_CHAR, Y
+		STA	PSHTSPR0+1,X
+		RTS
+
+
+PSHT_SPC:	LDY	#H'03
+PSS_LOOP:	LDA	PS_STAT,Y
+		BEQ	PSS_SET
+		DEY
+		BPL	PSS_LOOP
+		LDA	#0
+		RTS
+PSS_SET:	LDA	#1
+		RTS
+
+W2_SPC:
+		LDY	#H'03
+W2S_LOOP:	LDA	W2_STAT,Y
+		BEQ	W2S_SET
+		DEY
+		BPL	W2S_LOOP
+		LDA	#0
+		RTS
+W2S_SET:	LDA	#1
+		RTS
+
+
+
+SHOOT_W2:
+		LDA	WPN2
+		STA	PTR2L
+		LDA	#0
+		STA	PTR2H
+
+
+CHK_MAL2:	LDA	WPN2
+		BEQ	CM2_NONE
+		LDY	#0
+		LDA	(PTR2L),Y
+		BEQ	CM2_NONE	;BROKEN
+		BPL	SW2_A
+
+CM2_NONE:	RTS
+
+
+SW2_A:
+		LDA	WPN2
+		CMP	#MISSILES
+		BNE	SW2_B
+		JSR	SHOOTMSL
+		JMP	SW2_F
+SW2_B:
+		CMP	#THUNDER
+		BNE	SW2_C
+		JSR	SHOOTBOLT
+		JMP	SW2_F
+SW2_C:
+		CMP	#MINES
+		BNE	SW2_D
+		JSR	DROPMINE
+		JMP	SW2_F
+SW2_D:
+		CMP	#CLOAK
+		BNE	SW2_E
+		LDA	#1
+		STA	INVISO
+		JSR	WARNING		;update palettes for "INVISO"
+		JMP	SW2_F
+SW2_E:
+		CMP	#S_WAVE
+		BNE	SW2_F
+
+;an EMP Wave flash needs to be set
+
+		LDX	SCCNT
+		LDA	#H'3F		;high ptr.
+		STA	SCBUF, X
+		INX
+		LDA	#H'00		;low ptr.
+		STA	SCBUF, X
+		INX
+		LDA	#32		;size
+		STA	SCBUF, X
+		INX
+		TAY
+SW2_E0:		LDA	#H'30		;temporarily turn everything white!
+		STA	SCBUF, X
+		INX
+		DEY
+		BNE	SW2_E0
+		STX	SCCNT
+		LDA	#4
+		STA	FLASHCT
+		
+		JSR	DISABLE
+SW2_F:
+		LDA	WPN2
+		SEC
+		SBC	#CLOAK
+		TAY
+		LDA	CLOAK,Y
+		BNE	SW2_G
+		LDA	#0
+		STA	WPN2
+SW2_G:
+		RTS
+
+SHOOTMSL:
+		JSR	W2_SPC
+		BNE	SM_SET
+		JMP	SM_DONE
+SM_SET:
+		DEC	MISSILES
+		LDA	#H'C0
+		STA	W2_STAT,Y
+		LDA	#MISSLE
+		STA	W2_TYPE,Y
+
+		LDA	DIR
+		STA	W2_DIR,Y
+
+		LDA	#H'7F
+		STA	W2_XH,Y
+		STA	W2_YH,Y
+		LDA	#0
+		STA	W2_XL,Y
+		STA	W2_YL,Y
+
+		LDA	#-1	;was TARGET 04-21-90
+		STA	W2_TARG,Y
+
+
+		TYA
+		PHA
+		LDY	DIR
+		LDA	#PLYR_MSL
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		ASL 	A
+		ASL	A
+		TAX
+
+		LDA	TVELX
+		STA	W2_XVEL, Y
+		LDA	TVELY
+		STA	W2_YVEL, Y
+
+		LDY	DIR
+		LDA	FLIPTBL, Y
+
+		ORA	#2		;palette
+		STA	PSHTSPR0+18,X
+		
+		LDA	CHOFFTBL, Y
+		LDY	#MISSLE
+		CLC
+		ADC	WPN_CHAR, Y
+		STA	PSHTSPR0+17,X
+
+		LDA	#SHOT
+		JSR	CHK_SLNC
+		BEQ	SM_DONE
+		LDY	#MISLSHOT >> 8
+		LDX	#MISLSHOT & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHOT
+		STA	EFFECT
+
+SM_DONE:			     
+		RTS
+
+DROPMINE:
+		JSR	W2_SPC
+		BEQ	DM_DONE
+		DEC	MINES
+DM_SET:
+		LDA	#H'C0
+		STA	W2_STAT,Y
+		LDA	#MINE
+		STA	W2_TYPE,Y
+
+		LDA	#H'7F
+		STA	W2_XH,Y
+		STA	W2_YH,Y
+		LDA	#0
+		STA	W2_XL,Y
+		STA	W2_YL,Y
+
+		LDA	#90
+		STA	W2_DIR,Y
+
+
+		LDA	#0
+		STA	W2_XVEL, Y
+		LDA	#0
+		STA	W2_YVEL, Y
+
+		TYA
+		ASL 	A
+		ASL	A
+		TAX
+
+		LDA	#2
+		STA	PSHTSPR0+18,X
+		
+		LDA	#H'D0
+		STA	PSHTSPR0+17,X
+		LDA	#0
+		JSR	SILENCE
+		LDY	#MINE_1 >> 8
+		LDX	#MINE_1 & H'FF
+		LDA	#0
+		JSR	PLAY
+DM_DONE:			     
+		RTS
+
+SHOOTBOLT:
+		LDA	P_THNDR
+		BNE	SB_SET
+		RTS
+SB_SET:
+		DEC	THUNDER
+		LDA	#0
+		STA	P_THNDR
+		LDA	#H'C0
+		STA	W2_STAT
+		STA	W2_STAT+1
+		STA	W2_STAT+2
+		STA	W2_STAT+3
+		LDA	#T_BOLT
+		STA	W2_TYPE
+		STA	W2_TYPE+1
+		STA	W2_TYPE+2
+		STA	W2_TYPE+3
+		LDA	#H'7E
+		STA	W2_XH
+		STA	W2_XH+2
+		STA	W2_YH
+		STA	W2_YH+1
+		LDA	#H'80
+		STA	W2_XH+1
+		STA	W2_XH+3
+		STA	W2_YH+2
+		STA	W2_YH+3
+		LDA	#0
+		STA	W2_XL
+		STA	W2_XL+1
+		STA	W2_XL+2
+		STA	W2_XL+3
+		STA	W2_YL
+		STA	W2_YL+1
+		STA	W2_YL+2
+		STA	W2_YL+3
+
+		LDY	DIR
+		LDA	#H'0F
+		JSR	NEWVEL
+
+		LDA	TVELX
+		STA	W2_XVEL
+		STA	W2_XVEL+1
+		STA	W2_XVEL+2
+		STA	W2_XVEL+3
+		LDA	TVELY
+		STA	W2_YVEL
+		STA	W2_YVEL+1
+		STA	W2_YVEL+2
+		STA	W2_YVEL+3
+
+		LDA	#1 
+		STA	W2_TARG
+
+		LDA	#SHOT
+		JSR	CHK_SLNC
+		BEQ	THNDR_DONE
+		LDY	#MISLSHOT >> 8
+		LDX	#MISLSHOT & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHOT
+		STA	EFFECT
+
+THNDR_DONE:
+		RTS	  
+
+DISABLE:
+		DEC	S_WAVE
+		LDA	#0
+		JSR	SILENCE
+		LDY	#WAVE_1 >> 8
+		LDX	#WAVE_1 & H'FF
+		LDA	#0
+		JSR	PLAY
+DSBL_0:
+		LDY	#0
+DSBLLOOP:
+		LDA	ESHPSTAT,Y
+		AND	#H'C0
+		CMP	#H'C0
+		BEQ	DSBL_SET
+DSBLCONT:
+		INY
+		CPY	MAX_ENEMY
+		BNE	DSBLLOOP
+		RTS
+DSBL_SET:
+		LDA	ESHPSTAT,Y
+		ORA	#H'10
+		STA	ESHPSTAT,Y
+		LDA	DIFF
+		LSR	A
+		STA	ESHPTIME,Y
+		LDA	#120
+		SEC
+		SBC	ESHPTIME,Y
+		STA	ESHPTIME,Y
+		LDA	#0
+		STA	ESHPXVEL,Y
+		STA	ESHPYVEL,Y
+		JMP	DSBLCONT
+		
+
+;***********************************************************************
+
+; General combat routines for The Pradikus Conflict
+
+
+; Miscellaneous routines
+
+; Collide checks the collision of any two objects in OBJ1 and OBJ2
+
+COLLIDE:       
+		LDA	OBJ2_BOT
+		CMP	OBJ1_TOP
+		BCC	COLLNO
+		LDA	OBJ2_TOP
+		CMP	OBJ1_BOT
+		BCS	COLLNO
+
+		LDA	OBJ2_LT
+		CMP	OBJ1_RT
+		BCS	COLLNO
+		LDA	OBJ2_RT
+		CMP	OBJ1_LT
+		BCC	COLLNO
+		LDA	#1
+		RTS
+
+COLLNO:		LDA	#0
+		RTS
+
+
+
+;RETURNS SCREEN POSITION OF TWO BYTE POSITION. ASSUMES VALUE IS ON SCREEN
+;ACCUMULATOR HAS HIGH BYTE, X REG HAS LOW BYTE.  USES COUNT0 AS TEMP.
+GET_POS:
+		SEC	
+		SBC	#H'60
+		STX	COUNT0
+		ROL	COUNT0
+		ROL	A
+		ROL	COUNT0
+		ROL	A
+		RTS
+
+
+
+; PLAYER COMBAT ROUTINES
+; A GENERAL DRIVING ROUTINE TO CHECK WHETHER EACH SHOT HITS ANY TARGET
+; IF SO DAMAGE IS DONE AND ANY DESTROYED ENEMIES ARE SENT TO THE 
+; EXPLOSION TABLE.
+
+
+PLYR_SHOT:	LDY	#H'07
+PS_LOOP:	LDA	PS_STAT,Y
+		AND	#H'80 
+		BNE	PS_CHECK
+		DEY
+		BPL	PS_LOOP
+		RTS
+PS_CHECK:	
+		LDA	PS_XH,Y
+		LDX	PS_XL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ2_LT
+		CLC
+		ADC	#4
+		STA	OBJ2_RT
+
+		LDA	PS_YH,Y
+		LDX	PS_YL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ2_TOP
+		CLC
+		ADC	#4
+		STA	OBJ2_BOT
+		STY	CY
+		JSR	HITENEMY   ;WHICH ENEMY OFFSET IN LOGIC_Y
+		BEQ	PS_STATN
+		LDY	CY
+ 		LDA	PS_TYPE,Y
+		CMP	#T_BOLT
+		BNE	PSE0
+ 		LDY	LOGIC_Y
+		JSR	DAME2
+		JMP	PS_CONT
+PSE0:
+		TAY
+		LDA	DAMTABLE,Y
+ 		LDY	LOGIC_Y
+		JSR	DAM_ESHP
+ 		LDY	LOGIC_Y
+		LDA	ESHPXVEL,Y
+		STA	VEL_X
+		LDA	ESHPYVEL,Y
+		STA	VEL_Y		;USED FOR SETPEXPL
+		LDY	CY
+		LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		LDA	VEL_X
+		STA	PS_XVEL,Y
+		LDA	VEL_Y
+		STA	PS_YVEL,Y
+		JSR	ADDPEXPL
+PSE_A:
+		LDA	#2
+		JSR	ADDSCORE
+
+
+PS_CONT:	LDY	CY
+		DEY
+		BMI	PS_DONE
+		JMP	PS_LOOP
+PS_DONE:
+		RTS
+
+
+PS_STATN:	JSR	HITSTATN
+		BEQ	PS_MISLS
+		LDY	CY
+		LDA	PS_TYPE,Y
+		CMP	#T_BOLT
+		BNE	PSS0
+		LDA	#H'3F
+		LDY	LOGIC_Y
+		JSR	DAMSTATN
+		LDY	#7
+		LDX	#3
+		JSR	NUKETHNDR
+		JMP	PSE_C
+PSS0:
+		TAY
+		LDA	DAMTABLE,Y
+		LDY	LOGIC_Y
+		JSR	DAMSTATN
+		LDY	CY
+		LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		LDA	#0
+		STA	PS_XVEL,Y
+		STA	PS_YVEL,Y
+		JSR	ADDPEXPL
+PSE_C:
+		LDA	#6		;POINT VALUE IN TABLE FOR STATION
+		JSR	ADDSCORE
+		JMP	PS_CONT
+
+PS_MISLS:	JSR	HITMISLS
+		BEQ	PS_GUN
+		LDY 	LOGIC_Y
+		LDA	ES_STAT,Y
+		AND	#H'7F
+		STA	ES_STAT,Y
+		JSR	ADDSEXPL
+
+		LDY	CY
+		LDA	PS_TYPE,Y
+		CMP	#T_BOLT
+		BEQ	PSE_D
+		STY 	EXPL_Y
+		JSR	FREEPSHT
+PSE_D:
+		LDA	#3		;3 = 50 pts.
+		JSR	ADDSCORE
+		JMP	PS_CONT
+
+PS_GUN:		JSR	HITGUNS
+		BEQ	PSG_DONE
+
+		LDY	CY
+		LDA	PS_TYPE, Y
+		CMP	#T_BOLT
+		BEQ	PSG0		;alway kill if thunderbolt, otherwise		
+		LDY	LOGIC_Y		;  check to make sure turret is open
+		LDA	GUN_PHASE,Y
+		CMP	#4
+		BCC	PS_ARMR
+		CMP	#7
+		BCS	PS_ARMR
+
+		JSR	DAM_GUN
+		LDY	CY
+		LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		LDA	#0
+		STA	PS_XVEL,Y
+		STA	PS_YVEL,Y
+		JSR	ADDPEXPL
+
+PSE_E:		LDA	#5		;POINT VALUE IN TABLE FOR GUN
+		JSR	ADDSCORE
+
+PSG_DONE:	JMP	PS_CONT
+
+
+;thunderbolt
+
+PSG0:		LDY	LOGIC_Y
+		JSR	DAM_GUN
+		LDY	#7
+		LDX	#3
+		JSR	NUKETHNDR
+		JMP	PSE_E
+
+PS_ARMR:	; put ping sound here...
+
+		LDA	#2
+		JSR	SILENCE
+		LDY	#PING >> 8
+		LDX	#PING & H'FF
+		LDA	#2
+		JSR	PLAY
+   
+		LDY	CY
+		LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		LDA	#0
+		STA	PS_XVEL,Y
+		STA	PS_YVEL,Y
+		JSR	ADDPEXPL
+		JMP	PS_CONT
+
+NUKETHNDR:	STY 	EXPL_Y
+		STX 	EXPL_X
+		LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		LDA	#0
+		STA	PS_XVEL,Y
+		STA	PS_YVEL,Y
+		JSR	ADDPEXPL
+		LDY 	EXPL_Y
+		LDX 	EXPL_X
+		DEY
+		DEX
+		BPL	NUKETHNDR
+		INC	W2_YH
+		INC	W2_XH
+		INC	W2_YH+1
+		DEC	W2_XH+1
+		DEC	W2_YH+2
+		INC	W2_XH+2
+		DEC	W2_YH+3
+		DEC	W2_XH+3
+		LDA	#SHIP
+		JSR	CHK_SLNC
+		BEQ	NT_DONE
+		LDY	#SEXPL >> 8
+		LDX	#SEXPL & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHIP
+		STA	EFFECT
+NT_DONE:	RTS
+		
+
+
+
+;HITENEMY DETERMINES IF THE CURRENT SHOT IN OBJ2 HITS ANY ENEMY SHIP
+HITENEMY:	
+		
+		LDY	#0
+HE_LOOP:	LDA	ESHPSTAT,Y
+		AND	#H'C0 
+		CMP	#H'C0
+		BEQ	HE_CHECK
+HE_CONT:	INY
+		CPY	MAX_ENEMY
+		BNE	HE_LOOP
+
+		LDA	#0
+		RTS
+HE_CHECK:	STY	LOGIC_Y
+		JSR	BOXENEMY
+		JSR	COLLIDE
+		BEQ	HE_CONT
+HE_TRUE:	LDA	#01
+		RTS
+
+
+
+;HITSTATN RETURNS TRUE IF THE BULLET HITS THE SPACE STATION
+HITSTATN:	
+
+		LDA	BKGRND
+		BEQ	HS_0
+		LDA	#0
+		RTS
+HS_0:
+		LDY	TURRET_1
+		BMI	HS_1
+		JSR	HS_CHECK
+		BNE	HS_DONE
+HS_1:
+		LDY	TURRET_2
+		BMI	HS_FALSE
+		JSR	HS_CHECK
+		BNE	HS_DONE
+HS_FALSE:
+		LDA	#0
+HS_DONE:
+		RTS
+HS_CHECK:	
+		STY	LOGIC_Y
+		LDA	STN_STAT,Y
+		AND	#H'D0		;ALIVE + ON SCREEN + FRIENDLY
+		CMP	#H'C0		;ALIVE + ON SCREEN
+		BNE	HS_FALSE
+
+;check only enemy stations that are alive and on screen
+
+		LDA	STN_XH,Y
+		LDX	STN_XL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ1_LT
+		CLC
+		ADC	#H'14
+		STA	OBJ1_RT
+		LDA	STN_YH,Y
+		LDX	STN_YL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#H'02
+		STA	OBJ1_TOP
+		CLC
+		ADC	#H'14
+		STA	OBJ1_BOT
+		JSR	COLLIDE
+		RTS
+
+
+
+;HITMISLS DETERMINES IF THE CURRENT PLAYER SHOT HITS A MISSLE
+HITMISLS:	
+
+		LDY	#0
+HM_LOOP:	LDA	ES_STAT,Y
+		AND	#H'C0 
+		CMP	#H'C0
+		BEQ	HM_CHECK
+HM_CONT:	INY
+		CPY	MAX_ESHOT
+		BNE	HM_LOOP
+		LDA	#0
+		RTS
+HM_CHECK:	
+		LDA	ES_TYPE,Y
+		CMP	#MISSLE
+		BNE	HM_CONT
+		STY	LOGIC_Y
+		LDA	ES_XH,Y
+		LDX	ES_XL,Y
+		JSR	GET_POS
+		STA	OBJ1_LT
+	   	CLC
+		ADC	#8
+		STA	OBJ1_RT
+		LDA	ES_YH,Y
+		LDX	ES_YL,Y
+		JSR	GET_POS
+		STA	OBJ1_TOP
+		CLC
+		ADC	#8
+		STA	OBJ1_BOT
+		JSR	COLLIDE
+		BEQ	HM_CONT
+		LDA	#1
+		RTS
+
+
+HITGUNS:
+
+
+		LDA	BKGRND
+		BNE	HG_CHECK
+		LDA	#0
+		RTS
+HG_CHECK:
+		LDY	TURRET_1
+		JSR	HG_CHK
+		BNE	HG_DONE
+		LDY	TURRET_2
+		JSR	HG_CHK
+		BNE	HG_DONE
+		LDY	TURRET_3
+		JSR	HG_CHK
+		BNE	HG_DONE
+		LDY	TURRET_4
+		JSR	HG_CHK
+		BNE	HG_DONE
+HG_FALSE:
+		LDA	#0
+HG_DONE:
+		RTS
+HG_CHK:
+		STY	LOGIC_Y
+		BMI	HG_FALSE
+		LDA	GUN_STAT,Y
+		AND	#H'C0		;alive + onscreen
+		CMP	#H'C0		;...must be both to hit
+		BNE	HG_FALSE	
+		LDA	GUN_XH,Y
+		LDX	GUN_XL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ1_LT
+		CLC
+		ADC	#14
+		STA	OBJ1_RT
+		LDA	GUN_YH,Y
+		LDX	GUN_YL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ1_TOP
+		CLC
+		ADC	#14
+		STA	OBJ1_BOT
+		JSR	COLLIDE
+		RTS
+
+
+
+
+
+
+;DAM_ESHP REMOVES THE DAMAGE IN A FROM THE ENEMY SHIP IN PTR3 WITH OFFSET Y
+DAM_ESHP:	STA	COUNT0	   
+		LDA	ESHPDAM,Y
+		SEC
+		SBC	COUNT0
+		BCC	DAME2
+		STA	ESHPDAM,Y
+		RTS
+
+DAME2:	    	
+		LDA	#0
+		STA	ESHPDAM,Y
+		JSR	ADDEEXPL
+		LDX	LOGIC_Y
+		LDA	ESHPPTS,X		;POINT VALUE IN TABLE FOR SHIP
+		AND	#H'0F
+		JSR	ADDSCORE
+		JSR	INCSHIPS
+		RTS
+
+
+
+
+DAM_GUN:	; set the explosion...
+
+		LDA	#H'73	;onscreen + exploding + 19 expl. ticks
+		STA	GUN_STAT, Y
+		LDA	#SHIP
+		JSR	CHK_SLNC
+		BEQ	DG_DONE
+		LDY	#SEXPL >> 8
+		LDX	#SEXPL & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHIP
+		STA	EFFECT
+
+DG_DONE:	RTS	  
+
+
+;DAMSTATN REMOVES THE DAMAGE IN A FROM THE STATION IN PTR3,Y
+
+DAMSTATN:	STA	COUNT0	   
+		LDA	STN_DAM,Y
+		SEC
+		SBC	COUNT0
+		BCC	DAMS2
+		STA	STN_DAM,Y
+		RTS
+
+DAMS2:	    	;a space station has been killed
+
+		LDA	STN_STAT,Y
+		ORA	#H'20		;H'20 = killed
+		AND	#H'7F		;remove	"alive" bit
+		STA	STN_STAT,Y
+
+		LDA	#19
+		STA	STN_DAM,Y	;DAMAGE NOW HAS EXPLOSION TIMER
+		LDX	LOGIC_Y
+
+		LDA	STN_STAT, X	;POINT VALUE IN TABLE FOR STATION
+		AND	#H'06		;H'06 = points
+		LSR	A
+		CLC
+		ADC	#H'0A
+		JSR	ADDSCORE
+		RTS
+
+
+
+KILL_STN:	
+
+;space station has been completely destroyed...
+;ie., by landing on it and destroying the central turrets...
+
+		JSR	SYSINDX
+		LDA	#0
+		STA	STN_STAT,Y
+		RTS
+
+
+SYSINDX:
+
+;returns with Y-reg. = object number specified by ORBIT
+
+		LDY	#-1
+		LDA	ORBIT
+
+SI_LOOP:	INY
+		SEC
+		SBC	#4
+		BPL	SI_LOOP
+		RTS
+
+BITMASK0:
+	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+
+BITMASK1:
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+
+BITMASK2:
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.DB	H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF, H'FF
+	.DB	H'7F, H'BF, H'DF, H'EF, H'F7, H'FB, H'FD, H'FE
+
+;*********************
+; PLAYER ROUTINES
+;*********************
+
+HITPLAYER:	
+		LDA	PWRPLANT
+		BEQ	HP_DONE
+		LDA	#0
+		STA	DAMAGE
+		JSR	BOXPLYR
+		JSR	SHIPCLD
+		JSR	SHT_PLYR
+		LDA	CHEAT
+		BNE	HP_DONE
+		LDA	DAMAGE
+		BEQ	HP_DONE
+		JSR	COND_RED
+		JSR	DAMPLAYER
+		JSR	WARNING		;player is damaged so update
+					;palettes (if necessary) to
+					;reflect new status...
+HP_DONE:	RTS
+
+
+SHIPCLD:	LDY 	#0
+SC_LOOP:	LDA	ESHPSTAT,Y
+		AND	#H'C0
+		CMP	#H'C0
+		BEQ	SC_CHECK
+SC_CONT:	INY
+		CPY	MAX_ENEMY
+		BNE	SC_LOOP
+
+		RTS
+SC_CHECK:	STY	LOGIC_Y
+		JSR	BOXENEMY
+		JSR	COLLIDE
+		BEQ	SC_CONT
+		LDA	#8
+		JSR	ADD_PDAM
+		LDY	LOGIC_Y
+		LDA	#8
+		JSR	DAM_ESHP
+		LDA	#COLLISION
+		JSR	CHK_SLNC
+		BEQ	SC_0
+		LDY	#SEXPL >> 8
+		LDX	#SEXPL & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#COLLISION
+		STA	EFFECT
+		
+SC_0:
+		LDY 	LOGIC_Y
+		JMP	SC_CONT
+
+;SHT_PLYR CHECKS IF ANY ENEMY SHOTS HIT THE PLAYER
+SHT_PLYR:	LDY	#0
+SHT_P1:		LDA	ES_STAT,Y
+		AND	#H'80
+		BNE	SHT_P2
+SHTPCONT:	INY
+		CPY	MAX_ESHOT
+		BNE	SHT_P1
+		RTS
+SHT_P2:		
+		STY	CY
+		LDA	ES_XH,Y
+		LDX	ES_XL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ1_LT
+		CLC
+		ADC	#4
+		STA	OBJ1_RT
+		LDA	ES_YH,Y
+		LDX	ES_YL,Y
+		JSR	GET_POS
+		CLC
+		ADC	#2
+		STA	OBJ1_TOP
+		CLC
+		ADC	#4
+		STA	OBJ1_BOT
+		JSR	COLLIDE
+		BEQ	SHTPCONT
+		LDA	ES_TYPE,Y
+		TAY
+		LDA	DAMTABLE,Y
+		JSR	ADD_PDAM
+		LDY	CY
+		LDA	ES_STAT,Y
+		AND	#H'7F
+		STA	ES_STAT,Y
+		JSR	ADDSEXPL	
+		LDY	CY
+		JMP	SHTPCONT
+
+
+
+
+ADD_PDAM:	AND	#H'3F		;63 pts. max. per shot
+		CLC
+		ADC	DAMAGE
+		AND	#H'7F		;128 pts. total max.
+		STA	DAMAGE
+		RTS
+		
+
+DAMPLAYER:		LDA	#10
+			STA	DAMAGE
+
+		LDA	DAMAGE
+		BEQ	DAMP_DONE
+
+		CMP	SHIELD
+		BCS	DAMP_2
+
+;shield will absorb
+
+		LDA	SHIELD
+		SEC
+		SBC	DAMAGE
+		STA	SHIELD
+		JMP	DAMP_DONE
+
+DAMP_2:		LDA	SHIELD
+		SEC
+		SBC	DAMAGE
+		CLC
+		ADC	ARMOR
+		BMI	DAMP_KILL
+		BEQ	DAMP_KILL
+		STA	ARMOR
+		LDA	#0
+		STA	SHIELD
+DAMP_DONE:	RTS
+
+DAMP_KILL:	LDA	#0
+		STA	SHIELD
+		STA	ARMOR
+
+
+
+KILLPLYR:	LDA	CHEAT
+		BNE	KP_CHEAT
+
+		LDA	PWRPLANT
+		STA	SAVEPWR
+		LDA	#0
+		STA	PWRPLANT
+		LDA	#H'3F
+		STA	DEATH
+		LDA	#H'00
+		STA	THRUST
+		STA	TSPD
+
+		LDA	#H'F8
+		STA	FLMSPR0		;REMOVE THRUST FLAME
+
+		LDA	#-1
+		JSR	SILENCE
+		LDY	#SEXPL >> 8
+		LDX	#SEXPL & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHIP
+		STA	EFFECT
+		RTS
+
+KP_CHEAT:	LDA	#99
+		STA	ARMOR
+		RTS
+
+INCBASES:
+	INC	BASES1
+	LDA	BASES1
+	CMP	#10
+	BCC	IB_END
+	LDA	#0
+	STA	BASES1
+	INC	BASES10
+	LDA	BASES10
+	CMP	#10
+	BCC	IB_END
+	LDA	#0
+	STA	BASES10
+	INC	BASES100
+	LDA	BASES100
+	CMP	#10
+	BCC	IB_END
+	LDA	#0
+	STA	BASES100
+	INC	BASES1K
+	LDA	BASES1K
+	CMP	#10
+	BCC	IB_END
+	LDA	#0
+	STA	BASES1K
+	INC	BASES10K
+	LDA	BASES10K
+	CMP	#10
+	BCS	IB_MAX
+IB_END:	
+	RTS
+IB_MAX:
+	LDA	#9
+	STA	BASES1
+	STA	BASES10
+	STA	BASES100
+	STA	BASES1K
+	STA	BASES10K
+	RTS
+
+INCSHIPS:
+	INC	SHIPS1
+	LDA	SHIPS1
+	CMP	#10
+	BCC	IS_END
+	LDA	#0
+	STA	SHIPS1
+	INC	SHIPS10
+	LDA	SHIPS10
+	CMP	#10
+	BCC	IS_END
+	LDA	#0
+	STA	SHIPS10
+	INC	SHIPS100
+	LDA	SHIPS100
+	CMP	#10
+	BCC	IS_END
+	LDA	#0
+	STA	SHIPS100
+	INC	SHIPS1K
+	LDA	SHIPS1K
+	CMP	#10
+	BCC	IS_END
+	LDA	#0
+	STA	SHIPS1K
+	INC	SHIPS10K
+	LDA	SHIPS10K
+	CMP	#10
+	BCS	IS_MAX
+IS_END:	
+	RTS
+IS_MAX:
+	LDA	#9
+	STA	SHIPS1
+	STA	SHIPS10
+	STA	SHIPS100
+	STA	SHIPS1K
+	STA	SHIPS10K
+	RTS
+
+
+;**************************************
+
+DOPRINT:
+; X = low, Y = high addr. ptrs.
+; PR_X, PR_Y set to screen pos
+; PR_MODE, PR_PAGE also set
+
+	    	LDA	#0
+	    	STA	PR_PAGE
+		STX	PR_PTRL
+		STY	PR_PTRH
+		LDY	#0
+		LDA	(PR_PTRL), Y
+		STA	PR_X
+		STA	PR_LEFT
+		INY
+		LDA	(PR_PTRL), Y
+		STA	PR_Y
+		INY
+		STY	PR_INDEX
+		LDA	VID_RESET
+		JSR	PR_ADDR
+		LDY	PR_INDEX
+PRINT_LOOP:	LDA	(PR_PTRL), Y
+		CMP	#-1
+		BEQ	PRINT_END
+		CMP	#0
+		BEQ	PRINT_CR
+		SEC
+		SBC	#32
+		STA	VID_DATA		
+		INY
+		BNE	PRINT_LOOP
+PRINT_END:	RTS
+
+		
+PRINT_CR:	STY	PR_INDEX
+		LDA	PR_LEFT
+		STA	PR_X
+		INC	PR_Y
+		JSR	PR_ADDR
+		LDY	PR_INDEX
+		INY
+		BNE	PRINT_LOOP
+		RTS
+
+PR_ADDR:	LDY	PR_Y
+		LDA	LNADDRH, Y		
+	    	LDX	PR_PAGE
+	    	BEQ	PR_ADDR2
+	    	ORA	#4
+PR_ADDR2:	STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	PR_X
+		STA	VID_PTR
+		RTS
+
+;******************
+
+STATCHEAT:	LDX	#ENDTXT6 &H'FF
+		LDY	#ENDTXT6 >> 8
+		JSR	DOPRINT
+		JMP	STATDONE
+
+
+STATISTICS:	JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	ZAP_SPRITES
+		
+		LDA	#4
+		JSR	XVIDEO
+
+;;;;		LDA	CHEATDIE
+;;;;		BNE	STATCHEAT		
+
+		LDA	PWRPLANT
+		BNE	STAT2
+
+		LDX	#ENDTXT0 &H'FF
+		LDY	#ENDTXT0 >> 8
+		JSR	DOPRINT
+		JMP	STAT3
+
+STAT2:		LDX	#ENDTXT1 &H'FF
+		LDY	#ENDTXT1 >> 8
+		JSR	DOPRINT
+
+STAT3:		LDX	#ENDTXT2 &H'FF
+		LDY	#ENDTXT2 >> 8
+		JSR	DOPRINT
+
+		LDA	#SHIPS1 >>8
+		STA	PTR3H
+		LDA	#SHIPS1 &H'FF
+		STA	PTR3L
+		LDA	LNADDRH+ 9
+		STA	VID_PTR
+		LDA	#6
+		CLC
+		ADC	LNADDRL+ 9
+		STA	VID_PTR
+		LDY	#4
+		JSR	SHOWVAL
+
+		LDA	#BASES1 >>8
+		STA	PTR3H
+		LDA	#BASES1 &H'FF
+		STA	PTR3L
+		LDA	LNADDRH+10
+		STA	VID_PTR
+		LDA	#6
+		CLC
+		ADC	LNADDRL+10
+		STA	VID_PTR
+		LDY	#4
+		JSR	SHOWVAL
+
+		LDA	#SC1 >>8
+		STA	PTR3H
+		LDA	#SC1 &H'FF
+		STA	PTR3L
+		LDA	LNADDRH+13
+		STA	VID_PTR
+		LDA	#4
+		CLC
+		ADC	LNADDRL+13
+		STA	VID_PTR
+		LDY	#6
+		JSR	SHOWVAL
+
+		LDA	PWRPLANT
+		BEQ	STAT4
+;Alive...
+		LDX	#ENDTXT4 &H'FF
+		LDY	#ENDTXT4 >> 8
+		JSR	DOPRINT
+		JMP	STAT5
+
+STAT4:		LDX	#ENDTXT7 &H'FF
+		LDY	#ENDTXT7 >>8
+		JSR	DOPRINT
+
+STAT5:		JSR	STATTIME
+
+STATDONE:	JSR	VR_WAIT
+		JSR	DMAXFER
+		JSR	SET_VID
+		RTS
+
+
+ENDTXT0:	.DB	 4, 5, "YOU HAVE BEEN DESTROYED!", -1
+ENDTXT1:	.DB	 4, 5, "    CONGRATULATIONS!", -1
+
+ENDTXT2:	.DB	 4, 8, "YOU KILLED A TOTAL OF:", 0
+		.DB	       "        ENEMY SHIPS", 0
+		.DB	       "        ENEMY BASES", 0
+		.DB	 0
+		.DB	       "FOR A TOTAL OF:", 0
+		.DB	       "        POINTS", -1
+
+ENDTXT4:	.DB	 4,17, "AND YOU HAVE VANQUISHED", 0
+		.DB	       "THE P*RADIKUS EMPIRE!", 0
+		.DB	       "THE ENTIRE GALAXY GIVES", 0
+		.DB	       "YOU ITS THANKS...", 0 
+		.DB	       "      THE END!", -1
+
+ENDTXT6:	.DB	 3,14, "CHEATERS NEVER PROSPER...", -1
+
+ENDTXT7:	.DB	 4,17, "YOUR EFFORTS HAVE BEEN", 0
+		.DB	       "IN VAIN...THE P*RADIKUS", 0
+		.DB	       "FLEET HAS TRIUMPHED...", -1
+
+ENDTXT8:	.DB	 2,24, "APPROX. PLAY TIME:   :  :", -1
+
+
+
+
+STATTIME:	;show total game time...
+
+		LDX	#ENDTXT8 &H'FF
+		LDY	#ENDTXT8 >>8
+		JSR	DOPRINT
+
+		LDA	LNADDRH+24
+		STA	VID_PTR
+		LDA	#21
+		CLC
+		ADC	LNADDRL+24
+		STA	VID_PTR
+		LDA	T_HOUR
+		JSR	SHOWSM
+
+		LDA	VID_RESET
+		LDA	LNADDRH+24
+		STA	VID_PTR
+		LDA	#24
+		CLC
+		ADC	LNADDRL+24
+		STA	VID_PTR
+		LDA	T_MIN
+		JSR	SHOWSM
+
+		LDA	VID_RESET
+		LDA	LNADDRH+24
+		STA	VID_PTR
+		LDA	#27
+		CLC
+		ADC	LNADDRL+24
+		STA	VID_PTR
+		LDA	T_SEC
+		JSR	SHOWSM
+		RTS
+
+
+SHOWSM:		LDX	#0
+
+SHOWSM0:	CMP	#10
+		BCC	SHOWSM1
+		SEC
+		SBC	#10
+		INX
+		BNE	SHOWSM0
+
+SHOWSM1:	PHA
+		TXA
+		CLC
+		ADC	#H'10
+		STA	VID_DATA
+
+		PLA
+		CLC
+		ADC	#H'10
+		STA	VID_DATA
+		RTS
+
+
+SHOWVAL:	LDA	(PTR3L), Y
+		BNE	SV_A
+		CPY	#0
+		BEQ	SV_A
+		STA	VID_DATA
+		DEY
+		BPL	SHOWVAL
+		RTS
+
+SV_A:		CLC
+		ADC	#H'10
+		STA	VID_DATA
+		DEY
+		BMI	SV_B
+		LDA	(PTR3L), Y
+		JMP	SV_A
+SV_B:		RTS
+
+
+;*********************************************************************
+;THE FOLLOWING ARE THE ROUTINES FOR ADDING AND UPDATING EXPLOSIONS
+
+
+
+ADDSEXPL:	
+
+;add an explosion to the enemy shot explosion list
+
+		LDA	ES_STAT,Y
+		ORA	#H'20
+		STA	ES_STAT,Y
+		LDA	#6
+		STA	SHOTEXPL,Y
+		LDA	#SHOT
+		JSR	CHK_SLNC
+		BEQ	ADDSDONE
+		LDY	#SBOOM >> 8
+		LDX	#SBOOM & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHOT
+		STA	EFFECT
+
+ADDSDONE:	RTS
+
+
+
+ADDEEXPL:	
+
+;add an explosion to the enemy ship explosion list
+
+		LDA	ESHPSTAT,Y
+		AND	#H'7F
+		ORA	#H'20
+		STA	ESHPSTAT,Y
+		LDA	#19
+		STA	SHIPEXPL,Y
+
+		LDA	#SHIP
+		JSR	CHK_SLNC
+		BEQ	ADDEDONE
+		LDY	#SEXPL >> 8
+		LDX	#SEXPL & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHIP
+		STA	EFFECT
+		
+ADDEDONE:	RTS
+
+
+
+
+ADDPEXPL:	
+
+;add an explosion to the player shot explosion list
+
+		LDA	PS_STAT,Y
+		ORA	#H'20
+		STA	PS_STAT,Y
+		LDA	#6
+		STA	PLYREXPL,Y
+		LDA	#SHOT
+		JSR	CHK_SLNC
+		BEQ	ADDPDONE
+		LDY	#SBOOM >> 8
+		LDX	#SBOOM & H'FF
+		LDA	#3
+		JSR	PLAY
+		LDA	#SHOT
+		STA	EFFECT
+
+ADDPDONE:	RTS
+
+
+
+UPP_EXPL:	
+
+;update all player shot explosions
+
+		LDY	#7
+
+UPP_LOOP:      	LDA	PS_STAT,Y
+		AND	#H'20
+		BEQ	UPP_CONT
+		LDA	PLYREXPL,Y
+		BNE	UPP_SET
+UPP_CONT:	DEY
+		BPL	UPP_LOOP
+		JMP	UPS_EXPL
+
+UPP_SET:	STY	EXPL_Y
+		TAY
+		DEY
+		STY	EXPL_A
+		LDA	SEXPLCHR,Y
+		STA	EXPL_TEMP
+		LDA	EXPL_Y
+		ASL 	A
+		ASL	A
+		TAY
+		LDA	EXPL_TEMP
+		STA	PSHTSPR0+1,Y
+		LDA	#2
+		STA	PSHTSPR0+2,Y
+		LDY	EXPL_Y
+		LDA	EXPL_A
+		STA	PLYREXPL,Y
+		BNE	UPP_CONT
+		JSR	FREEPSHT    ; FREE UP THAT SHOT ENTRY
+		JMP	UPP_CONT
+
+
+
+
+UPS_EXPL:
+
+;update all enemy shot explosions
+
+		LDY	#0
+
+UPS_LOOP:	LDA	ES_STAT, Y
+		AND	#H'20
+		BEQ	UPS_CONT
+		LDA	SHOTEXPL, Y
+		BNE	UPS_SET
+UPS_CONT:	INY
+		CPY	MAX_ESHOT
+		BNE	UPS_LOOP
+		JMP	UPE_EXPL    
+
+UPS_SET:	STY	EXPL_Y
+		TAY
+		DEY
+		STY	EXPL_A
+		LDA	SEXPLCHR,Y
+		STA	EXPL_TEMP
+		LDA	EXPL_Y
+		ASL 	A
+		ASL	A
+		TAY
+		LDA	EXPL_TEMP
+		STA	SHOTSPR0+1,Y
+		LDA	#2
+		STA	SHOTSPR0+2,Y
+		LDY	EXPL_Y
+		LDA	EXPL_A
+		STA	SHOTEXPL,Y
+		BNE	UPS_CONT
+		JSR	FREESHOT    ; FREE UP THAT SHOT ENTRY
+		JMP	UPS_CONT
+
+
+
+UPE_EXPL:
+
+;update all enemy ship explosions...
+
+		LDY	#0
+
+UPE_LOOP:	LDA	ESHPSTAT, Y
+		AND	#H'20
+		BEQ	UPE_CONT
+		LDA	SHIPEXPL, Y
+		BEQ	UPE_CONT
+
+		SEC
+		SBC	#1
+		STA	SHIPEXPL, Y
+		JSR	EXPLODE
+
+UPE_CONT:	INY
+		CPY	MAX_ENEMY
+		BNE	UPE_LOOP
+
+		RTS
+
+
+
+FREEPSHT:	
+
+;free shot entry in Y-reg. for use...
+
+		TYA	
+		ASL 	A
+		ASL	A
+		TAY
+		LDA	#H'F8
+		STA	PSHTSPR0,Y
+
+		LDY	EXPL_Y
+		LDA	#0
+		STA	PS_STAT,Y
+
+		LDA	PS_TYPE,Y
+		CMP	#T_BOLT
+		BNE	FPS_DONE
+		LDA	#1
+		STA	P_THNDR
+
+FPS_DONE:	RTS
+
+
+
+
+
+FREESHOT:
+
+;free the enemy shot just exploded for use (index in Y-reg.)
+
+		TYA	
+		ASL 	A
+		ASL	A
+		TAY
+		LDA	#H'F8
+		STA	SHOTSPR0,Y	;remove sprite from screen
+
+		LDY	EXPL_Y
+		LDA	#0
+		STA	ES_STAT,Y
+
+		LDA	ES_TYPE,Y
+		CMP	#MISSLE
+		BNE	FES_DONE
+		DEC	E_MISLS
+
+FES_DONE:	RTS
+
+
+
+
+; FREESHIP frees the destroyed enemy ship for use
+; Y-reg. = Enemy ship index
+
+FREESHIP:	JSR	REMENEMY	;remove enemy sprites from screen
+
+FS_SET:		LDA	#0
+		STA	ESHPSTAT,Y
+		DEC	ENEMIES
+		BNE	FS_END
+		LDA	#GREEN
+		STA	STATUS
+
+FS_END:		RTS
+
+
+
+;*******************************************************************
+;
+;THE FOLLOWING ROUTINES ARE FOR UPDATING THE MOVEMENT OF ENEMIES
+;
+
+GETNEWDIR:
+		JSR	ND_TBL_I
+		JSR	ND_DIR_I
+		JSR	ND_INDEX
+		LDA	DIRTABLE,Y
+		STA	NEW_DIR
+		RTS
+
+ND_TBL_I:
+		LDA	SIGN_DX
+		BPL	NT_XPLUS
+		LDA	SIGN_DY
+		BPL	NT_2
+		LDA	#3
+		STA	TBLINDEX
+		RTS
+NT_2:
+		LDA	#2
+		STA	TBLINDEX
+		RTS
+NT_XPLUS:
+		LDA	SIGN_DY
+		BPL	NT_1
+		LDA	#0
+		STA	TBLINDEX
+		RTS
+NT_1:
+		LDA	#1
+		STA	TBLINDEX
+		RTS
+
+ND_DIR_I:	
+		LDA	DX
+		CMP	DY
+		BEQ	NDI_2
+		BCS	NDI_34
+		LDA	DX
+		BEQ	NDI_0
+		LDA	#1
+		STA	DIRINDEX
+		RTS
+NDI_0:
+		LDA	#0
+		STA	DIRINDEX
+		RTS
+NDI_2:
+		LDA	#2
+		STA	DIRINDEX
+		RTS
+NDI_34:
+		LDA	DY
+		BEQ	NDI_4
+		LDA	#3
+		STA	DIRINDEX
+		RTS
+NDI_4:
+		LDA	#4
+		STA	DIRINDEX
+		RTS
+
+ND_INDEX:
+		LDA	DIRINDEX
+		LDY	TBLINDEX
+		BEQ	NDI_DONE
+NDI_LOOP:
+		CLC
+		ADC	#5
+		DEY
+		BNE	NDI_LOOP
+NDI_DONE:	TAY
+		RTS
+
+CHG_DIR:
+		LDA	NEW_DIR
+		CMP	(PTR1L),Y
+		BEQ	CD_DONE
+		LDX	#7
+CD_LOOP:
+		INC	NEW_DIR
+		LDA	NEW_DIR
+		AND	#H'0F
+		STA	NEW_DIR
+		CMP	(PTR1L),Y
+		BEQ	CD_NEG
+		DEX
+		BNE	CD_LOOP
+CD_POS:
+		LDA	(PTR1L),Y
+		TAX
+		INX
+		TXA
+		JMP	CD_DONE
+CD_NEG:
+		LDA	(PTR1L),Y
+		TAX
+		DEX
+		TXA
+CD_DONE:
+		AND	#H'0F
+		STA	(PTR1L),Y
+		RTS
+
+
+SHIPSEEK:	
+		LDA	ESHPXDST,Y
+		STA	LOGIC_BX
+		LDA	ESHPYDST,Y
+		STA	LOGIC_BY
+		LDA	ESHP_XH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AX
+		LDA	ESHP_YH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AY
+		JSR	LOAD_DISP
+
+		JSR	GETNEWDIR
+		LDY	LOGIC_Y
+		LDA	#ESHPDIR >> 8
+		STA	PTR1H
+		LDA	#ESHPDIR & H'FF
+		STA	PTR1L
+		JSR	CHG_DIR
+		LDY	LOGIC_Y
+		
+		LDX	ESHPDRV,Y
+		LDA	ESHPDIR,Y
+		TAY
+		LDA	MAXDRIVE,X
+		JSR	NEWVEL
+
+		LDY	LOGIC_Y
+		LDA	TVELX
+		STA	ESHPXVEL,Y
+		LDA	TVELY
+		STA	ESHPYVEL,Y
+		RTS
+
+LOAD_DISP:
+		LDA	LOGIC_AX
+		CMP	LOGIC_BX
+		BCS	LD_1A
+		LDA	LOGIC_BX
+		SBC	LOGIC_AX
+		STA	DX
+		LDA	#1
+		STA	SIGN_DX
+		JMP	LD_DY
+LD_1A:
+		SBC	LOGIC_BX
+		STA	DX
+		LDA	#-1
+		STA	SIGN_DX
+LD_DY:
+		LDA	LOGIC_AY
+		CMP	LOGIC_BY
+		BCS	LD_2A
+		LDA	LOGIC_BY
+		SBC	LOGIC_AY
+		STA	DY
+		LDA	#1
+		STA	SIGN_DY
+		JMP	LD_DONE
+LD_2A:
+		SBC	LOGIC_BY
+		STA	DY
+		LDA	#-1	
+		STA	SIGN_DY
+LD_DONE:
+		RTS
+
+TOOCLOSE:
+		LDA	SEEKING
+		CMP	#1
+		BNE	TC_FALSE
+		LDA	ESHPXDST,Y
+		STA	LOGIC_BX
+		LDA	ESHPYDST,Y
+		STA	LOGIC_BY
+		LDA	ESHP_XH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AX
+		LDA	ESHP_YH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AY
+		JSR	LOAD_DISP
+		LDA	DX
+		CMP	#H'0C
+		BCS	TC_FALSE
+		LDA	DY
+		CMP	#H'0C
+		BCS	TC_FALSE
+		LDA	#1
+		RTS
+TC_FALSE:
+		LDA	#0
+		RTS
+
+
+TOOFAR:
+		LDA	SEEKING
+		BNE	TF_DONE
+		LDA	ESHPSTAT,Y
+		AND	#H'40
+		BEQ	TF_TRUE
+		LDA	#H'80
+		STA	LOGIC_BX
+		STA	LOGIC_BY
+		LDA	ESHP_XH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AX
+		LDA	ESHP_YH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AY
+		JSR	LOAD_DISP
+		LDA	DX
+		CMP	#H'15
+		BCS	TF_TRUE
+		LDA	DY
+		CMP	#H'15
+		BCS	TF_TRUE
+		LDX	DX
+		LDA	SQRTABLE,X
+		LDX	DY
+		CLC
+		ADC	SQRTABLE,X
+		CMP	#H'02
+		BCS	TF_TRUE
+TF_DONE:
+		RTS
+TF_TRUE:
+		LDY	LOGIC_Y
+		LDA	#H'80
+		STA	ESHPXDST,Y
+		STA	ESHPYDST,Y
+		LDA	#1
+		STA	SEEKING
+		RTS
+
+MOVERAND:
+		LDA	SEEKING
+		CMP	#H'04
+		BNE	MR_DONE
+		LDX	ESHPDIR,Y	
+		JSR	RANDOM
+		ROR	A
+		ROR	A
+		BCC	MR_RT
+MR_LT:
+		DEX
+		JMP	MR_SET
+MR_RT:
+		INX
+MR_SET:
+		TYA
+		PHA
+		TXA
+		AND	#H'0F
+		STA	ESHPDIR,Y
+		PHA
+		LDX	ESHPDRV,Y
+		PLA
+		TAY
+		LDA	MAXDRIVE,X
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	ESHPXVEL,Y
+		LDA	TVELY
+		STA	ESHPYVEL,Y
+MR_TRUE:
+		LDA	#1
+		RTS
+MR_DONE:
+		LDA	#0
+		RTS
+
+MOVESTRT:
+		LDA	SEEKING
+		CMP	#2
+		BEQ	MS_CHKVEL
+		LDA	#0
+		RTS
+MS_CHKVEL:
+		TYA
+		PHA
+		LDX	ESHPDRV,Y
+		LDA	MAXDRIVE,X
+		PHA
+		LDA	ESHPDIR,Y
+		TAY
+		PLA
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	ESHPXVEL,Y
+		LDA	TVELY
+		STA	ESHPYVEL,Y
+		LDA	#1
+		RTS
+
+VEERDEST:
+		JSR	RANDOM
+		ROR	A
+		ROR	A
+		ROR	A
+		BCC	VEER_LT
+VEER_RT:
+		LDA	ESHPDIR,Y
+		SEC
+		SBC	#4
+		AND	#H'0F
+		JMP	VEER_OFF
+VEER_LT:
+		LDA	ESHPDIR,Y
+		CLC
+		ADC	#4
+		AND	#H'0F
+VEER_OFF:
+		TAX
+		LDA	X_DEST,X
+		STA	LOGIC_AX
+		LDA	Y_DEST,X
+		STA	LOGIC_AY
+		LDA	XMOVE
+		ASL	A
+		CLC
+		ADC	LOGIC_AX
+		STA	LOGIC_AX		
+		LDA	YMOVE
+		ASL	A
+		CLC
+		ADC	LOGIC_AY
+		STA	LOGIC_AY		
+		RTS
+
+
+CHECKFIRE:	LDA	PWRPLANT
+		BEQ	CF_DONE		;don't fire if player is dead!
+
+		LDA	ESHPWPN,Y
+		BEQ	CF_DONE
+
+		LDA	RAND
+		AND	#H'03
+		BEQ	CF_DONE		;fire 75% of max.
+
+		LDA	SEEKING
+		BNE	CF_A
+    		LDA	ESHPTYPE,Y
+    		CMP	#H'60
+		BEQ	CF_A
+		RTS
+CF_A:
+		LDA	#H'80
+		STA	LOGIC_BX
+		STA	LOGIC_BY
+		LDA	ESHP_XH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AX
+		LDA	ESHP_YH,Y
+		CLC
+		ADC	#2
+		STA	LOGIC_AY
+		JSR	LOAD_DISP
+CF_B:
+		JSR	RANDOM
+		STA	LOGIC_TEMP
+		LDA	DIFF
+		CLC
+		ROR	A
+		CLC
+		ADC	LOGIC_TEMP
+		BCS	CF_C
+		CMP	DIFF
+		BCC	CF_TRUE
+CF_C:
+		INC	LASTFIRE
+		LDA	#H'9F		;was h'FF
+		SEC
+		SBC	DIFF
+		CMP	LASTFIRE
+		BCC	CF_TRUE
+CF_DONE:
+		RTS
+
+CF_TRUE:	
+		LDA	#0
+		STA	LASTFIRE
+		JSR	SHIPFIRE
+		RTS
+
+SHIPFIRE:	LDA	PWRPLANT
+		BNE	ESF_DO
+		JMP	ESF_DONE	;don't fire if player is dead...
+
+ESF_DO:		JSR	SHOTSPACE
+		BEQ	ESF_DONE
+		STY	LOGIC_TEMP
+		JSR	GETNEWDIR
+		LDY	LOGIC_Y
+		LDA	ESHPDIR,Y
+		JSR	ON_TARGET
+		BEQ	ESF_DONE
+ESF_A:
+		STY	TY			;ENEMY SHOT SOUND
+		STX	TX
+		LDA	ESHPWPN, Y
+		CMP	#3
+		BEQ	ESF_ALT
+		CMP	#5
+		BEQ	ESF_ALT
+
+		LDA	#2
+		JSR	SILENCE
+		LDY	#E_LASER >> 8
+		LDX	#E_LASER &H'FF
+		LDA	#2
+		JSR	PLAY
+		JMP	ESF_BLT
+
+ESF_ALT:	LDA	#2
+		JSR	SILENCE
+		LDY	#E_LASER >> 8
+		LDX	#E_LASER &H'FF
+		LDA	#2
+		JSR	PLAY
+ESF_BLT:	LDY	TY
+		LDX	TX
+
+		LDA	ESHPWPN,Y
+		CMP	#MISSLE
+		BNE	ESF_1
+		LDA	E_MISLS
+		CMP	#5
+		BCS	ESF_DONE
+		INC	E_MISLS
+ESF_1:
+		LDA	ESHP_XH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AX
+		LDA	ESHP_XL,Y
+		STA	LOGIC_BX
+		LDA	ESHP_YH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AY
+		LDA	ESHP_YL,Y
+		STA	LOGIC_BY
+		LDX	ESHPDIR,Y
+ESF_2:
+		LDA	ESHPXVEL,Y	;;;;;BLAH;;;;
+		STA	TVELX
+		LDA	ESHPYVEL,Y
+		STA	TVELY
+		LDA	ESHPWPN,Y
+		LDY	LOGIC_TEMP
+		JSR	FIRE
+ESF_DONE:
+		RTS
+
+ON_TARGET:
+		CMP	NEW_DIR
+		BEQ	OT_TRUE
+		SEC
+		SBC	#1
+		AND	#H'0F
+		CMP	NEW_DIR
+		BEQ	OT_TRUE
+		CLC
+		ADC	#2
+		AND	#H'0F
+		CMP	NEW_DIR
+		BEQ	OT_TRUE
+		LDA	#0
+		RTS
+OT_TRUE:
+		LDA	#1
+		RTS
+
+
+SHOTSPACE:	LDY	#0
+ESS_LOOP:	LDA	ES_STAT,Y
+		BEQ	ESS_TRUE
+		INY
+		CPY	MAX_ESHOT
+		BNE	ESS_LOOP
+		LDA	#0
+		RTS
+ESS_TRUE:	LDA	#1
+		RTS
+
+FIRE:		STA	ES_TYPE,Y
+		STA	LOGIC_TEMP
+		LDA	#H'C0
+		STA	ES_STAT,Y
+		TYA
+		PHA
+		TXA
+		PHA
+		TAY
+		LDX	LOGIC_TEMP
+		LDA	WPN_ACC,X
+		JSR	NEWVEL
+
+		PLA
+		TAX
+		PLA
+		TAY
+		LDA	TVELX
+		STA	ES_XVEL,Y
+		LDA	TVELY
+		STA	ES_YVEL,Y
+		TXA
+		STA	ES_DIR,Y
+		STX	LOGIC_X
+
+		LDA	LOGIC_AX
+		STA	ES_XH,Y
+		LDA	LOGIC_BX
+		STA	ES_XL,Y
+		LDA	LOGIC_AY
+		STA	ES_YH,Y
+		LDA	LOGIC_BY
+		STA	ES_YL,Y
+
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+
+		LDA	LOGIC_TEMP
+		CMP	#ATOMIC
+		BNE	FIRE_1A
+		LDA	#2
+		STA	SHOTSPR0+2,X
+		LDA	#H'00
+		JMP	FIRE_1C
+FIRE_1A:
+		PHA
+		LDA	#2
+		STA	SHOTSPR0+2,X
+		PLA
+		CMP	#CANNON
+		BNE	FIRE_1B
+		LDA	#H'00
+		JMP	FIRE_1C
+FIRE_1B:
+		LDY	LOGIC_X
+		LDA	CHOFFTBL, Y
+FIRE_1C:
+		LDY	LOGIC_TEMP
+		CLC
+		ADC	WPN_CHAR, Y
+FIRE_1:
+		STA	SHOTSPR0+1,X
+		LDY	LOGIC_X
+		LDA	FLIPTBL, Y
+		ORA	SHOTSPR0+2,X
+		STA	SHOTSPR0+2,X
+		JSR	COND_YLW
+		RTS
+
+		
+SHIPLOGIC:
+		LDA	PWRPLANT
+		BEQ	ESL_DONE
+		LDA	INVISO
+		BNE	ESL_DONE
+		JSR	FIND_NEXT
+		LDY	NEXT_ENEMY
+		LDA	ESHPSTAT,Y
+		AND	#H'90
+		CMP	#H'80		;ONLY IF ALIVE AND NOT DISABLED
+		BEQ	ESL_SET
+ESL_DONE:
+		RTS
+ESL_SET:
+		STY	LOGIC_Y
+		LDA	ESHPSEEK,Y
+		STA	SEEKING
+		JSR	TOOCLOSE
+		BEQ	ESL_1B
+		LDA	#0
+		STA	SEEKING
+		JSR	VEERDEST
+		LDY	LOGIC_Y
+		LDA	LOGIC_AX
+		STA	ESHPXDST,Y
+		LDA	LOGIC_AY
+		STA	ESHPYDST,Y
+		JMP	ESL_1C
+ESL_1B:
+		JSR	MOVERAND
+		BNE	ESL_1D
+		JSR	MOVESTRT
+		BNE	ESL_1D
+		JSR	TOOFAR
+ESL_1C:
+		JSR	SHIPSEEK
+ESL_1D:
+		LDY	LOGIC_Y
+		LDA	SEEKING
+		STA	ESHPSEEK,Y
+		JSR	CHECKFIRE
+		RTS
+
+
+FIND_NEXT:
+		LDX	NEXT_ENEMY
+		INX
+		CPX	MAX_ENEMY
+		BCC	FN_DONE
+		LDX	#0
+FN_DONE:
+		STX	NEXT_ENEMY
+		RTS
+
+
+STN_ACTN:	
+
+;call every NMI to perform logic for space stations
+
+		LDA	PWRPLANT
+		BEQ	SA_DONE		;player must be alive
+		LDA	BKGRND
+		BNE	SA_DONE		;  and in space!
+		LDA	INVISO
+		BNE	SA_DONE		;(and not using "inviso")
+
+FN_STN:		LDY	NEXT_STN
+		INY
+		CPY	#8
+		BCC	FNSTN_0
+		LDY 	#0		;force in range 0..7
+FNSTN_0:	STY	NEXT_STN
+
+		LDA	STN_STAT,Y
+		AND	#H'D8		;ALIVE+ONSCREEN+FRIENDLY+SHIELD DOWN
+		CMP	#H'C0		;ALIVE+ONSCREEN (+ENEMY+SHIELD UP)
+		BEQ	SA_DO
+
+;friendly and/or shield up
+
+SA_DONE:	RTS
+
+SA_DO:		STY	LOGIC_Y
+		JSR	RANDOM
+		STA	COUNT0
+		LDA	STN_STAT,Y
+		AND	#H'01
+		BEQ	SADO_A
+
+;;;has drones... (no longer used)
+;;
+;;		LDA	DIFF
+;;		CMP	COUNT0
+;;		BCC	SADO_A
+;;		RTS
+;;
+
+SADO_A:		LDA	DIFF
+		CLC
+		ADC	#30
+		CMP	COUNT0
+		BCS	SA_FIRE
+		INC	LASTFIRE
+		LDA	#H'FE
+		SEC
+		SBC	DIFF
+		LDY	LOGIC_Y
+		CMP	LASTFIRE
+		BCS	SA_DONE
+SA_FIRE:	JSR	SHOTSPACE
+		BEQ	SA_DONE
+		STY	LOGIC_TEMP
+		LDY	LOGIC_Y
+		LDA	STN_WPN,Y
+		CMP	#MISSLE
+		BNE	SA_1
+		LDA	E_MISLS
+		CMP	#5
+		BCS	SA_FIX
+		INC	E_MISLS
+		BNE	SA_1		;Always!
+SA_FIX:		LDA	#H_LASER	;force fire hvy. laser
+SA_1:		LDA	#0
+		STA	LASTFIRE
+
+		LDA	#2
+		JSR	SILENCE
+		LDY	#E_LASER >> 8
+		LDX	#E_LASER &H'FF
+		LDA	#2
+		JSR	PLAY
+
+		LDY	LOGIC_Y
+		LDA	STN_XH,Y
+		STA	LOGIC_AX
+		LDA	STN_YH,Y
+		STA	LOGIC_AY
+		LDA	#H'80
+		STA	LOGIC_BX
+		STA	LOGIC_BY
+		JSR	LOAD_DISP
+		JSR	GETNEWDIR
+
+		LDY	LOGIC_Y
+		LDA	STN_XL,Y
+		STA	LOGIC_BX
+		LDA	STN_YL,Y
+		STA	LOGIC_BY
+
+		LDX	NEW_DIR
+		LDA	#0
+		STA	TVELX
+		STA	TVELY
+		LDA	STN_WPN,Y
+		LDY	LOGIC_TEMP
+		JSR	FIRE
+
+SAD_DONE:		RTS
+
+
+		
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;THE FOLLOWING ROUTINES UPDATE THE MOVEMENT OF MISSLES
+
+MOVEMISL:
+		LDA	PWRPLANT
+		BEQ	MM_DONE
+		LDA	INVISO
+		BNE	MM_DONE
+		JSR	FN_SHOT
+		LDY	NEXT_SHOT
+		LDA	ES_STAT,Y
+		AND	#H'80
+		BEQ	MM_DONE
+		LDA	ES_TYPE,Y
+		CMP	#MISSLE
+		BEQ	MM_SET
+MM_DONE:
+		RTS
+MM_SET:
+		STY	LOGIC_Y
+		JSR	MISLSEEK
+		RTS
+
+FN_SHOT:
+		LDX	NEXT_SHOT
+		INX
+		CPX	MAX_ESHOT
+		BNE	FNS_DONE
+		LDX	#0
+FNS_DONE:
+		STX	NEXT_SHOT
+		RTS
+
+
+MISLSEEK:	
+		LDA	ES_XH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AX
+		LDA	ES_YH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AY
+		LDA	#H'80
+		STA	LOGIC_BX
+		STA	LOGIC_BY
+		JSR	LOAD_DISP
+		JSR	GETNEWDIR
+		LDY	LOGIC_Y
+		LDA	#ES_DIR >> 8
+		STA	PTR1H
+		LDA	#ES_DIR & H'FF
+		STA	PTR1L
+		JSR	CHG_DIR
+		LDY	LOGIC_Y
+
+		TYA
+		PHA
+		LDA	ES_DIR,Y
+		TAY
+		LDA	#ENMY_MSL
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	ES_XVEL,Y
+		LDA	TVELY
+		STA	ES_YVEL,Y
+		LDA	ES_DIR,Y
+		TAX
+		LDA	CHOFFTBL,X
+		STA	COUNT0
+		LDA	FLIPTBL,X
+		ORA	#2		;ENEMY SHOT PALETTE
+		STA	COUNT1
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	ES_TYPE,Y
+		TAY
+		LDA	WPN_CHAR,Y
+		CLC
+		ADC	COUNT0
+		STA	SHOTSPR0+1,X
+		LDA	COUNT1
+		STA	SHOTSPR0+2,X
+		RTS
+
+PLYRMISL:
+		LDY	NEXT_PSHT
+		STY	LOGIC_TEMP
+PM_LOOP:
+		INY
+		CPY	#4
+		BCC	FNPSDONE
+		LDY	#0
+FNPSDONE:
+		STY	NEXT_PSHT
+	
+		LDA	W2_STAT,Y
+		AND	#H'80
+		BEQ	PM_CONT
+		LDA	W2_TYPE,Y
+		CMP	#MISSLE
+		BNE	PM_CONT
+
+		LDA	W2_TARG,Y
+		BMI	PM_CHECK	;not currently locked..dbl.check!
+		TAX
+		LDA	ESHPSTAT,X
+		AND	#H'80
+		BNE	PM_SET		;enemy still alive...
+
+;enemy not alive, try to find one that is
+		
+PM_CHECK:	STY	T4
+		JSR	SEL_T2
+		LDY	T4
+		TAX
+		STA	W2_TARG,Y
+		CMP	#-1
+		BNE	PM_SET		;got one...
+
+;none alive!
+		
+PM_CONT:
+		CPY	LOGIC_TEMP
+		BNE	PM_LOOP
+PM_DONE:
+		RTS
+
+
+PM_SET:
+		STY	LOGIC_Y
+		STX	LOGIC_X
+PLYRSEEK:	
+		LDA	W2_XH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AX
+		LDA	W2_YH,Y
+		CLC
+		ADC	#1
+		STA	LOGIC_AY
+		LDA	ESHP_XH,X
+		CLC
+		ADC	#2
+		STA	LOGIC_BX
+		LDA	ESHP_YH,X
+		CLC
+		ADC	#2
+		STA	LOGIC_BY
+		JSR	LOAD_DISP
+		JSR	GETNEWDIR
+		LDY	LOGIC_Y
+		LDA	#W2_DIR >> 8
+		STA	PTR1H
+		LDA	#W2_DIR & H'FF
+		STA	PTR1L
+		JSR	CHG_DIR
+		LDY	LOGIC_Y
+
+		TYA
+		PHA
+		LDA	W2_DIR, Y
+		TAY
+		LDA	#PLYR_MSL
+		JSR	NEWVEL
+
+		PLA
+		TAY
+		LDA	TVELX
+		STA	W2_XVEL, Y
+		LDA	TVELY
+		STA	W2_YVEL, Y
+
+		LDA	W2_DIR,Y
+		TAX
+
+		LDA	CHOFFTBL,X
+		STA	COUNT0
+		LDA	FLIPTBL,X
+		ORA	#2		;palette
+		STA	COUNT1
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	W2_TYPE,Y
+		TAY
+		LDA	WPN_CHAR,Y
+		CLC
+		ADC	COUNT0
+		STA	PSHTSPR0+17,X
+		LDA	COUNT1
+		STA	PSHTSPR0+18,X
+		RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;THE FOLLOWING ROUTINES ARE USED FOR PLAYER MISSLES
+
+
+;...choose 1st active!		
+
+SEL_T2:		LDY	#0
+ST2_LOOP:	LDA	ESHPSTAT, Y
+		AND	#H'C0		;Alive & on screen
+		CMP	#H'C0
+		BEQ	ST2_END		;Found an active enemy!
+		INY
+		CPY	MAX_ENEMY
+		BNE	ST2_LOOP
+
+ST_FALSE:	LDA	#-1		;NO ENEMIES AT ALL!
+		RTS
+
+ST2_END:	TYA			;even though not in front,
+		RTS			;   select it!
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;THE FOLLOWING ROUTINES ARE FOR UPDATING THE POSITION OF ALL SPRITES
+
+;UPDTSHIP UPDATES THE POSITION OF ENEMY SHIPS ON THE SCREEN 
+UPDTSHIP:	
+		LDY	#0
+US_LOOP:	LDA 	ESHPSTAT,Y
+		AND	#H'F0
+		BNE	US_SET
+US_CONT:	INY
+		CPY	MAX_ENEMY
+		BNE	US_LOOP
+
+		RTS
+
+US_SET:		STY	EXPL_Y
+		LDX	ESHP_XL,Y
+		STX	TPOSL
+		LDX	ESHP_XH,Y
+		STX	TPOSH
+		LDA	ESHPXVEL,Y
+		JSR	ADDVEL
+		LDA	PSHPXVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	ESHP_XH,Y
+		LDA	TPOSL
+		STA	ESHP_XL,Y
+		
+		LDX	ESHP_YL,Y
+		STX	TPOSL
+		LDX	ESHP_YH,Y
+		STX	TPOSH
+		LDA	ESHPYVEL,Y
+		JSR	ADDVEL
+		LDA	PSHPYVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	ESHP_YH,Y
+		LDA	TPOSL
+		STA	ESHP_YL,Y
+
+		JSR	EXECTIME
+
+		LDA	ESHP_XH,Y
+		CMP	#H'20
+		BCC	US_REMX
+		CMP	#H'E0
+		BCS	US_REMX
+		CMP	#H'60
+		BCC	US_CLRX
+		CMP	#H'9E
+		BCS	US_CLRX
+		LDA	ESHP_YH,Y
+		CMP	#H'20
+		BCC	US_REMX
+		CMP	#H'E0
+		BCS	US_REMX
+		CMP	#H'60
+		BCC	US_CLRX
+		CMP	#H'9E
+		BCC	SPZ
+US_CLRX:	JMP	US_CLR
+US_REMX:	JMP	US_REM
+SPZ:
+
+		LDA	ESHPSTAT,Y
+		ORA	#H'40		;ON SCREEN 
+		STA	ESHPSTAT,Y
+
+		LDA	ESHPSTAT,Y
+		AND	#H'20		;Alive?
+		BEQ	US_0
+		JMP	US_CONT
+
+US_0:		JSR	POSENEMY
+		JSR	FLIPENEMY
+		JSR	DRAWENEMY
+
+		JMP	US_CONT
+
+US_REM:		
+		LDY	EXPL_Y
+		JSR	FREESHIP
+		JMP	US_CONT
+
+US_CLR:
+		LDA	ESHPSTAT,Y
+		AND	#H'20
+		BNE	US_REM
+		LDA	ESHPSTAT,Y
+		AND	#H'BF		;OFFSCREEN (ONSCREEN H'40 IS 0)
+		STA	ESHPSTAT,Y
+		LDA	ESHPTIME,Y
+		BNE	USC_A
+		LDA	#H'60
+		STA	ESHPTIME,Y
+
+;off-screen so remove sprites...
+
+USC_A:		JSR	REMENEMY
+		JMP	US_CONT
+
+
+EXECTIME:	LDA	ESHPTIME,Y
+		TAX
+		DEX
+		TXA
+		STA	ESHPTIME,Y
+		BNE	ET_DONE
+		LDA	ESHPSTAT,Y
+		AND	#H'10
+		BEQ	ET_A
+		LDA	ESHPSTAT,Y
+		AND	#H'EF
+		STA	ESHPSTAT,Y
+		JMP	ET_DONE
+ET_A:
+		LDA	ESHPSTAT,Y
+		AND	#H'40
+		BNE	ET_DONE
+		LDA	#H'10
+		STA	ESHP_XH,Y	;ITS OFFSCREEN TOO LONG SO REMOVE IT
+ET_DONE:
+		RTS
+		
+
+
+
+;UPDTESHT UPDATES THE SCREEN POSITION OF ALL ENEMY SHOTS
+UPDTESHT:	LDY	#0
+UES_LOOP:	LDA	ES_STAT,Y
+		AND	#H'F0
+		BNE	UES_SET
+UES_CONT:	INY
+		CPY	MAX_ESHOT
+		BNE	UES_LOOP
+		RTS
+UES_SET:	
+		STY	EXPL_Y
+		LDA	ES_XVEL,Y
+		LDX	ES_XH,Y
+		STX	TPOSH
+		LDX	ES_XL,Y
+		STX	TPOSL
+		JSR	ADDVEL
+		LDA	PSHPXVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	ES_XH,Y
+		LDA	TPOSL
+		STA	ES_XL,Y
+		LDA	ES_YVEL,Y
+		LDX	ES_YH,Y
+		STX	TPOSH
+		LDX	ES_YL,Y
+		STX	TPOSL
+		JSR	ADDVEL
+		LDA	PSHPYVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	ES_YH,Y
+		LDA	TPOSL
+		STA	ES_YL,Y
+		LDA	ES_XH,Y
+		CMP	#H'A0
+		BCS	UES_REM
+		CMP	#H'60
+		BCC	UES_REM
+		LDA	ES_YH,Y
+		CMP	#H'A0
+		BCS	UES_REM
+		CMP	#H'60
+		BCC	UES_REM
+		LDA	ES_XH,Y
+		LDX	ES_XL,Y
+		JSR	GET_POS
+		LDY	EXPL_Y
+		STA	COUNT1
+		LDA	ES_YH,Y
+		LDX	ES_YL,Y
+		JSR	GET_POS
+		LDY	EXPL_Y
+		STA	COUNT2
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	COUNT1
+		STA	SHOTSPR0+3,X
+		LDA	COUNT2
+		STA	SHOTSPR0,X
+		JMP	UES_CONT
+
+UES_REM:	LDY	EXPL_Y
+		JSR	FREESHOT
+		JMP	UES_CONT
+
+
+
+;UPDTPSHT UPDATES THE SCREEN POSITION OF ALL PLAYER SHOTS
+
+UPDTPSHT:	LDY	#H'07
+UPD_LOOP:	LDA	PS_STAT,Y
+		AND	#H'F0
+		BNE	UPD_SET
+UPD_CONT:	DEY
+		BPL	UPD_LOOP
+		RTS
+
+
+UPD_SET:	
+		STY	EXPL_Y
+		LDA	PS_TYPE,Y
+		CMP	#MINE
+		BNE	UPDS_A
+		JSR	UPDTMINE
+		LDY	EXPL_Y
+UPDS_A:
+		LDA	PS_XVEL,Y
+		LDX	PS_XH,Y
+		STX	TPOSH
+		LDX	PS_XL,Y
+		STX	TPOSL
+		JSR	ADDVEL
+		LDA	PSHPXVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	PS_XH,Y
+		LDA	TPOSL
+		STA	PS_XL,Y
+		LDA	PS_YVEL,Y
+		LDX	PS_YH,Y
+		STX	TPOSH
+		LDX	PS_YL,Y
+		STX	TPOSL
+		JSR	ADDVEL
+		LDA	PSHPYVEL
+		JSR	INVVEL
+		LDY	EXPL_Y
+		LDA	TPOSH
+		STA	PS_YH,Y
+		LDA	TPOSL
+		STA	PS_YL,Y
+		LDA	PS_XH,Y
+		CMP	#H'A0
+		BCS	UPD_REM
+		CMP	#H'60
+		BCC	UPD_REM
+		LDA	PS_YH,Y
+		CMP	#H'A0
+		BCS	UPD_REM
+		CMP	#H'60
+		BCC	UPD_REM
+		LDA	PS_XH,Y
+		LDX	PS_XL,Y
+		JSR	GET_POS
+		LDY	EXPL_Y
+		STA	COUNT1
+		LDA	PS_YH,Y
+		LDX	PS_YL,Y
+		JSR	GET_POS
+		LDY	EXPL_Y
+		STA	COUNT2
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	COUNT1
+		STA	PSHTSPR0+3,X
+		LDA	COUNT2
+		STA	PSHTSPR0,X
+		JMP	UPD_CONT
+
+UPD_REM:	LDY	EXPL_Y
+		JSR	FREEPSHT
+		JMP	UPD_CONT
+
+
+;SHOT_REF REFRESHES ALL SHOT SPRITE CHARS
+SHOT_REF:	JSR	PS1_REF
+		JSR	PS2_REF
+		JSR	ES_REF
+		RTS
+
+PS1_REF:       	LDY	#3
+PS1R_LOOP:	LDA	PS_STAT,Y
+		AND	#H'C0
+		CMP	#H'C0
+	      	BEQ	PS1R_SET
+		LDA	#H'F8
+		STA	TY
+		JMP	PS1R_E
+
+PS1R_CONT:	DEY
+		BPL	PS1R_LOOP
+		RTS
+
+PS1R_SET:	
+
+;get X & Y pos...
+
+		LDA	PS_XH, Y
+		LDX	PS_XL, Y
+		JSR	GET_POS
+		STA	TX
+		LDA	PS_YH, Y
+		LDX	PS_YL, Y
+		JSR	GET_POS
+		STA	TY
+
+;get "flip" info...
+
+PS1R_B:		LDX	PS_TYPE,Y
+		CPX	#L_LASER
+		BCS	PS1R_C
+		LDA	#0
+		STA	COUNT1
+		JMP	PS1R_D
+
+PS1R_C:		LDX	PS_DIR,Y
+		LDA	FLIPTBL,X
+		STA	COUNT1
+		LDA	CHOFFTBL,X
+		LDX	PS_TYPE,Y
+
+PS1R_D:		CLC
+		ADC	WPN_CHAR,X
+		STA	COUNT0
+
+PS1R_E:		TYA
+		ASL	A
+		ASL	A
+		CLC
+		ADC	#PSHTSPR0 &H'FF
+		TAX
+
+		LDA	TY
+		STA	SPRTBL0+ 0, X
+		LDA	COUNT0
+		STA	SPRTBL0+ 1, X
+		LDA	COUNT1
+		ORA	#2		;palette
+		STA	SPRTBL0+ 2, X
+		LDA	TX
+		STA	SPRTBL0+ 3, X
+		JMP	PS1R_CONT
+		
+
+PS2_REF:	LDY	#3
+PS2R_LOOP:	LDA	W2_STAT,Y
+		AND	#H'C0
+		CMP	#H'C0
+		BEQ	PS2R_SET
+		LDA	#H'F8
+		STA	TY
+		JMP	PS2R_E
+
+PS2R_CONT:	DEY
+		BPL	PS2R_LOOP
+		RTS
+
+PS2R_SET:	
+
+;get X & Y pos...
+
+		LDA	W2_XH, Y
+		LDX	W2_XL, Y
+		JSR	GET_POS
+		STA	TX
+		LDA	W2_YH, Y
+		LDX	W2_YL, Y
+		JSR	GET_POS
+		STA 	TY
+
+;get "flip" info...
+
+PS2R_B:		LDA	W2_TYPE,Y
+		CMP	#T_BOLT
+		BNE	PS2R_BA
+		LDA	#H'F8
+		STA	TY
+		JMP	PS2R_E
+	
+PS2R_BA:	LDX	W2_TYPE,Y
+		CPX	#MISSLE
+		BEQ	PS2R_C
+		LDA	#0
+		STA	COUNT1
+		JMP	PS2R_D
+
+PS2R_C:		LDX	W2_DIR,Y
+		LDA	FLIPTBL,X
+		STA	COUNT1
+		LDA	CHOFFTBL,X
+		LDX	W2_TYPE,Y
+
+PS2R_D:		CLC
+		ADC	WPN_CHAR,X
+		STA	COUNT0
+PS2R_E:		TYA
+		ASL	A
+		ASL	A
+		CLC
+		ADC	#PSHTSPR0 &H'FF
+		ADC	#16
+		TAX
+		
+		LDA	TY
+		STA	SPRTBL0+ 0, X
+		LDA	COUNT0
+		STA	SPRTBL0+ 1, X
+		LDA	COUNT1
+		ORA	#2	    	;palette
+		STA	SPRTBL0+ 2, X
+		LDA	TX
+		STA	SPRTBL0+ 3, X
+		JMP	PS2R_CONT
+		
+
+ES_REF:		LDY	#0
+ESR_LOOP:
+		LDA	ES_STAT,Y
+		AND	#H'C0
+		CMP	#H'C0
+		BEQ	ESR_SET
+ESR_CONT:	INY
+		CPY	MAX_ESHOT
+		BNE	ESR_LOOP
+		RTS
+ESR_SET:
+		LDX	ES_DIR,Y
+		LDA	FLIPTBL,X
+		STA	COUNT1
+		LDA	CHOFFTBL,X
+		STA	COUNT0
+		LDX	ES_TYPE,Y
+		CPX	#L_LASER
+		BCS	ESR_C
+		LDA	#0
+		JMP	ESR_D
+ESR_C:
+		LDA	COUNT0
+ESR_D:
+		CLC
+		ADC	WPN_CHAR,X
+		STA	COUNT0
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	COUNT0
+		STA	SHOTSPR0+1,X
+		LDA	ES_TYPE,Y
+		CMP	#ATOMIC
+		BEQ	ESR_E
+		LDA	#2
+		JMP	ESR_F
+ESR_E:
+		LDA	#2
+ESR_F:
+		ORA	COUNT1
+		STA	SHOTSPR0+2,X
+		JMP	ESR_CONT
+
+UPDTMINE:
+		TYA
+		ASL	A
+		ASL	A
+		TAX
+		LDA	TIMER0
+		AND	#H'08
+		CLC
+		ROR	A
+		ROR	A
+		ROR	A
+		ROR	A
+		ADC	#H'D0
+		STA	PSHTSPR0+1,X
+		LDA	#2
+		STA	PSHTSPR0+2,X
+		LDA	PS_DIR,Y
+		TAX
+		DEX
+		TXA
+		STA	PS_DIR,Y
+		BEQ	MINE_REM
+		RTS
+
+MINE_REM:	LDA	PS_STAT,Y
+		AND	#H'7F		; SET THE SHOT TO NOT 'ALIVE'
+		STA	PS_STAT,Y
+		JSR	ADDPEXPL
+		RTS
+
+UPDTBOLT:	LDA	W2_TYPE
+		CMP	#T_BOLT
+		BEQ	UB_SET
+		RTS
+
+UB_SET:		LDA	W2_STAT
+		AND	#H'80
+		BNE	UBS_CHAR
+		RTS
+
+UBS_CHAR:	LDA	W2_TARG
+		CLC
+		ADC	#6
+		ASL	A
+		ASL	A
+		TAX
+		LDA	LEXPLCHR,X
+		STA	PSHTSPR0+17
+		LDA	LEXPLCHR+1,X
+		STA	PSHTSPR0+21
+		LDA	LEXPLCHR+2,X
+		STA	PSHTSPR0+25
+		LDA	LEXPLCHR+3,X
+		STA	PSHTSPR0+29
+		LDA	#2
+		STA	PSHTSPR0+18
+		STA	PSHTSPR0+22
+		STA	PSHTSPR0+26
+		STA	PSHTSPR0+30
+		LDA	W2_TARG
+		EOR	#H'01
+		STA	W2_TARG
+		RTS
+
+
+		     
+
+UPDT_STN:	LDA	BKGRND
+		BEQ	USTN_0
+
+;not in space...therefore, no space stations!
+
+		JMP	UPDT_GUN
+
+;update stations:
+
+USTN_0:		LDA	#H'9C
+		STA	SPR0PTR
+
+		LDY	TURRET_1
+		BMI	USTN_1
+;alive!
+		JSR	USTN_SET
+		STA	TURRET_1
+
+;do second station, if one exists...
+
+USTN_1:	      	LDA	#H'C0		
+		STA	SPR0PTR
+
+		LDY	TURRET_2
+		BMI	USTNDONE
+;Alive!
+		JSR	USTN_SET
+		STA	TURRET_2
+
+USTNDONE:	RTS
+
+
+
+USTN_SET: 	
+;
+; Y-reg.  = index (0..7) into space station data tables
+; SPR0PTR = offset into sprite table (0, 16)
+;
+; Returns index into space station tables, or -1 if off screen
+
+		STY	LOGIC_Y		
+
+		LDA	STN_XH,Y
+		STA	TPOSH
+		LDA	STN_XL,Y
+		STA	TPOSL
+		LDA	PSHPXVEL
+		JSR	INVVEL
+		LDA	TPOSH
+		STA	STN_XH,Y
+		LDA	TPOSL
+		STA	STN_XL,Y
+		LDA	STN_YH,Y
+		STA	TPOSH
+		LDA	STN_YL,Y
+		STA	TPOSL
+		LDA	PSHPYVEL
+		JSR	INVVEL
+		LDA	TPOSH
+		STA	STN_YH,Y
+		LDA	TPOSL
+		STA	STN_YL,Y
+		LDA	STN_XH,Y
+		CMP	#H'5D
+		BCC	USTN_REM
+		CMP	#H'A1
+		BCS	USTN_REM
+		LDA	STN_YH,Y
+		CMP	#H'5E		;5D
+		BCC	USTN_REM
+		CMP	#H'A1
+		BCC	USTN_A
+
+;*** OFF SCREEN *********************************
+
+USTN_REM:    	LDA	STN_STAT,Y
+		AND	#H'BF		;set ON-SCREEN bit to 0 
+		STA	STN_STAT,Y	;  i.e., not on screen
+		LDA	#-1
+		RTS
+
+;*** ON SREEN ***********************************
+
+USTN_A:		LDA	STN_STAT, Y
+		ORA	#H'40	   	;ON SCREEN
+		STA	STN_STAT, Y
+
+		LDA	STN_XH, Y
+		CMP	#H'5F
+		BCC	SRPOSREM
+		CMP	#H'9F	
+		BCS	SRPOSREM
+		LDX	STN_XL, Y
+		JSR	GET_POS
+		STA	TX		;X screen pos.
+
+		LDA	STN_YH, Y
+		CMP	#H'5F
+		BCC	SRPOSREM
+		CMP	#H'9F	
+		BCS	SRPOSREM
+		LDX	STN_YL, Y
+		JSR	GET_POS
+		STA	TY		;Y screen pos.
+		JSR	POS3X3		;update sprite positions
+		JMP	SR_A
+
+SRPOSREM:	JSR	REM3X3		;off screen - remove sprites & quit
+		LDA	LOGIC_Y
+		RTS
+
+SR_A:		LDA	STN_STAT, Y
+		AND	#H'80		;Alive?
+		BEQ	SR_EXPL	  	;---No!
+;---Yes!
+		LDX	STN_ROTATE	;0, 1, or 2
+		LDA	#H'03
+		JSR	DRAWSTN		;Update "rotation"
+		LDA	LOGIC_Y
+		RTS
+
+SR_EXPL:	LDA	STN_STAT, Y
+		AND	#H'20
+		BEQ	SR_DEAD
+;exploding...
+		LDA	STN_DAM, Y	;explosion "tick"
+		SEC
+		SBC	#1
+		BNE	SR_E1
+
+;done with explosion...make dead
+
+		LDA	STN_STAT, Y
+		ORA	#H'08
+		AND	#H'4F
+		STA	STN_STAT, Y
+
+SR_DEAD:	LDA	#H'03
+		JSR	DRAWSTNX
+;dead...
+		LDA	LOGIC_Y
+	 	RTS
+
+
+;Exploding space station...update expl. sequence.
+
+SR_E1:		STA	STN_DAM, Y
+		
+		JSR	EXPL3X3
+		LDA	LOGIC_Y
+		RTS
+
+
+DRAWSTNX:	LDX	#3
+
+DRAWSTN:	
+;
+; TX, TY  = position on screen
+; SPR0PTR = index into sprite table
+; X-Reg.  = rotation "tick"  (0..2, 3 = DEAD)
+; Acc.    = palette & flip
+
+		JSR	FLIP3X3
+		JSR	POS3X3
+
+		LDY	SPR0PTR
+		LDA	STNCH1, X
+		STA	SPRTBL0+ 1, Y
+		LDA	STNCH2, X
+		STA	SPRTBL0+ 5, Y
+		LDA	STNCH3, X
+		STA	SPRTBL0+ 9, Y
+		LDA	STNCH4, X
+		STA	SPRTBL0+13, Y
+		LDA	STNCH5, X
+		STA	SPRTBL0+17, Y
+		LDA	STNCH6, X
+		STA	SPRTBL0+21, Y
+		LDA	STNCH7, X
+		STA	SPRTBL0+25, Y
+		LDA	STNCH8, X
+		STA	SPRTBL0+29, Y
+		LDA	STNCH9, X
+		STA	SPRTBL0+33, Y
+		RTS
+
+
+STNCH1:		.DB	H'6A,H'8D,H'73,H'96
+STNCH2:		.DB	H'6B,H'8E,H'74,H'97
+STNCH3:		.DB	H'6C,H'8F,H'75,H'98
+STNCH4:		.DB	H'8A,H'70,H'93,H'79
+STNCH5:		.DB	H'8B,H'71,H'94,H'7A
+STNCH6:		.DB	H'8C,H'72,H'95,H'7B
+STNCH7:		.DB	H'6D,H'90,H'76,H'99
+STNCH8:		.DB	H'6E,H'91,H'77,H'9A
+STNCH9:		.DB	H'6F,H'92,H'78,H'9B
+
+
+
+
+
+;GUN_STAT:
+;  1000000 = Set if alive
+;  0100000 = Set if onscreen
+;  0010000 = Set if exploding
+;  000xxxx = Explosion counter, if bit 0010000 is set, or
+;  000xxxx = Hit points (unused, set to 0001)
+
+GUN_ACTN:
+
+; Call every NMI to perform logic for turrets/guns
+
+		LDA	PWRPLANT
+		BEQ	GA_DONE		;player must be alive
+		LDA	BKGRND
+		BEQ	GA_DONE		;  and not in space!
+		LDA	INVISO
+		BNE	GA_DONE		;(and not using "inviso")
+
+       		LDY	#1
+		JSR	FN_CHK
+		LDY	#2
+		JSR	FN_CHK
+		LDY	#3
+		JSR	FN_CHK
+		LDY	#4
+		JMP	FN_CHK		;do all 4 ea. pass
+
+FN_CHK:		LDA	TURRET_1, Y	;get proper index into GUN tables
+		TAY
+		LDA	GUN_STAT, Y
+		AND	#H'C0		;alive + onscreen
+		CMP	#H'C0		;must be both to fire 
+		BEQ	GA_DO
+
+;not on screen and/or dead.
+
+GA_DONE:	RTS
+
+GA_DO:		;check if turret open...if not, don't fire!
+
+		LDA	GUN_PHASE, Y
+		CMP	#4
+		BEQ	GA_CHK		;open!
+		CMP	#6
+		BNE	GA_DONE		;closed!
+
+;turret is "open"...
+
+GA_CHK:		LDA 	TIMER0
+  		AND	#H'07		;only let fire once while open!
+  		BNE	GA_DONE
+  
+GA_FIRE:	STY	LOGIC_Y
+		JSR	SHOTSPACE
+		BEQ	GA_DONE		;no available shot spaces!
+		STY	LOGIC_TEMP	;save slot number
+		LDA	GUN_WPN		;weapon number
+		CMP	#MISSLE
+		BNE	GA_1
+
+;make sure a slot is available for a missile...
+
+		LDA	E_MISLS
+		CMP	#5
+		BCS	GA_FIX		;too many...fire hvy. laser
+		INC	E_MISLS
+		BNE	GA_1
+GA_FIX:		LDA	#H_LASER	;force fire hvy. laser
+GA_1:		LDA	#0
+		STA	LASTFIRE
+
+		LDA	#2
+		JSR	SILENCE
+		LDY	#E_LASER >> 8
+		LDX	#E_LASER &H'FF
+		LDA	#2
+		JSR	PLAY
+
+		LDY	LOGIC_Y		;restore turret number
+		LDA	GUN_XH, Y	;get x-pos.
+		STA	LOGIC_AX
+		LDA	GUN_YH, Y	;and y-pos.
+		STA	LOGIC_AY
+		LDA	#H'80
+		STA	LOGIC_BX
+		STA	LOGIC_BY
+		JSR	LOAD_DISP
+		JSR	GETNEWDIR	;aim
+
+		LDY	LOGIC_Y
+		LDA	GUN_XL, Y
+		STA	LOGIC_BX
+		LDA	GUN_YL, Y
+		STA	LOGIC_BY
+		LDX	NEW_DIR	       	;direction
+		LDA	#0	       	;initial speed.
+		STA	TVELX
+		STA	TVELY
+		LDA	GUN_WPN		;weapon type
+		LDY	LOGIC_TEMP	;slot
+		JMP	FIRE
+
+
+
+
+UPDT_GUN:	LDA	BKGRND
+		BEQ	UGUN_DONE	;no guns if in space!
+
+		LDA	#H'C0
+		STA	SPR0PTR
+		LDY	TURRET_1
+		JSR	UGUN_SET
+		STA	TURRET_1
+
+	    	LDA	#H'D0
+	    	STA	SPR0PTR
+	    	LDY	TURRET_2
+	    	JSR	UGUN_SET
+	    	STA	TURRET_2
+	    
+	    	LDA	#H'E0
+	    	STA	SPR0PTR
+	    	LDY	TURRET_3
+	    	JSR	UGUN_SET
+	    	STA	TURRET_3
+	    
+	    	LDA	#H'F0
+	    	STA	SPR0PTR
+	    	LDY	TURRET_4
+	    	JSR	UGUN_SET
+	    	STA	TURRET_4
+
+UGUN_DONE:	RTS
+
+UGUN_NO:	TYA
+		RTS
+
+UGUN_SET:
+
+; Y-reg. = turret index, SPR0PTR = index into sprite table
+; returns index or -1 (if off screen) in acc.
+
+		CPY	#0
+		BMI	UGUN_NO
+
+		STY	LOGIC_Y
+
+		LDA	GUN_XH, Y
+		STA	TPOSH
+		LDA	GUN_XL, Y
+		STA	TPOSL
+		LDA	PSHPXVEL
+		JSR	INVVEL
+		LDA	TPOSH
+		STA	GUN_XH, Y
+		LDA	TPOSL
+		STA	GUN_XL, Y
+		LDA	GUN_YH, Y
+		STA	TPOSH
+		LDA	GUN_YL, Y
+		STA	TPOSL
+		LDA	PSHPYVEL
+		JSR	INVVEL
+		LDA	TPOSH
+		STA	GUN_YH, Y
+		LDA	TPOSL
+		STA	GUN_YL, Y
+		LDA	GUN_XH, Y
+		CMP	#H'5D
+		BCC	UGUN_REM
+		CMP	#H'A1
+		BCS	UGUN_REM
+		LDA	GUN_YH, Y
+		CMP	#H'5E
+		BCC	UGUN_REM
+		CMP	#H'A1
+		BCC	UGUN_A
+
+;************** MOVED OFF-SCREEN ************************************
+
+UGUN_REM:	LDA	GUN_STAT, Y
+		AND	#H'BF		;clear onscreen bit
+		STA	GUN_STAT, Y
+		LDA	#-1
+		RTS
+
+;************** STILL ON-SCREEN *************************************
+
+UGUN_A:		LDA	GUN_STAT, Y
+		ORA	#H'40		;set onscreen bit
+		STA	GUN_STAT, Y
+
+		LDA	GUN_XH, Y
+		CMP	#H'5F
+		BCC	GRPOSREM
+		CMP	#H'9F
+		BCS	GRPOSREM
+		LDX	GUN_XL, Y
+		JSR	GET_POS		;get x screen pos.
+		STA	TX
+
+		LDA	GUN_YH, Y
+		CMP	#H'5F
+		BCC	GRPOSREM
+		CMP	#H'9F
+		BCS	GRPOSREM
+		LDX	GUN_YL, Y
+		JSR	GET_POS
+		STA	TY		;y screen pos.
+		JSR	POS2X2		;update sprite positions
+		JMP	GR_A		;draw it.
+
+GRPOSREM:	JSR	REM2X2		;off screen -- remove sprites & quit
+		LDA	LOGIC_Y
+		RTS
+
+GR_A:		LDA	GUN_STAT, Y
+		AND	#H'80		;Alive?
+		BEQ	GR_EXPL		;---No! See if exploding
+;---Yes!
+		LDA	TIMER0
+		AND	#H'0F
+		CMP	#H'0F		;animate every 16 timer ticks
+		BEQ	GR_A1
+      		LDX	GUN_PHASE, Y
+		JMP	GR_CHAR
+GR_A1:		LDA	INVISO
+		BEQ	GR_A2
+		LDX	#5		;stay open if inviso is on
+		JMP	GR_CHAR
+GR_A2:		LDX	GUN_PHASE, Y
+		INX
+		CPX	#H'0D
+		BCC	GR_CHAR
+		LDX	#0
+GR_CHAR:	TXA
+		STA	GUN_PHASE, Y
+		JSR	DRAWGUN		;update animation
+		LDA	LOGIC_Y
+		RTS
+
+GR_EXPL:	LDA	GUN_STAT, Y
+		AND	#H'20		;Exploding?
+		BEQ	GR_DEAD
+;---Exploding
+		LDA	GUN_STAT, Y
+		AND	#H'1F		;explosion "tick"
+		SEC
+		SBC	#1
+		BNE	GR_E1
+
+;done with explosion...make dead
+
+GR_DEAD:	LDA	#H'00	   	;remove the gun
+		STA	GUN_STAT, Y
+		CPY	#52
+		BCC	GR_D0
+		DEC	TOWERS
+		JMP	GR_D1
+GR_D0:		DEC	TURRETS
+GR_D1:		JSR	REM2X2
+		LDA	#-1		;...so dead guns don't use slots
+		RTS
+
+;exploding turret...update expl. sequence
+
+GR_E1:		STA	COUNT0
+		JSR	EXPL2X2
+		LDA	GUN_STAT, Y
+		AND	#H'E0
+		ORA	COUNT0
+		STA	GUN_STAT, Y	;imbed expl. tick back into GUN_STAT
+		LDA	LOGIC_Y
+		RTS
+
+
+DRAWGUN:
+;
+; TX, TY  = position on screen
+; SPR0PTR = index into sprite table
+; X-reg.  = "animation" frame
+
+		JSR	POS2X2
+
+		LDY	SPR0PTR
+		LDA	GUN_CHR, X
+		STA	SPRTBL0+ 1, Y
+		STA	SPRTBL0+ 5, Y
+		STA	SPRTBL0+ 9, Y
+		STA	SPRTBL0+13, Y
+		LDA	#H'01		;flip & palette
+		STA	SPRTBL0+ 2, Y
+		LDA	#H'41
+		STA	SPRTBL0+ 6, Y
+		LDA	#H'81
+		STA	SPRTBL0+10, Y
+		LDA	#H'C1
+		STA	SPRTBL0+14, Y
+
+		RTS
+
+
+GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
+		.DB	H'3F, H'3E, H'1F, H'1E, H'1E, H'1E
+		
+
+;;;UPDT_GUN:	LDA	#0
+;;;		STA	LOGIC_X
+;;;		LDY	TURRET_1
+;;;		JSR	UG_CHECK
+;;;		BNE	UG_1
+;;;		LDA	#H'FF
+;;;		STA	TURRET_1
+;;;UG_1:
+;;;		LDA	#16
+;;;		STA	LOGIC_X
+;;;		LDY	TURRET_2
+;;;		JSR	UG_CHECK
+;;;		BNE	UG_2
+;;;		LDA	#H'FF
+;;;		STA	TURRET_2
+;;;UG_2:		
+;;;		LDA	#32
+;;;		STA	LOGIC_X
+;;;		LDY	TURRET_3
+;;;		JSR	UG_CHECK
+;;;		BNE	UG_3
+;;;		LDA	#H'FF
+;;;		STA	TURRET_3
+;;;UG_3:		
+;;;		LDA	#48
+;;;		STA	LOGIC_X
+;;;		LDY	TURRET_4
+;;;		JSR	UG_CHECK
+;;;		BNE	UG_DONE
+;;;		LDA	#H'FF
+;;;		STA	TURRET_4
+;;;UG_DONE:
+;;;		LDA	#1
+;;;		RTS
+;;;UG_CHECK:
+;;;		BMI	UG_DONE
+;;;		LDA	GUN_STAT,Y
+;;;		AND	#H'40		;onscreen?
+;;;		BNE	UG_SET
+;;;		LDA	#0
+;;;		RTS
+;;;UG_SET:
+;;;		LDA	GUN_XH,Y
+;;;		STA	TPOSH
+;;;		LDA	GUN_XL,Y
+;;;		STA	TPOSL
+;;;		LDA	PSHPXVEL
+;;;		JSR	INVVEL
+;;;		LDA	TPOSH
+;;;		STA	GUN_XH,Y
+;;;		LDA	TPOSL
+;;;		STA	GUN_XL,Y
+;;;		LDA	GUN_YH,Y
+;;;		STA	TPOSH
+;;;		LDA	GUN_YL,Y
+;;;		STA	TPOSL
+;;;		LDA	PSHPYVEL
+;;;		JSR	INVVEL
+;;;		LDA	TPOSH
+;;;		STA	GUN_YH,Y
+;;;		LDA	TPOSL
+;;;		STA	GUN_YL,Y
+;;;		LDA	PSHPXVEL
+;;;		BEQ	UG_P0B
+;;;		BMI	UG_P0A
+;;;		LDA	GUN_XH,Y
+;;;		CMP	#H'5E
+;;;		BCC	UG_REM
+;;;		JMP	UG_P0B
+;;;UG_P0A:	 	
+;;;		LDA	GUN_XH,Y
+;;;		CMP	#H'A0
+;;;		BCS	UG_REM
+;;;UG_P0B:		
+;;;		LDA	PSHPYVEL
+;;;		BEQ	UG_P0D
+;;;		BMI	UG_P0C
+;;;		LDA	GUN_YH,Y
+;;;		CMP	#H'5E
+;;;		BCC	UG_REM
+;;;		JMP	UG_P0D
+;;;UG_P0C:
+;;;		LDA	GUN_YH,Y
+;;;       		CMP	#H'A0
+;;;		BCS	UG_REM
+;;;UG_P0D:
+;;;		JSR	UG_POS
+;;;		LDA	GUN_STAT,Y
+;;;		AND	#H'20		;exploding?
+;;;		BEQ	UG_P0
+;;;		JMP	UG_EXPL
+;;;
+;;;UG_REM:		LDA	GUN_STAT,Y
+;;;		AND	#H'80		;alive?
+;;;		BNE	UGR_1
+;;;;---DEAD!
+;;;UGE_REM:	LDA	#0
+;;;		STA	GUN_STAT,Y
+;;;		CPY	#52
+;;;		BCC	UGR_0
+;;;		DEC	TOWERS
+;;;		JMP	UGR_1
+;;;UGR_0:		DEC	TURRETS
+;;;
+;;;UGR_1:		LDX	LOGIC_X
+;;;		LDA	#H'F8
+;;;		STA	GUN_SPR0,X
+;;;		STA	GUN_SPR0+4,X
+;;;		STA	GUN_SPR0+8,X
+;;;		STA	GUN_SPR0+12,X
+;;;		LDA	GUN_STAT,Y
+;;;		AND	#H'BF		;kill onscreen bit?
+;;;		STA	GUN_STAT,Y
+;;;UGR_A:		LDA	#0
+;;;		RTS
+;;;
+;;;UG_P0:		LDA	GUN_STAT,Y
+;;;		AND	#H'80		;alive?
+;;;		BEQ	UGR_A
+;;;;ALIVE...
+;;;		LDA	TIMER0
+;;;		AND	#H'0F
+;;;		CMP	#H'0F
+;;;		BEQ	UG_P1
+;;;		LDX	GUN_PHASE,Y
+;;;		JMP	UG_C1
+;;;UG_P1:
+;;;		LDA	INVISO
+;;;		BEQ	UG_P2
+;;;		LDX	#5
+;;;		JMP	UG_CHAR
+;;;UG_P2:
+;;;		LDX	GUN_PHASE,Y
+;;;		INX
+;;;		CPX	#H'0D
+;;;		BCC	UG_CHAR
+;;;		LDX	#0
+;;;UG_CHAR:
+;;;		TXA	
+;;;		STA	GUN_PHASE,Y
+;;;
+;;;UG_C1:
+;;;		JSR	TRT_SPR
+;;;		LDA	GUN_PHASE,Y
+;;;		CMP	#4
+;;;		BNE	UG_F1
+;;;		LDA 	TIMER0
+;;;		AND	#H'07
+;;;		CMP	#H'07
+;;;		BNE	UG_F1
+;;;		JSR	UG_FIRE
+;;;		JMP	UG_DONE
+;;;
+;;;UG_F1:	    			RTS
+;;;		LDA	GUN_PHASE,Y
+;;;		CMP	#6
+;;;		BEQ	UG_F1A
+;;;		JMP	UG_DONE
+;;;UG_F1A:
+;;;		LDA 	TIMER0
+;;;		AND	#H'07
+;;;		CMP	#H'07
+;;;		BEQ	UG_F2
+;;;		JMP	UG_DONE
+;;;UG_F2:
+;;;		JSR	UG_FIRE
+;;;		JMP	UG_DONE
+;;;
+;;;UG_EXPL:	LDA	GUN_STAT, Y
+;;;		AND	#H'1F	   	;mask off explosion counter
+;;;		SEC
+;;;		SBC	#1
+;;;		STA	COUNT0
+;;;		LDA	GUN_STAT, Y
+;;;		AND	#H'E0
+;;;		ORA	COUNT0
+;;;		STA	GUN_STAT, Y
+;;;		LDA	COUNT0
+;;;		BNE	UGEXPL_A
+;;;		JMP	UGE_REM
+;;;
+;;;;update explosion...
+;;;
+;;;UGEXPL_A:	TAX	
+;;;		JSR	UGE_SPR
+;;;		RTS
+;;;
+;;;UG_POS:		LDA	GUN_XH,Y
+;;;		CMP	#H'5F
+;;;		BCC	UGPOSREM
+;;;		CMP	#H'9E		;WAS H'9F
+;;;		BCS	UGPOSREM
+;;;		LDX	GUN_XL,Y
+;;;		JSR	GET_POS
+;;;		STA	TX
+;;;		LDA	GUN_YH,Y
+;;;		CMP	#H'5F
+;;;		BCC	UGPOSREM
+;;;		CMP	#H'9E		;WAS H'9F
+;;;		BCS	UGPOSREM
+;;;		LDX	GUN_YL,Y
+;;;		JSR	GET_POS
+;;;		STA	TY
+;;;
+;;;UGPOS_A:	LDA	LOGIC_X
+;;;		STA	SPR0PTR
+;;;		JMP	POS2X2
+;;;
+;;;UGPOSREM:	LDA	LOGIC_X
+;;;		STA	SPR0PTR
+;;;		JMP	REM2X2
+;;;
+;;;UG_FIRE: 	STY	LOGIC_Y
+;;;
+;;;UGF_NORM:	
+;;;
+;;;		JSR	SHOTSPACE
+;;;		BEQ	UGF_DONE
+;;;		STY	LOGIC_TEMP
+;;;		LDY	LOGIC_Y
+;;;	
+;;;		LDA	#0
+;;;		STA	COUNT0
+;;;		STA	COUNT1
+;;;		LDA	GUN_XH,Y
+;;;		STA	LOGIC_AX
+;;;		LDA	GUN_YH,Y
+;;;		STA	LOGIC_AY
+;;;		LDA	#H'80
+;;;		STA	LOGIC_BX
+;;;		STA	LOGIC_BY
+;;;		JSR	LOAD_DISP
+;;;		JSR	GETNEWDIR
+;;;		LDA	GUN_XL,Y
+;;;		STA	LOGIC_BX
+;;;		LDA	GUN_YL,Y
+;;;		STA	LOGIC_BY
+;;;		LDX	NEW_DIR
+;;;		LDA	#0
+;;;		STA	TVELX
+;;;		STA	TVELY
+;;;		LDA	GUN_WPN
+;;;		CMP	#MISSLE
+;;;		BNE	UGF_B
+;;;		LDA	E_MISLS
+;;;		CMP	#5
+;;;		BCS	UGF_A
+;;;		LDA	#MISSLE
+;;;		INC	E_MISLS
+;;;		JMP	UGF_B
+;;;UGF_A:
+;;;		LDA	#L_LASER
+;;;UGF_B:
+;;;		LDY	LOGIC_TEMP
+;;;		JSR	FIRE
+;;;UGF_DONE:
+;;;		RTS
+;;;
+;;;
+;;;
+;;;TRT_SPR:
+;;;		LDA	GUN_CHR,X
+;;;		LDX	LOGIC_X
+;;;		STA	GUN_SPR0+13,X
+;;;		STA	GUN_SPR0+9,X
+;;;		STA	GUN_SPR0+5,X
+;;;		STA	GUN_SPR0+1,X
+;;;
+;;;		LDA	#1		;palette
+;;;		STA	GUN_SPR0+2,X
+;;;		LDA	#H'41
+;;;		STA	GUN_SPR0+6,X
+;;;		LDA	#H'C1
+;;;		STA	GUN_SPR0+10,X
+;;;		LDA	#H'81
+;;;		STA	GUN_SPR0+14,X
+;;;		RTS
+;;;
+;;;UGE_SPR:	LDA	E_SHPOFF,X
+;;;		STA	COUNT0
+;;;		TXA
+;;;		ASL	A
+;;;		ASL	A
+;;;		TAX
+;;;		LDA	LEXPLCHR,X
+;;;		PHA
+;;;		LDA	LEXPLCHR+1,X
+;;;		PHA
+;;;		LDA	LEXPLCHR+2,X
+;;;		PHA
+;;;		LDA	LEXPLCHR+3,X
+;;;		PHA
+;;;		LDX	LOGIC_X
+;;;		PLA
+;;;		STA	GUN_SPR0+9,X
+;;;		PLA
+;;;		STA	GUN_SPR0+13,X
+;;;		PLA
+;;;		STA	GUN_SPR0+5,X
+;;;		PLA
+;;;		STA	GUN_SPR0+1,X
+;;;		LDA	#2		;palette 2
+;;;		STA	GUN_SPR0+2,X
+;;;		STA	GUN_SPR0+6,X
+;;;		STA	GUN_SPR0+10,X
+;;;		STA	GUN_SPR0+14,X
+;;;		LDA	GUN_SPR0,X
+;;;		CLC
+;;;		ADC	COUNT0
+;;;		STA	GUN_SPR0,X
+;;;		LDA	GUN_SPR0+3,X
+;;;		CLC
+;;;		ADC	COUNT0
+;;;		STA	GUN_SPR0+3,X
+;;;		RTS
+;;;
+
+
+
+;************************************************************
+; NEW ENEMY/SPRITE HANDLING ROUTINES
+;
+;   11-29-89: Support 2x2 and 3x3 modes
+;
+;************************************************************
+
+
+INITSPR:	
+
+;initializes certian sprite table values that do not change
+;while in 'combat' mode.  Call upon exit from 'computer'
+;mode.
+;
+;[A]
+
+;compass -------------------------------
+
+		LDA	#H'D0		;y pos.	(was $DC, 05-17-90)
+		STA	CMPSPR0+0
+		LDA	#H'7C		;x pos.
+		STA	CMPSPR0+3
+
+;player ship ---------------------------
+
+		LDA	#H'74		;x & y coords of upper left
+		STA	TX
+		STA	TY
+		JSR	PSHPPTR		;set pointers into SPRTBL
+		JMP	POS3X3		;position sprites & end.
+
+
+
+;***************************************
+
+
+ESHPPTR:
+
+;sets pointers into SPRTBLs for enemy index (0..3) in Y-reg.
+
+		STY	TY
+		LDA	EMODE
+		ASL	A
+		ASL	A		;mult. by 4
+		CLC
+		ADC	TY		;add enemy index (0..3)
+		TAY
+		LDA	EINDEX, Y	;get offset into SPRTBLs
+		CLC
+		ADC	#SHOTSPR0 & H'FF
+		STA	SPR0PTR
+		LDY	TY
+		RTS
+
+EINDEX:
+
+;index by (EMODE * 4) + enemy no. to find offset (including
+;adjustments for max. no. of shots) for appropriate enemy no.
+;add to SHOTSPR0 to adjust for SPRTBL...
+
+		.DB	H'30, H'40, H'50, H'60
+		.DB	H'1C, H'2C, H'3C, H'4C
+		.DB	H'2C, H'3C, H'4C, H'FF
+		.DB	H'28, H'4C, H'FF, H'FF
+		.DB	H'1C, H'2C, H'3C, H'4C
+
+
+
+
+
+GETESIZE:
+
+;given an enemy index (0..3) in Y-reg., returns "size"
+;of enemy:
+;		0 = 2x2
+;		1 = 3x3
+;
+;	       -1 = error
+
+		STY	T3
+		LDA	EMODE
+		ASL	A
+		ASL	A		;mult. by 4
+		CLC
+		ADC	T3		;add enemy index (0..3)
+		TAY
+		LDA	ESIZE, Y	;get "size"
+		PHA
+		LDY	T3
+		PLA			;...so flags are correct
+		RTS
+
+ESIZE:
+
+;index by (EMODE * 4) + enemy no. to find "size" of enemy
+;A "size" of -1 means the enemy no. is invalid for the
+;current EMODE...
+
+		.DB	0,  0,  0,  0	;4 small
+		.DB	0,  0,  0,  1	;3 small & 1 large
+		.DB	0,  0,  1, -1	;2 small & 1 large
+		.DB	1,  1, -1, -1	;2 large
+		.DB	0,  0,  0, -1	;3 small & extra space station
+
+
+
+;***************************************
+
+
+
+PSHPPTR:
+
+;sets (constant) pointers into SPRTBLs for player ship
+
+		LDA	#PLYRSPR0 & H'FF
+		STA	SPR0PTR
+		RTS
+
+
+
+;***************************************
+
+EXPL3X3:
+
+;position/draw a 3x3 (actually 2x2) explosion given SPR0PTR
+;as pointer into SPRTBL0, (TX, TY) as the upper left
+;coordinates, and Acc. as the explosion "tick"
+;
+;		1  2  3
+;		4  5  6
+;		7  8  9
+;
+
+		STA	EXPL_A
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDA	TX
+		CLC
+		ADC	#4
+		STA	TX
+		LDA	TY
+		CLC
+		ADC	#4
+		STA	TY		;adjust for 3x3s...
+
+		LDA	EXPL_A		;get explosion "tick"
+		ASL	A
+		ASL	A
+		TAY
+		LDA	LEXPLCHR+3, Y
+		PHA
+		LDA	LEXPLCHR+2, Y
+		PHA
+		LDA	LEXPLCHR+1, Y
+		PHA
+		LDA	LEXPLCHR+0, Y
+		
+		LDY	SPR0PTR
+
+		STA	SPRTBL0+ 1, Y	;c1
+		PLA
+		STA	SPRTBL0+ 5, Y	;c2
+		PLA
+		STA	SPRTBL0+13, Y	;c4
+		PLA
+		STA	SPRTBL0+17, Y	;c5
+
+
+		LDA	#2		;palette
+		STA	SPRTBL0+ 2, Y	;p1
+		STA	SPRTBL0+ 6, Y	;p2
+		STA	SPRTBL0+14, Y	;p4
+		STA	SPRTBL0+18, Y	;p5
+
+		LDA	TY
+		LDY	EXPL_A
+		CLC
+		ADC	E_SHPOFF, Y	;explosion pos. offset
+		LDY	SPR0PTR
+		STA	SPRTBL0+ 0, Y	;y1
+		LDA	TY
+		STA	SPRTBL0+ 4, Y	;y2
+		JSR	YPOSADJ
+		STA	SPRTBL0+12, Y	;y4
+		STA	SPRTBL0+16, Y	;y5
+
+		LDA	#H'F8		;place excess off-screen
+		STA	SPRTBL0+ 8, Y	;y3
+		STA	SPRTBL0+20, Y	;y6
+		STA	SPRTBL0+24, Y	;y7
+		STA	SPRTBL0+28, Y	;y8
+		STA	SPRTBL0+32, Y	;y9
+
+		LDA	TX
+		LDY	EXPL_A
+		CLC
+		ADC	E_SHPOFF, Y	;explosion pos. offset
+		LDY	SPR0PTR
+		STA	SPRTBL0+ 3, Y	;x1
+		LDA	TX
+		STA	SPRTBL0+15, Y	;x4
+		JSR	XPOSADJ
+		STA	SPRTBL0+ 7, Y	;x2
+		STA	SPRTBL0+19, Y	;x5
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+EXPL2X2:
+
+;position/draw a 2x2 explosion given SPR0PTR as pointer
+;into SPRTBL0, (TX, TY) as the upper left coordinates,
+;and Acc. as the explosion "tick"
+;
+;		1  2
+;		3  4
+;
+
+		STA	EXPL_A
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDA	EXPL_A		;get explosion "tick"
+		ASL	A
+		ASL	A
+		TAY
+		LDA	LEXPLCHR+3, Y
+		PHA
+		LDA	LEXPLCHR+2, Y
+		PHA
+		LDA	LEXPLCHR+1, Y
+		PHA
+		LDA	LEXPLCHR+0, Y
+		
+		LDY	SPR0PTR
+
+		STA	SPRTBL0+ 1, Y	;c1
+		PLA
+		STA	SPRTBL0+ 5, Y	;c2
+		PLA
+		STA	SPRTBL0+ 9, Y	;c3
+		PLA
+		STA	SPRTBL0+13, Y	;c4
+
+		LDA	#2		;palette
+		STA	SPRTBL0+ 2, Y	;p1
+		STA	SPRTBL0+ 6, Y	;p2
+		STA	SPRTBL0+10, Y	;p3
+		STA	SPRTBL0+14, Y	;p4
+
+		LDA	TY
+		LDY	EXPL_A
+		CLC
+		ADC	E_SHPOFF, Y	;explosion pos. offset
+		LDY	SPR0PTR
+		STA	SPRTBL0+ 0, Y	;y1
+		LDA	TY
+		STA	SPRTBL0+ 4, Y	;y2
+		JSR	YPOSADJ
+		STA	SPRTBL0+ 8, Y	;y3
+		STA	SPRTBL0+12, Y	;y4
+
+		LDA	TX
+		LDY	EXPL_A
+		CLC
+		ADC	E_SHPOFF, Y	;explosion pos. offset
+		LDY	SPR0PTR
+		STA	SPRTBL0+ 3, Y	;x1
+		LDA	TX
+		STA	SPRTBL0+11, Y	;x3
+		JSR	XPOSADJ
+		STA	SPRTBL0+ 7, Y	;x2
+		STA	SPRTBL0+15, Y	;x4
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+	   
+EXPLODE:
+
+;set explosion tick & position of sprites for an 
+;enemy explosion, enemy index (0..3) in Y-reg.
+
+		STX	T0		;save X-reg.
+
+		JSR	ESHPPTR		;set pointer
+
+		LDA	ESHP_XH, Y
+		LDX	ESHP_XL, Y
+		JSR	GET_POS
+		STA	TX
+		LDA	ESHP_YH, Y
+		LDX	ESHP_YL, Y
+		JSR	GET_POS
+		STA	TY
+
+		JSR	GETESIZE
+		BNE	EXPL2
+
+;2x2 enemy...
+		LDA	SHIPEXPL, Y	;explosion tick
+		JSR	EXPL2X2
+		LDX	T0
+		RTS
+
+;3x3 enemy...
+
+EXPL2:		LDA	SHIPEXPL, Y	;explosion tick
+		JSR	EXPL3X3
+		LDX	T0
+		RTS
+
+
+
+;***************************************
+
+
+YPOSADJ:
+
+;given a Y-coord. (h'00..h'F8), add 8 and clip to
+;h'F8 or less...
+
+		CMP 	#H'F8		;already off-screen?
+		BCS	YPOSFIX
+
+		CLC
+		ADC	#8
+		CMP	#H'F8
+		BCC	YPOSEND		;ok!
+
+YPOSFIX:	LDA	#H'F8
+
+YPOSEND:	RTS
+
+
+
+XPOSADJ:
+
+;give an X-coord. (h'00..h'FF), add 8 and clip
+;(i.e., no wrap...)
+
+		CLC
+		ADC	#8
+		BCC	XPOSEND
+
+		LDA	#H'FF
+
+XPOSEND:	RTS
+
+
+;***************************************
+
+
+POS3X3:
+
+;position a 3x3 sprite given SPR0PTR as pointer
+;into SPRTBL0 and (TX, TY) as the upper left coordinates
+;
+;		1  2  3
+;		4  5  6
+;		7  8  9
+;
+
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+
+		LDA	TY
+		STA	SPRTBL0+ 0, Y	;y1
+		STA	SPRTBL0+ 4, Y	;y2
+		STA	SPRTBL0+ 8, Y	;y3
+		JSR	YPOSADJ
+		STA	SPRTBL0+12, Y	;y4
+		STA	SPRTBL0+16, Y	;y5
+		STA	SPRTBL0+20, Y	;y6
+		JSR	YPOSADJ
+		STA	SPRTBL0+24, Y	;y7
+		STA	SPRTBL0+28, Y	;y8
+		STA	SPRTBL0+32, Y	;y9
+
+		LDA	TX
+		STA	SPRTBL0+ 3, Y	;x1
+		STA	SPRTBL0+15, Y	;x4
+		STA	SPRTBL0+27, Y	;x7
+		JSR	XPOSADJ
+		STA	SPRTBL0+ 7, Y	;x2
+		STA	SPRTBL0+19, Y	;x5
+		STA	SPRTBL0+31, Y	;x8
+		JSR	XPOSADJ
+		STA	SPRTBL0+11, Y	;x3
+		STA	SPRTBL0+23, Y	;x6
+		STA	SPRTBL0+35, Y	;x9
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+POS2X2:
+
+;position a 2x2 sprite given SPR0PTR as pointers
+;into SPRTBL0 and (TX, TY) as the upper left coordinates
+;
+;		1  2
+;		3  4
+;
+
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+		LDX	SPR1PTR
+
+		LDA	TY
+		STA	SPRTBL0+ 0, Y	;y1
+		STA	SPRTBL0+ 4, Y	;y2
+		JSR	YPOSADJ
+		STA	SPRTBL0+ 8, Y	;y3
+		STA	SPRTBL0+12, Y	;y4
+
+		LDA	TX
+		STA	SPRTBL0+ 3, Y	;x1
+		STA	SPRTBL0+11, Y	;x3
+		JSR	XPOSADJ
+		STA	SPRTBL0+ 7, Y	;x2
+		STA	SPRTBL0+15, Y	;x4
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+POSENEMY:
+
+;set position of sprites for an enemy, index (0..3) in Y-reg.
+
+		TXA
+		PHA			;save registers
+
+		JSR	ESHPPTR		;set pointers
+
+		LDA	ESHP_XH, Y
+		LDX	ESHP_XL, Y
+		JSR	GET_POS
+		STA	TX
+		LDA	ESHP_YH, Y
+		LDX	ESHP_YL, Y
+		JSR	GET_POS
+		STA	TY
+
+		JSR	GETESIZE
+		BNE	POSE2
+
+;2x2 enemy...
+
+		JSR	POS2X2
+		PLA
+		TAX
+		RTS
+
+;3x3 enemy...
+
+POSE2:		JSR	POS3X3
+		PLA
+		TAX
+		RTS
+
+
+
+;***************************************
+
+
+		
+FLIP3X3:
+
+;set flip & pal. info. for a 3x3 sprite given SPR0PTR as
+;pointers into SPRTBL0 and flip/pal in Acc.
+;
+;		1  2  3
+;		4  5  6
+;		7  8  9
+;
+
+		STA	T0		;save flip & pal. info.
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+
+		LDA	T0		;restore flip & pal. info.
+		STA	SPRTBL0+ 2, Y	;p1
+		STA	SPRTBL0+ 6, Y	;p2
+		STA	SPRTBL0+10, Y	;p3
+		STA	SPRTBL0+14, Y	;p4
+		STA	SPRTBL0+18, Y	;p5
+		STA	SPRTBL0+22, Y	;p6
+		STA	SPRTBL0+26, Y	;p7
+		STA	SPRTBL0+30, Y	;p8
+		STA	SPRTBL0+34, Y	;p9
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+FLIP2X2:
+
+;set flip & pal. info. for a 2x2 sprite given SPR0PTR as
+;pointers into SPRTBL0 and flip/pal in Acc.
+;
+;		1  2
+;		3  4
+;
+
+		STA	T0		;save flip & pal. info.
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+
+		LDA	T0		;restore flip & pal. info
+		STA	SPRTBL0+ 2, Y	;p1
+		STA	SPRTBL0+ 6, Y	;p2
+		STA	SPRTBL0+10, Y	;p3
+		STA	SPRTBL0+14, Y	;p4
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+FLIPENEMY:
+
+;set flip / palette info for an enemy, index (0..3) in Y-reg.
+
+		STY	TY
+		STX	TX
+
+		JSR	ESHPPTR		;set pointers
+
+		LDX	ESHPDIR, Y
+		LDA	FLIPTBL, X 	;get appropriate flip byte
+		ORA	ESHPPAL, Y	;OR in the palette info...
+		PHA
+		JSR	GETESIZE
+		BNE	FLIPE2
+
+;2x2 enemy...
+
+		PLA
+		JSR	FLIP2X2
+		LDY	TY
+		LDX	TX
+		RTS
+
+;3x3 enemy...
+
+FLIPE2:		PLA
+		JSR	FLIP3X3
+		LDY	TY
+		LDX	TX
+		RTS
+
+
+
+;***************************************
+
+
+		
+DRAW3X3:
+
+;draw a 3x3 sprite given SPR0PTR as pointers
+;into SPRTBL0;
+;
+;  Acc.   = base char.
+;   X     = dir (0..15)
+;
+;		1  2  3
+;		4  5  6
+;		7  8  9
+;
+		
+		STA	T0		;base char
+
+		TYA
+		PHA			;save Y reg.
+		TXA
+		PHA			;save direction
+		
+		CLC
+		LDA	LGCH1, X	;1st shape #
+		ADC	T0		;add base char...
+		PHA
+		LDA	LGCH2, X     	;2nd
+		ADC	T0
+		PHA
+		LDA	LGCH3, X	;3rd
+		ADC	T0
+		PHA
+		LDA	LGCH4, X	;4th
+		ADC	T0
+		PHA
+		LDA	LGCH5, X	;5th
+		ADC	T0
+		PHA
+		LDA	LGCH6, X	;6th
+		ADC	T0
+		PHA
+		LDA	LGCH7, X	;7th
+		ADC	T0
+		PHA
+		LDA	LGCH8, X	;8th
+		ADC	T0
+		PHA
+		LDA	LGCH9, X	;9th
+		ADC	T0
+
+		LDY	SPR0PTR
+				
+		STA	SPRTBL0+33, Y	;9
+		PLA		
+		STA	SPRTBL0+29, Y	;8
+		PLA		
+		STA	SPRTBL0+25, Y	;7
+		PLA		
+		STA	SPRTBL0+21, Y	;6
+		PLA		
+		STA	SPRTBL0+17, Y	;5
+		PLA		
+		STA	SPRTBL0+13, Y	;4
+		PLA		
+		STA	SPRTBL0+ 9, Y	;3
+		PLA		
+		STA	SPRTBL0+ 5, Y	;2
+		PLA		     
+		STA	SPRTBL0+ 1, Y	;1
+
+		PLA
+		TAX
+		PLA
+		TAY			;restore X & Y regs.
+
+		RTS
+
+
+LGCH1:		.DB	H'00,H'03,H'06,H'09,H'0C,H'49,H'46,H'43
+		.DB	H'40,H'45,H'48,H'4B,H'4E,H'0B,H'08,H'05
+LGCH2:		.DB	H'01,H'04,H'07,H'0A,H'0D,H'4A,H'47,H'44
+		.DB	H'41,H'44,H'47,H'4A,H'4D,H'0A,H'07,H'04
+LGCH3:		.DB	H'02,H'05,H'08,H'0B,H'0E,H'4B,H'48,H'45
+		.DB	H'42,H'43,H'46,H'49,H'4C,H'09,H'06,H'03
+LGCH4:		.DB	H'20,H'23,H'26,H'29,H'2C,H'29,H'26,H'23
+		.DB	H'20,H'25,H'28,H'2B,H'2E,H'2B,H'28,H'25
+LGCH5:		.DB	H'21,H'24,H'27,H'2A,H'2D,H'2A,H'27,H'24
+		.DB	H'21,H'24,H'27,H'2A,H'2D,H'2A,H'27,H'24
+LGCH6:		.DB	H'22,H'25,H'28,H'2B,H'2E,H'2B,H'28,H'25
+		.DB	H'22,H'23,H'26,H'29,H'2C,H'29,H'26,H'23
+LGCH7:		.DB	H'40,H'43,H'46,H'49,H'4C,H'09,H'06,H'03
+		.DB	H'00,H'05,H'08,H'0B,H'0E,H'4B,H'48,H'45
+LGCH8:		.DB	H'41,H'44,H'47,H'4A,H'4D,H'0A,H'07,H'04
+		.DB	H'01,H'04,H'07,H'0A,H'0D,H'4A,H'47,H'44
+LGCH9:		.DB	H'42,H'45,H'48,H'4B,H'4E,H'0B,H'08,H'05
+		.DB	H'02,H'03,H'06,H'09,H'0C,H'49,H'46,H'43
+
+
+
+
+
+DRAW2X2:
+
+;draw a 2x2 sprite given SPR0PTR as pointers
+;into SPRTBL0;
+;
+;  Acc.   = base char.
+;   X     = flip / palette (calls FLIP2X2)
+;
+;		1  2
+;		3  4
+;
+		
+		STA	T0		;base char
+
+		TYA
+		PHA			;save Y reg.
+		TXA
+		PHA			;save direction
+		
+		CLC
+		LDA	SMCH1, X	;1st shape #
+		ADC	T0		;add base char...
+		PHA
+		LDA	SMCH2, X	;2nd
+		ADC	T0
+		PHA
+		LDA	SMCH3, X	;3rd
+		ADC	T0
+		PHA
+		LDA	SMCH4, X	;4th
+		ADC	T0
+
+		LDY	SPR0PTR
+
+		STA	SPRTBL0+13, Y	;4
+		PLA
+		STA	SPRTBL0+ 9, Y	;3
+		PLA
+		STA	SPRTBL0+ 5, Y	;2
+		PLA
+		STA	SPRTBL0+ 1, Y	;1
+
+		PLA
+		TAX
+		PLA
+		TAY			;restore X & Y regs.
+
+		RTS
+
+
+SMCH1: 		.DB	H'00,H'02,H'04,H'06,H'08,H'26,H'24,H'22
+		.DB	H'20,H'23,H'25,H'27,H'29,H'07,H'05,H'03
+SMCH2:		.DB	H'01,H'03,H'05,H'07,H'09,H'27,H'25,H'23
+		.DB	H'21,H'22,H'24,H'26,H'28,H'06,H'04,H'02
+SMCH3:		.DB	H'20,H'22,H'24,H'26,H'28,H'06,H'04,H'02
+		.DB	H'00,H'03,H'05,H'07,H'09,H'27,H'25,H'23
+SMCH4:		.DB	H'21,H'23,H'25,H'27,H'29,H'07,H'05,H'03
+		.DB	H'01,H'02,H'04,H'06,H'08,H'26,H'24,H'22
+
+
+
+
+DRAWENEMY:
+
+;draw enemy, index (0..3) in Y-reg.
+
+		STY	TY
+		STX	TX
+
+		JSR	ESHPPTR
+
+		LDX	ESHPDIR, Y
+
+		LDA	ESHPTYPE, Y
+		PHA
+		JSR	GETESIZE
+		BNE	DRAWE2
+
+;2x2 enemy...
+
+		PLA
+		JSR	DRAW2X2
+		LDY	TY
+		LDX	TX
+		RTS
+
+;3x3 enemy...
+
+DRAWE2:		PLA
+		JSR	DRAW3X3
+		LDY	TY
+		LDX	TX
+		RTS
+
+
+
+;***************************************
+
+REM3X3:
+
+;remove a 3x3 sprite given SPR0PTR as pointers
+;into SPRTBL0
+;
+;		1  2  3
+;		4  5  6
+;		7  8  9
+;
+
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+
+		LDA	#H'F8		;just off-screen
+		STA	SPRTBL0+ 0, Y	;y1
+		STA	SPRTBL0+ 4, Y	;y2
+		STA	SPRTBL0+ 8, Y	;y3
+		STA	SPRTBL0+12, Y	;y4
+		STA	SPRTBL0+16, Y	;y5
+		STA	SPRTBL0+20, Y	;y6
+		STA	SPRTBL0+24, Y	;y7
+		STA	SPRTBL0+28, Y	;y8
+		STA	SPRTBL0+32, Y	;y9
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+REM2X2:
+
+;remove a 2x2 sprite given SPR0PTR as pointer
+;into SPRTBL0
+;
+;		1  2
+;		3  4
+;
+
+		TYA
+		PHA			;save Y-reg.
+		TXA
+		PHA			;save X-reg.
+
+		LDY	SPR0PTR
+
+		LDA	#H'F8
+		STA	SPRTBL0+ 0, Y	;y1
+		STA	SPRTBL0+ 4, Y	;y2
+		STA	SPRTBL0+ 8, Y	;y3
+		STA	SPRTBL0+12, Y	;y4
+
+		PLA
+		TAX			;restore X-reg.
+		PLA
+		TAY			;restore Y-reg.
+		RTS
+
+
+
+
+
+REMENEMY:
+
+;set position of sprites for an enemy, index (0..3) in Y-reg.
+
+		TXA
+		PHA			;save registers
+
+		JSR	ESHPPTR		;set pointers
+
+		LDA	#H'F8		;set Y-coord. to off-screen
+		STA	TY
+
+		JSR	GETESIZE
+		BNE	REME2
+
+;2x2 enemy...
+
+		JSR	REM2X2
+		PLA
+		TAX
+		RTS
+
+;3x3 enemy...
+
+REME2:		JSR	REM3X3
+		PLA
+		TAX
+		RTS
+
+
+
+
+;***************************************
+
+
+
+BOX2X2:
+
+;load collision info. for a 2x2 sprite located at
+;screen pos. (A, Y)
+
+		CLC
+		ADC	#H'02
+		STA	OBJ1_LT
+		CLC
+		ADC	#H'0C
+		STA	OBJ1_RT
+		TYA
+		CLC
+		ADC	#H'02
+		STA	OBJ1_TOP
+		CLC
+		ADC	#H'0C
+		STA	OBJ1_BOT
+		RTS
+
+BOX3X3:
+
+;load collision info. for a 3x3 sprite located at
+;screen pos. (A, Y)
+
+		CLC
+		ADC	#H'04
+		STA	OBJ1_LT
+		CLC
+		ADC	#H'10
+		STA	OBJ1_RT
+		TYA
+		CLC
+		ADC	#H'04
+		STA	OBJ1_TOP
+		CLC
+		ADC	#H'10
+		STA	OBJ1_BOT
+		RTS
+
+
+BOXENEMY:
+
+;load collision info. for enemy index in Y-reg.
+
+		STY	TY
+		STX	TX
+
+		LDA	ESHP_XH, Y
+		LDX	ESHP_XL, Y
+		JSR	GET_POS		;get equiv. X screen pos.
+		PHA			;save X pos.
+		LDA	ESHP_YH, Y
+		LDX	ESHP_YL, Y
+		JSR	GET_POS		;get equiv. Y screen pos.
+
+		STA	T0
+		JSR	GETESIZE
+		BNE	BOXE2
+
+;2x2 enemy...
+
+		LDY	T0
+		PLA
+		JSR	BOX2X2
+		LDY	TY
+		LDX	TX
+		RTS
+
+;3x3 enemy...
+
+BOXE2:		LDY	T0
+		PLA
+		JSR	BOX3X3
+		LDY	TY
+		LDX	TX
+		RTS
+
+
+
+
+BOXPLYR:
+
+;load collision info. for player (constant) into OBJ2
+
+		LDA	#PLYR_TOP
+		STA	OBJ2_TOP
+		STA	OBJ2_LT
+		LDA	#PLYR_BOT
+		STA	OBJ2_BOT
+		STA	OBJ2_RT
+		RTS
+
+
+
+;************************************************************
+;SOUND ROUTINES
+;************************************************************
+
+
+;THE FOLLOWING EQUATES ARE USED TO MAKE MUSIC STRINGS.
+
+.EQU	LC,		H'00
+.EQU	LCs,		H'01
+.EQU	LDb,		H'01
+.EQU	LD,		H'02
+.EQU	LDs,		H'03
+.EQU	LEb,		H'03
+.EQU	LE,		H'04
+.EQU	LF,		H'05
+.EQU	LFs,		H'06
+.EQU	LGb,		H'06
+.EQU	LG,		H'07
+.EQU	LGs,		H'08
+.EQU	LAb,		H'08
+.EQU	LA,		H'09
+.EQU	LAs,		H'0A
+.EQU	LBb,		H'0A
+.EQU	LB,		H'0B
+.EQU	C,		H'0C
+.EQU	Cs,		H'0D
+.EQU	Db,		H'0D
+.EQU	D,		H'0E
+.EQU	Ds,		H'0F		
+.EQU	Eb,		H'0F
+.EQU	E,		H'10
+.EQU	F,		H'11
+.EQU	Fs,		H'12
+.EQU	Gb,		H'12
+.EQU	G,		H'13	;NOTES (center around instrument range)
+.EQU	Gs,		H'14
+.EQU	Ab,		H'14
+.EQU	Ax,		H'15	;Special Case.  'A' is register!
+.EQU	As,		H'16
+.EQU	Bb,		H'16
+.EQU	B,		H'17
+.EQU	HC,		H'18
+.EQU	HCs,		H'19	;s = sharp (#)
+.EQU	HDb,		H'19	;b = flat
+.EQU	HD,		H'1A
+.EQU	HDs,		H'1B
+.EQU	HEb,		H'1B
+.EQU	HE,		H'1C
+.EQU	HF,		H'1D
+.EQU	HFs,		H'1E
+.EQU	HGb,		H'1E
+.EQU	PAUSE,		H'1F
+
+.EQU	N16,		B'00000000	;NOTE DURATIONS:
+.EQU	N8,		B'00100000	;  Use by adding (Gs+N16)
+.EQU	N4,		B'01000000
+.EQU	N2,		B'01100000
+.EQU	N1,		B'10000000
+
+.EQU	BASE_HARPSI,	B'10100000
+.EQU	HARPSI,		B'10100001
+.EQU	HIGH_HARPSI,	B'10100010
+.EQU	BASE_STRING,	B'10100011
+.EQU	STRING,		B'10100100
+.EQU	HIGH_STRING,	B'10100101
+.EQU	BASE_ELECPIANO,	B'10100110
+.EQU	ELECPIANO,	B'10100111
+.EQU	HIGH_ELECPIANO,	B'10101000	;INSTRUMENT SELECT COMMANDS
+.EQU	BASE_SLIDER,	B'10101001
+.EQU	SLIDER,		B'10101010
+.EQU	HIGH_SLIDER,	B'10101011
+.EQU	BASE_BEE,	B'10101100
+.EQU	BEE,		B'10101101
+.EQU	HIGH_BEE,	B'10101110
+.EQU	BASE_PIANO,	B'10101111
+.EQU	PIANO,		B'10110000
+.EQU	HIGH_PIANO,	B'10110001
+.EQU	BASE_ARCADE,	B'10110010
+.EQU	ARCADE,		B'10110011
+.EQU	HIGH_ARCADE,	B'10110100
+
+
+.EQU	VOICE0,		B'11100000	;used to select a register
+.EQU	VOICE1,		B'11100001	;set (voice).
+.EQU	VOICE2,		B'11100010
+.EQU	VOICE3,		B'11100011
+
+.EQU	REPLAY,		B'11100100	;used to repeat a sound string
+.EQU	ENDPLAY,	B'11101000	;used to end a sound string
+
+.EQU	LOADREG0,	B'11101100	;used to hard code loading
+.EQU	LOADREG1,	B'11101101	;of registers in currently
+.EQU	LOADREG2,	B'11101110	;selected register set (voice).
+.EQU	LOADREG3 ,	B'11101111
+
+.EQU	STOPVOICE,	B'11110000	;silence a voice
+.EQU	STARTVOICE,	B'11110100 	;activate a voice
+
+.EQU	COMPLEX,	B'11111100	;select the complex generator
+
+
+
+;THIS ROUTINE WILL PLAY (ACTIVATE) THE SOUND STRUCTURE POINTED TO BY
+;Y:X.  THE SLOT TO PLAY IT IN IS PASSED IN A.  A RETURNS Z IF SUCCESS
+;AND NZ IF FAILURE.  THE VALUES FOR A ARE:
+
+;0 AND Z IF SUCCESS.
+;-1 IF THE SOUND SLOT # WAS INVALID (OVER RANGE).
+;1 IF THE SLOT WAS ALREADY IN USE (USE SILENCE TO FREE THE SLOT).
+
+PLAY:  	STX	SUBSVAR1
+	STY	SUBSVAR2	;SAVE ENTRY POINTERS
+	JSR	SNDINDX		;IN RANGE?
+	BEQ	PL10
+	RTS
+
+PL10:	LDA	SND_RAM+SF,X	;IN USE?
+	BPL	PL20
+	LDA	#1		;IF IT IS, RETURN 1
+	RTS
+
+PL20:	LDA	#1
+	STA	SND_RAM+ST,X	;SET NEXT NMI TO ACTIVATE SOUND
+	LDA	#0
+	STA	SND_RAM+SI,X	;SET INSTRUMENT 0 AS DEFAULT
+	LDA	SUBSVAR1
+	STA	SND_RAM+SBL,X
+	STA	SND_RAM+SOL,X	;SET LOW OFFSET
+	LDA	SUBSVAR2
+	STA	SND_RAM+SBH,X
+	STA	SND_RAM+SOH,X	;SET HIGH OFFSET
+	LDA	#H'C0
+	STA	SND_RAM+SF,X	;SET AS ACTIVE SOUND STRUCTURE BUT NO REG.
+	RTS
+
+;THIS ROUTINE WILL SILENCE (FREE UP) THE SOUND SLOT SPECIFIED BY A.
+;IT IS OK TO SILENCE A SOUND THAT IS NOT ACTIVE.  ON RETURN A=0 AND Z 
+;IF SUCCESS OR A=-1 AND NZ IF INVALID SLOT #.
+
+SILENCE:
+	CMP	#-1		;SILENCE ALL?
+	BNE	SL10
+
+	LDA	#0
+SL5:	PHA
+	JSR	SILENCE		;IF SO, LOOP WITH ALL VALUES
+	BNE	SL7
+	PLA
+	CLC
+	ADC	#1
+	JMP	SL5
+SL7:	PLA
+	LDA	#0		;AND RETURN OK.
+	RTS
+
+SL10:	JSR	SNDINDX
+	BEQ	SL20	
+	RTS			;IF BAD INDEX, RETURN -1
+
+;INTERNAL CALL LOCATION IF X HAS A VALID SLOT NUMBER TO SILENCE.
+
+SL20:  	LDA	SND_RAM+SF,X	;GET THE FLAG BYTE
+	BPL	SL50		;SKIP IF NOT IN USE
+
+;THIS SLOT WAS ACTIVE.  IF IT WAS NOT ACTUALLY PLAYING WE ARE DONE BUT
+;IF IT WAS PLAYING, WE MIGHT HAVE TO REACTIVATE ANOTHER SUSPENDED SOUND
+;SLOT.  WE SCAN THE LIST FROM THE TOP DOWN AND ONLY REACTIVATE THE FIRST
+;WE FIND.
+
+	TAY			;SAVE A COPY
+	AND	#H'60		;SEE IF NOT ASSIGNED OR IF SUSPENDED
+	BEQ	SL25		;SKIP IF TRULY ACTIVE
+	LDA	#0
+	STA	SND_RAM+SF,X	;IF INACTIVE, JUST FREE IT UP
+	JMP	SL50		;IF THIS ONE'S INACTIVE, IT DIDN'T SUSPEND ANY
+
+SL25:  	JSR	DISABLE_VOICE	;IF ACTIVE, DISABLE IT'S VOICE
+	LDA	SND_RAM+SF,X	;GET BACK IT'S FLAG
+	PHA			;SAVE THE FLAG
+	LDA	#0
+	STA	SND_RAM+SF,X	;FREE UP THIS SOUND STRUCTURE
+	PLA
+	AND	#H'1F		;KEEP BASE OF REGISTERS IN USE
+	STA	SUBSVAR1	;SAVE HERE FOR COMPARE TO ONES WE FIND
+
+	LDX	#0		;START AT LOWEST SLOT
+
+SL30:	TXA
+	PHA
+	LDA	SND_RAM+SF,X	;GET ITS FLAG BYTE
+	BPL	SL42		;IF NOT IN USE, SKIP IT
+
+	AND	#H'20		;SEE IF SUSPENDED
+	BEQ	SL42		;WE DON'T CARE UNLESS IT IS
+	LDA	SND_RAM+SF,X
+	AND	#H'1F		;GET THE VOICE IT WAS USING
+	EOR	SUBSVAR1	;SEE IF SAME AS OURS
+	BNE	SL42		;IF NOT, WE DON'T CARE
+	PLA			;IF IT WAS, DISCARD SLOT INDEX
+	JSR	INITSND		;AND INITIALIZE IT
+	LDA	SND_RAM+SF,X
+	AND	#H'DF
+	STA	SND_RAM+SF,X	;AND MARK AS NOT SUSPENDED ANY MORE
+	JMP	SL50
+
+SL42:	PLA
+	CLC
+	ADC	#SND_WIDE
+	TAX
+	CMP	#SND_WIDE*SNDSLOTS	;SEE IF DONE WITH LIST
+	BCC	SL30			;DO NEXT
+	JMP	SL50
+
+SL45:	PLA			;IF LIST END, DONE
+
+SL50:	LDA	#0
+	RTS
+
+
+
+INSTRUMENTS:	
+.DB	H'C0,H'00          		;BASE_HARPSI
+.DB	H'C0,H'00          		;HARPSI
+.DB	H'C0,H'00          		;HIGH_HARPSI    
+.DB	H'80,H'00          		;BASE_STRING
+.DB	H'80,H'00          		;STRING
+.DB	H'80,H'00          		;HIGH_STRING    
+.DB	H'00,H'00          		;BASE_ELECPIANO
+.DB	H'00,H'00          		;ELECPIANO
+.DB	H'00,H'00          		;HIGH_ELECPIANO
+.DB	H'80,H'FF          		;BASE_SLIDER
+.DB	H'80,H'FF          		;SLIDER
+.DB	H'80,H'FF          		;HIGH_SLIDER   
+.DB	H'00,H'D6          		;BASE_BEE
+.DB	H'00,H'D6          		;BEE
+.DB	H'00,H'D6          		;HIGH_BEE
+.DB	H'40,H'00          		;BASE_PIANO
+.DB	H'40,H'00          		;PIANO
+.DB	H'40,H'00          		;HIGH_PIANO
+.DB 	H'80,H'C9			;BASE_ARCADE
+.DB 	H'80,H'C9			;ARCADE
+.DB 	H'80,H'C9			;HIGH ARCADE
+
+;THIS ROUTINE WILL GO THROUGH THE SOUND SLOTS AND WILL FEED THE NEXT
+;CORRECT DATA TO THE SOUND CHIP ACCORDING TO THE ACTIVE SLOTS.  IT SHOULD
+;BE CALLED EACH NMI.
+
+FEED_SOUND:
+
+	LDX	#0		;START WITH THE LOWEST SOUND SLOT.
+	
+FS20:	LDA	SND_RAM+SF,X	;GET THE SOUND FLAG
+	BPL	FS30		;IF NOT IN USE, SKIP IT
+
+;FOUND A SOUND THAT IS RUNNING.  COUNT DOWN ITS TIMER.
+
+	DEC	SND_RAM+ST,X	;COUNT IT DOWN
+	BEQ	FS50		;IF REACHES ZERO, TIME FOR MORE PROCESSING	
+
+;DONE WITH THIS SOUND, OR NOT IN USE.
+
+FS30:	TXA
+	CLC
+	ADC	#SND_WIDE
+	TAX
+	CMP	#SND_WIDE*SNDSLOTS	;END OF LIST?
+	BCC	FS20			;IF NOT, CONTINUE
+	RTS
+
+;THIS SOUND NEEDS TO BE UPDATED.  ITS TIMER RAN OUT.
+
+FS50:  	LDA	SND_RAM+SOL,X		;GET LOW OFFSET OF NEXT BYTE TO USE
+	STA	SUBSVAR1
+	LDA	SND_RAM+SOH,X		;GET HIGH
+	STA	SUBSVAR2		;MAKE POINTER TO THE NEXT BYTE
+	LDY	#0
+
+;PROCESS NEXT COMMAND FOR THIS SOUND SLOT.
+
+FS60:	LDA	(SUBSVAR1),Y
+	AND	#B'11100000		;SEE IF JUST A NOTE
+	CMP	#B'10100000		;NOTES END BELOW THIS
+	BCS	FS200
+
+;JUST ANOTHER NOTE TO PLAY.
+
+	LDA	(SUBSVAR1),Y		;GET BACK DURATION
+	JSR	SET_DURATION
+
+	LDA	SND_RAM+SI,X		;GET INSTRUMENT TYPE
+	ASL	A			;MAKE *2 POINTER
+	TAY
+	LDA	FREQBASES,Y		;GET LOW BASE OF FREQUENCY TABLE
+	STA	PTR3L
+	LDA	FREQBASES+1,Y
+	STA	PTR3L+1		;MAKE POINTER TO FREQUENCY TABLE
+	LDY	#0
+	LDA	(SUBSVAR1),Y		;GET NOTE TO USE
+	AND	#H'1F
+	CMP	#PAUSE			;SILENCE?
+	BEQ	FS70
+	ASL	A			;MAKE INDEX FROM IT
+	TAY
+	LDA	(PTR3L),Y
+	STA	SUBSVAR3
+	INY
+	LDA	(PTR3L),Y
+	STA	SUBSVAR4		;SET FREQUENCY TO USE
+	JSR	SET_FREQUENCY
+FS70:  	JSR	INC_INDX
+	JMP	FS30
+	
+;ITS A SPECIAL COMMAND.
+
+FS200:	CMP	#B'10100000	;SELECT INSTRUMENT?
+	BNE	FS220
+	LDA	(SUBSVAR1),Y	;GET BACK INSTRUMENT
+	AND	#H'1F
+	STA	SND_RAM+SI,X	;PUT INTO SLOT
+	LDA	SND_RAM+SF,X	;SEE IF SUSPENDED OR NO BASE
+	AND	#H'60
+	BNE	FS210
+	JSR	INITSND		;INITIALIZE FOR THIS INSTRUMENT
+
+;DONE WITH THIS SOUND AND NEED TO INC THE POINTER AND PUT IN A 1 NMI DELAY.
+
+FS210:	JSR	INC_INDX
+	LDA	#1
+	STA	SND_RAM+ST,X	;SET TIMER FOR NEXT NMI
+	JMP	FS30
+	
+;ABSOLUTE FREQUENCY LOAD?
+
+FS220:	CMP	#B'11000000	;LOAD FREQUENCY?
+	BNE	FS240
+
+	LDA	(SUBSVAR1),Y	;GET NOTE DURATION
+	ASL	A
+	ASL	A
+	ASL	A		;MOVE NOTE DURATION INTO NORMAL LOCATION
+	JSR	SET_DURATION
+
+	LDY	#0
+	LDA	(SUBSVAR1),Y	;GET HIGH FREQUENCY 2 BITS
+	AND	#3
+	STA	SUBSVAR4
+	INY
+	LDA	(SUBSVAR1),Y	;GET LOW FREQUENCY BYTE
+	STA	SUBSVAR3	;SAVE IT
+
+	JSR	SET_FREQUENCY	;SET FREQUENCY.  WILL CAUSE IT TO PLAY
+	JSR	INC_INDX
+	JSR	INC_INDX
+	JMP	FS30
+
+;EXTENDED COMMAND.
+
+FS240:	LDA	(SUBSVAR1),Y	;GET THE EXTENDED BITS
+	AND	#B'00011111	;KEEP THEM AND THE DATA BITS TOO.
+	CMP	#B'00000011+1	;SEE IF SPECIFY VOICE COMMAND
+	BCS	FS260
+
+	AND	#3		;GET THE VOICE TO USE
+	ASL	A
+	ASL	A		;MAKE *4 BASE POINTER
+
+FS245: 	PHA			;SAVE VOICE BASE BITS
+	LDA	SND_RAM+SF,X	;GET CURRENT VALUE
+	AND	#H'E0		;REMOVE THE BITS THAT SELECT THE BASE REG
+	STA	SND_RAM+SF,X
+	PLA
+	ORA	SND_RAM+SF,X	;PUT NEW REGISTER BASE INTO THE FLAG BYTE
+	AND	#H'9F		;REMOVE REGISTER NOT SELECTED BIT AND SUSPEND
+	STA	TMP_NMI1	;SAVE HERE FOR CHECK FOR OTHER'S USING IT
+	STA	SND_RAM+SF,X
+	STX	TMP_NMI2	;SAVE OUR INDEX
+
+	LDX	#0
+FS250:	LDA	SND_RAM+SF,X	;GET A FLAG BYTE
+	EOR	TMP_NMI1	;SEE IF THAT SOUND SLOT IS USING THIS VOICE
+	BNE	FS255
+      	LDA	SND_RAM+SF,X
+	ORA	#H'20		;IF SO, SUSPEND HIM
+	STA	SND_RAM+SF,X
+FS255:	TXA
+	CLC
+	ADC	#SND_WIDE
+	TAX
+	CMP	#SND_WIDE*SNDSLOTS	;DONE?
+	BCC	FS250
+
+	LDX	TMP_NMI2	;GET BACK OUR INDEX
+	LDA	TMP_NMI1	;AND OUR FLAG BYTE
+	STA	SND_RAM+SF,X	;PUT BACK OUR FLAG CAUSE OUR LOOP SUSPENDED US
+	JSR	ENABLE_VOICE	;AND ENABLE OUR VOICE
+	JMP	FS210
+
+FS260:	CMP	#B'00000111+1	;REPEAT LIST?
+	BCS	FS280
+	LDA	SND_RAM+SBL,X
+	STA	SND_RAM+SOL,X
+	LDA	SND_RAM+SBH,X
+	STA	SND_RAM+SOH,X	;IF SO, JUST RESET POINTER
+	JMP	FS210		;AND SKIP THIS COMMAND.
+
+
+FS280:	CMP	#B'00001011+1	;END LIST?
+	BCS	FS300
+	TXA
+	PHA
+	JSR	SL20		;USE THE SILENCE ROUTINE'S SPECIAL ENTRY PNT.
+	PLA
+	TAX
+	JMP	FS210
+
+FS300:	CMP	#B'00001111+1	;ABSOLUTE REG LOAD?
+	BCS	FS320
+
+	LDA	SND_RAM+SF,X
+	AND	#H'60
+	BEQ	FS310
+	JMP	FS210		;SKIP IT IF NOT SELECTED OR SUSPENDED
+
+FS310:	LDA	SND_RAM+SF,X	;GET REG BASE FOR THIS VOICE
+	AND	#H'1F		;KEEP THE REG OFFSET
+	STA	SUBSVAR3
+	LDY	#0
+	LDA	(SUBSVAR1),Y	;GET LOW 2 BITS OF REG TO USE
+	AND	#3
+	CLC
+	ADC	SUBSVAR3	;MAKE IT INTO A POINTER
+	STA	PTR3L
+	LDA	#H'40
+	STA	PTR3L+1	;AND POINT TO THE REG AT 40XX
+	LDY	#1
+	LDA	(SUBSVAR1),Y	;GET VALUE TO USE
+	LDY	#0
+	STA	(PTR3L),Y	;PUT IT OUT THERE
+	JSR	INC_INDX		;SKIP THE EXTRA BYTE WE USED
+	JMP	FS210	
+
+FS320:	CMP	#B'00010011+1	;DISABLE SOUND?
+	BCS	FS340
+	JSR	DISABLE_VOICE
+	JMP	FS210
+
+FS340:	CMP	#B'00010111+1	;ENABLE SOUND?
+	BCS	FS360
+	JSR	ENABLE_VOICE
+	JMP	FS210
+
+FS360:	CMP	#B'000110111+1	;USE COMPLEX VOICE?
+	BCS	FS380
+	LDA	#H'10		;ITS BASE IS HERE
+	JMP	FS245		;SHARE CODE WITH THE OTHER VOICE LOGIC
+
+;COMMAND NOT RECOGNIZED.  JUST SKIP IT.
+
+FS380:	JMP	FS210
+
+;THIS ROUTINE WILL TAKE A SOUND SLOT INDEX IN X AND ENABLE THE APPROPRIATE
+;BIT IN THE SOUND ENABLE REGISTER TO MAKE THOSE REGISTERS ACTIVE.
+
+ENABLE_VOICE:
+
+	JSR	ENABLE_BIT
+	ORA	REG4015
+	STA	REG4015
+	STA	H'4015		;ENABLE IT AND SAVE VALUE FOR OTHERS TO REF.
+	RTS
+
+;THIS ROUTINE WILL DISABLE A VOICE SIMILAR TO ENABLE VOICE.
+
+DISABLE_VOICE:
+	JSR	ENABLE_BIT
+	EOR	#H'FF
+	AND	REG4015
+	STA	REG4015
+	STA	H'4015		;DISABLE IT AND SAVE STATE	
+	RTS
+
+;THIS ROUTINE WILL PUT AN ENABLE REGISTER BIT VALUE INTO A FOR THE SOUND
+;SLOT INDEX IN X.  THIS VALUE IS FOR REG4015.
+
+ENABLE_BIT:
+	LDA	SND_RAM+SF,X	;GET THE REGISTERS TO USE
+	AND	#H'1F
+	LSR	A
+	LSR	A		;MAKE INTO UNIQUE NUMBER 0-4
+	TAY
+	LDA	#1
+	INY
+EB10:	DEY
+	BEQ	EB20
+	ASL	A   		;SHIFT UP ENABLE BIT
+     	JMP	EB10
+EB20:	RTS
+
+
+;THIS TABLE HAS A 2 BYTE VALUE FOR EACH NOTE DURATION.  THIS FIRST IS
+;THE NUMBER OF NMI CYCLES WE SHOULD WAIT FOR THE NOTE TO COMPLETE.
+;THE SECOND IS THE VALUE TO PUT INTO THE SOUND CHIP DURATION REGISTER BITS.
+
+TIME_BASE:
+.DB	8,1			;1/16 NOTE
+.DB	16,5			;1/8 NOTE
+.DB	32,8			;1/4 NOTE
+.DB	64,15			;1/2 NOTE
+.DB	128,31			;WHOLE NOTE
+
+;THIS ROUTINE WILL TAKE A NOTE DURATION (1/16, 1/8, 1/4, ETC) AS SPECIFIED
+;IN THE TOP 3 BITS OF A AND WILL SET THE TIME COUNTER VALUE IN
+;THE SOUND SLOT AND WILL ALSO SET UP THE SOUND REGISTER RESPONSIBLE FOR
+;THE TIME.  THE SLOT INDEX MUST BE IN X.  THE VALUES IN THE HIGH 3 BITS OF 
+;A SHOULD RANGE FROM B'000 TO B'100.  IF THE SLOT IS SUSPENDED OR THE
+;REGISTERS ARE NOT SELECTED, THIS ROUTINE WILL SET UP ONLY THE TIME
+;BASE AND WILL NOT DO AN ACTUAL LOAD.
+
+;X IS SAVED BUT Y IS NOT.  SUBSVARs ARE NOT DISTURBED.    NMI LEVEL
+;ROUTINE ONLY!
+
+SET_DURATION:
+
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A		;MOVE BITS DOWN TO MAKE *2 INDEX
+	AND	#H'FE		;MAKE SURE INDEX IS EVEN
+	TAY			;USE INDEX HERE
+	LDA	TIME_BASE,Y	;GET THE TIME BASE FOR OUR SOUND STRUCTURE
+	STA	SND_RAM+ST,X	;RELOAD THE TIMER
+
+	LDA	SND_RAM+SF,X	;GET BACK THE FLAG
+	AND	#H'60		;SEE IF SUSPENDED OR NO REGS SELECTED
+	BNE	SD60
+
+	INY
+	LDA	TIME_BASE,Y	;GET THE RELOAD BITS FOR THE LOW REGISTER
+	STA	TMP_NMI1	;SAVE IT HERE
+
+	LDA	SND_RAM+SF,X	;GET REGISTER BASE
+	AND	#H'1F		;MAKE BASE REG
+	STA	PTR3L
+	LDA	#H'40
+	STA	PTR3L+1	;INTO A POINTER WE CAN USE
+
+	LDA	SND_RAM+SI,X	;GET INSTRUMENT
+	ASL	A		;MAKE *2 POINTER FROM IT
+	TAY
+	LDA	INSTRUMENTS,Y	;GET REGISTER VALUE TO LOAD
+	ORA	TMP_NMI1	;OR IN THE TIME BASE
+	LDY	#0
+	STA	(PTR3L),Y	;PUT INTO THE SOUND CHIP
+SD60:	RTS
+
+;THE FOLLOWING TABLE HAS A 1 WORD PTR TO THE FREQUENCY TABLE TO USE
+;FOR A GIVEN INSTRUMENT.  THE INSTRUMENTS REPEAT THEIR RANGES IN 3'S
+;SO ACTUALLY THE TABLE REPEATS A WHOLE LOT.
+
+FREQBASES:
+
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ,HIGH_FREQ
+.DRW	LOW_FREQ,MID_FREQ
+
+;THIS TABLE CONTAINS THE FREQUENCIES TO USE FOR SPECIFIC NOTES IN
+;A MULTI-OCTIVE RANGE.  THERE ARE 3 REFERENCE POINTS INTO THE TABLE
+;FOR USE WITH THE VARIOUS INSTRUMENTS.
+
+LOW_FREQ:
+.DRW	H'352		;C	
+.DRW	H'325		;C#	
+.DRW	H'2FD		;D	
+.DRW	H'2CC		;Eb	
+.DRW	H'2A7		;E	
+.DRW	H'27C		;F	
+.DRW	H'25A		;F#	
+.DRW	H'23B		;G	
+.DRW	H'213		;Ab	
+.DRW	H'1FD		;A	
+.DRW	H'1DE		;Bb	
+.DRW	H'1C6		;B	
+
+MID_FREQ:
+.DRW	H'1AB		;C	
+.DRW	H'191		;C#	
+.DRW	H'17A		;D	
+.DRW	H'167		;Eb	
+.DRW	H'151		;E	
+.DRW	H'13F		;F	
+.DRW	H'12C		;F#	
+.DRW	H'11C		;G	
+.DRW	H'10D		;Ab	
+.DRW	H'FE 		;A	
+.DRW	H'EF 		;Bb	
+.DRW	H'E2 		;B	
+
+HIGH_FREQ:
+.DRW	H'D5  		;MIDDLE C	
+.DRW	H'C8		;C#	
+.DRW	H'BE		;D	
+.DRW	H'B3		;Eb	
+.DRW	H'A9		;E	
+.DRW	H'9F		;F	
+.DRW	H'96		;F#	
+.DRW	H'8E		;G	
+.DRW	H'86		;Ab	
+.DRW	H'7E		;A	
+.DRW	H'77		;Bb	
+.DRW	H'70		;B	
+.DRW	H'6A		;C	
+.DRW	H'64		;C#	
+.DRW	H'5E		;D	
+.DRW	H'59		;Eb	
+.DRW	H'54		;E	
+.DRW	H'4F		;F	
+.DRW	H'4B		;F#	
+.DRW	H'46		;G	
+.DRW	H'42		;Ab	
+.DRW	H'3F		;A	
+.DRW	H'3B		;Bb	
+.DRW	H'38		;B	
+.DRW	H'34		;C	
+.DRW	H'32		;C#	
+.DRW	H'2F		;D	
+.DRW	H'2C		;Eb	
+.DRW	H'29		;E	
+.DRW	H'27		;F	
+.DRW	H'24		;F#	
+.DRW	H'23		;G	
+
+;THIS ROUTINE WILL TAKE A FREQUENCY IN SUBSVAR3 AND 4 AND WILL LOAD
+;IT INTO THE SOUND CHIP POINTED TO BY THE SLOT INDEX IN X.  IT JUST
+;RETURNS IF THE REGISTERS ARE NOT SELECTED OR THE SOUND IS SUSPENDED.
+
+SET_FREQUENCY:
+
+	LDA	SND_RAM+SF,X	;GET BACK THE FLAG
+	AND	#H'60		;SEE IF SUSPENDED OR NO REGS SELECTED
+	BNE	SQ60
+
+	LDA	SND_RAM+SF,X	;GET REGISTER BASE
+	AND	#H'1F		;MAKE BASE REG
+	STA	PTR3L
+	LDA	#H'40
+	STA	PTR3L+1	;INTO A POINTER WE CAN USE
+
+	LDY	#2		;START WITH LOW REG LOAD
+	LDA	SUBSVAR3
+	STA	(PTR3L),Y
+	INY
+	LDA	SUBSVAR4	;THEN GET HIGH
+	ORA	#8		;OR IN THE BIT TO USE DURATION REG
+	STA	(PTR3L),Y
+SQ60:	RTS
+
+;THIS ROUTINE WILL INCREMENT THE CURRENT SOUND OFFSET POINTER IN THE
+;SOUND SLOT SPECIFIED BY INDEX IN X.
+
+INC_INDX:
+	INC	SND_RAM+SOL,X	;DONE, MOVE INDEX ALONG
+	BNE	IX5
+	INC	SND_RAM+SOH,X
+IX5:	RTS
+
+
+;THIS ROUTINE WILL TAKE A SLOT INDEX IN X (NOT A SLOT #) AND WILL USE
+;THE INSTRUMENT SPECIFICATION TO INITIALIZE THAT REGISTER SET.  MAKE SURE
+;THAT THE REGISTER SET SPECIFICATION IS VALID, NOT SUSPENDED, AND THAT
+;THE INSTRUMENT IS VALID, THIS ROUTINE DOES NOT CHECK THAT.
+
+;YOUR INDEX IN X IS SAVED.  SUBSVARs ARE ALL CHANGED.
+
+INITSND:
+	LDA	SND_RAM+SI,X	;GET INSTRUMENT
+	ASL	A		;MAKE *2 POINTER FROM IT
+	STA	SUBSVAR4	;SAVE IT HERE
+	LDA	SND_RAM+SF,X	;GET BASE
+	AND	#H'1F
+	STA	SUBSVAR1
+	LDA	#H'40
+	STA	SUBSVAR2	;MAKE FULL POINTER TO IT IN MEMORY
+
+ 	LDY	SUBSVAR4
+	LDA	INSTRUMENTS,Y	;GET REGISTER VALUE TO LOAD
+	LDY	#0
+	STA	(SUBSVAR1),Y	;PUT INTO CORRECT REGISTER
+	LDY	SUBSVAR4
+	INY			;GET NEXT REGISTER VALUE
+	LDA	INSTRUMENTS,Y
+	LDY	#1
+	STA	(SUBSVAR1),Y	;PUT INTO NEXT REG
+	JSR	ENABLE_VOICE
+	RTS
+
+CHK_SLNC:
+	CMP	EFFECT
+	BCS	SLNC_IT
+	LDX	#21
+	LDA	SND_RAM+SF,X
+	AND	#H'80
+	BEQ	SLNC_IT
+	LDA	#0
+	RTS
+SLNC_IT:
+	LDA	#3
+	JSR	SILENCE
+	LDA	#1
+	RTS
+
+;THIS ROUTINE WILL CONVERT A SOUND SLOT NUMBER IN A INTO AN INDEX IN X.  IT
+;ALSO CHECKS FOR IN RANGE.  ON RETURN Z AND A=0 IF VALID.    
+
+SNDINDX:
+	CMP	#SNDSLOTS	;VALID VALUE?
+	BCS	SX40		;SKIP IF NOT
+
+	TAX
+	LDY	#SND_WIDE
+	JSR	MUL
+	LDA	#0
+	RTS
+
+SX40:	LDA	#-1
+	RTS
+
+
+MUL: 	STY	COUNT0		;SAVE MULTIPLIER
+	STX	COUNT2		;SAVE MULTIPLICAND
+	LDA	#0
+	STA	COUNT1		;ZERO HIGH RESULT
+	LDX	#8		;THERE ARE 8 BITS TO TEST FOR
+
+M10:	ASL	A		;SHIFT PRODUCT 1 TO DOUBLE IT.  FIRST LOOP=0
+	ROL	COUNT1		;AND MOVE BIT UP INTO RESULT HIGH BYTE
+
+	ASL	COUNT0		;SEE IF WE NEED TO ADD FOR THIS BIT
+	BCC	M20
+	CLC
+	ADC	COUNT2		;IF SO, ADD IN THE VALUE
+	BCC	M20
+	INC	COUNT1		;IF CARRY, BRING UP TO HIGH RESULT
+M20:	DEX
+	BNE	M10
+	TAX			;SAVE LOW BYTE IN RETURN REG	
+	LDY	COUNT1		;AND GET HIGH
+	RTS
+
+;THIS ROUTINE WILL ADD THE 1 BYTE VALUE IN A TO THE 2 BYTE VALUE IN
+;X AND Y (X LOW BYTE).  THIS ROUTINE MAY BE CALLED FROM ANY LEVEL AND 
+;IT USES ITS OWN VARIABLES.  ONLY COUNT1 IS CHANGED.
+
+ADD_WORD:
+	STX	COUNT1
+	CLC
+	ADC	COUNT1
+	TAX
+	BCC	AW10
+	INY
+AW10:	RTS
+
+
+;*****************************************************
+
+
+;SET THE DIFFICULTY
+; USES A, X, & Y 
+
+SET_DIFF:
+
+		LDA	PRADIKUS
+		BNE	SD_PRAD
+
+
+		LDA	GALAXY_Y
+		ASL	A
+		ASL	A
+		ASL	A
+		CLC
+		ADC	GALAXY_X
+		TAX
+		LDA	DIFF_TBL,X
+		TAY
+		LDX	TIME_DIFF
+		INX
+		STX	TIME_DIFF
+		JSR	MUL_ADD	
+	  	BCS	SD_FIX
+		CMP	#H'48
+		BCC	SD_OK
+		
+SD_FIX:		LDA	#H'48		;maximum diff.
+
+SD_OK:		STA	DIFF
+		RTS
+
+
+SD_PRAD:	LDA	#H'58
+		STA	DIFF
+		RTS
+
+MAXETBL:	.DB	 4,  4,  3,  2,  3	;maximum no. of enemies
+MAXSTBL:	.DB	12,  7, 11, 10,  7	;maximum no. of shots
+	;index of 4 is used when 2 or more space stations exist
+	;in the current solar system
+
+
+SET_DENS:
+		LDA	PRADIKUS
+		BNE	DENSPRAD
+		LDA	GALAXY_Y
+		ASL	A
+		ASL	A
+		ASL	A
+		CLC
+		ADC	GALAXY_X
+		TAX
+		LDA	DENS_TBL,X
+SDENS_B:
+		LSR	A		;comment out to make harder
+
+		STA	DENS
+		LSR	A
+		STA	DENSCOUNT
+		RTS
+DENSPRAD:
+		LDA	#H'60
+		JMP	SDENS_B
+
+MUL_ADD:
+		STX	CX
+		LDA	#0
+MA_LOOP:
+		CLC
+		ADC	CX
+		BCS	MA_DONE
+		DEY
+		BNE	MA_LOOP
+MA_DONE:
+		RTS
+
+;*****************************************************
+
+NEWVEL:
+
+;A-reg. = desired speed (0..15)
+;Y-reg. = direction (0..15)
+;
+;returns val. in (TVELX, TVELY)
+
+		PHA
+		TYA
+		ASL	A
+		TAY
+		PLA
+
+NEWVEL2:
+
+;A-reg. = desired speed (0..15)
+;Y-reg. = direction (0..31)
+;
+;returns val. in (TVELX, TVELY)
+
+		STY	COUNT3		;temporary var.
+		PHA			;save speed
+		LDA	AXTL, Y
+		STA	PTR1L
+		LDA	AXTH, Y
+		STA	PTR1H		;pointer to correct X table
+		LDA	AYTL, Y
+		STA	PTR2L
+		LDA	AYTH, Y
+		STA	PTR2H		;pointer to correct Y table
+
+		PLA			;pull req. speed from stack
+		TAY
+		LDA	(PTR1L), Y
+		STA	TVELX		;X speed adjusted for angle
+		LDA	COUNT3		;check to see if neg.
+		CMP	#17
+		BCC	NEWVEL3		;<17 is pos.
+		LDA	TVELX
+		EOR	#H'FF
+		STA	TVELX
+		INC	TVELX		;make neg. in 2's comp.
+
+NEWVEL3:	LDA	(PTR2L), Y
+		STA	TVELY		;Y speed adjusted for angle
+		LDA	COUNT3 		;check to see if neg.
+		CMP	#8
+		BCC	NEWVEL4		;<8 is neg.
+		CMP	#25
+		BCC	NEWVEL5		;>=8 and <25 is pos.
+NEWVEL4:	LDA	TVELY
+		EOR	#H'FF
+		STA	TVELY
+		INC	TVELY		;make neg. in 2's comp.
+
+NEWVEL5:	RTS
+
+
+AXTL:	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
+	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
+	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
+
+	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
+	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
+	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
+
+
+AXTH:	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+
+	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+
+
+AYTL:	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
+	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
+	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
+	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+     
+	.DB	AT8 &H'FF, AT7 &H'FF, AT6 &H'FF, AT5 &H'FF
+	.DB	AT4 &H'FF, AT3 &H'FF, AT2 &H'FF, AT1 &H'FF
+	.DB	AT0 &H'FF, AT1 &H'FF, AT2 &H'FF, AT3 &H'FF
+	.DB	AT4 &H'FF, AT5 &H'FF, AT6 &H'FF, AT7 &H'FF
+
+
+AYTH:	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+     
+	.DB	AT8 >>8, AT7 >>8, AT6 >>8, AT5 >>8
+	.DB	AT4 >>8, AT3 >>8, AT2 >>8, AT1 >>8
+	.DB	AT0 >>8, AT1 >>8, AT2 >>8, AT3 >>8
+	.DB	AT4 >>8, AT5 >>8, AT6 >>8, AT7 >>8
+
+
+
+AT8:	.DB	0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96,104,112,120
+AT7:   	.DB	0, 8, 16, 24, 31, 39, 47, 55, 63, 70, 78, 86, 94,102,110,117
+AT6:	.DB	0, 7, 15, 22, 30, 37, 44, 52, 60, 65, 74, 81, 89, 94,102,108
+AT5:	.DB	0, 7, 13, 20, 27, 33, 40, 47, 54, 60, 67, 75, 80, 87, 94,100
+AT4:	.DB	0, 6, 11, 17, 23, 28, 34, 40, 42, 51, 57, 62, 68, 74, 79, 85
+AT3:	.DB	0, 4,  9, 13, 18, 22, 27, 31, 36, 40, 44, 49, 53, 58, 62, 67
+AT2:	.DB	0, 3,  6,  9, 12, 15, 18, 21, 24, 28, 31, 34, 37, 40, 43, 46
+AT1:	.DB	0, 2,  3,  5,  6,  8,  9, 11, 12, 14, 16, 17, 19, 20, 22, 23
+AT0:	.DB	0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
+
+
+;*******************************************
+
+CHK_ARC:
+
+; X = center (0..31)
+; A = 1/2 "width" of arc.
+; Y = "angle" to check (-15..31)
+;
+; Returns #h'FF if (X-A) <= Y <= (X+A)
+;  (i.e., Y is inside the arc...)
+
+		STA	COUNT3		;temp. storage
+		TYA
+		BEQ	CHK_AFIX
+		BPL	CHK_ARC0
+
+;force Y pos. & non-zero
+
+CHK_AFIX:	CLC
+		ADC	#32
+		TAY
+
+CHK_ARC0:	TXA
+		SEC
+		SBC	COUNT3		;X-A
+		BPL	CHK_ARC1
+;X-A < 0
+		CLC
+		ADC	#32		;make positive
+		STA	T1
+		TYA
+		CMP	T1
+		BCS	CHK_ARC4	;in arc!
+		BCC	CHK_ARC2	;...always...
+
+CHK_ARC1:	STA	T1
+		TYA
+		CMP	T1
+		BCC	CHK_ARC3	;NOT in arc!
+CHK_ARC2:	TXA
+		CLC
+		ADC	COUNT3
+		STA	T1		;X+A
+		TYA
+		CMP	T1
+		BCC	CHK_ARC4
+		BEQ	CHK_ARC4	;in arc!
+
+;No...
+
+CHK_ARC3:	LDA	#0
+		RTS
+
+;Yes...
+
+CHK_ARC4:	LDA	#H'FF
+		RTS
+
+
+;*******************************************
+
+
+ADJVEL:
+
+;TSPD = current speed (0..15)
+;TDIR = current direction (0..31)
+;TMAX = max. speed (0..15)
+; Y   = direction of thrust (0..31)
+;
+;returns speed in (TVELX, TVELY)
+
+		LDA	TSPD
+		BNE	ADJ_V1
+
+		LDA	TMAX
+		BPL	ADJ_V0
+		BNE	ADJ_V0
+;Error! (TMAX is < 1!)
+		LDA	#0
+		STA	TDIR
+		STA	TSPD
+		STA	TVELX
+		STA	TVELY
+		RTS
+
+;thrust from stop
+	
+ADJ_V0:		LDA	#1
+		STA	TSPD
+		STY	TDIR		;Y already holds dir...
+		JMP	NEWVEL2
+
+;already moving...
+
+ADJ_V1:		CPY	TDIR
+		BEQ	ADJ_V3
+
+		TYA
+		CLC
+		ADC	#16
+		CMP	TDIR		;thrust in opp. dir?
+		BEQ	ADJ_V2		;Yes...
+		SEC
+		SBC	#32
+		CMP	TDIR
+		BNE	ADJ_V4		;No...
+
+;Y in opp. direction of TDIR...
+		
+ADJ_V2:		DEC	TSPD		;always > 0!
+		LDA	TSPD
+		JMP	NEWVEL2		;dir in Y-reg.
+
+;Y = TDIR...
+
+ADJ_V3:		INC	TSPD
+		LDA	TSPD
+		CMP	TMAX
+		BCC	ADJ_V3A		;check to make sure TSPD
+		BEQ	ADJ_V3A		;doesn't exceed TMAX
+		LDA	TMAX
+		STA	TSPD
+ADJ_V3A:	JMP	NEWVEL2		;dir in Y-reg.
+
+
+;check for change in TDIR
+
+ADJ_V4:	   	STY	T0		;save dir. of thrust...
+	   
+	   ;	LDX	TDIR
+	   ;	LDY	TSPD
+	   ;	LDA	AVEL_M0T, Y
+	   ;	LDY	T0
+	   ;	JSR	CHK_ARC
+	   ;	BNE	ADJ_V8		;TDIR unchanged...
+	   ;
+	   ;	LDA	TDIR
+	   ;	CLC
+	   ;	ADC	#16
+	   ;	AND	#H'1F
+	   ;	TAX
+	   ;	LDY	TSPD
+	   ;	LDA	AVEL_M1T, Y
+	   ;	LDY	T0
+	   ;	JSR	CHK_ARC
+	   ;	BNE	ADJ_V8		;TDIR unchanged...
+	   
+	   	LDY	T0		;dir of thrust
+	   	LDA	TDIR
+	   	CLC
+	   	ADC	#H'08
+	   	AND	#H'1F
+	   	TAX
+	   	LDA	#8
+	   	JSR	CHK_ARC
+	   	BEQ	ADJ_V6		;dec. TDIR
+
+;inc. TDIR...
+
+	   ;	LDY	TSPD
+	   ;	LDA	AVEL_ROT, Y
+	   ;	CLC
+	   ;	ADC	TDIR
+	   ;	AND	#H'1F
+	   ;	STA	TDIR
+
+	INC	TDIR
+	LDA	TDIR
+	CMP	#32
+	BCC	ADJ_V5
+	LDA	#0
+	STA	TDIR
+
+	   ;	LDA	T0		;dir of thrust
+	   ;	CLC
+	   ;	ADC	#(32-8)
+	   ;	AND	#H'1F
+	   ;	TAX
+	   ;	LDA	#8
+	   ;	LDY	TDIR
+	   ;	JSR	CHK_ARC		;make sure we didn't add too much
+	   ;	BNE	ADJ_V8		;No...
+	   ;
+ADJ_V5:	   ;	LDA	T0		;dir of thrust
+	   ;	STA	TDIR
+	   	JMP	ADJ_V8
+
+;dec. TDIR...
+
+ADJ_V6:	   ;	LDY	TSPD
+	   ;	LDA	TDIR
+	   ;	SEC
+	   ;	SBC	AVEL_ROT, Y
+	   ;	AND	#H'1F
+	   ;	STA	TDIR
+
+	DEC	TDIR
+	LDA	TDIR
+	BPL	ADJ_V8
+	LDA	#31
+	STA	TDIR
+
+	   ;	LDA	T0		;dir of thrust
+	   ;	CLC
+	   ;	ADC	#8
+	   ;	AND	#H'1F
+	   ;	TAX
+	   ;	LDA	#8
+	   ;	LDY	TDIR
+	   ;	JSR	CHK_ARC		;make sure we didn't sub. too much
+	   ;	BNE	ADJ_V8
+	   ;
+ADJ_V7:	   ;	LDA	T0		;dir of thrust
+	   ;	STA	TDIR
+
+;check for change in TSPD
+
+ADJ_V8:		LDX	TDIR
+		LDY	TSPD
+		LDA	AVEL_ACT, Y
+		LDY	T0		;dir of thrust
+		JSR	CHK_ARC
+		BEQ	ADJ_V9
+
+;acceleration...
+
+		INC	TSPD
+		LDA	TSPD
+		CMP	TMAX
+		BCC	ADJ_V10
+		BEQ	ADJ_V10
+		LDA	TMAX
+		STA	TSPD
+		JMP	ADJ_V10
+
+;decel?
+
+ADJ_V9:		LDA	TDIR
+		CLC
+		ADC	#16
+		AND	#H'1F
+		TAX
+		LDY	TSPD
+		LDA	AVEL_DCT, Y
+		LDY	T0		;dir of thrust
+		JSR	CHK_ARC
+		BEQ	ADJ_V10		;no change in TSPD
+
+;deceleration...
+
+		DEC	TSPD		;always > 0!
+
+ADJ_V10:	LDY	TDIR
+		LDA	TSPD
+		JMP	NEWVEL2		;done!
+
+		
+
+
+;-Valid ranges plyr -----|x1xx2xx3xx4xx5xx6x|-------------------------
+
+AVEL_ACT:	.DB	0, 7, 7, 6, 6, 6, 6, 5, 5, 5, 5, 5, 5, 5, 5, 5
+;arc widths for pos. change in TSPD (centered on TDIR), indexed by TSPD
+
+AVEL_DCT:	.DB	0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+;arc widths for neg. change in TSPD (centered on TDIR+16), index by TSPD
+
+AVEL_M0T:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+;arc widths for no change in dir (centered on TDIR), indexed by TSPD
+
+AVEL_M1T:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+;arc widths for no change in dir (centered on TDIR+16), indexed by TSPD
+
+AVEL_ROT:	.DB	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+;amount to add to (or sub. from) TDIR based on TSPD
+
+
+
+INVVEL:
+; ADDS THE NEGATIVE OF THE NUMBER
+
+		STA	T0
+		LDA	#0
+		SEC
+		SBC	T0
+
+
+ADDVEL:
+
+;(TPOSH:TPOSL) = position
+;            A = velocity (hi-bit set if neg.)
+
+		PHA
+		LDA	#0
+		STA	COUNT3
+		PLA
+		BMI	SUBVEL
+
+		CLC
+		ROL	A
+		ROL	COUNT3
+		ROL	A
+		ROL	COUNT3
+		CLC
+		ADC	TPOSL
+		STA	TPOSL
+		LDA	TPOSH
+		ADC	COUNT3
+		STA	TPOSH
+		RTS
+
+SUBVEL:	       	STA	T0
+		LDA	#H'00
+		SEC
+		SBC	T0		;make positive
+		CLC
+		ROL	A
+		ROL	COUNT3
+		ROL	A
+		ROL	COUNT3
+		STA	COUNT2
+		LDA	TPOSL
+		SEC
+		SBC	COUNT2
+		STA	TPOSL
+		BCS	SUBVEL2
+		INC	COUNT3		;a borrow took place	
+		SEC
+SUBVEL2:	LDA	TPOSH
+		SBC	COUNT3
+		STA	TPOSH
+		RTS
+
+
+;**************************************
+
+BACKPAL:
+
+;Enable a background palette:
+;  X = low ptr., Y = high ptr.
+
+		LDA	#1
+		ORA	NEW_PAL
+		STA	NEW_PAL
+		STX	BPAL_BASE
+		STY	BPAL_BASE+1
+		RTS
+
+SPRITEPAL:
+
+;Enable a sprite palette:
+;  X = low ptr., Y = high ptr.
+
+		LDA	#2
+		ORA	NEW_PAL
+		STA	NEW_PAL
+		STX	SPAL_BASE
+		STY	SPAL_BASE+1
+		RTS
+
+
+
+DOPAL:		LDA	FLASHCT
+		BEQ	DOPAL2
+       		DEC	FLASHCT
+		BNE	DOPAL2
+
+;an EMP Wave flash needs to be reset
+
+		JSR	RESETPALS	;reset background
+		JSR	WARNING		;reset sprites
+
+;load the video buffer with any pending palette info.
+
+DOPAL2:		LDA	NEW_PAL		;see if need to init. new
+		AND	#1
+		BEQ	DP_SPR
+
+;Initialize a new BACKGROUND palette...
+
+		EOR	NEW_PAL
+		STA	NEW_PAL		;reset background bit
+		LDY	#0
+		LDA	(BPAL_BASE), Y
+		STA	BPAL_BLINK	;set blink to first frame
+		INY
+		LDA	(BPAL_BASE), Y
+		STA	BPAL_DEPTH	;set depth of blink
+		INY
+		LDA	#1
+		STA	BPAL_INDX
+		LDA	(BPAL_BASE), Y
+		STA	BPAL_FREQ	;set frequency in ticks
+		STA	BPAL_CNT	;and initial count
+
+		CLC
+		LDA	BPAL_BASE
+		ADC	#3		;offset to next tick
+		STA	BPAL_BASE  	
+		LDA	BPAL_BASE+1
+		ADC	#0
+		STA	BPAL_BASE+1
+
+		LDX	SCCNT
+		LDA	#H'3F		;high ptr.
+		STA	SCBUF, X
+		INX
+		LDA	#H'00		;low ptr.
+		STA	SCBUF, X
+		INX
+		LDA	#16		;size
+		STA	SCBUF, X
+		INX
+		STA	T0
+		LDY	#0
+
+DPBACKL:		LDA	(BPAL_BASE), Y
+		INY
+		STA	SCBUF, X
+		INX
+		DEC	T0
+		BNE	DPBACKL
+		STX	SCCNT
+
+		RTS
+
+
+;Initialize a new SPRITE palette...
+
+DP_SPR:		LDA	NEW_PAL
+		BEQ	DPMAINT
+		LDA	#0
+		STA	NEW_PAL		;reset flag
+
+		LDY	#0
+		LDA	(SPAL_BASE), Y
+		STA	SPAL_BLINK	;set blink
+		INY
+		LDA	(SPAL_BASE), Y
+		STA	SPAL_DEPTH	;set depth of blink
+		INY
+		LDA	#1
+		STA	SPAL_INDX
+		LDA	(SPAL_BASE) ,Y
+		STA	SPAL_FREQ	;set frequency
+		STA	SPAL_CNT	; and initial count
+
+		CLC
+		LDA	SPAL_BASE
+		ADC	#3
+		STA	SPAL_BASE
+		LDA	SPAL_BASE+1
+		ADC	#0
+		STA	SPAL_BASE+1
+
+		LDX	SCCNT		;get screen buffer count
+		LDA	#H'3F
+		STA	SCBUF, X
+		INX
+		LDA	#H'11		;skip 0th 'color'
+		STA	SCBUF, X
+		INX
+		LDA	#15		;number of bytes data
+		STA	SCBUF, X
+		INX
+		STA	T0
+		LDY	#1		;skip 0th 'color'
+
+DPSPRL:		LDA	(SPAL_BASE), Y
+		INY
+		STA	SCBUF, X
+		INX
+		DEC	T0
+		BNE	DPSPRL
+		STX	SCCNT
+		RTS
+
+;Not initializing...check for background blink...
+
+DPMAINT:		LDA	BPAL_BLINK
+		BEQ	DPMSPR		;no blinking background pal.
+		DEC	BPAL_CNT
+		BNE	DPMSPR
+		LDA	BPAL_FREQ
+		STA	BPAL_CNT
+
+		LDA	BPAL_BLINK
+		ASL	A
+		ASL	A		;x 4 (no. bytes per frame)
+		STA	T0		
+		TAX
+		LDY	BPAL_INDX	;current frame
+		JSR	MUL
+		LDA	#16
+		SEC
+		SBC	T0
+		STA	T1
+		JSR	ADD_WORD
+		STX	PTR0L
+		STY	PTR0H
+		LDA	BPAL_BASE
+		CLC
+		ADC	PTR0L
+		STA	PTR0L
+		LDA	BPAL_BASE+1
+		ADC	PTR0H
+		STA	PTR0H		;add base to pointer
+
+		LDX	SCCNT
+		LDA	#H'3F
+		STA	SCBUF, X
+		INX
+		LDA	T1		;get first pal. reg. to fix
+		STA	SCBUF, X
+		INX
+		LDA	T0		;get count
+		STA	SCBUF, X
+		INX
+
+		LDY	#0
+DPM2:		LDA	(PTR0L), Y	;get data
+		STA	SCBUF, X	; and put in video buffer
+		INY
+		INX
+		DEC	T0		;dec. count
+		BNE	DPM2
+		STX	SCCNT
+
+		INC	BPAL_INDX
+		LDA	BPAL_INDX
+		CMP	BPAL_DEPTH
+		BNE	DPMSPR
+		LDA	#0
+		STA	BPAL_INDX	;reset to first frame
+
+;Check for sprite palette blink...
+
+DPMSPR:		LDA	SPAL_BLINK
+		BEQ	DPEND
+		DEC	SPAL_CNT
+		BNE	DPEND
+		LDA	SPAL_FREQ
+		STA	SPAL_CNT
+
+		LDA	SPAL_BLINK
+		ASL	A
+		ASL	A
+		STA	T0
+		TAX
+		LDY	SPAL_INDX
+		JSR	MUL
+		LDA	#16
+		SEC
+		SBC	T0
+		STA	T1
+		JSR	ADD_WORD
+		STX	PTR0L
+		STY	PTR0H
+		LDA	SPAL_BASE
+		CLC
+		ADC	PTR0L
+		STA	PTR0L
+		LDA	SPAL_BASE+1
+		ADC	PTR0H
+		STA	PTR0H		;add base to ptr.
+
+		LDX	SCCNT
+		LDA	#H'3F
+		STA	SCBUF, X
+		INX
+		LDA	T1
+		CLC
+		ADC	#H'10		;offset into sprite pals.
+		STA	SCBUF, X
+		INX
+		LDA	T0		;count
+		STA	SCBUF, X
+		INX
+
+		LDY	#0
+DPM3:		LDA	(PTR0L), Y	;get data
+		STA	SCBUF, X	; and put in video buffer
+		INY
+		INX
+		DEC	T0
+		BNE	DPM3
+		STX	SCCNT
+
+		INC	SPAL_INDX
+		LDA	SPAL_INDX
+		CMP	SPAL_DEPTH
+		BNE	DPEND
+		LDA	#0
+		STA	SPAL_INDX
+
+DPEND:		RTS
+
+
+;*************************************************
+
+WRITE_SCBUF:
+
+;Transfer data from the video buffer during an NMI
+
+		
+		LDX	SCCNT
+		BEQ	WSEND		;skip if buffer empty
+
+		LDY	#0
+WS0:		TXA			;save count
+		PHA
+		LDA	V_SEL
+		AND	#H'7A		;default for horiz. write
+		LDX	SCBUF, Y	;get high byte of addr.
+		BPL	WS1
+		ORA	#4		;set for Vert. write
+WS1:		STA	VID_SEL
+		LDA	VID_RESET
+		TXA
+		AND	#H'7F
+		STA	VID_PTR		;high byte of addr.
+		INY
+		LDA	SCBUF, Y
+		STA	VID_PTR		;low byte of addr.
+		INY
+		LDX	SCBUF, Y	;no. of bytes
+		STX	T0
+		INY
+
+WS2:		LDA	SCBUF, Y
+		INY
+		STA	VID_DATA
+		DEX
+		BNE	WS2
+
+		PLA			;restore orig. count
+		SEC
+		SBC	T0		; and sub. no. written
+		TAX
+		DEX
+		DEX
+		DEX			;adj. for 3-byte header
+		BNE	WS0		;do more if needed
+
+		LDA	#0
+		STA	SCCNT
+		LDA	V_SEL
+		AND	#H'7A
+		STA	V_SEL
+
+WSEND:		RTS
+
+
+
+;*************************************************
+
+CONVERT:	LDA	HORZBUFFER
+		BNE	CONV_H		;need to do horizontal
+		JMP	CONV_V		;check for vertical...
+
+CONV_H:		LDA	HORZBUFFER+1
+		AND	#H'1F
+		STA	T0
+		LDA	#32
+		SEC
+		SBC	T0
+		STA	T0
+		STA	T1		;no. to write 1st pass
+
+		LDA	#40
+		STA	DATCOUNT	;total no. to write
+		
+		LDA	#3
+		PHA			;index into HORZBUFFER
+
+		LDX	HORZBUFFER+1	;screen X-pos.
+CXH0:		LDY	HORZBUFFER+2	;screen Y-pos.
+		JSR	CONVADDR
+		TYA
+		PHA
+		LDY	SCCNT		;index into SCBUF
+		TXA
+		STA	SCBUF, Y
+		INY
+		PLA
+		STA	SCBUF, Y
+		INY
+		LDA	T0
+		STA	SCBUF, Y
+		INY
+		PLA
+		TAX
+
+CXH1:		LDA	HORZBUFFER, X
+		STA	SCBUF, Y
+		INY
+		INX
+		DEC	DATCOUNT
+		BEQ	CXHX
+
+		DEC	T0
+		BNE	CXH1
+
+		STY	SCCNT
+		TXA
+		PHA
+		LDA	T1
+		CLC
+		ADC	HORZBUFFER+1
+		AND	#H'3F
+		TAX
+		LDA	DATCOUNT
+		CMP	#32
+		BCC	CXH2
+		LDA	#32
+CXH2:		STA	T0
+		STA	T1
+		JMP	CXH0
+
+CXHX:		STY	SCCNT
+		LDA	#0
+		STA	HORZBUFFER
+		RTS
+
+
+
+
+CONV_V:		LDA	VERTBUFFER
+		BNE	CONV_V2
+		RTS
+
+CONV_V2:		LDA	#30
+		SEC
+		SBC	VERTBUFFER+2
+		STA	T0
+		STA	T1
+
+		LDA	#30
+		STA	DATCOUNT
+		
+		LDA	#3
+		PHA
+
+		LDY	VERTBUFFER+2
+
+CXV0:		LDX	VERTBUFFER+1
+		JSR	CONVADDR
+		TYA
+		PHA
+		LDY	SCCNT
+		TXA
+		ORA	#H'80		;force vertical write
+		STA	SCBUF, Y
+		INY
+		PLA
+		STA	SCBUF, Y
+		INY
+		LDA	T0
+		STA	SCBUF, Y
+		INY
+		PLA			;index into VERTBUFFER
+		TAX
+
+CXV1:		LDA	VERTBUFFER, X
+		STA	SCBUF, Y
+		INY
+		INX
+		DEC	DATCOUNT
+		BEQ	CXVX
+
+		DEC	T0
+		BNE	CXV1
+
+		STY	SCCNT
+		TXA
+		PHA
+		LDY	#0		;restart at line 0
+		LDA	DATCOUNT
+		STA	T0
+		STA	T1
+		JMP	CXV0
+
+CXVX:		STY	SCCNT
+		LDA	#0
+		STA	VERTBUFFER
+		RTS
+
+
+
+CONVADDR:		LDA	LNADDRH, Y
+		CPX	#32
+		BCC	CONVADD1
+		CLC
+		ADC	#4
+CONVADD1:		PHA
+		TXA
+		AND	#H'1F
+		CLC
+		ADC	LNADDRL, Y
+		TAY			;low
+		PLA
+		TAX			;high
+		RTS
+
+
+
+;*************************************************
+
+SCROLL:		LDA	#0
+		STA	GAMEMODE
+		STA	CHEATDIE
+		STA	DIR
+		STA	T_SIX
+		STA	T_SEC
+		STA	T_MIN
+		STA	T_HOUR
+		STA	TDIR
+		STA	TSPD
+		STA	LST_THR
+		STA	BASESPRITE
+		STA	STN_ROTATE
+
+		STA	XREL
+		STA	YREL
+		STA	PSHPXVEL
+		STA	PSHPYVEL
+		STA	PXOFF
+		STA	PYOFF
+
+		STA	XSTAT
+	
+		LDA	#H'80
+		STA	VPALBUFFER
+		STA	HPALBUFFER
+		LDA	#0
+		STA	SCCNT
+		STA	FLASHCT
+
+		LDA	#0
+		STA	COMPITEM
+		LDA	#H'FF
+		STA	WARP
+		JSR	DOCOMP
+		JSR	VR_WAIT
+		LDA	WARP
+		PHA
+		JSR	INITWARP
+		PLA
+		STA	WARP
+		LDA	#0
+		STA	DIFF
+		STA	TIME_DIFF
+		JSR	ZAP_SPRITES
+		JSR	INITSPR
+		JSR	CTRL1B0
+	
+		LDA	#H'18		;WAS H'1E (05-06-90)
+		STA	V_MODE
+		LDA	#H'08
+		STA	V_SEL
+	
+DO_NMI:		LDA	VID_RESET
+		BMI	DO_NMI
+		
+		LDA	#0
+		STA	SCCNT
+
+		LDA	V_SEL
+		ORA	#H'80
+		STA	VID_SEL
+
+SCROLL_END:	LDA	GAMEMODE
+		CMP	#H'81
+		BNE	SC_E1
+
+;just finished title...
+
+		LDA	V_SEL
+		AND	#H'7F		;turn off NMI interrupts
+		STA	V_SEL
+		STA	VID_SEL
+
+		RTS
+
+SC_E1:		CMP	#H'01
+		BNE	SC_E2
+
+;just finished game...
+
+		LDA	V_SEL
+		AND	#H'7F		;turn off NMI interrupts
+		STA	V_SEL
+		STA	VID_SEL
+
+		LDA	#-1
+		JSR	SILENCE
+
+		JSR	ENDGAME
+
+		RTS
+
+SC_E2:		CMP	#H'83
+		BNE	SC_E3
+
+;just finished "continue"...
+
+		LDA	V_SEL
+		AND	#H'7F		;turn off NMI interrupts
+		STA	V_SEL
+		STA	VID_SEL
+
+		RTS
+
+
+SC_E3:		JMP	SCROLL_END
+
+
+
+;*************************************************
+; NMI ROUTINES
+;*************************************************
+
+NMI:	     	PHA			;save registers
+	     	TXA
+	     	PHA
+	     	TYA
+	     	PHA	 		
+
+		LDA	V_SEL
+		AND	#H'7A		;turn off page select, nmi, vert.
+		STA	VID_SEL
+
+		LDA	VID_RESET
+		AND	#H'20
+		STA	TOOMANY
+
+		LDA	#6
+		STA	VID_MODE
+
+             	JSR	WRITE_SCBUF
+            	JSR	PAL_XFER
+
+
+  	  	LDA	VID_RESET	;set-up for DMA xfer of sprites
+	     	LDA	BASESPRITE
+	    	STA	SPR_PTR
+		LDA	#SPRTBL0 >>8
+		STA	DMA		;transfer sprite data table
+
+
+		LDA	V_SEL
+		AND	#H'FE		;kill 'page' bit
+		ORA	PAGE
+		STA	V_SEL
+		STA	VID_SEL
+	     	LDA	V_MODE
+	     	STA	VID_MODE
+
+      	     	LDA	VID_RESET
+      	     	LDA	XSCROLL
+      	     	STA	SCR_REG
+      	     	LDA	YSCROLL
+      	     	STA	SCR_REG
+
+		JSR	DOPAL
+
+		JSR	DOSTUFF
+		JSR	TICK
+
+;!!! IMPORTANT !!!
+;--The following 2 lines must be here to ensure that interrupts are not
+;enabled during a retrace.  This is because the interrupt is LEVEL driven,
+;not EDGE driven...in other words, we may cause the NMI routine to be
+;called at a time other than the beginning of retrace.  If the NMI routine
+;is called towards the end of a retrace, Y-Scroll problems such as a 
+;quick "jerk" in Y-axis can occur...
+
+
+VR_LOOP:	LDA	VID_RESET
+		BMI	VR_LOOP
+
+;(see above)
+
+
+
+		LDA	V_SEL
+		ORA	#H'80
+		STA	VID_SEL
+
+	     	PLA
+	     	TAY
+	     	PLA	
+	     	TAX
+	     	PLA
+
+		RTI
+		
+
+;*************************************************
+
+
+PAL_XFER:	LDA	VPALBUFFER+0
+		BPL	VERTOK
+		JMP	NOVERT
+
+VERTOK:		STA	VID_PTR
+		LDA	VPALBUFFER+1
+		STA	VID_PTR
+		LDA	VPALBUFFER+2
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+3
+		STA	VID_PTR
+		LDA	VPALBUFFER+4
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+5
+		STA	VID_PTR
+		LDA	VPALBUFFER+6
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+7
+		STA	VID_PTR
+		LDA	VPALBUFFER+8
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+9
+		STA	VID_PTR
+		LDA	VPALBUFFER+10
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+11
+		STA	VID_PTR
+		LDA	VPALBUFFER+12
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+13
+		STA	VID_PTR
+		LDA	VPALBUFFER+14
+		STA	VID_DATA
+
+		LDA	VPALBUFFER+0
+		STA	VID_PTR
+		LDA	VPALBUFFER+15
+		STA	VID_PTR
+		LDA	VPALBUFFER+16
+		STA	VID_DATA
+
+		LDA	VPALBUFFER
+		ORA	#H'80
+		STA	VPALBUFFER
+
+
+NOVERT:		LDA	HPALBUFFER+0
+		BPL	HORZOK
+		JMP	NOHORZ
+
+HORZOK:
+		STA	VID_PTR
+		LDA	HPALBUFFER+1
+		STA	VID_PTR
+		LDA	HPALBUFFER+2
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+3
+		STA	VID_PTR
+		LDA	HPALBUFFER+4
+		STA	VID_PTR
+		LDA	HPALBUFFER+5
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+6
+		STA	VID_PTR
+		LDA	HPALBUFFER+7
+		STA	VID_PTR
+		LDA	HPALBUFFER+8
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+9
+		STA	VID_PTR
+		LDA	HPALBUFFER+10
+		STA	VID_PTR
+		LDA	HPALBUFFER+11
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+12
+		STA	VID_PTR
+		LDA	HPALBUFFER+13
+		STA	VID_PTR
+		LDA	HPALBUFFER+14
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+15
+		STA	VID_PTR
+		LDA	HPALBUFFER+16
+		STA	VID_PTR
+		LDA	HPALBUFFER+17
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+18
+		STA	VID_PTR
+		LDA	HPALBUFFER+19
+		STA	VID_PTR
+		LDA	HPALBUFFER+20
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+21
+		STA	VID_PTR
+		LDA	HPALBUFFER+22
+		STA	VID_PTR
+		LDA	HPALBUFFER+23
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+24
+		STA	VID_PTR
+		LDA	HPALBUFFER+25
+		STA	VID_PTR
+		LDA	HPALBUFFER+26
+		STA	VID_DATA
+
+		LDA	HPALBUFFER+27
+		STA	VID_PTR
+		LDA	HPALBUFFER+28
+		STA	VID_PTR
+		LDA	HPALBUFFER+29
+		STA	VID_DATA
+
+		LDA	HPALBUFFER
+		ORA	#H'80
+		STA	HPALBUFFER
+
+NOHORZ:		RTS
+
+		
+;*************************************************
+
+DOSTUFF:	LDA	#0
+		LDX	TOOMANY
+		BEQ	RSP
+		LDA	BASESPRITE
+		CLC
+		ADC	#H'40
+		AND	#H'C0
+RSP:		STA	BASESPRITE
+
+		JSR	FEED_SOUND
+		JSR	JSTICK1
+		
+		LDA	GAMEMODE
+		BEQ	DOSTUFF3
+		BMI	DOSTUFF1
+		JMP	DOPAUSE
+
+DOSTUFF1:	CMP	#H'80
+		BNE	DOSTUFF2
+		JMP	DOTITLE
+DOSTUFF2:	JMP	DOCONT
+
+DOSTUFF3:	
+
+;play mode
+
+		JSR	CONTROL
+
+		LDA	TIMER0
+		AND	#H'03
+		BNE	SN01
+	
+	   	JSR	PLYRMOVE	;just check to see what player wants
+
+SN01:	   	JSR	SCROLL_MOVE
+       	   	JSR	CONVERT
+
+;***** UPDATE COMBAT ROUTINES ********************
+
+UPDATE:	   	LDA	TIMER0
+	   	AND	#H'03
+	   	BNE	SN00
+	   
+	   	INC	DENSCOUNT
+
+SN00:	   	ROR	A
+	   	BCC	SN0A
+	   
+	   	JSR	COMPASS
+	   	JSR	HITPLAYER
+	   	JMP	SN0B
+
+SN0A: 	  	JSR	CHK_NEWE	     
+      		JSR	SHIPLOGIC	
+
+SN0B:		JSR	PLYRDRAW
+
+	  	JSR	UPDT_STN	;ALSO UPDATES TURRETS
+	  	JSR	STN_ACTN
+		JSR	GUN_ACTN
+	
+	  	JSR	PLYRMISL
+       		JSR	PLYR_SHOT
+
+	  	JSR	UPDTSHIP
+	  	JSR	MOVEMISL
+  		JSR	UPDTBOLT
+  
+  	 	JSR	UPDTESHT
+	  	JSR	UPDTPSHT
+		JSR	UPP_EXPL
+
+ 		LDA	PWRPLANT
+		BNE	SN0C
+		JSR	GAMEOVER
+
+SN0C:		LDA	BKGRND	
+		BEQ	SN0D	
+		LDA	TOWERS
+		BEQ	SN0C2
+		BMI	SN0C2	
+		JMP	SN0D
+SN0C2:		JSR	INCBASES
+		LDA	BKGRND	
+		CMP	#H'80
+		BNE	SN0E
+		JMP	GAMEWON
+
+SN0E:		LDA	PWRPLANT
+		BEQ	SN0D		;if player dies, don't continue...!
+
+		BMI	SN0E0
+		JSR	KILL_STN		
+	
+;just destroyed something...
+
+SN0E0:		JSR	MKITMLST
+		JSR	VR_WAIT
+		JSR	UPP_EXPL
+		LDA	#0
+		STA	BKGRND
+		JSR	INITCMBT
+		LDA	#1
+		STA	WARP
+		LDA	ORBIT
+		JSR	SYSINDX
+		LDA	BITMASK0,Y
+		AND	SAVEBIT0
+		STA	SAVEBIT0
+		STA	SYSBIT0
+		LDA  	BITMASK1,Y
+		AND	SAVEBIT1
+		STA	SAVEBIT1
+		STA	SYSBIT1
+		LDA	BITMASK2,Y
+		AND	SAVEBIT2
+		STA	SAVEBIT2
+		STA	SYSBIT2
+		JSR	CTRL1A
+
+SN0D:		LDA	GAMEMODE
+		CMP	#H'7F
+		BNE	DO_DONE
+		JSR	SHOWPAUSE
+
+DO_DONE:	RTS
+
+;*************************************************
+
+SETHIGHSCORE:	LDA	SC1M
+		CMP	H1M
+		BCC	SHS_END
+		STA	H1M
+		LDA	SC100000
+		CMP	H100K
+		BCC	SHS_END
+		STA	H100K
+		LDA	SC10000
+		CMP	H10K
+		BCC	SHS_END
+		STA	H10K
+		LDA	SC1000
+		CMP	H1K
+		BCC	SHS_END
+		STA	H1K
+		LDA	SC100
+		CMP	H100
+		BCC	SHS_END
+		STA	H100
+		LDA	SC10
+		CMP	H10
+		BCC	SHS_END
+		STA	H10
+		LDA	SC1
+		CMP	H1
+		BCC	SHS_END
+		STA	H1
+
+SHS_END:	;entry point to take (approx.) half your money when you die!
+
+		LDA	#0
+		STA	SC1		;lose ones, tens, & hundreds
+		STA	SC10
+		STA	SC100
+
+		LDA	SC1M		;millions
+		LSR	A
+		STA	SC1M
+		BCC	SHS_1HK
+		LDA	SC100000
+		CLC
+		ADC	#10
+		STA	SC100000
+	
+SHS_1HK:	LDA	SC100000	;hundred-thous.
+		LSR	A
+		STA	SC100000
+		BCC	SHS_1TK
+		LDA	SC10000
+		CLC
+		ADC	#10
+		STA	SC10000
+
+SHS_1TK:	LDA	SC10000
+		LSR	A
+		STA	SC10000
+		BCC	SHS_1K
+		LDA	SC1000
+		CLC
+		ADC	#10
+		STA	SC1000
+
+SHS_1K:		LDA	SC1000
+		LSR	A
+		STA	SC1000
+
+		RTS
+
+
+GAMEWON:	LDY	#1
+		JSR	BIGDELAY
+
+		LDA	#H'0F
+		JSR	ADDSCORE
+		LDA	#0
+		STA	HASPLAYED
+		LDA	#-1
+		JSR	SILENCE
+		JSR	ZAP_SPRITES
+
+		LDA	#0
+		STA	BKGRND
+		LDA	#0
+		STA	XREL
+		STA	YREL
+		LDA	#H'A0
+		STA	XPOS
+		STA	YPOS		;fake out drawsystem to
+		JSR	DRAWSYSTEM	;draw starfield...
+		JSR	RESETPALS
+		LDA	#0
+		STA	SCCNT
+		JSR	DOPAL
+		LDA	V_SEL
+		PHA
+		JSR	WRITE_SCBUF
+		PLA
+		STA	V_SEL
+		JSR	VR_WAIT
+		JSR	DMAXFER
+		JSR	SET_VID
+
+		JSR	STATISTICS
+	
+		LDY	#50
+		JSR	BIGDELAY
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	SETHIGHSCORE
+		PLA
+		PLA
+		JMP	BOOT2A0
+
+
+GAMEOVER:	LDA	DEATH
+		BEQ	GO_D
+		BPL	GO_A
+		JSR	GO_3
+		RTS
+
+GO_A:		CMP	#H'3F
+		BNE	GO_A1
+		LDA	#0
+		STA	ARMOR
+		STA	SHIELD
+		STA	FUEL
+		LDA	DEATH
+GO_A1:
+		SEC
+		SBC	#H'2C
+		STA	COUNT0
+		CLC
+		ADC	#20
+		STA	COUNT1
+
+		JSR	GO_1
+		JSR	GO_2
+
+GO_C:		DEC	DEATH
+		BNE	GO_CONT
+		
+		LDA	#H'FF
+		STA	DEATH
+		JSR	GO_SET
+GO_CONT:	
+		RTS
+		
+GO_D:		LDA	#H'01		;end of game
+		STA	GAMEMODE
+		RTS
+
+ENDGAME:	LDA	V_SEL
+		AND	#H'7F
+		STA	VID_SEL
+		STA	V_SEL
+
+		LDY	#4
+		JSR	BIGDELAY
+		JSR	ZAP_SPRITES
+
+		LDA	XPOS
+		PHA
+		LDA	YPOS
+		PHA
+		LDA	BKGRND
+		PHA
+		LDA	#0	
+		STA	BKGRND
+		LDA	#0
+		STA	XREL
+		STA	YREL
+		LDA	#H'A0
+		STA	XPOS
+		STA	YPOS
+	
+		JSR	DRAWSYSTEM
+         	   	JSR	RESETPALS
+		LDA	#0
+		STA	SCCNT
+		JSR	DOPAL
+ 	JSR	VR_WAIT
+ 	JSR	KILL_VID
+ 	LDA	V_SEL
+ 	PHA
+ 	JSR	WRITE_SCBUF
+ 	PLA
+ 	STA	V_SEL
+		JSR	VR_WAIT
+		JSR	SET_VID
+	
+		PLA
+		STA	BKGRND
+		PLA
+		STA	YPOS
+		PLA
+		STA	XPOS
+	
+	
+		JSR	STATISTICS
+	
+		LDY	#50
+		JSR	BIGDELAY
+	
+		LDA	#-1
+		JSR	SILENCE
+
+	
+		LDA	#0
+		STA	PRADIKUS
+
+		LDA	SAVEPWR
+		STA	PWRPLANT
+		LDA	SAVEARMR
+		STA	ARMOR
+		LDA	BKGRND
+		BEQ	GO_F
+		LDA	SAVE_X
+		STA	XPOS
+		STA	DEST_X
+		LDA	SAVE_Y
+		STA	YPOS
+		STA	DEST_Y
+	
+GO_F:
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JMP	SETHIGHSCORE
+
+
+GO_1:	       	LDY	COUNT0
+		DEY
+		BPL	GO_1A
+		RTS
+GO_1A:
+		TYA
+		ASL	A
+		ASL	A
+		TAY
+		JSR	GO_CHAR		;SET THE FOUR SPRITE CHARS
+
+		LDY	COUNT0
+		DEY
+		JSR	GO_DISP		;FOR 1X1 BEGIN & END OFFSET BY 4
+GO_1DONE:		RTS
+
+GO_2:	       	LDA	COUNT1
+		CMP	#20
+		BCS	GO_2DONE
+		LDY	COUNT1
+		DEY
+		BPL	GO_2A
+		RTS
+GO_2A:	
+		TYA
+		ASL 	A
+		ASL	A
+		TAY
+		JSR	GO_CHAR		;SET THE FOUR SPRITE CHARS
+
+		LDY	COUNT1
+		DEY
+		JSR	GO_DISP		;FOR 1X1 BEGIN & END OFFSET BY 4
+GO_2DONE:	RTS
+
+GO_3:		
+		DEC	DEATH
+		LDA	DEATH
+		BMI	GO_3A
+		LDA	#0
+		STA	DEATH
+		RTS
+GO_3A:					;"GAME" on top line
+		LDA	PSHTSPR0	;Y pos
+		CMP	#H'78
+		BEQ	GO_3B
+		CLC
+		ADC	#2
+		STA	PSHTSPR0
+		STA	PSHTSPR0+4		
+		STA	PSHTSPR0+8		
+		STA	PSHTSPR0+12
+
+GO_3B:					;"OVER" on bottom line
+		LDA	PSHTSPR0+16	;Y pos
+		CMP	#H'80
+		BEQ	GO_3C
+		SEC
+		SBC	#2
+		STA	PSHTSPR0+16
+		STA	PSHTSPR0+20
+		STA	PSHTSPR0+24
+		STA	PSHTSPR0+28
+
+GO_3C:				   	;"GAME" on left side
+		LDA	PSHTSPR0+35	;X pos
+		CMP	#H'70
+		BEQ	GO_3D
+		CLC
+		ADC	#2
+		STA	PSHTSPR0+35
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+39
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+43
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+47
+
+GO_3D:					;"OVER" on right side
+		LDA	PSHTSPR0+51	;X pos
+		CMP	#H'70
+		BEQ	GO_3DONE
+		SEC
+		SBC	#2
+		STA	PSHTSPR0+51
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+55
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+59
+		CLC
+		ADC	#8
+		STA	PSHTSPR0+63
+
+GO_3DONE:
+		RTS
+
+
+
+GO_SET:		
+		JSR	INITEXPL
+		JSR	INITPSHT
+
+		LDA	#6
+		STA	PSHTSPR0
+		STA	PSHTSPR0+4		
+		STA	PSHTSPR0+8		
+		STA	PSHTSPR0+12	;"GAME" on top line
+		
+		LDA	#H'F0
+		STA	PSHTSPR0+16
+		STA	PSHTSPR0+20
+		STA	PSHTSPR0+24
+		STA	PSHTSPR0+28	;"OVER" on bottom line
+
+		LDA	#H'78
+		STA	PSHTSPR0+32
+		STA	PSHTSPR0+36	
+		STA	PSHTSPR0+40	
+		STA	PSHTSPR0+44	;"GAME" on left side
+		
+ 		CLC
+ 		ADC	#8
+ 		STA	PSHTSPR0+48
+ 		STA	PSHTSPR0+52
+ 		STA	PSHTSPR0+56
+		STA	PSHTSPR0+60	;"OVER" on right side
+
+		LDA	#H'88
+		STA	PSHTSPR0+15
+		STA	PSHTSPR0+31
+	
+		LDA	#H'80
+		STA	PSHTSPR0+11
+		STA	PSHTSPR0+27
+
+		LDA	#H'78
+		STA	PSHTSPR0+7
+		STA	PSHTSPR0+23
+
+		LDA	#H'70
+		STA	PSHTSPR0+3
+		STA	PSHTSPR0+19
+
+		LDA	#0
+		STA	PSHTSPR0+35
+
+		LDA	#8
+		STA	PSHTSPR0+39
+
+		LDA	#16
+		STA	PSHTSPR0+43
+
+		LDA	#24
+		STA	PSHTSPR0+47
+
+		LDA	#H'F6
+		STA	PSHTSPR0+63
+
+		LDA	#H'EE
+		STA	PSHTSPR0+59
+		
+		LDA	#H'E6
+		STA	PSHTSPR0+55
+
+		LDA	#H'DE
+		STA	PSHTSPR0+51
+
+		LDA	#H'7C		; G
+		STA	PSHTSPR0+1
+		STA	PSHTSPR0+33
+
+		LDA	#H'7D		; A
+		STA	PSHTSPR0+5
+		STA	PSHTSPR0+37
+
+		LDA	#H'9C		; M
+		STA	PSHTSPR0+9
+		STA	PSHTSPR0+41
+
+		LDA	#H'9D		; E
+		STA	PSHTSPR0+13
+		STA	PSHTSPR0+25
+		STA	PSHTSPR0+45
+		STA	PSHTSPR0+57
+
+		LDA	#H'AF		; O
+		STA	PSHTSPR0+17
+		STA	PSHTSPR0+49
+
+		LDA	#H'CF		; V
+		STA	PSHTSPR0+21
+		STA	PSHTSPR0+53
+
+		LDA	#H'EF		; R
+		STA	PSHTSPR0+29
+		STA	PSHTSPR0+61
+
+		LDA	#2		;palette
+		STA	PSHTSPR0+2
+		STA	PSHTSPR0+6
+		STA	PSHTSPR0+10
+		STA	PSHTSPR0+14
+		STA	PSHTSPR0+18
+		STA	PSHTSPR0+22
+		STA	PSHTSPR0+26
+		STA	PSHTSPR0+30
+
+		STA	PSHTSPR0+34
+		STA	PSHTSPR0+38
+		STA	PSHTSPR0+42
+		STA	PSHTSPR0+46
+		STA	PSHTSPR0+50
+		STA	PSHTSPR0+54
+		STA	PSHTSPR0+58
+		STA	PSHTSPR0+62
+
+		RTS
+
+
+;GO_CHAR sets the sprite chars to the correct explosion tick
+
+GO_CHAR:	LDA	LEXPLCHR,Y
+		STA	PLYRSPR0+1
+
+		LDA	LEXPLCHR+1,Y
+		STA	PLYRSPR0+5
+		LDA	LEXPLCHR+2,Y
+		STA	PLYRSPR0+13
+		LDA	LEXPLCHR+3,Y
+		STA	PLYRSPR0+17
+		LDA	#2		;set the palettes
+		STA	PLYRSPR0+2
+		STA	PLYRSPR0+6
+		STA	PLYRSPR0+14
+		STA	PLYRSPR0+18
+
+;remove excess since ship is 3x3 and explosion is only 2x2
+
+		LDA	#H'F8		;Y pos. off-screen
+		STA	PLYRSPR0+ 8
+		STA	PLYRSPR0+20
+		STA	PLYRSPR0+24
+		STA	PLYRSPR0+28
+		STA	PLYRSPR0+32
+		RTS
+
+; GO_DISP sets the sprite coordinates so that the explosion is centered
+
+GO_DISP:	LDA	E_SHPOFF,Y	;offsets for diff. expl. ticks
+		TAX
+		CLC
+		ADC	#PLYR_POS
+		STA	PLYRSPR0
+		TXA
+		CLC
+		ADC	#PLYR_POS
+		STA	PLYRSPR0+3
+		RTS
+
+
+
+	
+
+CONTROL:
+	LDA	PWRPLANT
+	BNE	CTRL0A
+	JMP	CTRL4
+
+CTRL0A:
+	LDA	CHEAT
+	BEQ	CTRLA
+	LDA	#99
+	STA	ARMOR
+	STA	SHIELD
+	STA	FUEL
+	LDA	#99
+	STA	CLOAK
+	STA	MISSILES
+	STA	THUNDER
+	STA	MINES
+	STA	S_WAVE
+	LDA	#0
+	STA	DAMAGE
+	STA	STATUS
+	LDA	#6	;;!!!
+	STA	DRIVE
+	LDA	#5
+	STA	PWRPLANT
+	STA	SHLDTYPE
+	LDA	#4
+	STA	WPN1
+	LDA	WPN2
+	BNE	CTRL0
+	LDA	#THUNDER
+	STA	WPN2
+
+CTRL0:	
+;;;;	LDA	CHEATDIE
+;;;;	BEQ	CTRLA
+;;;;	LDA	#0
+;;;;	STA	HASPLAYED	;disable continue!
+;;;;	JSR	KILLPLYR
+
+CTRLA:	LDA	J1CHG
+	AND	#START
+	BEQ	CTRL1
+
+;pause if START is pressed
+
+	LDA	#H'7F
+	STA	GAMEMODE
+	LDA	#0
+	STA	CODE_INDX
+	LDA	#-1		;turn off all unwanted sounds
+	JSR 	SILENCE
+	LDA	#1
+	JSR	SILENCE
+	LDY	#BELL >>8
+	LDX	#BELL &H'FF
+	LDA	#1
+	JSR	PLAY
+	JMP	CTRL4
+
+CTRL1:	LDA	J1CHG
+	AND	#SELECT
+	BNE	CTRL1A0
+	JMP	CTRL2
+
+
+
+;enter computer mode due to SELECT button
+
+CTRL1A0:	LDA	#0
+		STA	COMPITEM
+
+;entry for when enemy base is destroyed...
+
+CTRL1A:		LDA	#-1
+		JSR	SILENCE
+		LDA	#0
+		STA	EFFECT
+		JSR	DOCOMP
+		JSR	VR_WAIT
+		LDY	#0
+		JSR	ZAP_SPRITES
+		JSR	INITSPR
+	
+CTRL1B0:	LDA	WARP
+		BPL	CTRL1B
+		JSR	INITWARP
+		JMP	CTRL1D
+	
+CTRL1B:		CMP	#1		;just landed!
+		BNE	CTRL1C
+		JSR	INITCMBT
+		JSR	LOAD_GUNS
+		LDA	XPOS
+		STA	SAVE_X
+		LDA	YPOS
+		STA	SAVE_Y
+		LDA	#0
+		STA	WARP
+	
+		LDA	BKGRND
+		BMI	CTRL1B1
+
+;space station
+
+		LDA	#STATION &H'FF
+		STA	BKGRPTRL
+		LDA	#STATION >> 8
+		STA	BKGRPTRH
+
+		LDA	#32
+		STA	BKGRWIDTH
+
+		LDA	#15
+		STA	DEST_X
+		STA	DEST_Y		;initialize compass to point toward
+					;control tower.
+
+		LDA	RAND		;setup position on planet
+		AND	#H'07		;pick one of 8
+		TAY
+		LDA	PLNTXPOS, Y
+		STA	XPOS
+		LDA	PLNTYPOS, Y
+		STA	YPOS
+		JMP	CTRL1D
+
+PLNTXPOS:	.DB	1, 1, 15, 31, 31, 31, 15, 1
+PLNTYPOS:	.DB	15, 1, 1, 1, 15, 31, 31, 31
+
+;planet
+
+CTRL1B1:	LDA	#21
+		STA	YPOS
+		STA	DEST_X
+		STA	DEST_Y
+		LDA	#1
+		STA	XPOS
+		LDA	PRADIKUS
+		BEQ	CTRL1B2
+		LDA	#PRADMAP &H'FF
+		STA	BKGRPTRL
+		LDA	#PRADMAP >> 8
+		STA	BKGRPTRH
+	
+		LDA	#44
+		STA	BKGRWIDTH
+	
+		JMP	CTRL1D
+	
+CTRL1B2:	LDA	#PLANET_1 &H'FF
+		STA	BKGRPTRL
+		LDA	#PLANET_1 >> 8
+		STA	BKGRPTRH
+	
+		LDA	#44
+		STA	BKGRWIDTH
+
+		JMP	CTRL1D
+
+CTRL1C:		CMP	#2		;left orbit...
+		BNE	CTRL1D
+
+		LDA	#H'7F
+		STA	BKGRWIDTH
+
+		JSR	INITCMBT
+		LDA	#0
+		STA	WARP
+	
+		LDA	SAVE_X
+		STA	XPOS
+		LDA	SAVE_Y
+		STA	YPOS
+
+
+CTRL1D:
+	JSR	INITPLYR
+	JSR	PLYRDRAW
+	
+	JSR	DRAWSYSTEM
+	JSR	SHOT_REF
+
+	RTS
+
+CTRL2:	LDA	J1CHG
+	AND	#A_BTN
+	BEQ	CTRL3
+	JMP	SHOOT_W1	;BUTTON A
+
+CTRL3:	LDA	J1CHG
+	AND	#B_BTN
+	BEQ	CTRL3A
+	JMP	SHOOT_W2	;BUTTON B
+
+CTRL3A:	LDA	INVISO
+	BEQ	CTRL4
+	LDA	J1VAL
+	AND	#B_BTN
+	BEQ	CTRL3B
+	
+
+	LDX	#H'1F
+	LDA	BKGRND
+	BEQ	USECLK		;used up slower in space
+	LDX	#H'0F
+
+USECLK:	TXA
+        AND	TIMER0
+	BNE	CTRL4
+	DEC	CLOAK
+	BNE	CTRL4
+
+CTRL3B:	LDA	#0
+	STA	INVISO
+	JSR	WARNING		;make sure to fix palettes since
+				;"INVISO" is no longer active
+CTRL4:	RTS
+
+;*************************************************
+
+DOCOMP:		LDA	#0
+		STA	COMPTIME
+
+		JSR	ZAP_SPRITES
+		LDA	#H'08
+		STA	V_MODE
+	
+		JSR	VR_WAIT
+		JSR	KILL_VID
+
+		LDA	#0
+		JSR	XVIDEO
+
+DOCOMP1:
+		
+		LDX	#1	;clear page 1
+	LDA	#H'FC		;fill w/solid blocks (md. blue) 04-20-90
+		JSR	CLEAR
+
+		JSR	VR_WAIT
+
+		LDA	#H'09
+		STA	V_SEL
+		STA	VID_SEL
+
+		LDA	VID_RESET
+		LDA	#H'3F
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_PTR
+		LDA	#H'0E
+		STA	VID_DATA
+		LDA	#H'21
+		STA	VID_DATA
+		LDA	#H'11
+		STA	VID_DATA
+		LDA	#H'01
+		STA	VID_DATA
+
+
+		LDY	#16
+DCOMP2:		LDA	COMPPAL, Y
+		STA	SPALREGS, Y
+		DEY
+		BNE	DCOMP2
+
+	LDA	STATUS
+
+;0=green; 1=yellow; 2=red; -1=critical
+
+	CLC
+	ADC	#1
+	TAY
+	LDA	STATCOLOR, Y
+	STA	SPALREGS+10
+		
+		JSR	SPALXFER
+
+;do palettes for video page 0
+
+		LDA	VID_RESET
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'C0
+		STA	VID_PTR
+	
+		LDY	#0
+		LDA	#0
+PIC0C:		STA	VID_DATA
+		INY
+		CPY	#H'40
+               
+		BNE	PIC0C
+
+;do palettes for video page 1
+
+		LDA	VID_RESET
+		LDA	#H'27
+		STA	VID_PTR
+		LDA	#H'C0
+		STA	VID_PTR
+	
+		LDY	#0
+		LDA	#0
+PIC0D:		STA	VID_DATA
+		INY
+		CPY	#H'40
+               
+		BNE	PIC0D
+
+		LDA	VID_RESET
+		LDA	#H'20
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_PTR
+
+		LDA	#CS_DATA &H'FF
+		STA	PTR0L
+		LDA	#CS_DATA >>8
+		STA	PTR0H
+	
+		LDY	#0
+DC_LOOP:
+		LDA	(PTR0L), Y
+		STA	VID_DATA
+		INC	PTR0L
+		BNE	DC_CHECK
+		INC	PTR0H
+	
+DC_CHECK:
+		LDA	PTR0L
+		CMP	#CSD_END &H'FF
+		BNE	DC_LOOP
+	
+		LDA	PTR0H
+		CMP	#CSD_END >>8
+		BNE	DC_LOOP
+	
+		LDA	XSCROLL
+		PHA
+		LDA	YSCROLL
+		PHA
+	
+
+		LDA	#H'F8
+		STA	XSCROLL
+		LDA	#H'F6
+		STA	YSCROLL
+
+;*************************************************
+
+		JSR	COMPON
+
+		PLA
+		STA	YSCROLL
+		PLA
+		STA	XSCROLL
+
+		LDA	#H'18		;WAS H'1E (05-06-90)
+		STA	V_MODE
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+
+		JSR	WARNING		;reset sprite palette
+					;in case player bought
+					;fuel or armor...
+       	 	JSR	RESETPALS
+		LDA	#0
+		STA	SCCNT
+		JSR	DOPAL
+	LDA	V_SEL
+	PHA
+	JSR	WRITE_SCBUF
+	PLA
+	STA	V_SEL
+
+		LDA	BKGRND
+		BNE	DC_FIX
+
+		LDA	SYS_PAL
+		JMP	XVIDEO
+
+DC_FIX:		LDA	#1		;planet surface or space station
+		JMP	XVIDEO
+
+
+STATCOLOR:
+
+;0=critical (red); 1=green; 2=yellow; 3=red
+	
+		.DB	H'16,H'19,H'37,H'16
+
+
+COMPPAL:	.DB	H'0E,H'36,H'26,H'37	;            
+		.DB	H'0E,H'21,H'24,H'01	;0E/21/23/01
+		.DB	H'0E,H'34,H'36,H'26	;--/30/COND/??
+		.DB	H'0E,H'16,H'26,H'37	;flashing
+
+
+
+
+BPAL0:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
+		.DB	H'0E,H'20,H'10,H'00
+		.DB	H'0E,H'19,H'11,H'30
+		.DB	H'0E,H'04,H'29,H'21
+		.DB	H'0E,H'23,H'36,H'25	;blinking...
+		.DB	H'0E,H'37,H'25,H'23
+		.DB	H'0E,H'25,H'23,H'36
+
+BPAL2:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
+		.DB	H'0E,H'20,H'10,H'00
+		.DB	H'0E,H'26,H'16,H'35
+		.DB	H'0E,H'21,H'25,H'2B
+		.DB	H'0E,H'39,H'27,H'24	;blinking...
+		.DB	H'0E,H'27,H'24,H'37
+		.DB	H'0E,H'25,H'36,H'27
+
+BPAL4:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
+		.DB	H'0E,H'20,H'10,H'00
+		.DB	H'0E,H'09,H'16,H'39
+		.DB	H'0E,H'11,H'36,H'15
+		.DB	H'0E,H'26,H'23,H'37	;blinking...
+		.DB	H'0E,H'23,H'38,H'28
+		.DB	H'0E,H'36,H'27,H'24
+
+BPAL6:		.DB	H'01,H'03,H'0F		;blink/frame/freq.
+		.DB	H'0E,H'20,H'10,H'00
+		.DB	H'0E,H'16,H'11,H'30
+		.DB	H'0E,H'31,H'34,H'14
+		.DB	H'0E,H'38,H'26,H'14	;blinking...
+		.DB	H'0E,H'26,H'14,H'38
+		.DB	H'0E,H'14,H'35,H'25
+
+STNPAL:		.DB	H'01,H'04,H'08		;blink/frame/freq.
+		.DB	H'0E,H'10,H'00,H'0E
+		.DB	H'0E,H'21,H'11,H'01
+		.DB	H'0E,H'31,H'21,H'11
+		.DB	H'0E,H'0E,H'00,H'0E	;blinking...
+		.DB	H'0E,H'06,H'00,H'0E
+		.DB	H'0E,H'16,H'00,H'0E
+		.DB	H'0E,H'26,H'00,H'0E
+
+PLNTPAL:	.DB	H'00,H'00,H'00		;blink/frame/freq.
+		.DB	H'01,H'19,H'09,H'37
+		.DB	H'01,H'10,H'00,H'0E
+		.DB	H'01,H'10,H'00,H'0E
+		.DB	H'01,H'21,H'11,H'01
+
+
+;Regular sprite palettes...
+
+
+SPALGRN:	.DB	H'01,H'03,H'0F		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'10,H'0A	;player ship
+		.DB	H'0E,H'30,H'10,H'1A
+		.DB	H'0E,H'30,H'10,H'2A
+
+SPALYLW:	.DB	H'01,H'03,H'09		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'10,H'16	;player ship
+		.DB	H'0E,H'30,H'10,H'26
+		.DB	H'0E,H'30,H'10,H'36
+
+SPALRED:	.DB	H'01,H'03,H'04		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'10,H'05	;player ship
+		.DB	H'0E,H'30,H'10,H'15
+		.DB	H'0E,H'30,H'10,H'25
+
+
+;Sprite palettes to use when cloaking device is in use...
+
+SPCLKGRN:	.DB	H'01,H'03,H'0F		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'15,H'0A	;player ship
+		.DB	H'0E,H'30,H'05,H'1A
+		.DB	H'0E,H'30,H'15,H'2A
+
+SPCLKYLW:	.DB	H'01,H'03,H'09		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'15,H'16	;player ship
+		.DB	H'0E,H'30,H'05,H'26
+		.DB	H'0E,H'30,H'15,H'36
+
+SPCLKRED:	.DB	H'01,H'03,H'04		;blink/frame/freq.
+	.DB	H'0E,H'37,H'27,H'17	;enemy ships
+	.DB	H'0E,H'32,H'1C,H'12	;enemy ships/turrets
+;	.DB	H'0E,H'24,H'14,H'34	;enemy ships
+;	.DB	H'0E,H'12,H'21,H'3C	;enemy ships/turrets
+		.DB	H'0E,H'16,H'26,H'36	;explosions/shots
+		.DB	H'0E,H'30,H'15,H'05	;player ship
+		.DB	H'0E,H'30,H'05,H'15
+		.DB	H'0E,H'30,H'15,H'25
+
+
+;************************************************
+	
+.EQU		CODEDONE,	H'00
+
+CODE_1:		.DB	B_BTN, UP_BTN, RT_BTN, A_BTN
+		.DB	DN_BTN, LT_BTN, CODEDONE
+
+DOPAUSE:	LDA	J1CHG
+		BEQ	NCODE2
+		AND	#START
+		BNE	PAUSEOFF
+		LDA	J1CHG
+		LDX	CODE_INDX
+		CMP	CODE_1, X
+		BEQ	NEXTCODE
+		LDA	#0
+		STA	CODE_INDX
+		RTS
+
+PAUSEOFF:	LDA	#1
+		JSR	SILENCE
+		LDY	#BELL >>8
+		LDX	#BELL &H'FF
+		LDA	#1
+		JSR	PLAY
+		JSR	SHOT_REF
+		LDA	#0
+		STA	GAMEMODE
+		RTS
+
+NEXTCODE:	INX
+		STX	CODE_INDX
+		LDA	CODE_1, X
+		BNE	NCODE2
+
+SET_CHEAT:	LDA	CHEAT
+		EOR	#H'FF
+		STA	CHEAT
+		LDA	#99
+		STA	FUEL	
+		STA	ARMOR
+		STA	SHIELD
+		JSR	WARNING
+		LDA	#1
+		JSR	SILENCE
+		LDY	#CODE_SND >>8
+		LDX	#CODE_SND &H'FF
+		LDA	#1
+		JSR	PLAY
+		LDA	#0
+		STA	CODE_INDX
+NCODE2:		RTS
+
+
+SHOWPAUSE:	LDY	#PSHTSPR0 &H'FF
+		LDX	#0
+SPLOOP:		LDA	PAUSESPR, X
+		STA	SPRTBL0, Y
+		INY
+		INX
+		CPX	#20
+		BNE	SPLOOP
+
+		LDA	#H'FA
+SPL2:		STA	SPRTBL0, Y
+		INY
+		INX
+		CPX	#32
+		BNE	SPL2
+		RTS
+
+PAUSESPR:	.DB	H'94, H'D2, H'03, H'6C	;P
+		.DB	H'94, H'7D, H'03, H'74	;A
+		.DB	H'94, H'D3, H'03, H'7C	;U
+		.DB	H'94, H'FE, H'03, H'84	;S
+		.DB	H'94, H'9D, H'03, H'8C	;E
+
+;************************************************
+
+PLYRMOVE:
+	
+	LDA	PWRPLANT
+	BNE	PLYRMV0
+	JMP	PLYRME
+
+;see if player is rotating and/or thrusting
+
+PLYRMV0:
+	LDX	#21
+	LDA	SND_RAM+SF,X
+	AND	#H'80
+	BNE	PLYRM0A
+	LDA	#0
+	STA	EFFECT
+
+PLYRM0A:
+	LDA	THRUST
+	BEQ	PLYRM0B
+	BMI	PLYRM0B
+	LDA	EFFECT
+	CMP	#2
+	BCS	PLYRM0C
+	LDX	#ENG & H'FF
+	LDY	#ENG >> 8
+       	LDA	#3
+       	JSR	PLAY
+       	LDA	#ENGINE
+       	STA	EFFECT
+	JMP	PLYRM0C
+	
+PLYRM0B:
+	LDA	#2
+	JSR	CHK_SLNC
+	BEQ	PLYRM0C
+	LDA	#0
+	STA	EFFECT
+PLYRM0C:
+	LDX	DIR
+	LDY	THRUST
+
+	LDA	J1VAL
+	ROR	A		;rotate right?
+
+	BCC	PLYRM1
+	INX
+	PHA
+	LDA	#0
+	STA	THR_CNT
+	PLA
+
+PLYRM1:	ROR	A		;rotate left?
+	BCC	PLYRM2
+	DEX
+	PHA
+	LDA	#0
+	STA	THR_CNT
+	PLA
+
+PLYRM2:	ROR	A		;decel?
+	BCC	PLYRM3
+	LDY	#-1	;***
+	JMP	PLYRM4
+
+PLYRM3:	ROR	A		;accel?
+	BCC	PLYRM3A
+	INY
+	CPY	#8
+	BCC	PLYRM4
+	LDY	#8
+	JMP	PLYRM4
+
+
+PLYRM3A:	LDY	#0
+
+
+PLYRM4:	TXA
+	AND	#H'0F
+PLYRM6:	STA	DIR
+	TYA
+	BMI	PLYRM8
+	CMP	#H'09
+	BCC	PLYRM7
+	LDA	#H'08
+PLYRM7:	STA	THRUST
+	RTS
+
+PLYRM8:	STA	THRUST
+PLYRME:	RTS
+	
+
+;*************************************************
+
+PLYRDRAW:
+
+;update sprite table based on ship facing (DIR)
+;and THRUST...assumes display disabled and
+;INITPLYR has already set up position of sprites
+
+		LDA	PWRPLANT
+		BNE	PD2
+		RTS	   		;player is dead!
+
+
+PD2:		LDX	DIR
+	
+		LDA	TIMER0
+		AND	#H'08		;rate of "flame flicker"
+		ASL	A
+		ASL	A
+		CLC
+		ADC	CHOFFTBL, X	;flame shape #
+		ADC	#H'AA		;either $AA or $CA
+		STA	FLMSPR0+1
+
+		LDA	FLIPTBL, X
+		ORA	#2	   	;palette
+		STA	FLMSPR0+2
+
+		LDA	FLMXOFF, X	;flame X-pos
+		STA	FLMSPR0+3
+		
+		LDA	THRUST
+		BEQ	PDF0
+		BMI	PDF0
+	
+		LDA	FLMYOFF, X	;flame Y-pos
+		BNE	PDF1
+	
+PDF0:		LDA	#H'F8		;no thrust...
+	
+PDF1:		STA	FLMSPR0+0
+	
+;draw player ship...
+	
+		JSR	PSHPPTR		;load pointers to plyr ship sprites
+		LDA	#0		;base char.
+		LDX	DIR		;facing
+		JSR	DRAW3X3	
+		LDA	FLIPTBL, X
+		ORA	#3
+		JMP	FLIP3X3		;done!
+		
+
+;******************************************************			
+
+NEG:		STA	ABS
+		LDA	#0
+		SEC
+		SBC	ABS
+		STA	ABS
+		RTS
+
+DOFIND:		LDA	#0
+		STA	SIGN_DX
+		STA	SIGN_DY
+
+		LDA	XPOS
+		SEC
+		SBC	DEST_X
+		TAX
+		BPL	DFIND0
+		LDA	#-1
+		STA	SIGN_DX
+DFIND0:		LDA	YPOS
+		SEC
+		SBC	DEST_Y
+		TAY
+		BPL	DFIND1
+		LDA	#-1
+		STA	SIGN_DY
+DFIND1:		LDA	#0
+		STA	CX
+		STA	CY
+
+FIND:  		LDA	#0
+		STA	T0
+
+		CPX	#0
+		BNE	FIND30
+		CPY	#0
+		BNE	FIND10
+;dx = 0, dy = 0
+		LDA	#-1
+		RTS
+
+FIND10:		TYA
+		BMI	FIND20
+;dx = 0, dy+
+		LDA	#0
+		RTS
+
+;dx = 0, dy-
+
+FIND20:		LDA	#4
+		RTS
+
+FIND30:		CPY	#0
+		BNE	FIND50
+;dy = 0
+		TXA
+		BMI	FIND40
+;dx+
+		LDA	#6
+		RTS
+
+FIND40:		LDA	#2
+		RTS
+
+FIND50:		STX	TX
+		CPY	TX
+		BNE	FIND70
+;dx = dy
+		TYA
+		BMI	FIND60
+;dy+
+		LDA	#7
+		RTS
+
+FIND60:		LDA	#3
+		RTS
+
+FIND70:		LDA	TX
+		JSR	NEG
+		STA	TX
+		CPY	TX
+		BNE	FIND90
+;dx = -dy
+		TYA
+		BMI	FIND80
+;dy+
+		LDA	#1
+		RTS
+
+FIND80:		LDA	#5
+		RTS
+
+FIND90:		TXA
+		BIT	SIGN_DX
+		BEQ	FIND100
+		JSR	ABSVAL
+FIND100:	LSR	A
+		ROL	T0
+		CLC
+		ADC	CX
+		BIT	SIGN_DX
+		BEQ	FIND110
+		JSR	NEG
+FIND110:	TAX
+		LDA	T0
+		STA	CX
+
+		LDA	#0
+		STA	T0
+		TYA
+		BIT	SIGN_DY
+		BEQ	FIND120
+		JSR	ABSVAL
+FIND120:	LSR	A
+		CLC
+		ADC	CY
+		BIT	SIGN_DY
+		BEQ	FIND130
+		JSR	NEG
+FIND130:	TAY
+		LDA	T0
+		STA	CY
+		JMP	FIND
+		
+
+COMPASS:	JSR	DOFIND
+		CMP	#-1
+		BNE	CMPS_A
+		LDA	#H'BC		;sm. ship char
+		STA	CMPSPR0+1
+		LDA	#2
+		JMP	CMPS_B
+CMPS_A:
+		ASL	A
+		TAX
+		LDA	CHOFFTBL, X
+		CLC
+		ADC	#H'B0		;char
+		STA	CMPSPR0+1
+		LDA	FLIPTBL, X
+		ORA	#2		;palette/flip
+CMPS_B:
+		STA	CMPSPR0+2
+		RTS
+
+
+;************************************************
+
+INITPLYR:
+
+;sets up player ship sprites to center
+;of screen...
+;	        1 2 3
+;               4 5 6
+;	        7 8 9
+	                     
+
+		LDA	#H'74		;"PLYR_POS"	
+		STA	H'020C	;y1
+		STA	H'020F	;x1
+		STA	H'0210  ;y2
+		STA	H'0214  ;y3
+		STA	H'021B	;x4
+		STA	H'0227	;x7
+
+		STA	H'07D0	;y1
+		STA	H'07D3	;x1
+		STA	H'07D4  ;y2
+		STA	H'07D8  ;y3
+		STA	H'07DF	;x4
+		STA	H'07EB	;x7
+
+
+		LDA	#H'7C
+		STA	H'0213	;x2
+		STA	H'0218	;y4
+		STA	H'021C  ;y5
+		STA	H'021F  ;x5
+		STA	H'0220	;y6
+		STA	H'022B	;x8
+
+		STA	H'07D7	;x2
+		STA	H'07DC	;y4
+		STA	H'07E0  ;y5
+		STA	H'07E3  ;x5
+		STA	H'07E4	;y6
+		STA	H'07EF	;x8
+
+
+		LDA	#H'84
+		STA	H'0217	;x3
+		STA	H'0223	;x6
+		STA	H'0224	;y7
+		STA	H'0228	;y8
+		STA	H'022C  ;y9
+		STA	H'022F  ;x9
+
+		STA	H'07DB	;x3
+		STA	H'07E7	;x6
+		STA	H'07E8	;y7
+		STA	H'07EC	;y8
+		STA	H'07F0  ;y9
+		STA	H'07F3  ;x9
+
+
+		RTS
+
+;*************************************************
+
+MAXDRIVE:
+	.DB	H'00,H'03,H'03,H'04,H'04,H'05,H'06
+	.DB	H'07,H'08,H'08,H'08,H'08,H'08,H'08		
+
+PMAXDRIVE:
+	.DB	H'00,H'03,H'03,H'04,H'05,H'06,H'07
+	.DB	H'07,H'00,H'00,H'00,H'00,H'00,H'00		
+
+;*************************************************
+
+SCROLL_MOVE:	
+;    LDA	XSCROLL	
+;    STA	SAV_XSCR
+;    LDA	YSCROLL
+;    STA	SAV_YSCR
+;    LDA	PAGE
+;    STA	SAV_PAGE
+
+   		LDA	PXOFF
+   		STA	SAV_XOFF
+   		LDA	PYOFF
+   		STA	SAV_YOFF
+		
+		JSR	SCR_XY
+
+		LDA	XSTAT
+		AND	#H'01
+		STA	XSTAT
+		ROR	A
+		BCC	SCRM_50		;do X first...
+
+;do Y first...
+   ;	  	LDA	PSHPYVEL
+   ;		STA	SAV_YOFF
+
+		LDA	YMOVE
+		BEQ	SCRM_10		;OK for X movement
+		BMI	SCRM_00
+		JSR	SCR_DN
+		JMP	SCRM_05
+SCRM_00:	JSR	SCR_UP
+SCRM_05:	LDA	XSTAT		;check to see if Y-scroll occured
+		BPL	SCRM_10		;...no, OK for X movement...
+		
+		LDA	#0
+		STA	XMOVE		;cancel any pending X movement
+   		STA	PSHPXVEL
+   		LDA	SAV_XOFF	
+		STA	PXOFF		;restore old offset
+;    LDA	SAV_XSCR
+;    STA	XSCROLL
+;    LDA	SAV_PAGE
+;    STA	PAGE
+		JMP	SCRM_30
+
+;do X only if Y not needed...
+
+SCRM_10:	LDA	XMOVE
+		BEQ	SCRM_30
+		BMI	SCRM_20
+		JSR	SCR_RT
+		JMP	SCRM_25
+SCRM_20:	JSR	SCR_LT
+SCRM_25:	
+   ;		LDA	PSHPXVEL
+   ;		STA	SAV_XVEL
+
+;done with Y & X...
+
+SCRM_30:	JMP	ADJSCROLL	;done!
+
+
+;do X first...
+
+SCRM_50:		
+   ;		LDA	PSHPXVEL
+   ;		STA	SAV_XOFF	;save X movement since it's OK...
+
+		LDA	XMOVE
+		BEQ	SCRM_70		;OK for Y movement
+		BMI	SCRM_60
+		JSR	SCR_RT
+		JMP	SCRM_65
+SCRM_60:	JSR	SCR_LT
+SCRM_65:	LDA	XSTAT		;check to see if X-scroll occured
+		BPL	SCRM_70		;...no, OK for Y movement...
+
+		LDA	#0
+		STA	YMOVE		;cancel any pending Y movement
+   		STA	PSHPYVEL
+   		LDA	SAV_YOFF
+   		STA	PYOFF		;restore old offset
+;    LDA	SAV_YSCR
+;    STA	YSCROLL
+		JMP	SCRM_90
+
+;do Y only if X not needed...
+
+SCRM_70:	LDA	YMOVE
+		BEQ	SCRM_90
+		BMI	SCRM_80
+		JSR	SCR_DN
+		JMP	SCRM_85
+SCRM_80:	JSR	SCR_UP
+SCRM_85:	
+    ;		LDA	PSHPYVEL
+    ;		STA	SAV_YVEL
+
+;done with X & Y...
+
+SCRM_90:	;JMP	ADJSCROLL	;fall through to ADJSCROLL
+
+	
+;*************************************************
+
+ADJSCROLL:			
+	
+	LDA	XMOVE
+ 	BMI	AS0A
+	
+	LDA	XSCROLL
+	CLC
+	ADC	XMOVE
+	STA	XSCROLL
+
+	BCC	AS0
+	LDA	PAGE
+	EOR	#1
+	STA	PAGE
+	JMP	AS0
+
+AS0A:	LDA	#0
+	SEC
+	SBC	XMOVE
+	CMP	XSCROLL
+	BEQ	AS0B
+	BCC	AS0B
+	
+	LDA	PAGE
+	EOR	#1
+	STA	PAGE
+
+AS0B:	LDA	XSCROLL
+	CLC
+	ADC	XMOVE
+	STA	XSCROLL
+
+	
+
+AS0:	
+	LDA	YSCROLL
+	CLC
+	ADC 	YMOVE
+	CMP	#H'F0
+	BCC	AS2
+	
+	PHA
+	LDA	YMOVE
+	BMI	AS1
+
+	PLA
+	SBC	#H'F0
+	JMP	AS2
+
+AS1:	PLA
+	CLC
+	ADC	#H'F0
+
+AS2:	
+
+
+	STA	YSCROLL
+
+	LDA	#0
+	STA	XMOVE
+	STA	YMOVE
+
+	RTS
+
+;*************************************************
+
+
+SCR_XY:
+		LDA	TIMER0
+	   	AND	#H'07
+	   	CMP	#H'07
+	   	BNE	SCRXY_0
+	
+		LDA	THRUST
+		BEQ	SCRXY_0		;no thrust
+		BPL	SCRXY_1
+
+
+;reverse thrusters...
+
+		LDA	#0
+		STA	LST_THR
+
+		LDA	TSPD
+		CMP	#0
+		BEQ	SCRXY_0
+		DEC	TSPD
+
+;no thrust...
+
+SCRXY_0:	;check for "natural" decceleration...
+
+		INC	LST_THR
+		LDA	LST_THR
+		CMP	#112
+		BNE	SCRXY_A
+		LDA	#0
+		STA	LST_THR
+		DEC	TSPD
+		LDA	TSPD
+		BPL	SCRXY_A
+		LDA	#0
+		STA	TSPD
+
+SCRXY_A:	LDA	TSPD
+		LDY	TDIR
+		JSR	NEWVEL2
+		
+
+	   	JMP	SCRX_0
+
+
+;thrust...
+
+SCRXY_1:	LDA	#0
+		STA	LST_THR
+	
+		LDY	DRIVE
+		LDA 	PMAXDRIVE, Y
+		STA	TMAX
+		LDA	DIR
+		ASL	A
+		TAY
+	
+		JSR	ADJVEL
+
+
+SCRX_0:		LDA	TVELX
+	   	CLC
+	   	ADC	PXOFF
+		STA	PSHPXVEL
+	
+		BMI	SCRX_2
+		AND	#H'0F
+		STA	PXOFF
+		LDA	PSHPXVEL
+		AND	#H'70
+		STA	PSHPXVEL
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	XMOVE
+		JMP	SCRX_3
+	
+SCRX_2:		LDA	#0
+		SEC
+		SBC	PSHPXVEL
+		STA	PSHPXVEL
+		AND	#H'0F
+		STA	PXOFF
+		LDA	#0
+		SEC
+		SBC	PXOFF
+		STA	PXOFF
+	
+		LDA	PSHPXVEL
+		AND	#H'F0
+		STA	PSHPXVEL
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	XMOVE
+		LDA	#0
+		SEC
+		SBC	XMOVE
+		STA	XMOVE
+		LDA	#0
+		SEC
+		SBC	PSHPXVEL
+		STA	PSHPXVEL
+		
+SCRX_3:	
+
+
+SCRY_0:		LDA	TVELY
+		CLC
+		ADC	PYOFF
+		STA	PSHPYVEL
+	
+		BMI	SCRY_2
+		AND	#H'0F
+		STA	PYOFF
+		LDA	PSHPYVEL
+		AND	#H'70
+		STA	PSHPYVEL
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	YMOVE
+		JMP	SCRY_3	
+	
+SCRY_2:		LDA	#0
+		SEC
+		SBC	PSHPYVEL
+		STA	PSHPYVEL
+		AND	#H'0F
+		STA	PYOFF
+		LDA	#0
+		SEC
+		SBC	PYOFF
+		STA	PYOFF
+	
+		LDA	PSHPYVEL
+		AND	#H'F0
+		STA	PSHPYVEL
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	YMOVE
+		LDA	#0
+		SEC
+		SBC	YMOVE
+		STA	YMOVE
+		LDA	#0
+		SEC
+		SBC	PSHPYVEL
+		STA	PSHPYVEL
+	
+SCRY_3:		RTS
+
+;*************************************************
+
+
+SCR_DN:
+
+;accumulator is $01 to $07 (+1 to +7)
+
+		CLC
+		ADC	YBOFF
+		STA	YBOFF
+
+		CMP	#8
+		BCC	SD4		;still <= 7
+
+;need to scroll
+		SBC	#8
+		STA	YBOFF
+
+		INC	YBLOCK
+		LDA	YBLOCK
+		CMP	#30
+		BCC	SD0
+		LDA	#0
+		STA	YBLOCK
+
+SD0:		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	SD1
+		LDA	#0
+		STA	YREL
+		INC	YPOS
+		LDA	YPOS
+		CMP	BKGRWIDTH
+		BCC	SD1
+		DEC	YPOS
+
+SD1:		LDA	XBLOCK
+		SEC
+		SBC	XREL
+		TAX
+		LDY	YBLOCK
+		DEY
+		BPL	SD2
+		LDY	#29
+
+SD2:		LDA	YPOS
+		CLC
+		ADC	#2
+		STA	TY
+
+		LDA	YREL
+		PHA
+		SEC
+		SBC	#3
+		STA	YREL
+		BPL	SD3
+		ADC	#8
+		STA	YREL
+		DEC	TY
+
+SD3:		LDA	XPOS
+		SEC
+		SBC	#2
+		STA	TX
+
+       	JSR	ROWXFER
+
+		LDA	#H'81
+		STA	XSTAT
+
+		PLA
+		STA	YREL
+
+SD4:		RTS
+		
+
+;*************************************************
+
+
+SCR_UP:
+
+;accumulator is $F8 to $FF (-7 to -1)
+
+		CLC
+		ADC	YBOFF
+		STA	YBOFF
+
+		BPL	SU4		;still >= 0
+
+;need to scroll
+		CLC
+		ADC	#8
+		STA	YBOFF
+	
+		DEC	YBLOCK
+		BPL	SU0
+		LDA	#29
+		STA	YBLOCK
+
+SU0:		DEC 	YREL
+		BPL	SU1
+		LDA	#7
+		STA	YREL
+		DEC	YPOS
+		BPL	SU1
+		INC	YPOS
+
+SU1:		LDA	XBLOCK
+		SEC
+		SBC	XREL
+		TAX
+		LDY	YBLOCK
+
+		LDA	XPOS
+		SEC
+		SBC	#2
+		STA	TX
+
+		LDA	YPOS
+		SEC
+		SBC	#2
+		STA	TY
+
+       	JSR	ROWXFER
+
+		LDA	#H'81
+		STA	XSTAT
+
+SU4:		RTS
+			
+
+;*************************************************
+	
+
+
+SCR_RT:
+
+;Accumulator is $01 to $07 (+1 to +7)
+
+		CLC
+		ADC	XBOFF
+		STA	XBOFF
+		CMP	#8
+		BCC	SR4		;still <= 7
+
+;need to scroll
+		SBC	#8
+		STA	XBOFF
+
+		INC	XBLOCK
+		LDA	XBLOCK
+		CMP	#64
+		BCC	SR0
+		LDA	#0
+		STA	XBLOCK
+SR0:		INC	XREL
+		LDA	XREL
+		CMP	#8
+		BCC	SR1
+		LDA	#0
+		STA	XREL
+		INC	XPOS
+		LDA	XPOS
+		CMP	BKGRWIDTH
+		BCC	SR1
+		DEC	XPOS
+
+SR1:		LDA	XBLOCK
+		CLC
+		ADC	#32
+		CMP	#64
+		BCC	SR2
+		SBC	#64
+SR2:		TAX
+		
+		LDY	YBLOCK
+		
+		LDA	YPOS
+		SEC
+		SBC	#2
+		STA	TY
+
+		LDA	XPOS
+		CLC
+		ADC	#2
+		STA	TX
+		
+SR3:		LDA	YREL
+		PHA
+
+       	JSR	COLXFER
+
+		LDA	#H'80
+		STA	XSTAT
+
+		PLA
+		STA	YREL
+
+SR4:		RTS
+
+
+;*************************************************
+
+
+SCR_LT:	
+
+;Accumulator is $F8 to $FF (-7 to -1)
+
+		CLC
+		ADC	XBOFF
+		STA	XBOFF
+		BPL	SL4		;still >= 0
+
+;need to scroll
+		CLC
+		ADC	#8
+		STA	XBOFF
+
+		DEC	XBLOCK
+		BPL	SL0
+		LDA	#63
+		STA	XBLOCK
+SL0:		DEC	XREL
+		BPL	SL1
+		LDA	#7
+		STA	XREL
+		DEC	XPOS
+		BPL	SL1
+		INC	XPOS
+
+SL1:		LDX	XBLOCK
+		LDY	YBLOCK
+		
+		LDA	YPOS
+		SEC
+		SBC	#2
+		STA	TY
+
+		LDA	XPOS
+		SEC
+		SBC	#2
+		STA	TX
+		
+		LDA	YREL
+		PHA
+
+       	JSR	COLXFER
+
+		LDA	#H'80
+		STA	XSTAT
+
+		PLA
+		STA	YREL
+
+SL4:		RTS
+
+
+
+
+
+
+
+
+
+
+DMAXFER:	
+  	  	LDA	VID_RESET
+	  	LDA	#0
+		STA	SPR_PTR
+		STA	SPR_PTR
+
+
+;*************************************************
+; ENABLE THE FOLLOWING 3 LINES FOR 2 SPRITE SETS!
+;*************************************************
+	LDA	TIMER0
+	ROR	A
+	BCS	DMAXF2
+
+
+DMAXF1:	LDA	#SPRTBL0 >>8
+	STA	DMA
+	RTS
+
+DMAXF2:	LDA	#SPRTBL1 >>8
+	STA	DMA
+	RTS
+
+
+PAL1:		.DB	H'36,H'36,H'36,H'36,H'37,H'37,H'37,H'37
+		.DB	H'36,H'36,H'36,H'36,H'37,H'37,H'37,H'37
+
+PAL2:		.DB	H'26,H'27,H'26,H'27,H'26,H'27,H'26,H'27
+		.DB	H'26,H'27,H'26,H'27,H'26,H'27,H'26,H'27
+
+PAL3:		.DB	H'06,H'06,H'16,H'16,H'16,H'16,H'26,H'26
+		.DB	H'26,H'26,H'16,H'16,H'16,H'16,H'06,H'06
+
+
+
+
+TICK:  		INC	TIMER0
+		BNE	PTIME
+		INC	TIMER1
+		BNE	PTIME
+		INC	TIMER2
+		BNE	PTIME
+		INC	TIMER3
+
+;update game time (hours : minutes : seconds)
+
+PTIME:         	LDA	GAMEMODE
+	       	BNE	TICK1
+
+		INC	T_SIX
+		LDA	T_SIX
+		CMP	#60
+		BCC	TICK1
+		LDA	#0
+		STA	T_SIX
+		INC	T_SEC
+		LDA	T_SEC
+		CMP	#60
+		BCC	TICK1
+		LDA	#0
+		STA	T_SEC
+		INC	T_MIN
+		LDA	T_MIN
+		CMP	#60
+		BCC	TICK1
+		LDA	#0
+		STA	T_MIN
+		LDA	T_HOUR
+		CMP	#99
+		BCC	TICK1		;stop at 99 hours or more (!)
+		INC	T_HOUR	
+	
+TICK1:		LDA	TIMER0
+		AND	#H'0F
+		BNE	TICKROT
+		INC	STN_ROTATE
+		LDA	STN_ROTATE
+		CMP	#3
+		BNE	TICKROT
+		LDA	#0
+		STA	STN_ROTATE
+TICKROT:
+
+	LDA	GAMEMODE
+	BNE	TFAS_END	;do the rest only if in PLAY mode
+
+	LDA	TIMER1
+	AND	#H'0F
+	CMP	#H'07
+	BNE	TICK_FAS
+TICK_1A:
+	LDA	TIMER0
+	BNE	TICK_FAS
+	JSR	SET_DIFF
+
+TICK_FAS:
+	LDX	#3		;fuel consumption rate
+	LDA	BKGRND
+	BEQ	TFAS_ENG
+	LDX	#7
+	JMP	TFAS_CHK
+TFAS_ENG:
+	LDA	THRUST
+	BNE	TFAS_CHK
+	LDX	#7
+TFAS_CHK:
+	TXA
+	AND	TIMER0
+	BNE	TSHLD
+	
+	DEC	REFUEL
+	BNE	TSHLD
+	LDY	DRIVE
+	LDA	FRES, Y
+	STA	REFUEL
+	DEC	FUEL
+   	JSR	WARNING		;check for low fuel and update
+				;palettes if necesary...
+	LDA	FUEL
+	BPL	TSHLD
+	LDA	#0
+	STA	FUEL
+	LDA	PWRPLANT
+	BEQ	TSHLD
+	JSR	KILLPLYR
+TSHLD:
+	LDA	TIMER0
+	ROR
+	BCC	TFAS_END
+	DEC	REGEN
+	BNE	TFAS_END
+
+	INC	SHIELD
+
+	LDY	SHLDTYPE
+	LDA	SHIELD
+	CMP	SHMAX, Y
+	BCC	TSHLD2
+	BEQ	TSHLD2
+	LDA	SHMAX, Y
+	STA	SHIELD
+
+TSHLD2:	LDY	PWRPLANT
+	LDA	SHRES, Y
+	STA	REGEN
+TFAS_END:
+	RTS
+	
+
+SHMAX:		.DB	0,  20,  40,  60,  80,  99
+SHRES:		.DB     0,  15,  12,  10,   7,   5
+FRES:		.DB     0,  30,  45,  60,  80, 100
+
+;*************************************************
+
+
+WARNING:	LDX	#SPALGRN &H'FF	;assume normal...
+		LDY	#SPALGRN >>8
+		JSR	SPRITEPAL
+
+		LDA	PWRPLANT
+		BEQ	WARN_END	;dead so don't worry about it!
+
+		LDA	INVISO
+		BEQ	WARN1
+
+;active cloaking device...      		
+
+		LDX	#SPCLKGRN &H'FF
+		LDY	#SPCLKGRN >>8
+		JSR	SPRITEPAL
+		
+WARN1:		LDX	#0		;assume condition is GREEN
+
+		LDA	ARMOR
+		CLC
+		ADC	SHIELD
+		CMP	#40
+		BCS	WARN2
+
+;ARMOR + SHIELD < 40 = yellow
+
+		INX
+		CMP	#15
+		BCS	WARN2
+
+;ARMOR + SHIELD < 20 = red
+
+		INX
+
+WARN2:		LDA	FUEL
+
+		CPX	#0
+		BNE	WARN2A		;only bring to cond. red if
+					;fuel is extremely low
+	
+		CMP	#20
+		BCS	WARN3
+
+;less than 20 fuel units...
+
+		INX
+
+WARN2A:		CMP	#5
+		BCS	WARN3
+
+;less than 10 fuel units...
+
+		LDX	#2		;condition RED	
+
+
+WARN3:		TXA
+		BEQ	WARN_END	;condition GREEN
+
+		CMP	#1
+		BNE	WARN_RED
+
+;condition YELLOW
+
+		LDA	INVISO
+		BEQ	WARN3A
+
+;active cloaking device...      		
+
+       		LDX	#SPCLKYLW &H'FF
+		LDY	#SPCLKYLW >>8
+		JMP	SPRITEPAL
+
+WARN3A:		LDX	#SPALYLW &H'FF
+		LDY	#SPALYLW >>8
+		JMP	SPRITEPAL
+
+;condition RED
+
+WARN_RED:	
+		LDA	INVISO
+		BEQ	WARNR1
+
+;active cloaking device...      		
+
+		LDX	#SPCLKRED &H'FF
+		LDY	#SPCLKRED >>8
+		JMP	SPRITEPAL
+
+WARNR1:		LDX	#SPALRED &H'FF
+		LDY	#SPALRED >>8
+		JMP	SPRITEPAL
+
+
+WARN_END:  	RTS
+
+
+
+;************************************************
+
+BPALXFER:
+
+;transfers new palettes info to video chip
+;during NMI...
+
+		LDA	VID_RESET
+		LDA	#H'3F
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_PTR
+
+		LDY	#0
+BPALX0:		LDA	BPALREGS, Y
+		STA	VID_DATA
+		INY
+		CPY	#H'10
+		BNE	BPALX0
+		RTS
+
+
+SPALXFER:	LDA	VID_RESET
+		LDA	#H'3F
+		STA	VID_PTR
+		LDA	#H'11
+		STA	VID_PTR
+	
+		LDY	#1
+SPALX0:		LDA	SPALREGS, Y
+		STA	VID_DATA
+		INY
+		CPY	#H'10
+		BNE	SPALX0
+		RTS
+
+
+
+RESETPALS:		
+		LDA	BKGRND		
+		BMI	RESPAL2
+		BNE	RESPAL1
+
+;space
+           	LDY	SYS_PAL		;4, 5, 6, or 7
+		DEY
+		DEY
+		DEY	
+		DEY
+           	LDX	SYSPALL, Y	;low
+           	LDA	SYSPALH, Y	;high
+           	TAY
+		JMP	BACKPAL
+
+;space station
+
+RESPAL1:	LDX	#STNPAL &H'FF
+		LDY	#STNPAL >>8
+		JMP	BACKPAL
+
+;planet
+
+RESPAL2:	LDX	#PLNTPAL &H'FF
+		LDY	#PLNTPAL >>8
+		JMP	BACKPAL
+
+SYSPALL:	.DB	BPAL0 &H'FF, BPAL2 &H'FF, BPAL4 &H'FF, BPAL6 &H'FF
+SYSPALH:	.DB	BPAL0 >> 8,  BPAL2 >> 8,  BPAL4 >> 8,  BPAL6 >> 8
+
+
+;************************************************
+
+
+KILL_VID:	
+	LDA	#6
+	STA	VID_MODE
+	RTS
+
+SET_VID:
+	LDA	V_SEL
+	STA	VID_SEL
+	LDA	V_MODE
+	STA	VID_MODE
+
+	LDA	VID_RESET
+	LDA	XSCROLL
+	STA	SCR_REG
+	LDA	YSCROLL
+	STA	SCR_REG
+	RTS
+
+
+
+
+
+	
+;*************************************************
+; BACKGROUND SCROLLING ROUTINES:
+;*************************************************
+
+
+
+BULLSYST:
+	LDA	#BS &H'FF
+	STA	PTR2L
+	LDA	#BS >>8
+	STA	PTR2H
+
+	LDA	#SYSTEM &H'FF
+	STA	PTR1L
+	LDA	#SYSTEM >> 8
+	STA	PTR1H
+
+	LDY	#25
+	JSR	BLOCKMOVE
+
+	LDA	#6		;? DEFAULT PALETTE
+	STA	SYS_PAL
+
+     ;;	JSR	SET_FUEL
+	JSR	INIT_STN
+	JSR	LOAD_STN
+	LDA	SYSTEM+1	;x pos. of 1st item in solar system
+	STA	DEST_X
+	LDA	SYSTEM+2	;y pos. of 1st item...
+	STA	DEST_Y
+
+	RTS
+
+BS:		;**HEADER******
+
+;----SOLAR44:
+	.DB	H'46	;X_SET5
+	.DB	H'3e, H'4f, H'01, INHAB + FRNDLY + HIGH ;space station
+	.DB	H'2e, H'1a, H'22, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'56, H'25, H'14, INHAB + FRNDLY + LOW
+	.DB	H'5a, H'31, H'23, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'35, H'41, SUN, H'00	;sun
+	.DB	H'1F, H'5A, H'26, GAS
+
+
+
+
+;*************************************************
+;	FINDBLOCK/ETC.
+;*************************************************
+
+
+FINDBLOCK:
+
+;given a coord. in (TX, TY) find out if obj
+;needs to be drawn or if empty space...
+;calls appropriate proc. to set up OBJPTR
+
+
+		LDA	TX
+		BMI	FO_NO_OBJ
+		CMP	BKGRWIDTH
+		BCS	FO_NO_OBJ
+		LDA	TY
+		BMI	FO_NO_OBJ
+		CMP	BKGRWIDTH
+		BCS	FO_NO_OBJ
+			
+
+		LDA	BKGRPTRL
+		STA	OBJPTRL
+		LDA	BKGRPTRH
+		STA	OBJPTRH
+	
+		LDA	TY
+		BEQ	FO_3
+		TAY
+
+		LDA	OBJPTRL
+		CLC
+FO_0:		
+	    	ADC	BKGRWIDTH
+
+		BCC	FO_1
+		INC	OBJPTRH
+		CLC
+FO_1:		DEY
+		BNE	FO_0		
+
+FO_2:		STA	OBJPTRL
+
+FO_3:		LDY	TX
+		LDA	(OBJPTRL), Y
+
+		PHA
+		AND	#H'C0
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	FLIP
+		PLA
+		AND	#H'3F
+		TAX
+
+		CPX	#0
+		BEQ	FO_NO_OBJ
+		JMP	GETBLOCK
+
+
+FO_NO_OBJ:	LDA	BKGRND
+		BMI	FNOBJ2
+
+		LDA	#H'FF
+		STA	FLIP
+		JMP	OBJ_NIL
+
+FNOBJ2:		LDX	#0
+		JMP	GETBLOCK
+
+
+;*************************************************
+
+
+
+BXADDR:
+
+;X-reg, Y-reg = pos. on screen
+
+		LDA	VID_RESET
+		LDA	LNADDRH, Y
+		CPX	#32
+		BCC	BXA0
+		CLC
+		ADC	#4
+BXA0:		STA	VID_PTR
+		TXA
+		AND	#H'1F
+		CLC
+		ADC	LNADDRL, Y
+		STA	VID_PTR
+		RTS
+
+
+
+;**************************************
+
+
+CLEAR:
+
+;A-reg = Fill character (#h'FA for blank screen)
+;X-reg = Video page # to clear
+;
+;***** Video MUST be disabled!
+
+		PHA		;04-20-90
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+
+		LDA	VID_RESET
+		LDA	#H'20
+		CPX	#0
+		BEQ	CLEAR0
+
+		CLC
+		ADC	#H'04
+
+CLEAR0:		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_PTR
+
+			PLA		;was h'FA, 04-20-90
+		LDX	#24
+CLEAR1:		LDY	#40
+CLEAR2:		STA	VID_DATA
+		DEY
+		BNE	CLEAR2
+		DEX
+		BNE	CLEAR1
+
+		RTS
+
+
+SCRXTBL:	.DB	H'FC, H'04, H'0C, H'14, H'1C, H'24, H'2C, H'34
+SCRYTBL:	.DB	H'EB, H'F3, H'03, H'0B, H'13, H'1B, H'23, H'2B
+
+DRAWSYSTEM:
+
+;draws page0 & page1 -- 
+;shows current section of solar system based on XPOS, YPOS
+		
+		LDA	#H'FA
+		LDX	#0	;video page 0
+		JSR	CLEAR
+		LDA	#H'FA
+		LDX	#1	;video page 1
+		JSR	CLEAR
+
+		LDA	#H'FF
+		STA	TURRET_1
+		STA	TURRET_2
+		STA	TURRET_3
+		STA	TURRET_4
+	
+;;		LDA	BKGRND
+;;		BEQ	DS0D
+;;		LDY	TURRET_1
+;;		BMI	DS0A
+;;		LDA	#0
+;;		STA	LOGIC_X
+;;		JSR	UG_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_1
+;;DS0A:
+;;		LDY	TURRET_2
+;;		BMI	DS0B
+;;		LDA	#16
+;;		STA	LOGIC_X
+;;		JSR	UG_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_2
+;;DS0B:
+;;		LDY	TURRET_3
+;;		BMI	DS0C
+;;		LDA	#32
+;;		STA	LOGIC_X
+;;		JSR	UG_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_3
+;;DS0C:
+;;		LDY	TURRET_4
+;;		BMI	DS0F
+;;		LDA	#48
+;;		STA	LOGIC_X
+;;		JSR	UG_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_4
+;;
+;;
+;;DS0D:
+;;		LDY	TURRET_1
+;;		BMI	DS0E
+;;	;;	LDA	#H'C0
+;;	;;	STA	SPR0PTR
+;;	;;	JSR	USTN_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_1
+;;DS0E:
+;;		LDY	TURRET_2
+;;		BMI	DS0F
+;;	;;	LDA	#H'9C
+;;	;;	STA	SPR0PTR
+;;	;;	JSR	USTN_REM
+;;		LDA	#H'FF
+;;		STA	TURRET_2
+		
+DS0F:
+		JSR	VR_WAIT
+		JSR	KILL_VID
+
+
+;clear palette data --------------
+
+	    	LDY	#0
+		LDA	#0
+CLRGRID:	STA	PALGRID, Y
+		INY
+		CPY	#128
+		BNE	CLRGRID
+
+;---------------------------------
+
+		LDA	#1
+		STA	PAGE
+
+		LDA	#0
+		STA	HORZBUFFER
+		STA	VERTBUFFER
+		STA	YBLOCK
+		STA	VEL_X
+
+		LDA	YREL
+		ROR	A
+		BCC	SPAZZ3
+
+		INC	YBLOCK
+		INC	VEL_X
+
+SPAZZ3:		LDA	YBLOCK
+		ASL	A
+		ASL	A
+		ASL	A
+
+		CLC
+		ADC	#H'EB
+		ADC	YBOFF
+		CMP	#H'F0
+		BCC	DS0
+		SEC
+		SBC	#H'F0
+DS0:		STA	YSCROLL
+
+		LDY	XREL
+		STY	XBLOCK
+		LDA	SCRXTBL, Y
+		CLC
+		ADC	XBOFF
+		BMI	DS1
+
+		PHA
+		LDA	PAGE
+		EOR	#1
+		STA	PAGE
+		PLA
+
+DS1:		STA	XSCROLL
+		
+		
+		LDA	V_SEL
+		AND	#H'FE
+		ORA	PAGE
+		STA	V_SEL
+
+		LDA	YBLOCK
+		PHA
+		LDA	YREL
+		PHA
+		LDA	YPOS
+		PHA
+		LDA	XMOVE
+		PHA
+		LDA	YMOVE
+		PHA
+		LDA	YBOFF
+		PHA
+
+
+		LDA	#30
+		STA	COMPTIME
+
+DRAWSYS1:	LDA	XBLOCK
+		SEC
+		SBC	XREL
+		TAX
+
+		LDY	YBLOCK
+
+		LDA	XPOS
+		SEC
+		SBC	#2
+		STA	TX
+
+		LDA	YPOS
+		SEC
+		SBC	#2
+		STA	TY
+
+
+	LDA	YREL
+	PHA
+		JSR	ROWXFER
+	PLA
+	STA	YREL
+
+;TX, TY	= starting pos. in solar system
+;YREL	= offset/line (0..7)
+;X, Y   = starting pos. on screen
+
+;		LDA	V_SEL
+;		AND	#H'7B		;to inc. by column
+;		STA	VID_SEL
+
+		LDX	HORZBUFFER+1
+		LDY	HORZBUFFER+2
+		JSR	BXADDR
+
+		LDY	#3
+DRSYS1A:	LDA	HORZBUFFER, Y
+		STA	VID_DATA
+		INY
+		INX
+		CPX	#32
+		BEQ	DRSYS1B
+		CPX	#64
+		BCC	DRSYS1C
+		LDX	#0
+DRSYS1B:	TYA
+		PHA
+		LDY	HORZBUFFER+2
+		JSR	BXADDR
+		PLA
+		TAY
+DRSYS1C:	DEC	HORZBUFFER
+		BNE	DRSYS1A
+		
+
+;*************************************************
+;horizontal palette transfer
+;*************************************************
+
+		LDA	HPALBUFFER+0
+		BPL	DRSHOK
+		JMP	DRSHNO
+
+DRSHOK:
+		STA	VID_PTR
+		LDA	HPALBUFFER+1
+		STA	VID_PTR
+		LDA	HPALBUFFER+2
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+3
+		STA	VID_PTR
+		LDA	HPALBUFFER+4
+		STA	VID_PTR
+		LDA	HPALBUFFER+5
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+6
+		STA	VID_PTR
+		LDA	HPALBUFFER+7
+		STA	VID_PTR
+		LDA	HPALBUFFER+8
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+9
+		STA	VID_PTR
+		LDA	HPALBUFFER+10
+		STA	VID_PTR
+		LDA	HPALBUFFER+11
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+12
+		STA	VID_PTR
+		LDA	HPALBUFFER+13
+		STA	VID_PTR
+		LDA	HPALBUFFER+14
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+15
+		STA	VID_PTR
+		LDA	HPALBUFFER+16
+		STA	VID_PTR
+		LDA	HPALBUFFER+17
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+18
+		STA	VID_PTR
+		LDA	HPALBUFFER+19
+		STA	VID_PTR
+		LDA	HPALBUFFER+20
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+21
+		STA	VID_PTR
+		LDA	HPALBUFFER+22
+		STA	VID_PTR
+		LDA	HPALBUFFER+23
+		STA	VID_DATA
+	
+		LDA	HPALBUFFER+24
+		STA	VID_PTR
+		LDA	HPALBUFFER+25
+		STA	VID_PTR
+		LDA	HPALBUFFER+26
+		STA	VID_DATA
+
+		LDA	HPALBUFFER+27
+		STA	VID_PTR
+		LDA	HPALBUFFER+28
+		STA	VID_PTR
+		LDA	HPALBUFFER+29
+		STA	VID_DATA
+
+DRSHNO:		LDA	HPALBUFFER
+		ORA	#H'80
+		STA	HPALBUFFER
+
+;*************************************************
+
+		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	DRAWSYS2
+
+	 	LDA	#0
+		STA	YREL
+		INC	YPOS
+
+DRAWSYS2:	INC	YBLOCK
+		LDA	YBLOCK
+		CMP	#30
+		BCC	DRAWSYS3
+		LDA	#0
+		STA	YBLOCK
+
+DRAWSYS3:	DEC	COMPTIME
+		BEQ	DRAWSYS4
+		JMP	DRAWSYS1
+
+DRAWSYS4:	PLA
+		STA	YBOFF
+		PLA
+		STA	YMOVE
+		PLA
+		STA	XMOVE
+		PLA	
+		STA	YPOS
+		PLA
+		STA	YREL
+		PLA
+		STA	YBLOCK
+
+		RTS
+
+
+;*************************************************
+
+FINDOBJECT:
+
+;given a coord. in (TX, TY) find out if obj
+;needs to be drawn or if empty space...
+;calls appropriate proc. to set up OBJPTR to point to it.
+
+		LDA	#0
+		STA	OBJINDEX
+
+		LDA	BKGRND
+		BEQ	FO_SPACE
+
+		JMP	FINDBLOCK
+
+
+FO_SPACE:	LDA	#0
+		STA	FLIP
+
+		LDA	TX		;first check if valid coord.
+		BMI	FO_F4
+		LDA	TY
+		BMI	FO_F4
+
+		LDA	SYSTEM
+		STA	T2		;get # of objects
+
+		LDY	#1		;pointer to 1st objects x-pos field
+	
+FO_FIND:	LDA	SYSTEM+1, Y	;y coord.
+		CMP	TY
+		BEQ	FO_FINDX
+
+FO_F3:		TYA
+		CLC
+		ADC	#4
+		TAY
+		DEC	T2
+		BNE	FO_FIND
+FO_F4:		JMP	OBJ_NIL
+
+FO_FINDX:
+		LDA	SYSTEM+0, Y	;x coord.
+		CMP	TX
+		BEQ	FO_FOUND
+		BNE	FO_F3		;always!
+
+
+FO_FOUND:	STY	OBJINDEX
+		JMP	GETOBJPTR
+
+
+;*************************************************
+; MAP ROUTINES
+;*************************************************
+
+DOMAP:
+
+;Y-reg = background type
+
+		CPY	#0
+		BNE	DOMAP0
+
+		LDA	#GAL_MAP >> 8
+		STA	PTR3H
+		LDA	#GAL_MAP & H'FF
+		STA	PTR3L
+		JMP	DOMAP6
+
+DOMAP0:		LDA	BKGRND
+		SEC
+		SBC	#H'7F
+		TAY
+
+		LDA	MAPADDRH, Y
+		STA	PTR3H
+		LDA	MAPADDRL, Y
+		STA	PTR3L
+	
+DOMAP6:		LDA	BKGRND
+		BMI	DOMAP7
+
+		LDA	SYS_PAL
+		JSR	XVIDEO
+
+		JMP	DOMAP8
+
+DOMAP7:		LDA	#0
+		JSR	XVIDEO		;planet or space station
+
+;set palettes for planet
+
+		LDY	#2
+		LDA	PALCOLOR, Y
+		STA	COUNT0
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'C3
+		STA	VID_PTR
+		LDA	COUNT0
+		AND	#H'F0
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'CB
+		STA	VID_PTR
+		LDA	COUNT0
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'D3
+		STA	VID_PTR
+		LDA	COUNT0
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'DB
+		STA	VID_PTR
+		LDA	COUNT0
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'E3
+		STA	VID_PTR
+		LDA	COUNT0
+		AND	#H'0F
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+
+		LDA	#H'3F		;set colors
+		STA	VID_PTR
+		LDA	#H'08
+		STA	VID_PTR
+		LDA	#H'0E
+		STA	VID_DATA
+		LDA	#H'19
+		STA	VID_DATA
+		LDA	#H'11
+		STA	VID_DATA
+		LDA	#H'37
+		STA	VID_DATA
+
+
+		JSR	DMAXFER
+		JSR	SET_VID
+
+DOMAP8:		LDY	#2
+		LDX	#0
+		STX	CX
+		STX	LOGIC_Y
+
+DRAW_MAP:	STY	CY
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDY	CY
+		LDA	LNADDRH,Y
+		STA	VID_PTR
+		LDA	#H'0C
+		CLC
+		ADC	LNADDRL,Y
+		STA	VID_PTR
+DM_0:		LDY	CX
+		LDA	(PTR3L),Y
+		STA	VID_DATA
+		INY
+		STY	CX
+		TYA
+		AND	#H'0F
+		BNE	DM_0
+		LDY	CY
+		INY
+		STY	CY
+		JSR	SET_VID
+		JSR	DMAXFER
+		INC	LOGIC_Y
+		LDA	LOGIC_Y
+		AND	#H'0F
+		BNE	DRAW_MAP
+		RTS
+
+MAPADDRH:
+	.DB	STN_MAP >>8, PRAD_MAP >>8, P1_MAP >>8
+MAPADDRL:
+	.DB	STN_MAP &H'FF, PRAD_MAP &H'FF, P1_MAP &H'FF
+
+
+;THE GALAXY MAP BACKGROUND TABLE
+GAL_MAP:
+	.DB	H'06, H'00, H'06, H'07, H'00, H'06, H'03, H'00
+	.DB	H'00, H'04, H'03, H'05, H'06, H'00, H'00, H'06
+	.DB	H'05, H'06, H'06, H'05, H'05, H'00, H'06, H'07
+	.DB	H'06, H'06, H'03, H'06, H'00, H'05, H'06, H'06
+	.DB	H'03, H'07, H'04, H'03, H'02, H'03, H'20, H'1C
+	.DB	H'04, H'02, H'07, H'05, H'03, H'20, H'03, H'04
+	.DB	H'00, H'06, H'06, H'04, H'03, H'1C, H'0B, H'DD
+	.DB	H'05, H'03, H'04, H'06, H'1C, H'04, H'02, H'04
+	.DB	H'04, H'00, H'00, H'1C, H'20, H'00, H'05, H'02
+	.DB	H'02, H'00, H'04, H'00, H'00, H'1C, H'05, H'00
+	.DB	H'00, H'1C, H'02, H'03, H'00, H'02, H'1C, H'05
+	.DB	H'03, H'03, H'0B, H'03, H'06, H'00, H'07, H'00
+	.DB	H'00, H'03, H'06, H'00, H'07, H'20, H'03, H'04
+	.DB	H'05, H'06, H'03, H'00, H'06, H'06, H'07, H'05
+	.DB	H'00, H'02, H'00, H'00, H'DD, H'00, H'00, H'0B
+	.DB	H'DD, H'02, H'02, H'00, H'00, H'1C, H'05, H'06
+
+	.DB	H'05, H'02, H'06, H'07, H'03, H'20, H'03, H'DD
+	.DB	H'0B, H'00, H'07, H'02, H'00, H'03, H'07, H'06
+	.DB	H'00, H'02, H'06, H'05, H'03, H'04, H'06, H'03
+	.DB	H'02, H'00, H'02, H'06, H'00, H'02, H'00, H'00
+	.DB	H'00, H'20, H'00, H'00, H'04, H'1C, H'02, H'03
+	.DB	H'02, H'02, H'04, H'00, H'04, H'02, H'05, H'00
+	.DB	H'06, H'00, H'1C, H'06, H'00, H'02, H'03, H'03
+	.DB	H'07, H'05, H'00, H'02, H'00, H'00, H'00, H'06
+	.DB	H'05, H'00, H'04, H'03, H'00, H'00, H'00, H'0B
+	.DB	H'DD, H'0B, H'02, H'07, H'02, H'00, H'05, H'00
+	.DB	H'00, H'05, H'00, H'06, H'03, H'06, H'06, H'00
+	.DB	H'07, H'00, H'00, H'05, H'05, H'06, H'07, H'06
+	.DB	H'00, H'00, H'00, H'05, H'00, H'06, H'02, H'04
+	.DB	H'05, H'00, H'05, H'07, H'00, H'00, H'00, H'05
+	.DB	H'00, H'07, H'06, H'00, H'04, H'06, H'06, H'02
+	.DB	H'02, H'03, H'02, H'02, H'06, H'03, H'05, H'00
+
+;THE BACKGROUND MAP FOR A SPACE STATION IN COMPUTER MODE
+STN_MAP:
+	.DB	 SPC,   S1,  SPC,  SPC,  SPC,   S4,  SPC,  SPC
+	.DB	  S1,   S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;0
+	.DB	 SPC,  SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC
+	.DB	  S3,  SPC,  SPC,  SPC,   S2,  SPC,  SPC,  SPC	;1
+	.DB	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC
+	.DB	  S3,  SPC,  SPC,   S5,  SPC,  SPC,  SPC,  SPC	;2
+	.DB	 SPC,  SPC,  SPC,  SPC,   S1, H'C8, H'C1, H'FC	  
+	.DB	H'FC, H'5D, H'C6,   S1,  SPC,   S2,  SPC,  SPC	;3
+	.DB	 SPC,  SPC,  SPC,  SPC, H'3C, H'FC, H'4E, H'FC
+	.DB	H'FC, H'81, H'FC, H'3D,  SPC,  SPC,   S6,  SPC	;4
+	.DB	 SPC,  SPC,  SPC, H'C7, H'FC, H'EA,  SPC, H'FC
+	.DB	H'FC,  SPC, H'3F, H'FC, H'E7,  SPC,  SPC,  SPC	;5
+	.DB	 SPC,   S1,   S4, H'F3, H'80,  SPC, H'7D, H'FC
+	.DB	H'FC, H'7E,   S3, H'5E, H'53,   S2,  SPC,  SPC	;6
+	.DB	 SPC,  SPC,  SPC, H'FC, H'FC, H'FC, H'FC, H'EB
+	.DB	H'EC, H'FC, H'FC, H'FC, H'FC,  SPC,  SPC,  SPC	;7
+
+	.DB	 SPC,  SPC,  SPC, H'FC, H'FC, H'FC, H'FC, H'ED
+	.DB	H'EE, H'FC, H'FC, H'FC, H'FC,  SPC,  SPC,  SPC	;8
+	.DB	 SPC,  SPC,  SPC, H'5E, H'53,  SPC, H'9D, H'FC
+	.DB	H'FC, H'9E,  SPC, H'F3, H'80,   S1,  SPC,  SPC	;9
+	.DB	 SPC,  SPC,  SPC, H'E8, H'FC, H'3D,  SPC, H'FC
+	.DB	H'FC,  SPC, H'3C, H'FC, H'EA,  SPC,   S6,  SPC	;A
+	.DB	 SPC,  SPC,   S2,  SPC, H'3F, H'FC, H'5D, H'FC
+	.DB	H'FC, H'C1, H'FC, H'3E,  SPC,  SPC,  SPC,  SPC	;B
+	.DB	 SPC,  SPC,  SPC,  SPC,  SPC, H'E6, H'81, H'FC
+	.DB	H'FC, H'4E, H'E9,  SPC,  SPC,  SPC,   S2,  SPC	;C
+	.DB	  S4,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC
+	.DB	 SPC,  SPC,  SPC,   S1,  SPC,  SPC,  SPC,  SPC	;D
+	.DB	 SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC,   S5
+	.DB	  S2,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC,  SPC	;E
+	.DB	 SPC,  SPC,  SPC,  SPC,  SPC,   S1,  SPC,  SPC
+	.DB	 SPC,  SPC,   S3,  SPC,  SPC,  SPC,  SPC,  SPC	;F
+
+
+;THE BACKGROUND MAP FOR PRADIKUS IN COMPUTER MODE
+PRAD_MAP:
+	.DB	H'FB, H'FB, H'A7, H'A8, H'A9, H'FB, H'FB, H'FB
+	.DB	H'FB, H'FB, H'FB, H'FB, H'A7, H'88, H'A9, H'FB
+	.DB	H'A7, H'A8, H'89, H'FC, H'87, H'A8, H'A9, H'FB
+	.DB	H'FB, H'FB, H'A7, H'88, H'89, H'FC, H'87, H'A9
+	.DB	H'E7, H'49, H'47, H'E8, H'49, H'FC, H'67, H'FB
+	.DB	H'FB, H'FB, H'69, H'47, H'E8, H'49, H'FC, H'C9
+	.DB	H'A7, H'89, H'C9, H'68, H'69, H'FC, H'87, H'88
+	.DB	H'A8, H'88, H'89, H'67, H'68, H'69, H'47, H'E9
+	.DB	H'C7, H'FC, H'87, H'88, H'89, H'FC, H'FC, H'FC
+	.DB	H'FC, H'FC, H'FC, H'87, H'88, H'89, H'C9, H'FB
+	.DB	H'E7, H'48, H'49, H'FC, H'FC, H'47, H'48, H'E8
+	.DB	H'48, H'E8, H'49, H'FC, H'FC, H'47, H'E9, H'FB
+	.DB	H'FB, H'FB, H'E7, H'49, H'FC, H'67, H'8A, H'8B
+	.DB	H'8A, H'8B, H'69, H'47, H'48, H'E9, H'FB, H'FB
+	.DB	H'FB, H'FB, H'FB, H'E7, H'49, H'C9, H'AA, H'AB
+	.DB	H'AA, H'AB, H'C7, H'67, H'FB, H'FB, H'FB, H'FB
+
+	.DB	H'FB, H'FB, H'FB, H'FB, H'C7, H'67, H'8A, H'8B
+	.DB	H'8A, H'8B, H'69, H'87, H'A9, H'FB, H'FB, H'FB
+	.DB	H'FB, H'FB, H'FB, H'A7, H'89, H'C9, H'AA, H'AB
+	.DB	H'AA, H'AB, H'C7, H'FC, H'87, H'A9, H'FB, H'FB
+	.DB	H'FB, H'A7, H'88, H'89, H'FC, H'87, H'A8, H'88
+	.DB	H'88, H'A8, H'89, H'FC, H'FC, H'87, H'A9, H'FB
+	.DB	H'FB, H'69, H'47, H'48, H'49, H'FC, H'47, H'E8
+	.DB	H'49, H'FC, H'FC, H'47, H'48, H'49, H'C9, H'FB
+	.DB	H'A7, H'89, H'67, H'68, H'69, H'FC, H'C9, H'FB
+	.DB	H'69, H'FC, H'FC, H'C9, H'68, H'69, H'67, H'FB
+	.DB	H'69, H'FC, H'87, H'88, H'89, H'47, H'E9, H'FB
+	.DB	H'E7, H'49, H'FC, H'87, H'88, H'89, H'67, H'FB
+	.DB	H'E7, H'E8, H'48, H'E8, H'48, H'E9, H'FB, H'FB
+	.DB	H'FB, H'E7, H'48, H'49, H'47, H'E8, H'E9, H'FB
+	.DB	H'FB, H'FB, H'FB, H'FB, H'FB, H'FB, H'FB, H'FB
+	.DB	H'FB, H'FB, H'FB, H'E7, H'E9, H'FB, H'FB, H'FB
+
+
+;THE BACKGROUND MAP FOR PLANET 1 IN COMPUTER MODE
+P1_MAP:
+	.DB	H'86, H'A6, H'A7, H'A9, H'46, H'66, H'A7, H'88
+	.DB	H'A9, H'86, H'A6, H'46, H'66, H'86, H'66, H'46
+	.DB	H'D1, H'A7, H'89, H'87, H'A9, H'D1, H'69, H'FC
+	.DB	H'67, H'A6, H'46, H'66, H'A7, H'88, H'A8, H'A9
+	.DB	H'86, H'E7, H'49, H'FC, H'87, H'A9, H'C7, H'47
+	.DB	H'E9, H'A6, H'68, H'66, H'C7, H'FC, H'FC, H'C9
+	.DB	H'86, H'A6, H'69, H'FC, H'FC, H'C9, H'E7, H'E9
+	.DB	H'46, H'68, H'86, H'A7, H'89, H'FC, H'FC, H'67
+	.DB	H'D1, H'A7, H'89, H'FC, H'47, H'E9, H'A7, H'A8
+	.DB	H'88, H'A9, H'A7, H'89, H'47, H'49, H'FC, H'C9
+	.DB	H'46, H'E7, H'49, H'FC, H'87, H'88, H'89, H'47
+	.DB	H'49, H'87, H'89, H'47, H'E9, H'E7, H'E8, H'E9
+	.DB	H'66, H'86, H'E7, H'49, H'47, H'E8, H'48, H'E9
+	.DB	H'E7, H'48, H'E8, H'E9, H'A6, H'46, H'66, H'46
+	.DB	H'A6, H'D1, H'A7, H'89, H'C9, H'66, H'68, H'8A
+	.DB	H'8B, H'A6, H'46, H'66, H'86, H'D1, H'46, H'68
+
+	.DB	H'86, H'A7, H'89, H'47, H'E9, H'A6, H'46, H'AA
+	.DB	H'AB, H'66, H'86, H'66, H'46, H'A6, H'D1, H'A6
+	.DB	H'68, H'E7, H'48, H'E9, H'66, H'86, H'66, H'46
+	.DB	H'D1, H'CA, H'CB, H'CC, H'86, H'A6, H'46, H'A6
+	.DB	H'86, H'46, H'68, H'D1, H'CA, H'CB, H'F1, H'CC
+	.DB	H'A6, H'CD, H'EF, H'EC, H'68, H'CA, H'F1, H'CC
+	.DB	H'66, H'46, H'D1, H'86, H'EA, H'FD, H'ED, H'CF
+	.DB	H'66, H'46, H'CD, H'CF, H'CA, H'F2, H'FD, H'D0
+	.DB	H'A6, H'86, H'66, H'46, H'D2, H'FD, H'D0, H'A6
+	.DB	H'86, H'CA, H'F1, H'CC, H'D2, H'FD, H'FD, H'EC
+	.DB	H'66, H'46, H'A6, H'CA, H'F2, H'FD, H'F0, H'CC
+	.DB	H'CA, H'F2, H'FD, H'F0, H'F2, H'FD, H'FD, H'D0
+	.DB	H'68, H'66, H'D1, H'EA, H'ED, H'EE, H'CE, H'CF
+	.DB	H'CD, H'EF, H'FD, H'FD, H'FD, H'FD, H'ED, H'CF
+	.DB	H'A6, H'46, H'68, H'CD, H'CF, H'86, H'D1, H'46
+	.DB	H'66, H'CD, H'CE, H'EE, H'CE, H'EE, H'CF, H'68
+
+;****************************************
+
+HASITEM:	
+
+;Y-reg. = item code
+
+		CPY	#H'10
+		BCS	HASITEM0
+		LDY	#0
+		RTS
+
+HASITEM0:	TYA
+		SEC
+		SBC	#H'10
+		CMP	#H'19
+		BEQ	HASITEM1
+		PHA
+	
+		LDY	ORBIT
+		LDA	SYSTEM+3, Y	;data bits
+		AND	#V_HIGH
+		STA	T3		;tech. lvl.
+
+		PLA
+		TAY
+		LDA	T3
+		CMP	ITEMTECH, Y
+		LDA	#0
+		ROL	A
+		TAY
+		RTS
+
+HASITEM1:	LDY	ORBIT
+		LDA	SYSTEM+2,Y	;type/pal.
+		AND	#H'70
+		BNE	HASITEM2	;space stn?
+		LDA	SYSTEM+2,Y	;stn. index
+		AND	#H'0F
+		TAY
+		LDA	SDEF_OBJ,Y
+		AND	#H'03
+		CMP	#H'01
+		LDA	#0
+		ROL	A
+		TAY
+		RTS
+
+HASITEM2:	LDY	#0
+		RTS
+
+ITEMTECH:	.DB	LOW, AVG, AVG, HIGH, V_HIGH	;drives
+		.DB	LOW, AVG, AVG, HIGH, V_HIGH	;power plants
+		.DB	LOW, AVG, AVG, HIGH, V_HIGH	;shields
+		.DB	0, 0				;armor, fuel
+		.DB	LOW, AVG, HIGH, V_HIGH		;wpn1
+		.DB	HIGH, LOW, AVG, V_HIGH, V_HIGH	;wpn2
+
+
+;*************************************************
+
+GETCOST:	CPY	#H'10
+		BCS	GETCOST0
+		LDY	#0
+		RTS
+
+GETCOST0:	TYA
+		SEC
+		SBC	#H'10
+		TAY
+		LDA	ITEMC6, Y
+		STA	C100000
+		LDA	ITEMC5, Y
+		STA	C10000
+		LDA	ITEMC4, Y
+		STA	C1000
+		LDA	ITEMC3,	Y
+		STA	C100
+		LDA	ITEMC2, Y
+		STA	C10
+		LDA	#0
+		STA	C1
+	
+GETCREDIT:
+		TYA
+		PHA
+		CMP	CRDT_Y
+		BCS	GETCRDT0
+		LDA	CRDT_Y
+		BMI	GETCRDT1
+		LDA	#0
+		STA	C10
+		STA	C100
+		STA	C1000
+		STA	C10000
+		STA	C100000
+		PLA
+		TAY
+		RTS
+GETCRDT0:
+		LDY	CRDT_Y
+		LDA	ITEMCR6, Y
+		STA	CR100K
+		LDA	ITEMCR5, Y
+		STA	CR10K
+		LDA	ITEMCR4, Y
+		STA	CR1K
+		LDA	ITEMCR3, Y
+		STA	CR100
+		LDA	ITEMCR2, Y
+		STA	CR10
+
+SUBCR0:		LDA	C10
+		SEC
+		SBC	CR10
+		STA	C10
+		BCS	SUBCR1
+		LDA	C10
+		SEC
+		SBC	#H'F6
+		STA	C10
+		JSR	MNSC1
+
+SUBCR1:		LDA	C100
+		SEC
+		SBC	CR100
+		STA	C100
+		BCS	SUBCR2
+		LDA	C100
+		SEC
+		SBC	#H'F6
+		STA	C100
+		JSR	MNSC2
+
+SUBCR2:		LDA	C1000
+		SEC
+		SBC	CR1K
+		STA	C1000
+		BCS	SUBCR3
+		LDA	C1000
+		SEC
+		SBC	#H'F6
+		STA	C1000
+		JSR	MNSC3
+
+SUBCR3:		LDA	C10000
+		SEC
+		SBC	CR10K
+		STA	C10000
+		BCS	SUBCR4
+		LDA	C10000
+		SEC
+		SBC	#H'F6
+		STA	C10000
+		JSR	MNSC4
+
+SUBCR4:		LDA	C100000
+		SEC
+		SBC	CR100K
+		STA	C100000
+GETCRDT1:
+		PLA
+		TAY
+		RTS
+
+MNSC1:		DEC	C100
+		LDA	C100
+		BPL	MNSCRTS
+		LDA	#9
+		STA	C100
+
+MNSC2:		DEC	C1000
+		LDA	C1000
+		BPL	MNSCRTS
+		LDA	#9
+		STA	C1000
+
+MNSC3:		DEC	C10000
+		LDA	C10000
+		BPL	MNSCRTS
+		LDA	#9
+		STA	C10000
+
+MNSC4:		DEC	C100000
+MNSCRTS:	RTS
+		
+	;       DRIVES---  PWR/PL---  SHIELDS--  A F  WPN1     WPN2-----
+
+ITEMC6:	.DB	0,0,1,1,2, 0,0,1,1,2, 0,0,0,1,1, 0,0, 0,0,0,0, 0,0,0,0,5
+ITEMC5:	.DB	2,6,0,4,0, 2,6,0,4,0, 1,4,8,2,6, 0,0, 0,1,1,2, 0,0,0,0,0
+ITEMC4:	.DB	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 5,0,7,5, 2,1,1,3,0
+ITEMC3:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 1,0, 0,0,5,0, 5,0,7,2,0
+ITEMC2:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,5, 0,0,0,0, 0,0,5,5,0
+
+ITEMD5:	.DB	1,2,2,5,0, 1,2,2,5,0, 1,1,2,2,0, 0,0, 0,0,0,0, 0,0,0,0,0
+ITEMD4:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,1,2,0, 0,0,0,0,0
+ITEMD3:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 5,0,0,0, 2,1,2,0,0
+ITEMD2:	.DB	0,0,0,0,0, 0,0,0,0,0, 0,0,0,0,0, 0,0, 0,0,0,0, 5,0,5,0,0
+
+;THE CREDIT FOR RESALE & END SCORING
+ITEMCR6: .DB	0,0,0,1,1, 0,0,0,1,1, 0,0,0,0,1, 0,0, 0,0,0,0, 0,0,0,0,0
+ITEMCR5: .DB	1,4,7,0,5, 1,4,7,0,5, 1,3,6,9,2, 0,0, 0,0,0,1, 0,0,0,0,0
+ITEMCR4: .DB	5,5,5,5,0, 5,5,5,5,0, 1,0,0,0,0, 0,0, 2,5,8,2, 1,0,0,1,0
+ITEMCR3: .DB	0,0,0,0,0, 0,0,0,0,0, 2,0,0,0,0, 0,0, 5,0,7,5, 2,5,9,7,0
+ITEMCR2: .DB	0,0,0,0,0, 0,0,0,0,0, 5,0,0,0,0, 0,0, 0,0,5,0, 5,0,0,5,0
+		
+		
+
+;*************************************************
+
+GETITEM:	
+SUBCASH:	LDA	SC1M
+		PHA
+		LDA	SC100000
+		PHA
+		LDA	SC10000
+		PHA
+		LDA	SC1000
+		PHA
+		LDA	SC100
+		PHA
+		LDA	SC10
+		PHA
+		LDA	SC1
+		PHA
+
+		SEC
+		SBC	C1
+		STA	SC1
+		BCS	SUBC0
+		LDA	SC1
+		SEC
+		SBC	#H'F6	;BORROW 10
+		STA	SC1
+		JSR	SUBX0
+
+SUBC0:		LDA	SC10
+		SEC
+		SBC	C10
+		STA	SC10
+		BCS	SUBC1
+		LDA	SC10
+		SEC
+		SBC	#H'F6
+		STA	SC10
+		JSR	SUBX1
+
+SUBC1:		LDA	SC100
+		SEC
+		SBC	C100
+		STA	SC100
+		BCS	SUBC2
+		LDA	SC100
+		SEC
+		SBC	#H'F6
+		STA	SC100
+		JSR	SUBX2
+
+SUBC2:		LDA	SC1000
+		SEC
+		SBC	C1000
+		STA	SC1000
+		BCS	SUBC3
+		LDA	SC1000
+		SEC
+		SBC	#H'F6
+		STA	SC1000
+		JSR	SUBX3
+
+SUBC3:		LDA	SC10000
+		SEC
+		SBC	C10000
+		STA	SC10000
+		BCS	SUBC4
+		LDA	SC10000
+		SEC
+		SBC	#H'F6
+		STA	SC10000
+		JSR	SUBX4
+
+SUBC4:		LDA	SC100000
+		SEC
+		SBC	C100000
+		STA	SC100000
+		BCS	SUBC5
+		LDA	SC100000
+		SEC
+		SBC	#H'F6
+		STA	SC100000
+		JSR	SUBX5
+
+SUBC5:		LDA	SC1M
+		BMI	CANTBUY
+		
+CANBUY:		PLA
+		PLA
+		PLA
+		PLA
+		PLA
+		PLA
+		PLA
+		
+		LDY	#1
+		RTS
+
+CANTBUY:	PLA
+		STA	SC1
+		PLA
+		STA	SC10
+		PLA
+		STA	SC100
+		PLA
+		STA	SC1000
+		PLA
+		STA	SC10000
+		PLA
+		STA	SC100000
+		PLA
+		STA	SC1M
+		
+		LDY	#0
+		RTS
+			
+
+SUBX0:		DEC	SC10
+		LDA	SC10
+		BPL	SUBXRTS
+		LDA	#9
+		STA	SC10
+		
+SUBX1:		DEC	SC100
+		LDA	SC100
+		BPL	SUBXRTS
+		LDA	#9
+		STA	SC100
+
+SUBX2:		DEC	SC1000
+		LDA	SC1000
+		BPL	SUBXRTS
+		LDA	#9
+		STA	SC1000
+
+SUBX3:		DEC	SC10000
+		LDA	SC10000
+		BPL	SUBXRTS
+		LDA	#9
+		STA	SC10000
+
+SUBX4:		DEC	SC100000
+		LDA	SC100000
+		BPL	SUBXRTS
+		LDA	#9
+		STA	SC100000
+
+SUBX5:		DEC	SC1M
+SUBXRTS:	RTS
+		
+
+;*************************************************
+
+DRAWSTR:	JSR	VR_WAIT
+		JSR	KILL_VID
+
+		LDA	VID_RESET
+		STX	TX
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	TX
+		STA	VID_PTR
+
+		LDY	#0
+DRAWSTR0:	LDA	(PTR3L), Y
+		CMP	#H'FF
+		BEQ	DRAWSTR1
+		SEC
+		SBC	#H'20
+		STA	VID_DATA
+		INY
+		JMP	DRAWSTR0
+
+DRAWSTR1:	JSR	DMAXFER
+		JSR	SET_VID
+		RTS
+
+
+
+DRAWSHP:	LDY	#0
+		STY	T0
+
+DRAWSHP0:	JSR	VR_WAIT
+		JSR	KILL_VID
+
+		LDA	VID_RESET
+		LDA	T0
+		CLC
+		ADC	#H'08
+		TAX
+		LDA	LNADDRH, X
+		STA	VID_PTR
+		LDA	LNADDRL, X
+		CLC
+		ADC	#H'10
+		STA	VID_PTR
+
+		LDA	#8
+		STA	T1
+		
+DRAWSHP1:	LDA	(PTR3L), Y
+		STA	VID_DATA
+		INY
+		DEC	T1
+		BNE	DRAWSHP1
+
+		JSR	DMAXFER
+		JSR	SET_VID
+
+		INC	T0
+		LDA	T0
+		CMP	#6
+		BNE	DRAWSHP0
+
+		RTS		
+		
+;*************************************************
+
+PALCOLOR:	.DB	H'00,H'55,H'AA,H'FF
+
+
+DOSCAN:		LDA	SYS_PAL
+		JSR	XVIDEO
+
+		LDA	#0
+		STA	COUNT0		;palette data
+
+		LDY	ORBIT
+		LDA	SYSTEM+2, Y	;type/pal.
+		AND	#H'70
+		BEQ	DOSCP0		;space stn?
+
+		LDA	SYSTEM+2, Y	;pal.
+		AND	#H'70
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A		;shift pal. to low nybble
+		TAY
+		LDA	PALCOLOR, Y
+		STA	COUNT0
+
+DOSCP0:		JSR	VR_WAIT
+		JSR	KILL_VID
+
+	
+	JSR	RESETPALS
+
+	LDA	VID_RESET
+	LDY	#0
+	LDA	#H'3F
+	STA	VID_PTR
+	LDA	#H'00
+	STA	VID_PTR
+	LDA	#H'0E
+	STA	VID_DATA
+	LDA	#H'21
+	STA	VID_DATA
+	LDA	#H'11
+	STA	VID_DATA
+	LDA	#H'01
+	STA	VID_DATA
+
+
+		LDY	#7
+DOSCP0A:	LDA	(BPAL_BASE), Y
+		STA	VID_DATA
+		INY
+		CPY	#15		;16
+		BNE	DOSCP0A
+
+
+
+		LDA	VID_RESET
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'D4
+		STA	VID_PTR
+		LDA	COUNT0
+		STA	VID_DATA
+		STA	VID_DATA
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'DC
+		STA	VID_PTR
+		LDA	COUNT0
+		AND	#H'0F
+		STA	VID_DATA
+		STA	VID_DATA
+		JSR	VR_WAIT
+		JSR	DMAXFER
+		JSR	SET_VID
+
+		LDA	#STXT01 &H'FF
+		STA	PTR3L
+		LDA	#STXT01 >>8
+		STA	PTR3H
+		LDX	#H'10
+		LDY	#H'01
+		JSR	DRAWSTR		;"IN-ORBIT"
+
+		LDA	#STXT00 &H'FF
+		STA	PTR3L
+		LDA	#STXT00 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'02
+		JSR	DRAWSTR		;"SECTOR/SYSTEM"
+
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDY	#H'03
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	#H'0D
+		STA	VID_PTR
+		LDA	GALAXY_X
+		CLC
+		ADC	#1
+		JSR	DRAWNUM
+		LDA	#H'0D
+		STA	VID_DATA
+		LDA	GALAXY_Y
+		CLC
+		ADC	#1
+		JSR	DRAWNUM
+		JSR	DMAXFER
+		JSR	SET_VID
+		
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDY	#H'03
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	#H'16
+		STA	VID_PTR
+		LDA	SECTOR_X
+		JSR	DRAWNUM
+		LDA	#H'0D
+		STA	VID_DATA
+		LDA	SECTOR_Y
+		JSR	DRAWNUM
+		JSR	DMAXFER
+		JSR	SET_VID
+
+
+		LDA	#STXT02 &H'FF
+		STA	PTR3L
+		LDA	#STXT02	>>8
+		STA	PTR3H
+		LDX	#H'0E
+		LDY	#H'05
+		JSR	DRAWSTR		;"COORDINATES"
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDY	#H'06
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	#H'10
+		STA	VID_PTR
+		LDA	XPOS
+		CLC
+		ADC	#1
+		JSR	DRAWNUM3
+		LDA	#H'0D
+		STA	VID_DATA
+		STA	VID_DATA
+		LDA	YPOS
+		CLC
+		ADC	#1
+		JSR	DRAWNUM3
+		JSR	DMAXFER
+		JSR	SET_VID
+
+		LDA	#0
+		STA	COUNT0		;message #
+		STA	COUNT1		;life?
+		STA	COUNT2		;tech. lvl.
+		STA	COUNT3		;fuel?
+
+		LDY	ORBIT
+		LDA	SYSTEM+2, Y	;type/pal.
+		AND	#H'F0
+		CMP	#H'30		;sun?
+		BNE	DOSC_0
+;sun
+		LDA	#P6SHAPE &H'FF
+		STA	PTR3L
+		LDA	#P6SHAPE >>8
+		STA	PTR3H
+		JSR	DRAWSHP		;draw 6x6 "planet"
+
+		LDA	#3
+		STA	COUNT0
+		LDA	#STXT0D &H'FF
+		STA	PTR3L
+		LDA	#STXT0D >>8
+		STA	PTR3H
+		JMP	DOSC_LBL	;"STAR"
+
+DOSC_0:	
+		CMP	#H'00
+		BNE	DOSC_0A		;space station?
+		JMP	DOSC_7
+
+;planet
+
+DOSC_0A:	LDA	SYSTEM+2, Y	;size (lo. nyb.)
+		AND	#H'0F
+		TAY
+		LDA	PSHPSL, Y
+		STA	PTR3L
+		LDA	PSHPSH, Y
+		STA	PTR3H
+		JSR	DRAWSHP	     	;draw planet of approp. size
+		
+		LDY	ORBIT
+		LDA	SYSTEM+3, Y	;data bits
+		AND	#INHAB
+		BNE	DOSC_3
+;no life
+		LDA	#3
+		STA	COUNT0	  	;msg. # for "NO INTELLIGENT LIFE.."
+	;	JSR	HAS_GAS
+	;	BNE	DOSC_2
+		LDA	SYSTEM+3, Y
+		AND	#GAS
+		BNE	DOSC_2
+;no gas
+		LDA	SYSTEM+3, Y	;data bits
+		AND	#FRNDLY
+		BNE	DOSC_1
+;enemy
+		LDA	#4		;msg. # for "ENEMY BASE DESTROYED.."
+		STA	COUNT0
+DOSC_1:		LDA	#STXT10 &H'FF	;"UNINHABITED"
+		STA	PTR3L
+		LDA	#STXT10 >>8
+		STA	PTR3H
+		JMP	DOSC_LBL
+
+;gas giant
+
+DOSC_2:		LDA	#3		;msg. # for "...NO INTELLIGENT LIFE.."
+		STA	COUNT3
+		LDA	#STXT0A &H'FF	;"GAS GIANT"
+		STA	PTR3L
+		LDA	#STXT0A >>8
+		STA	PTR3H
+		JMP	DOSC_LBL
+
+;inhabited!
+
+DOSC_3:		LDA	#1
+		STA	COUNT1
+		LDA	SYSTEM+3, Y	;data bits
+		AND	#FRNDLY
+		BNE	DOSC_4
+;enemy base
+		LDA	#1
+		STA	COUNT0
+		LDA	#STXT0C &H'FF
+		STA	PTR3L
+		LDA	#STXT0C >>8
+		STA	PTR3H
+		JMP	DOSC_5
+
+;friendly base
+
+DOSC_4:		LDA	#2
+		STA	COUNT0
+		LDA	#STXT0B &H'FF
+		STA	PTR3L
+		LDA	#STXT0B >>8
+		STA	PTR3H
+
+;inhabited...
+
+DOSC_5:
+		JSR	HAS_GAS
+		BEQ	DOSC_6
+		LDA	#1
+		STA	COUNT3
+DOSC_6:		LDA	SYSTEM+3, Y	;data bits
+		AND	#V_HIGH
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	COUNT2
+		INC	COUNT2
+		JMP	DOSC_LBL
+
+;space station!
+
+DOSC_7:		LDA	#H'D4
+		STA	SPR0PTR
+		LDA	#H'50
+		STA	TY
+		LDA	#H'9C
+		STA	TX
+		JSR	POS3X3
+
+		LDA	SYSTEM+3,Y	;data bits
+		AND	#INHAB
+		BEQ	DOSC_7A
+;alive...
+ 		LDX	#0
+		LDA	#H'01
+	 	JSR	DRAWSTN
+		LDA	#1
+		STA	COUNT1
+		JMP	DOSC_7B
+
+;dead
+
+DOSC_7A:     	LDA	#H'01
+		JSR	DRAWSTNX
+		LDA	#0
+		STA	COUNT1
+
+DOSC_7B:	;copy to SPRTBL1
+
+		LDY	#H'D4
+DOSC_7BA:	LDA	SPRTBL0, Y
+		STA	SPRTBL1, Y
+		INY
+		BNE	DOSC_7BA
+
+		LDY	ORBIT
+		JSR	HAS_GAS
+		BEQ	DOSC_7C
+		LDA	#1
+		STA	COUNT3
+DOSC_7C:	LDA	SYSTEM+3, Y	;data bits
+		AND	#V_HIGH
+		LSR	A
+		LSR	A
+		LSR	A
+		STA	COUNT2
+		INC	COUNT2
+		
+DOSC_8:		LDA	SYSTEM+3,Y	;data bits
+		AND	#FRNDLY
+		BEQ	DOSC_9
+		LDA	#STXT0E &H'FF
+		STA	PTR3L
+		LDA	#STXT0E >>8
+		STA	PTR3H
+		JMP	DOSC_LBL
+
+;enemy...
+
+DOSC_9:		LDA	#STXT0F &H'FF
+		STA	PTR3L
+		LDA	#STXT0F >>8
+		STA	PTR3H
+		JMP	DOSC_LBL
+
+
+DOSC_YN:	CMP	#0
+		BEQ	DOSC_NO
+;yes
+		LDA	#STXT05 &H'FF
+		STA	PTR3L
+		LDA	#STXT05 >>8
+		STA	PTR3H
+		JMP	DRAWSTR
+
+DOSC_NO:	LDA	#STXT04 &H'FF
+		STA	PTR3L
+		LDA	#STXT04 >>8
+		STA	PTR3H
+		JMP	DRAWSTR
+
+
+DOSC_LBL:	LDX	#H'0C
+		LDY	#H'0E
+		JSR	DRAWSTR
+
+		LDY	ORBIT
+		LDA	SYSTEM+2, Y	;type/pal.
+		AND	#H'70
+		CMP	#H'30		;sun?
+		BEQ	DOSC_MSG
+;non-sun
+		LDA	#STXT03 &H'FF
+		STA	PTR3L
+		LDA	#STXT03 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'10
+		JSR	DRAWSTR
+
+		LDX	#H'0C
+		LDY	#H'11
+		LDA	COUNT1		;life?
+		JSR	DOSC_YN
+
+		LDY	COUNT2		;tech. lvl.
+		LDA	TECHSTRL, Y
+		STA	PTR3L
+		LDA	TECHSTRH, Y
+		STA	PTR3H
+		LDX	#H'11
+		LDY	#H'11
+		JSR	DRAWSTR
+
+		LDX	#H'18
+		LDY	#H'11
+		LDA	COUNT3		;fuel?
+		JSR	DOSC_YN
+
+DOSC_MSG:	LDA	COUNT0
+		CMP	#1
+		BEQ	DOSC_M0		;"SENSORS INDICATE ENEMY ACTIVITY.."
+		CMP	#2
+		BEQ	DOSC_M0		;"SENSORS INDICATE A FRIENDLY BASE.."
+		CMP	#3
+		BEQ	DOSC_M2		;"NO INTELLIGENT LIFE IS PRESENT!"
+		CMP	#4
+		BEQ	DOSC_M3		;"ENEMY BASE IS DESTROYED!!"
+		RTS
+
+;inhabited planet!
+
+DOSC_M0:	LDA	#STXT11 &H'FF	;"SENSORS INDICATE"
+		STA	PTR3L
+		LDA	#STXT11 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'14
+		JSR	DRAWSTR
+
+		LDA	COUNT0
+		CMP	#1
+		BNE	DOSC_M1
+;enemy base
+		LDA	#STXT12 &H'FF	;"ENEMY ACTIVITY!!"
+		STA	PTR3L
+		LDA	#STXT12 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'15
+		JSR	DRAWSTR
+
+		LDA	#STXT14 &H'FF	;"PROCEED WITH"
+		STA	PTR3L
+		LDA	#STXT14 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'17
+		JSR	DRAWSTR
+
+		LDA	#STXT15 &H'FF	;"CAUTION!"
+		STA	PTR3L
+		LDA	#STXT15 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'18
+		JSR	DRAWSTR
+
+		RTS
+
+;uninhabited!
+
+DOSC_M2:	LDA	#STXT18 &H'FF 	;"NO INTELLIGENT"
+		STA	PTR3L
+		LDA	#STXT18 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'14
+		JSR	DRAWSTR
+
+		LDA	#STXT19 &H'FF	;"LIFE IS PRESENT!"
+		STA	PTR3L
+		LDA	#STXT19 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'15
+		JSR	DRAWSTR
+
+		RTS
+
+;destroyed enemy base
+		
+DOSC_M3:	LDA	#STXT1A &H'FF	;"ENEMY BASE"
+		STA	PTR3L
+		LDA	#STXT1A >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'14
+		JSR	DRAWSTR
+
+		LDA	#STXT1B &H'FF	;"IS DESTROYED!!"
+		STA	PTR3L
+		LDA	#STXT1B >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'15
+		JSR	DRAWSTR
+
+		RTS
+		
+;friendly base
+
+DOSC_M1:	LDA	#STXT13 &H'FF	;"A FRIENDLY BASE!"
+		STA	PTR3L
+		LDA	#STXT13 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'15
+		JSR	DRAWSTR
+
+		LDA	#STXT16 &H'FF	;"YOU ARE CLEARED"
+		STA	PTR3L
+		LDA	#STXT16 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'17
+		JSR	DRAWSTR
+
+		LDA	#STXT17 &H'FF	;"FOR LANDING!"
+		STA	PTR3L
+		LDA	#STXT17 >>8
+		STA	PTR3H
+		LDX	#H'0C
+		LDY	#H'18
+		JSR	DRAWSTR
+
+		RTS
+
+
+HAS_GAS:
+		LDA	SYSTEM+2,Y	;type/pal.
+		AND	#H'F0
+		BEQ	HASGAS0		;space stn?
+		CMP	#H'30		;sun?
+		BEQ	NO_GAS
+		LDA	SYSTEM+3,Y	;data bits
+		AND	#GAS
+		BEQ	NO_GAS
+HASGAS0:
+		LDA	SYSTEM+3,Y	;data bits
+		AND	#INHAB
+		BEQ	NO_GAS
+		LDA	#1
+		RTS
+NO_GAS:
+		LDA	#0
+		RTS
+
+;*************************************************
+
+
+DRAWNUM3:	PHA
+		LDA	#H'10
+		STA	COUNT1
+		PLA
+
+DN3_100:	CMP	#100
+		BCC	DN3_10
+		SEC
+		SBC	#100
+		INC	COUNT1
+		JMP	DN3_100
+
+DN3_10:		PHA	                         
+		LDA	COUNT1
+		STA	VID_DATA
+		LDA	#H'10
+		STA	COUNT1
+		PLA
+
+DN3_10A:	CMP	#10
+		BCC	DN3_1
+		SEC
+		SBC	#10
+		INC	COUNT1
+		JMP	DN3_10A
+
+DN3_1:		PHA	                         
+		LDA	COUNT1
+		STA	VID_DATA
+		PLA
+		CLC
+		ADC	#H'10
+		STA	VID_DATA
+		RTS
+
+
+DRAWNUM:	PHA
+		LDA	#H'10
+		STA	COUNT1
+		PLA
+		CMP	#99
+		BCC	DN_10
+		LDA	#H'19
+		STA	VID_DATA
+		STA	VID_DATA
+		RTS
+
+DN_10:		CMP	#10
+		BCC	DN_1
+		SEC
+		SBC	#10
+		INC	COUNT1
+		JMP	DN_10
+
+DN_1:		PHA	                         
+		LDA	COUNT1
+		STA	VID_DATA
+		PLA
+		CLC
+		ADC	#H'10
+		STA	VID_DATA
+		RTS
+
+
+;**** "SCAN" DATA TABLES *************************
+
+STXT00:	.DB	"SECTOR:  SYSTEM:",H'FF
+STXT01:	.DB	"IN",H'77,"ORBIT" ,H'FF
+STXT02:	.DB	"COORDINATES:"    ,H'FF
+STXT03:	.DB	"LIFE  TECH  FUEL",H'FF
+STXT04:	.DB	"NO"		  ,H'FF
+STXT05:	.DB	"YES"		  ,H'FF
+STXT06:	.DB	" LOW"		  ,H'FF
+STXT07:	.DB	" MED."		  ,H'FF
+STXT08:	.DB	" HIGH"		  ,H'FF
+STXT09:	.DB	"V.HIGH"	  ,H'FF
+STXT0A:	.DB	"   GAS GIANT"	  ,H'FF
+STXT0B:	.DB	"FRIENDLY PLANET" ,H'FF
+STXT0C:	.DB	"  ENEMY PLANET"  ,H'FF
+STXT0D:	.DB	"      STAR"	  ,H'FF
+STXT0E:	.DB	"FRIENDLY STATION",H'FF
+STXT0F:	.DB	" ENEMY STATION"  ,H'FF
+STXT10:	.DB	"  UNINHABITED"   ,H'FF
+STXT11:	.DB	"SENSORS INDICATE",H'FF
+STXT12:	.DB	"ENEMY ACTIVITY!!",H'FF
+STXT13:	.DB	"A FRIENDLY BASE!",H'FF
+STXT14:	.DB	"  PROCEED WITH"  ,H'FF
+STXT15:	.DB	"    CAUTION!"	  ,H'FF
+STXT16:	.DB	"YOU ARE CLEARED" ,H'FF
+STXT17:	.DB	"  FOR LANDING!"  ,H'FF
+STXT18:	.DB	" NO INTELLIGENT" ,H'FF
+STXT19:	.DB	"LIFE IS PRESENT!",H'FF
+STXT1A:	.DB	"   ENEMY BASE"	  ,H'FF
+STXT1B:	.DB	" IS DESTROYED!!" ,H'FF
+STXT1C:	.DB	" NONE"           ,H'FF
+
+
+TECHSTRL:	.DB	STXT1C &H'FF, STXT06 &H'FF
+		.DB	STXT07 &H'FF, STXT08 &H'FF
+		.DB	STXT09 &H'FF
+
+TECHSTRH:	.DB	STXT1C >>8, STXT06 >>8
+		.DB	STXT07 >>8, STXT08 >>8
+		.DB	STXT09 >>8
+
+
+PSHPSL:		.DB	S0SHAPE &H'FF, S0SHAPE &H'FF, P2SHAPE &H'FF
+		.DB	P3SHAPE &H'FF, P4SHAPE &H'FF, P5SHAPE &H'FF
+		.DB	P6SHAPE &H'FF
+
+PSHPSH:		.DB	S0SHAPE >>8, S0SHAPE >>8, P2SHAPE >>8
+		.DB	P3SHAPE >>8, P4SHAPE >>8, P5SHAPE >>8
+		.DB	P6SHAPE >>8
+
+
+S0SHAPE:	
+
+P2SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'40,H'41,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'60,H'61,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+
+P3SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'42,H'43,H'44,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'62,H'63,H'64,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'82,H'83,H'84,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+
+P4SHAPE:	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+		.DB	H'FA,H'FA,H'45,H'46,H'47,H'48,H'FA,H'FA
+		.DB	H'FA,H'FA,H'65,H'66,H'67,H'68,H'FA,H'FA
+		.DB	H'FA,H'FA,H'85,H'86,H'87,H'88,H'FA,H'FA
+		.DB	H'FA,H'FA,H'A5,H'A6,H'A7,H'A8,H'FA,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+
+P5SHAPE:	.DB	H'FA,H'FA,H'49,H'4A,H'4B,H'4C,H'4D,H'FA
+		.DB	H'FA,H'FA,H'69,H'6A,H'6B,H'6C,H'6D,H'FA
+		.DB	H'FA,H'FA,H'89,H'8A,H'8B,H'8C,H'8D,H'FA
+		.DB	H'FA,H'FA,H'A9,H'AA,H'AB,H'AC,H'AD,H'FA
+		.DB	H'FA,H'FA,H'C9,H'CA,H'CB,H'CC,H'CD,H'FA
+		.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+
+P6SHAPE:	.DB	H'FA,H'FA,H'4F,H'50,H'51,H'52,H'FA,H'FA
+		.DB	H'FA,H'6E,H'6F,H'70,H'71,H'72,H'73,H'FA
+		.DB	H'FA,H'8E,H'8F,H'90,H'91,H'92,H'93,H'FA
+		.DB	H'FA,H'AE,H'AF,H'B0,H'B1,H'B2,H'B3,H'FA
+		.DB	H'FA,H'CE,H'CF,H'D0,H'D1,H'D2,H'D3,H'FA
+		.DB	H'FA,H'FA,H'EF,H'F0,H'F1,H'F2,H'FA,H'FA
+
+
+
+
+
+
+;*************************************************
+
+
+FLMXOFF:	.DB	H'7C,H'77,H'72,H'6F,H'6F,H'6F,H'72,H'76
+		.DB	H'7C,H'81,H'86,H'89,H'89,H'89,H'86,H'81
+
+FLMYOFF:	.DB	H'89,H'89,H'86,H'81,H'7C,H'77,H'72,H'6F
+		.DB	H'6F,H'6F,H'72,H'77,H'7C,H'81,H'86,H'89
+
+FLIPTBL:	.DB	H'00,H'00,H'00,H'00,H'00,H'80,H'80,H'80
+		.DB	H'80,H'C0,H'C0,H'C0,H'C0,H'40,H'40,H'40
+
+CHOFFTBL:	.DB	H'00,H'01,H'02,H'03,H'04,H'03,H'02,H'01
+		.DB	H'00,H'01,H'02,H'03,H'04,H'03,H'02,H'01
+
+
+;*************************************************
+; COMBAT ROM TABLES
+;*************************************************
+
+
+
+DAMTABLE:	.DB	   0,    5,    7,   10,   15,   15,   25,   10
+WPN_ACC:	.DB	   0,   11,   12,   15,   15,   15,    0,   15
+WPN_CHAR:	.DB	H'00, H'B5, H'5E, H'E0, H'E5, H'EA, H'D0
+
+LNADDRL:	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+		.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+
+LNADDRH:	.DB	H'20, H'20, H'20, H'20, H'20, H'20, H'20, H'20
+		.DB	H'21, H'21, H'21, H'21, H'21, H'21, H'21, H'21
+		.DB	H'22, H'22, H'22, H'22, H'22, H'22, H'22, H'22
+		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
+
+SQRTABLE:	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+		.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'01
+		.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'02,H'02
+		.DB	H'02,H'02,H'02,H'03,H'03,H'03,H'03,H'03
+		.DB	H'04,H'04,H'04,H'05,H'05,H'05,H'05,H'06
+		.DB	H'06,H'06,H'07,H'07,H'07,H'08,H'08,H'08
+		.DB	H'09,H'09,H'0A,H'0A,H'0A,H'0B,H'0B,H'0C
+		.DB	H'0C,H'0D,H'0D,H'0E,H'0E,H'0F,H'0F,H'0F
+		.DB	H'10,H'11,H'11,H'12,H'12,H'13,H'13,H'14
+		.DB	H'14,H'15,H'15,H'16,H'17,H'17,H'18,H'18
+		.DB	H'19,H'1A,H'1A,H'1B,H'1C,H'1C,H'1D,H'1E
+		.DB	H'1E,H'1F,H'20,H'21,H'21,H'22,H'23,H'23
+		.DB	H'24,H'25,H'26,H'27,H'27,H'28,H'29,H'2A
+		.DB	H'2B,H'2B,H'2C,H'2D,H'2E,H'2F,H'30,H'30
+		.DB	H'31,H'32,H'33,H'34,H'35,H'36,H'37,H'38
+     		.DB	H'39,H'3A,H'3B,H'3C,H'3D,H'3E,H'3F,H'3F
+
+		
+SEXPLCHR:	.DB	H'FA
+		.DB	H'5E, H'5F, H'5E, H'5F, H'5E
+
+LEXPLCHR:	.DB	H'FA, H'FA, H'FA, H'FA
+		.DB	H'5E, H'FA, H'FA, H'FA
+		.DB	H'5E, H'FA, H'FA, H'FA
+		.DB	H'5F, H'FA, H'FA, H'FA
+		.DB	H'5F, H'FA, H'FA, H'FA
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'BE, H'BF, H'DE, H'DF
+		.DB	H'BE, H'BF, H'DE, H'DF
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'BE, H'BF, H'DE, H'DF
+		.DB	H'BE, H'BF, H'DE, H'DF
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'7E, H'7F, H'9E, H'9F
+		.DB	H'5F, H'FA, H'FA, H'FA
+		.DB	H'5F, H'FA, H'FA, H'FA
+		.DB	H'5E, H'FA, H'FA, H'FA
+		.DB	H'5E, H'FA, H'FA, H'FA
+
+E_SHPOFF:	.DB	H'00, H'04, H'04, H'04, H'04, H'00, H'00
+		.DB	H'00, H'00, H'00, H'00, H'00, H'00
+		.DB	H'00, H'00, H'04, H'04, H'04, H'04
+
+DIRTABLE:	.DB	H'00, H'01, H'02, H'03, H'04
+		.DB	H'08, H'07, H'06, H'05, H'04
+		.DB	H'08, H'09, H'0A, H'0B, H'0C
+		.DB	H'00, H'0F, H'0E, H'0D, H'0C
+
+NEWEPOS:	.DB	H'7E, H'A4, H'6C, H'A8, H'5C, H'A4, H'58, H'A4
+		.DB	H'5C, H'7E, H'58, H'6C, H'5C, H'5C, H'68, H'5C
+		.DB	H'7E, H'5C, H'8C, H'58, H'A4, H'5C, H'A8, H'6C
+		.DB	H'A4, H'7E, H'A8, H'8C, H'A4, H'A4, H'8C, H'A8
+
+
+;**** ENEMY SHIP DATA TABLES ****
+
+;--BASE SPRITE CHARS
+;index 0 or 1 ok for space
+;index 0..15 ok for planet & spacestation
+
+EDEFCHAR:	.DB	H'60, H'A0, H'6A, H'60, H'A0, H'6A, H'60, H'A0
+		.DB	H'6A, H'60, H'A0, H'6A, H'60, H'A0, H'6A, H'60
+
+
+
+;	ENEMY MOVEMENT TYPES IN ESHPSEEK
+;	01 = SEEK & VEER
+;	02 = STRAIGHT
+;	03 = SEEK WITHOUT VEERING (suicidal)
+;	04 = RANDOM
+
+EDEFSEEK:	.DB	H'03, H'04, H'03, H'04, H'04, H'03, H'04, H'03
+		.DB	H'02, H'03, H'04, H'03, H'04, H'04, H'03, H'02
+		.DB	H'03, H'04, H'03, H'04, H'03, H'03, H'03, H'04
+		.DB	H'01, H'02, H'04, H'03, H'04, H'04, H'03, H'01
+		.DB	H'04, H'03, H'03, H'02, H'03, H'04, H'02, H'03
+		.DB	H'04, H'02, H'01, H'03, H'04, H'03, H'03, H'04
+		.DB	H'03, H'03, H'01, H'02, H'03, H'04, H'02, H'01
+		.DB	H'01, H'04, H'04, H'03, H'01, H'04, H'03, H'01
+		.DB	H'03, H'03, H'01, H'03, H'01, H'04, H'01, H'01
+		.DB	H'01, H'01, H'03, H'01, H'03, H'03, H'01, H'03
+		.DB	H'01, H'03, H'01, H'03, H'01, H'01, H'01, H'01
+		.DB	H'03, H'01, H'01, H'03, H'01, H'01, H'03, H'01
+		.DB	H'01, H'01, H'03, H'01, H'03, H'03, H'01, H'01
+;SEEK FOR ON OR NEAR P'RADIKUS
+		.DB	H'01, H'03, H'01, H'01, H'03, H'01, H'01, H'01
+		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+		.DB	H'01, H'03, H'01, H'01, H'03, H'01, H'01, H'01
+		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+    
+
+EDEFDAM:	.DB	H'02, H'02, H'02, H'02, H'02, H'05, H'05, H'05
+		.DB	H'05, H'05, H'05, H'05, H'05, H'07, H'07, H'07
+		.DB	H'09, H'07, H'09, H'09, H'09, H'09, H'0A, H'09
+		.DB	H'0A, H'0A, H'0D, H'0D, H'0D, H'0D, H'0F, H'0F
+		.DB	H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F
+		.DB	H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F, H'0F
+		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
+		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
+		.DB	H'14, H'14, H'14, H'14, H'14, H'14, H'14, H'14
+		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
+		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
+		.DB	H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E, H'1E
+;ARMOR FOR ON OR NEAR P'RADIKUS
+		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
+		.DB	H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F
+		.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
+		.DB	H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F, H'2F
+
+EDEFDRV:	.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+		.DB	H'01, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+		.DB	H'02, H'01, H'01, H'01, H'02, H'01, H'02, H'01
+		.DB	H'02, H'01, H'02, H'02, H'01, H'02, H'02, H'01
+		.DB	H'02, H'02, H'01, H'02, H'02, H'03, H'02, H'02
+		.DB	H'02, H'03, H'03, H'02, H'02, H'02, H'03, H'02
+		.DB	H'03, H'02, H'02, H'02, H'03, H'02, H'02, H'03
+		.DB	H'03, H'02, H'03, H'03, H'02, H'03, H'03, H'03
+		.DB	H'04, H'03, H'03, H'04, H'04, H'03, H'03, H'04
+		.DB	H'03, H'04, H'03, H'03, H'03, H'04, H'04, H'03
+		.DB	H'04, H'03, H'04, H'04, H'04, H'03, H'04, H'05
+		.DB	H'04, H'04, H'04, H'04, H'04, H'04, H'04, H'04
+		.DB	H'04, H'04, H'04, H'04, H'04, H'04, H'04, H'05
+;DRIVE TYPES FOR ON OR NEAR P'RADIKUS
+		.DB	H'04, H'05, H'04, H'05, H'05, H'05, H'05, H'05
+		.DB	H'05, H'05, H'05, H'05, H'05, H'05, H'05, H'05
+		.DB	H'04, H'05, H'04, H'05, H'05, H'05, H'05, H'05
+		.DB	H'05, H'05, H'05, H'05, H'05, H'05, H'05, H'05
+
+EDEFWPN:	.DB	H'00, H'01, H'01, H'01, H'01, H'01, H'01, H'01
+		.DB	H'01, H'01, H'01, H'02, H'01, H'01, H'01, H'00
+		.DB	H'01, H'02, H'01, H'01, H'01, H'02, H'01, H'01
+		.DB	H'02, H'01, H'02, H'02, H'02, H'02, H'02, H'01
+		.DB	H'02, H'01, H'03, H'02, H'02, H'03, H'02, H'02
+		.DB	H'03, H'02, H'02, H'01, H'03, H'02, H'01, H'02
+		.DB	H'03, H'03, H'03, H'03, H'02, H'02, H'03, H'03
+		.DB	H'02, H'02, H'03, H'02, H'02, H'03, H'02, H'03
+		.DB	H'03, H'03, H'02, H'03, H'03, H'02, H'03, H'02
+		.DB	H'04, H'03, H'03, H'04, H'03, H'04, H'03, H'04
+		.DB	H'03, H'04, H'04, H'03, H'03, H'04, H'05, H'04
+		.DB	H'05, H'04, H'03, H'04, H'05, H'05, H'04, H'05
+		.DB	H'04, H'04, H'05, H'04, H'04, H'05, H'05, H'04
+;SHIPS WEAPONS ON OR NEAR P'RADIKUS
+		.DB	H'04, H'05, H'04, H'05, H'04, H'05, H'05, H'04
+		.DB	H'05, H'04, H'05, H'05, H'04, H'05, H'04, H'05
+		.DB	H'04, H'05, H'04, H'05, H'04, H'05, H'05, H'04
+		.DB	H'05, H'04, H'05, H'05, H'04, H'05, H'04, H'05
+
+EDEFPTS:	.DB	H'06, H'06, H'07, H'06, H'06, H'06, H'07, H'07
+		.DB	H'06, H'07, H'06, H'06, H'07, H'08, H'07, H'06
+		.DB	H'06, H'07, H'07, H'08, H'07, H'07, H'08, H'07
+		.DB	H'07, H'07, H'08, H'07, H'07, H'08, H'08, H'07
+		.DB	H'08, H'07, H'07, H'08, H'08, H'09, H'08, H'08
+		.DB	H'08, H'08, H'08, H'08, H'09, H'08, H'08, H'09
+		.DB	H'09, H'08, H'08, H'09, H'08, H'09, H'08, H'09
+		.DB	H'09, H'09, H'08, H'09, H'09, H'08, H'08, H'09
+		.DB	H'09, H'0A, H'09, H'09, H'09, H'09, H'0A, H'09
+		.DB	H'09, H'09, H'0A, H'09, H'09, H'0A, H'0A, H'09
+		.DB	H'09, H'0A, H'09, H'0A, H'0A, H'0A, H'0B, H'0A
+		.DB	H'0A, H'0A, H'0B, H'0A, H'0A, H'0B, H'0B, H'0A
+		.DB	H'0B, H'0B, H'0A, H'0B, H'0A, H'0B, H'0B, H'0B
+;POINT VALUES FOR SHIPS ON OR NEAR P'RADIKUS
+		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
+		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
+		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
+		.DB	H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D, H'0D
+
+
+;**** SPACE STATION TABLES ********************************
+
+;index #s 0-4 = friendly...
+
+
+SDEF_WPN:	.DB	H'00, H'00, H'00, H'00
+		.DB	H'02, H'03, H'02, H'03
+		.DB	H'03, H'04, H'04, H'04
+		.DB	H'05, H'05, H'05
+;the P'Radikus station weapon
+		.DB	H'05
+
+SDEF_DAM:	.DB	H'00, H'00, H'00, H'00
+		.DB	H'7F, H'8F, H'9F, H'AF
+		.DB	H'BF, H'BF, H'CF, H'CF
+		.DB	H'DF, H'EF, H'FF
+;the P'Radikus station shield
+		.DB	H'FF
+
+;H'80 	    alive
+;H'10 	    friendly
+;H'04 & 02  point value
+;H'01 	    has drones (no longer used)
+;
+SDEFSTAT:	.DB	H'90, H'90, H'90, H'90
+		.DB	H'80, H'80, H'82, H'83
+		.DB	H'83, H'85, H'85, H'85
+		.DB	H'87, H'87, H'87
+;the P'Radikus station stat
+		.DB	H'87
+
+SDEF_OBJ:	.DB	H'A8, H'CC, H'FE, H'FD
+		.DB	H'A0, H'A0, H'C0, H'C0
+		.DB	H'E2, H'E0, H'E0, H'E2
+		.DB	H'E0, H'E1, H'E3
+;the P'Radikus station obj.
+		.DB	H'00
+
+;**********************************************************
+
+
+
+;;GUN_CHR:	.DB	H'1E, H'1E, H'1E, H'1F, H'3E, H'3F, H'3F
+;;		.DB	H'3F, H'3E, H'1F, H'1E, H'1E, H'1E
+
+
+
+DIFF_TBL:	.DB	5, 4, 4, 4, 4, 4, 4, 5
+		.DB	4, 4, 3, 3, 3, 3, 4, 4
+		.DB	4, 3, 2, 2, 2, 2, 3, 4
+		.DB	4, 3, 2, 1, 1, 2, 3, 4
+		.DB	4, 3, 2, 1, 1, 2, 3, 4
+		.DB	4, 3, 2, 2, 2, 2, 3, 4
+		.DB	4, 4, 3, 3, 3, 3, 4, 4
+		.DB	5, 4, 4, 4, 4, 4, 4, 5
+
+DENS_TBL:	.DB	H'17, H'1C, H'1C, H'1C, H'1C, H'1C, H'1C, H'17
+		.DB	H'1C, H'1C, H'21, H'21, H'21, H'21, H'1C, H'1C
+		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
+		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
+		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
+		.DB	H'1C, H'21, H'28, H'28, H'28, H'28, H'21, H'1C
+		.DB	H'1C, H'1C, H'21, H'21, H'21, H'21, H'1C, H'1C
+		.DB	H'17, H'1C, H'1C, H'1C, H'1C, H'1C, H'1C, H'17
+
+
+;PRADIKUS SOUND DATA
+
+THEME0:
+	.DB	VOICE0, STRING
+	.DB	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
+	.DB	HC+N16, Eb+N16, D+N16, Eb+N16, C+N16, Eb+N16, D+N16, Eb+N16
+	.DB	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
+	.DB	Ab+N16, F+N16, E+N16, F+N16, C+N16, F+N16, E+N16, F+N16
+	.DB	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
+	.DB	B+N16, F+N16, Eb+N16, F+N16, D+N16, F+N16, Eb+N16, F+N16
+	.DB	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.DB	HC+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.DB	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
+	.DB	HEb+N16, Ab+N16, G+N16, Ab+N16, Eb+N16, Ab+N16, G+N16, Ab+N16
+	.DB	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
+	.DB	HD+N16, Fs+N16, E+N16, Fs+N16, D+N16, Fs+N16, E+N16, Fs+N16
+	.DB	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
+	.DB	HD+N16, G+N16, Fs+N16, G+N16, D+N16, G+N16, Fs+N16, G+N16
+	.DB	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
+	.DB	HC+N16, E+N16, D+N16, E+N16, C+N16, E+N16, D+N16, E+N16
+	.DB	REPLAY
+
+THEME1:
+	.DB	VOICE1, BASE_STRING
+	.DB	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.DB	C+N16, G+N16, F+N16, G+N16, Eb+N16, G+N16, F+N16, G+N16
+	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.DB	C+N16, Ab+N16, G+N16, Ab+N16, F+N16, Ab+N16, G+N16, Ab+N16
+	.DB	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
+	.DB	C+N16, Eb+N16, D+N16, Eb+N16, G+N16, Eb+N16, D+N16, Eb+N16
+	.DB	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
+	.DB	C+N16, HC+N16, Bb+N16, HC+N16, Ab+N16, HC+N16, Bb+N16, HC+N16
+	.DB	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
+	.DB	C+N16, Ax+N16, G+N16, Ax+N16, Fs+N16, Ax+N16, G+N16, Ax+N16
+	.DB	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
+	.DB	LBb+N16, Bb+N16, Ax+N16, Bb+N16, G+N16, Bb+N16, Ax+N16, Bb+N16
+	.DB	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
+	.DB	LBb+N16, G+N16, F+N16, G+N16, E+N16, G+N16, F+N16, G+N16
+	.DB	REPLAY
+
+BELL:
+	.DB	VOICE1
+	.DB	LOADREG0,H'A0,LOADREG1,H'77,LOADREG2,H'3E,LOADREG3,H'00
+	.DB	LOADREG0,H'9F,LOADREG1,H'77,LOADREG2,H'3E,LOADREG3,H'00
+	.DB	PAUSE+N16, ENDPLAY
+
+CODE_SND:
+	.DB	VOICE1
+	.DB	LOADREG0,H'FF,LOADREG1,H'AB,LOADREG2,H'00,LOADREG3,H'01
+	.DB	LOADREG0,H'FF,LOADREG1,H'AB,LOADREG2,H'00,LOADREG3,H'01
+	.DB	PAUSE+N16, ENDPLAY
+
+ENG:
+	.DB	VOICE3
+	.DB	LOADREG0,H'79,LOADREG1,H'7B,LOADREG2,H'1E,LOADREG3,H'70
+	.DB	STARTVOICE
+	.DB	REPLAY
+
+PING:
+	.DB	VOICE2
+	.DB	LOADREG0,H'07,LOADREG1,H'16,LOADREG2,H'21,LOADREG3,H'20
+	.DB	PAUSE+N8, ENDPLAY
+
+SBOOM:
+	.DB	VOICE3
+	.DB	LOADREG0,H'05,LOADREG1,H'F1,LOADREG2,H'5E,LOADREG3,H'D7
+	.DB	PAUSE+N8, ENDPLAY
+
+MINE_1:
+	.DB	VOICE1
+	.DB	LOADREG0,H'3B,LOADREG1,H'8A,LOADREG2,H'4E,LOADREG3,H'B9
+	.DB	PAUSE+N16, ENDPLAY
+
+LASER_0:
+	.DB	VOICE0
+	.DB	LOADREG0,H'28,LOADREG1,H'A3,LOADREG2,H'C2,LOADREG3,H'50
+	.DB	PAUSE+N8, ENDPLAY
+
+E_LASER:
+	.DB	VOICE1
+	.DB	LOADREG0,H'7F,LOADREG1,H'CA,LOADREG2,H'FF,LOADREG3,H'98
+	.DB	PAUSE+N8, ENDPLAY
+
+WAVE_1:
+	.DB	VOICE1
+	.DB	LOADREG0,H'3B,LOADREG1,H'8A,LOADREG2,H'4E,LOADREG3,H'B9
+	.DB	PAUSE+N16, ENDPLAY
+
+GUN_SHOT:
+	.DB	VOICE3
+	.DB	LOADREG0,H'44,LOADREG1,H'4D,LOADREG2,H'5D,LOADREG3,H'08
+	.DB	PAUSE+N8, ENDPLAY
+
+MISLSHOT:
+	.DB	VOICE3
+	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'24,LOADREG3,H'70
+	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'26,LOADREG3,H'70
+	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'28,LOADREG3,H'70
+	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'2A,LOADREG3,H'70
+	.DB	LOADREG0,H'7F,LOADREG1,H'96,LOADREG2,H'2C,LOADREG3,H'70
+	.DB	PAUSE+N8, ENDPLAY
+
+SEXPL:
+	.DB	VOICE3
+	.DB	LOADREG0,H'18,LOADREG1,H'4C,LOADREG2,H'5C,LOADREG3,H'2A
+	.DB	LOADREG0,H'42,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'41,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'40,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1F,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1E,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1D,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1C,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1B,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'1A,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'19,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'18,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'17,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'16,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'15,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'14,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	LOADREG0,H'13,LOADREG1,H'4C,LOADREG2,H'5F,LOADREG3,H'73
+	.DB	ENDPLAY
+
+
+X_DEST:	.DB	H'80, H'78, H'70, H'68, H'60, H'68, H'70, H'78
+	.DB	H'80, H'88, H'90, H'98, H'A0, H'98, H'90, H'88
+
+Y_DEST:	.DB	H'A0, H'98, H'90, H'88, H'80, H'78, H'70, H'68
+	.DB	H'60, H'68, H'70, H'78, H'80, H'88, H'90, H'98
+
+
+COPYRIGHT:	.DB	"       HIGH SCORE       "	;12 lines x 24
+		.DB	"                        "
+		.DB	"                        "   
+		.DB	"     BY JIM TREADWAY    "
+		.DB	"     AND MIKE HUNLEY    "
+		.DB	" ADDITIONAL GRAPHICS BY "
+		.DB	"  JON AND NANCY VALESH  "
+		.DB	"        "
+		.DB	H'AD,H'AE,H'AE,H'AE,H'AE,H'AE,H'AE,H'AF
+		.DB	"        "
+		.DB	H'0F	;(C) symbol
+		.DB	"1990 COLOR DREAMS, INC."
+	        .DB	"        ",H'CD,"      ",H'CF,"        "
+		.DB	"        "
+		.DB	H'ED,H'EE,H'EE,H'EE,H'EE,H'EE,H'EE,H'EF
+		.DB	"        "
+		.DB	"  ALL RIGHTS RESERVED!	 "
+
+NUMTAB:		.DB	H'F0, H'F1, H'F2, H'F3, H'F4
+		.DB	H'F5, H'F6, H'F7, H'F8, H'F9
+
+
+CS_DATA:	     
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#0
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#1
+	.DB	H'57,H'57,H'78,H'77,H'57,H'57,H'57,H'57
+	.DB	H'57,H'57,H'57,H'57,H'57,H'57,H'57,H'57 
+	.DB	H'57,H'57,H'57,H'57,H'78,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'23,H'2F,H'2E,H'24,H'FA,H'FA	;#2
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'D8,H'B7,H'B7,H'B7,H'B7,H'B7,H'B7	;#3
+	.DB	H'B7,H'B7,H'D7,H'58,H'FA,H'FA,H'FA,H'FA	   
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC                   
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#4
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#5
+	.DB	H'F7,H'F7,H'98,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'D9,H'59,H'5C,H'5C,H'5C,H'5C,H'5A	;#6
+	.DB	H'FA,H'FA,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'BE,H'79,H'5C,H'5C,H'5C,H'5C,H'5A	;#7
+	.DB	H'FA,H'FA,H'BE,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'BA,H'99,H'5C,H'5C,H'5C,H'5C,H'5A	;#8
+	.DB	H'FA,H'FA,H'BB,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#9
+	.DB	H'57,H'57,H'78,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'24,H'32,H'29,H'36,H'25,H'FA	;#10
+	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'30,H'37,H'32,H'0F,H'30,H'2C	;#11
+	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'33,H'28,H'29,H'25,H'2C,H'24	;#12
+	.DB	H'0D,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#13
+	.DB	H'F7,H'F7,H'98,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'D9,H'7A,H'7B,H'9A,H'9C,H'9C,H'9C	;#14
+	.DB	H'9C,H'5B,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'BA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#15
+	.DB	H'FA,H'FA,H'BB,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'D9,H'7A,H'7B,H'9B,H'9C,H'9C,H'9C	;#16
+	.DB	H'9C,H'5B,H'DA,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'BE,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#17
+	.DB	H'FA,H'FA,H'BE,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'BA,H'FA,H'08,H'FA,H'1D,H'FA,H'FA	;#18
+	.DB	H'09,H'FA,H'BB,H'97,H'F7,H'F7,H'F7,H'F7
+	.DB	H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7
+	.DB	H'F7,H'F7,H'F7,H'F7,H'98,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'77,H'57,H'57,H'57,H'57,H'57,H'57	;#19
+	.DB	H'57,H'57,H'78,H'77,H'57,H'57,H'57,H'57
+	.DB	H'57,H'57,H'57,H'57,H'57,H'57,H'57,H'57
+	.DB	H'57,H'57,H'57,H'57,H'78,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#20
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#21
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#22
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#23
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#24
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+			       
+	.DB	H'FC,H'58,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA	;#25
+	.DB	H'FA,H'FA,H'F8,H'58,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA,H'FA
+	.DB	H'FA,H'FA,H'FA,H'FA,H'F8,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'97,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7	;#26
+	.DB	H'F7,H'F7,H'98,H'97,H'F7,H'F7,H'F7,H'F7
+	.DB	H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7,H'F7
+	.DB	H'F7,H'F7,H'F7,H'F7,H'98,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#27
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+							   
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#28
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC	;#29
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+	.DB	H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC,H'FC
+CSD_END:
+
+
+INCLUDE( PLNTMAPS.ASM)
+
+;
+;*************************************************
+; INT. VECTORS
+;*************************************************
+
+IRQ:	JMP	BOOT		;power up or reset
+	RTI
+
+.ORG	h'FFFA
+
+.DRW	NMI
+.DRW	BOOT
+.DRW	IRQ
+
+.END
+
+;*************************************************
+; END
+;*************************************************
+

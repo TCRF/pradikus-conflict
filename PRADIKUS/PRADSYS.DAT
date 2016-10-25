@@ -1,0 +1,2103 @@
+;**********************************************************
+;	SOLAR SYSTEM DATA TABLE --
+;**********************************************************
+
+
+
+;
+;SOLARxx:
+;	.DB	SYSINFO
+;	.DB	XPOS, YPOS, TYPE, DATA
+;
+;
+;SYSINFO: 
+;     00xxxxxx = number of objects in solar system
+;      ^
+;      +------ = top 2 bits is which video sets to use (+3) 
+;
+	.EQU	X_SET4,		H'00   	;ie. set 4
+	.EQU	X_SET5,		H'40	;    set 5
+	.EQU	X_SET6,		H'80	;    set 6
+	.EQU	X_SET7,		H'C0	;    set 7
+;
+;
+;TYPE:
+;     xxxx0000 = Type/Palette:  0 = Space Station
+;				1 = Planet
+;				2 = Planet or Gas giant if size 6
+;				3 = Sun
+;
+;     0000xxxx = Size (0..6) or Space Station index #.
+;
+;
+;
+;
+;DATA:	
+;	.EQU	GAS,		H'80	;1xxxxxxx ;low 3 bits unused?
+;	.EQU	INHAB,		H'40	;x1xxxxxx
+;	.EQU	FRNDLY,		H'20	;xx1xxxxx
+;	.EQU	V_HIGH,		H'18	;xxx11xxx
+;	.EQU	HIGH,		H'10	;xxx10xxx
+;	.EQU	AVG,		H'08	;xxx01xxx
+;	.EQU	LOW,		H'00	;xxx00xxx
+;
+;
+;	.EQU	SUN,		H'36
+
+
+  SOLAR00:
+	.DB	X_SET4 + H'04
+	.DB	H'66, H'1b, H'13, GAS + INHAB + AVG
+	.DB	H'0e, H'1f, H'25, INHAB + LOW
+	.DB	H'3c, H'34, SUN, H'00	;sun
+	.DB	H'3c, H'66, H'12, GAS + INHAB + FRNDLY + AVG
+				      
+  SOLAR01:
+	.DB	X_SET6 + H'04
+	.DB	H'44, H'38, SUN, H'00	;sun
+	.DB	H'41, H'54, H'24, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'4c, H'5c, H'22, LOW
+	.DB	H'0a, H'62, H'23, INHAB + AVG
+
+  SOLAR02:
+	.DB	X_SET6 + H'0c
+	.DB	H'51, H'0c, H'24, INHAB + FRNDLY + AVG
+	.DB	H'1a, H'19, H'26, GAS
+	.DB	H'73, H'1a, H'24, GAS + INHAB + AVG
+	.DB	H'3c, H'43, SUN, H'00	;sun
+	.DB	H'45, H'48, H'24, INHAB + FRNDLY + HIGH
+	.DB	H'39, H'55, H'15, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'10, H'58, H'15, INHAB + LOW
+	.DB	H'61, H'5a, H'13, INHAB + HIGH
+	.DB	H'1c, H'62, H'24, INHAB + AVG
+	.DB	H'4e, H'6a, H'13, LOW
+	.DB	H'18, H'6f, H'24, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'58, H'78, H'14, INHAB + FRNDLY + HIGH
+
+  SOLAR03:
+	.DB	X_SET7 + H'0c
+	.DB	H'10, H'25, H'26, GAS
+	.DB	H'33, H'2a, H'13, INHAB + AVG
+	.DB	H'19, H'2f, H'22, LOW
+	.DB	H'66, H'37, H'24, INHAB + FRNDLY + LOW
+	.DB	H'3a, H'38, SUN, H'00	;sun
+	.DB	H'43, H'38, H'26, GAS
+	.DB	H'31, H'3a, H'25, INHAB + FRNDLY + AVG
+	.DB	H'4b, H'46, H'26, GAS 
+	.DB	H'43, H'49, H'12, INHAB + FRNDLY + HIGH
+	.DB	H'3e, H'62, H'12, INHAB + HIGH
+	.DB	H'38, H'69, H'26, GAS 
+	.DB	H'07, H'6d, H'24, INHAB + AVG
+
+  SOLAR04:
+	.DB	X_SET5 + H'0d
+	.DB	H'31, H'0a, H'22, INHAB + HIGH
+	.DB	H'0b, H'17, H'26, GAS 
+	.DB	H'3e, H'1A, H'22, INHAB + FRNDLY + HIGH
+	.DB	H'67, H'1F, H'15, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'36, H'21, H'24, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'40, H'32, SUN, H'00	;sun
+	.DB	H'3c, H'37, H'26, GAS 
+	.DB	H'71, H'38, H'24, INHAB + FRNDLY + AVG
+	.DB	H'67, H'41, H'12, LOW
+	.DB	H'74, H'50, H'23, INHAB + AVG
+	.DB	H'64, H'5a, H'24, LOW
+	.DB	H'78, H'5c, H'15, GAS + INHAB + LOW
+	.DB	H'2c, H'72, H'14, INHAB + FRNDLY + AVG
+
+  SOLAR05:
+	.DB	X_SET4 + H'0f
+	.DB	H'07, H'1e, H'0A, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'65, H'07, H'26, GAS 
+	.DB	H'0d, H'1A, H'12, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'71, H'1F, H'15, GAS + INHAB + HIGH
+	.DB	H'43, H'2f, H'26, GAS 
+	.DB	H'22, H'30, H'22, GAS + INHAB + AVG
+	.DB	H'6b, H'36, H'13, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'52, H'3a, SUN, H'00	;sun
+	.DB	H'4f, H'3f, H'26, GAS 
+	.DB	H'23, H'42, H'15, GAS + INHAB + HIGH
+	.DB	H'3f, H'44, H'14, GAS + INHAB + AVG
+	.DB	H'14, H'4a, H'25, FRNDLY + LOW
+	.DB	H'2a, H'6e, H'12, GAS + INHAB + AVG
+	.DB	H'37, H'78, H'12, GAS + INHAB + V_HIGH
+	.DB	H'68, H'7F, H'22, FRNDLY + LOW
+
+  SOLAR06:
+	.DB	X_SET5 + H'04
+	.DB	H'22, H'30, H'12, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'40, H'3b, SUN, H'00	;sun
+	.DB	H'35, H'49, H'24, INHAB + FRNDLY + LOW
+	.DB	H'1a, H'65, H'13, GAS + INHAB + FRNDLY + V_HIGH
+
+  SOLAR07:
+	.DB	X_SET4 + H'0b
+	.DB	H'44, H'3e, H'09, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'28, H'0c, H'22, GAS + INHAB + HIGH
+	.DB	H'6f, H'0d, H'13, GAS + INHAB + AVG
+	.DB	H'20, H'12, H'26, GAS
+	.DB	H'07, H'17, H'22, GAS + INHAB + AVG
+	.DB	H'48, H'18, H'26, GAS
+	.DB	H'40, H'3b, SUN, H'00	;sun
+	.DB	H'3f, H'3c, H'15, GAS + INHAB + V_HIGH
+	.DB	H'2c, H'4f, H'23, FRNDLY + LOW
+	.DB	H'14, H'5b, H'14, GAS + INHAB + HIGH
+	.DB	H'50, H'67, H'26, GAS
+
+  SOLAR08:
+  SOLAR09:
+	.DB	X_SET4 + H'0e
+	.DB	H'1f, H'0d, H'26, GAS
+	.DB	H'32, H'14, H'15, GAS + INHAB + AVG
+	.DB	H'48, H'19, H'26, GAS
+	.DB	H'37, H'2e, H'24, INHAB + FRNDLY + HIGH
+	.DB	H'73, H'35, H'14, GAS + INHAB + AVG
+	.DB	H'24, H'3b, H'12, FRNDLY + LOW
+	.DB	H'40, H'3e, SUN, H'00	;sun
+	.DB	H'4c, H'49, H'23, GAS + INHAB + FRNDLY + AVG
+	.DB	H'6b, H'50, H'12, INHAB + FRNDLY + LOW
+	.DB	H'76, H'59, H'14, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'77, H'5c, H'22, FRNDLY + LOW
+	.DB	H'69, H'61, H'13, INHAB + FRNDLY + V_HIGH
+	.DB	H'18, H'6c, H'22, FRNDLY + LOW
+	.DB	H'0e, H'72, H'26, GAS
+
+  SOLAR10:
+  SOLAR11:
+	.DB	X_SET7 + H'0f
+	.DB	H'0d, H'18, H'25, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'55, H'18, H'13, GAS + INHAB + AVG
+	.DB	H'39, H'1e, H'26, GAS
+	.DB	H'10, H'2c, H'22, INHAB + FRNDLY + V_HIGH
+	.DB	H'56, H'2f, H'12, GAS + INHAB + HIGH
+	.DB	H'78, H'34, H'26, GAS
+	.DB	H'0a, H'35, H'12, GAS + INHAB + FRNDLY + AVG
+	.DB	H'24, H'37, H'25, INHAB + FRNDLY + AVG
+	.DB	H'41, H'38, SUN, H'00	;sun
+	.DB	H'0d, H'3a, H'14, GAS + INHAB + AVG
+	.DB	H'68, H'4f, H'24, INHAB + FRNDLY + AVG
+	.DB	H'4e, H'56, H'26, GAS
+	.DB	H'12, H'5d, H'12, GAS + INHAB + HIGH
+	.DB	H'6a, H'60, H'25, GAS + INHAB + FRNDLY + AVG
+	.DB	H'31, H'62, H'13, GAS + INHAB + AVG
+
+  SOLAR12:
+  SOLAR13:
+  	.DB	X_SET7 + H'09
+  	.DB	H'51, H'48, H'08, INHAB + V_HIGH ;space station (unfriendly)
+  	.DB	H'23, H'12, H'12, INHAB + V_HIGH
+  	.DB	H'4c, H'19, H'22, GAS + INHAB + HIGH
+  	.DB	H'10, H'25, H'26, GAS
+  	.DB	H'44, H'33, H'24, GAS + INHAB + LOW
+  	.DB	H'4c, H'37, H'12, FRNDLY + LOW
+  	.DB	H'31, H'38, H'25, GAS + INHAB + HIGH
+  	.DB	H'35, H'3c, H'12, GAS + INHAB + AVG
+  	.DB	H'46, H'43, SUN, H'00	;sun
+  
+  SOLAR14:
+	.DB	X_SET7 + H'06
+	.DB	H'61, H'4a, H'0C, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'0b, H'65, H'0D, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'2a, H'11, H'25, GAS + INHAB + HIGH
+	.DB	H'23, H'12, H'22, FRNDLY + LOW
+	.DB	H'4d, H'1e, H'24, GAS + INHAB + HIGH
+	.DB	H'3e, H'38, SUN, H'00	;sun
+
+  SOLAR15:
+	.DB	X_SET4 + H'0a
+	.DB	H'20, H'17, H'02, INHAB + FRNDLY + V_HIGH ;space station
+	.DB	H'27, H'0a, H'12, INHAB + FRNDLY + HIGH
+	.DB	H'26, H'19, H'13, GAS + INHAB + FRNDLY + AVG
+	.DB	H'37, H'1e, H'26, GAS
+	.DB	H'33, H'23, H'23, INHAB + FRNDLY + LOW
+	.DB	H'37, H'27, H'22, FRNDLY + LOW
+	.DB	H'3e, H'3d, SUN, H'00	;sun
+	.DB	H'25, H'51, H'15, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'50, H'55, H'24, INHAB + FRNDLY + V_HIGH
+	.DB	H'63, H'5f, H'15, GAS + INHAB + AVG
+
+  SOLAR16:
+	.DB	X_SET5 + H'03
+	.DB	H'20, H'17, H'0D, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'12, H'1f, H'26, GAS
+	.DB	H'32, H'35, SUN, H'00	;sun
+
+  SOLAR17:
+	.DB	X_SET7 + H'0c
+	.DB	H'61, H'64, H'0C, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'36, H'1C, H'0B, INHAB + V_HIGH ;space station (unfriendly)
+	.DB	H'1a, H'06, H'25, GAS + INHAB + V_HIGH
+	.DB	H'06, H'0c, H'25, GAS + INHAB + HIGH
+	.DB	H'48, H'11, H'12, GAS + INHAB + HIGH
+	.DB	H'28, H'1d, H'24, GAS + INHAB + AVG
+	.DB	H'33, H'22, H'26, GAS
+	.DB	H'14, H'36, H'23, GAS + INHAB + HIGH
+	.DB	H'5e, H'39, H'23, GAS + INHAB + AVG
+	.DB	H'3c, H'3c, SUN, H'00	;sun
+	.DB	H'09, H'51, H'25, GAS + INHAB + HIGH
+	.DB	H'58, H'51, H'14, GAS + INHAB + AVG
+
+  SOLAR18:
+  SOLAR19:
+	.DB	X_SET4 + H'04
+	.DB	H'0d, H'11, H'23, GAS + INHAB + FRNDLY + AVG
+	.DB	H'3e, H'2b, H'13, GAS + INHAB + FRNDLY + AVG
+	.DB	H'35, H'3c, SUN, H'00	;sun
+	.DB	H'1c, H'51, H'25, GAS + INHAB + FRNDLY + LOW
+
+  SOLAR20:
+	.DB	X_SET4 + H'12
+	.DB	H'69, H'0c, H'05, INHAB + AVG ;space station (unfriendly)
+	.DB	H'46, H'09, H'23, FRNDLY + LOW
+	.DB	H'61, H'0a, H'22, GAS + INHAB + HIGH
+	.DB	H'4b, H'0d, H'26, GAS
+	.DB	H'40, H'1e, H'23, GAS + INHAB + V_HIGH
+	.DB	H'27, H'25, H'14, GAS + INHAB + HIGH
+	.DB	H'5f, H'29, H'25, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'3f, H'38, SUN, H'00	;sun
+	.DB	H'36, H'3f, H'14, INHAB + FRNDLY + HIGH
+	.DB	H'5c, H'49, H'26, GAS
+	.DB	H'51, H'4a, H'23, INHAB + FRNDLY + AVG
+	.DB	H'57, H'4e, H'22, GAS + INHAB + LOW
+	.DB	H'31, H'58, H'15, GAS + INHAB + AVG
+	.DB	H'23, H'59, H'24, GAS + INHAB + HIGH
+	.DB	H'3e, H'59, H'14, FRNDLY + LOW
+	.DB	H'09, H'5b, H'26, GAS
+	.DB	H'57, H'67, H'25, GAS + INHAB + AVG
+	.DB	H'5d, H'70, H'22, GAS + INHAB + HIGH
+
+  SOLAR21:
+	.DB	X_SET7 + H'03
+	.DB	H'46, H'09, H'13, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'2c, H'15, H'22, GAS + INHAB + FRNDLY + AVG
+	.DB	H'41, H'3e, SUN, H'00	;sun
+
+  SOLAR22:
+  SOLAR23:
+	.DB	X_SET6 + H'09
+	.DB	H'1b, H'0f, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'5d, H'32, H'13, GAS + INHAB + FRNDLY + AVG
+	.DB	H'36, H'3a, SUN, H'00	;sun
+	.DB	H'1c, H'41, H'12, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'54, H'50, H'26, GAS
+	.DB	H'0e, H'54, H'13, INHAB + FRNDLY + HIGH
+	.DB	H'6f, H'63, H'25, INHAB + FRNDLY + HIGH
+	.DB	H'4a, H'6f, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'6e, H'76, H'22, GAS + INHAB + FRNDLY + LOW
+
+  SOLAR24:
+	.DB	X_SET6 + H'11
+	.DB	H'42, H'4d, H'03, INHAB + FRNDLY + V_HIGH ;space station
+	.DB	H'26, H'08, H'23, INHAB + FRNDLY + HIGH
+	.DB	H'39, H'0a, H'13, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'4c, H'0d, H'24, INHAB + FRNDLY + AVG
+	.DB	H'18, H'11, H'26, GAS
+	.DB	H'63, H'1c, H'25, GAS + INHAB + FRNDLY + LOW
+	.DB	H'34, H'26, H'15, INHAB + FRNDLY + HIGH
+	.DB	H'25, H'27, H'26, GAS
+	.DB	H'26, H'2e, H'13, INHAB + FRNDLY + AVG
+	.DB	H'3a, H'34, SUN, H'00	;sun
+	.DB	H'42, H'3f, H'13, INHAB + FRNDLY + LOW
+	.DB	H'73, H'51, H'26, GAS
+	.DB	H'3b, H'5c, H'13, FRNDLY + LOW
+	.DB	H'5d, H'68, H'23, GAS + INHAB + AVG
+	.DB	H'0a, H'6b, H'24, GAS + INHAB + HIGH
+	.DB	H'4f, H'72, H'26, GAS
+	.DB	H'59, H'74, H'23, GAS + INHAB + AVG
+
+  SOLAR25:
+	.DB	X_SET4 + H'0b
+	.DB	H'47, H'61, H'06, GAS + INHAB + HIGH ;space station (unfr.)
+	.DB	H'0d, H'09, H'07, GAS + INHAB + HIGH ;space station (unfr.)
+	.DB	H'30, H'0a, H'26, GAS
+	.DB	H'70, H'0d, H'24, GAS + INHAB + HIGH
+	.DB	H'3d, H'1f, H'13, GAS + INHAB + AVG
+	.DB	H'3c, H'23, H'22, GAS + INHAB + AVG
+	.DB	H'25, H'27, H'26, GAS
+	.DB	H'46, H'3c, H'22, GAS + INHAB + HIGH
+	.DB	H'42, H'46, SUN, H'00	;sun
+	.DB	H'63, H'52, H'15, GAS + INHAB + AVG
+	.DB	H'3b, H'6b, H'15, GAS + INHAB + AVG
+
+  SOLAR26:
+	.DB	X_SET4 + H'12
+	.DB	H'1c, H'74, H'00, INHAB + FRNDLY + AVG ;space station
+	.DB	H'5d, H'0A, H'24, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'0b, H'0E, H'12, INHAB + FRNDLY + AVG
+	.DB	H'0e, H'16, H'26, GAS
+	.DB	H'51, H'18, H'13, INHAB + FRNDLY + HIGH
+	.DB	H'30, H'1c, H'23, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'11, H'1f, H'15, INHAB + FRNDLY + AVG
+	.DB	H'47, H'25, H'26, GAS
+	.DB	H'25, H'2d, H'12, INHAB + FRNDLY + LOW
+	.DB	H'3b, H'2d, H'24, GAS + INHAB + FRNDLY + AVG
+	.DB	H'65, H'3e, H'13, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'3d, H'42, SUN, H'00	;sun
+	.DB	H'67, H'4e, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'31, H'50, H'24, INHAB + FRNDLY + LOW
+	.DB	H'4c, H'5b, H'12, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'06, H'62, H'24, INHAB + FRNDLY + AVG
+	.DB	H'1f, H'6c, H'26, GAS
+	.DB	H'4c, H'6d, H'25, FRNDLY + LOW
+
+  SOLAR27:
+	.DB	X_SET4 + H'04
+	.DB	H'5c, H'10, H'24, INHAB + FRNDLY + HIGH
+	.DB	H'11, H'1f, H'15, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'41, H'41, SUN, H'00	;sun
+	.DB	H'5d, H'5c, H'26, GAS
+
+  SOLAR28:
+  SOLAR29:
+	.DB	X_SET4 + H'0d
+	.DB	H'73, H'60, H'01, INHAB + FRNDLY + HIGH ;space station
+	.DB	H'09, H'0D, H'12, GAS + INHAB + HIGH
+	.DB	H'09, H'1D, H'26, GAS
+	.DB	H'47, H'1F, H'14,  INHAB + AVG
+	.DB	H'70, H'2c, H'15, GAS + INHAB + HIGH
+	.DB	H'0e, H'34, H'12, FRNDLY + LOW
+	.DB	H'3c, H'36, SUN, H'00	;sun
+	.DB	H'71, H'4e, H'15, GAS + INHAB + HIGH
+	.DB	H'38, H'58, H'22, GAS + INHAB + AVG
+	.DB	H'67, H'60, H'12, FRNDLY + LOW
+	.DB	H'78, H'68, H'25, INHAB + FRNDLY + LOW
+	.DB	H'78, H'71, H'15, INHAB + FRNDLY + AVG
+	.DB	H'6d, H'7A, H'13, GAS + INHAB + FRNDLY + AVG
+
+  SOLAR30:
+  SOLAR31:
+	.DB	X_SET6 + H'05
+	.DB	H'56, H'0c, H'0D, GAS + INHAB + V_HIGH ;space station THUNDER BOLT
+	.DB	H'20, H'23, H'0C, GAS + INHAB + V_HIGH ;space station
+	.DB	H'57, H'06, H'24, GAS + INHAB + HIGH
+	.DB	H'63, H'1b, H'14, GAS + INHAB + V_HIGH
+	.DB	H'3c, H'36, SUN, H'00	;sun
+
+  SOLAR32:
+	.DB	X_SET7 + H'0e
+	.DB	H'3a, H'57, H'03, INHAB + FRNDLY + V_HIGH ;space station
+	.DB	H'6c, H'10, H'25, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'3e, H'11, H'12, INHAB + FRNDLY + LOW
+	.DB	H'09, H'15, H'26, GAS
+	.DB	H'52, H'29, H'25, INHAB + FRNDLY + AVG
+	.DB	H'0b, H'2b, H'25, INHAB + FRNDLY + AVG
+	.DB	H'6b, H'3d, H'24, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'39, H'43, SUN, H'00	;sun
+	.DB	H'56, H'5e, H'15, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'75, H'5e, H'24, INHAB + FRNDLY + LOW
+	.DB	H'51, H'61, H'13, FRNDLY + LOW
+	.DB	H'47, H'62, H'25, GAS + INHAB + AVG
+	.DB	H'75, H'6a, H'26, GAS
+	.DB	H'2d, H'6c, H'25, GAS + INHAB + HIGH
+
+  SOLAR33:
+  	.DB	X_SET7 + H'08
+  	.DB	H'56, H'51, H'0E, GAS + INHAB + V_HIGH ;space station  FREEM DRIVE
+  	.DB	H'66, H'36, H'0C, GAS + INHAB + V_HIGH ;space station
+  	.DB	H'1d, H'18, H'0C, GAS + INHAB + V_HIGH ;space station
+  	.DB	H'33, H'30, H'0C, GAS + INHAB + V_HIGH ;space station
+  	.DB	H'70, H'3c, H'0C, GAS + INHAB + V_HIGH ;space station
+  	.DB	H'3e, H'11, H'22, GAS + INHAB + V_HIGH
+  	.DB	H'33, H'3e, SUN, H'00	;sun
+  	.DB	H'61, H'6a, H'25, GAS + INHAB + V_HIGH
+  
+  SOLAR34:
+  SOLAR35:
+	.DB	X_SET7 + H'0e
+	.DB	H'26, H'37, H'04, GAS + INHAB + AVG ;space station
+	.DB	H'77, H'0a, H'26, GAS
+	.DB	H'20, H'0c, H'15, GAS + INHAB + HIGH
+	.DB	H'67, H'0e, H'23, FRNDLY + LOW
+	.DB	H'5a, H'12, H'26, GAS
+	.DB	H'34, H'23, H'25, GAS + INHAB + LOW
+	.DB	H'62, H'30, H'22, GAS + INHAB + HIGH
+	.DB	H'78, H'31, H'14, GAS + INHAB + AVG
+	.DB	H'36, H'33, H'23, GAS + INHAB + LOW
+	.DB	H'6e, H'3d, H'24, GAS + INHAB + AVG
+	.DB	H'33, H'40, SUN, H'00	;sun
+	.DB	H'52, H'4f, H'14, GAS + INHAB + HIGH
+	.DB	H'70, H'62, H'26, GAS
+	.DB	H'20, H'69, H'13, GAS + INHAB + AVG
+
+  SOLAR36:
+	.DB	X_SET6 + H'0e
+	.DB	H'4c, H'20, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'78, H'07, H'14, GAS + INHAB + HIGH
+	.DB	H'40, H'09, H'15, GAS + INHAB + AVG
+	.DB	H'2f, H'0e, H'23, INHAB + FRNDLY + LOW
+	.DB	H'2b, H'15, H'26, GAS
+	.DB	H'4e, H'32, H'22, GAS + INHAB + HIGH
+	.DB	H'29, H'34, H'23, FRNDLY + LOW
+	.DB	H'3b, H'37, SUN, H'00	;sun
+	.DB	H'70, H'3a, H'14, GAS + INHAB + AVG
+	.DB	H'69, H'44, H'24, GAS + INHAB + HIGH
+	.DB	H'4a, H'46, H'14, GAS + INHAB + LOW
+	.DB	H'11, H'47, H'24, GAS + INHAB + HIGH
+	.DB	H'57, H'4d, H'15, GAS + INHAB + LOW
+	.DB	H'3d, H'63, H'24, GAS + INHAB + AVG
+
+  SOLAR37:
+	.DB	X_SET4 + H'05
+	.DB	H'20, H'17, H'03, INHAB + FRNDLY + V_HIGH ;space station
+	.DB	H'75, H'09, H'26, GAS
+	.DB	H'55, H'0c, H'23, FRNDLY + LOW
+	.DB	H'3a, H'10, H'15, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'35, H'44, SUN, H'00	;sun
+
+  SOLAR38:
+  SOLAR39:
+	.DB	X_SET4 + H'12
+	.DB	H'06, H'73, H'04, GAS + INHAB + AVG ;space station
+	.DB	H'51, H'0b, H'26, GAS
+	.DB	H'70, H'0b, H'14, GAS + INHAB + HIGH
+	.DB	H'66, H'11, H'12, GAS + INHAB + AVG
+	.DB	H'71, H'21, H'14, GAS + INHAB + LOW
+	.DB	H'30, H'2e, H'26, GAS
+	.DB	H'1b, H'35, H'23, GAS + INHAB + AVG
+	.DB	H'42, H'3a, H'25, GAS + INHAB + LOW
+	.DB	H'78, H'3d, H'15, GAS + INHAB + HIGH
+	.DB	H'3d, H'42, SUN, H'00	;sun
+	.DB	H'72, H'43, H'25, GAS + INHAB + AVG
+	.DB	H'61, H'5a, H'22, GAS + INHAB + HIGH
+	.DB	H'5a, H'5d, H'23, GAS + INHAB + LOW
+	.DB	H'59, H'61, H'13, FRNDLY + LOW
+	.DB	H'3c, H'62, H'26, GAS
+	.DB	H'44, H'63, H'24, GAS + INHAB + HIGH
+	.DB	H'72, H'64, H'15, GAS + INHAB + AVG
+	.DB	H'6c, H'6e, H'26, GAS
+
+  SOLAR40:
+	.DB	X_SET7 + H'0a
+	.DB	H'70, H'0c, H'23, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'1e, H'14, H'25, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'14, H'22, H'14, INHAB + FRNDLY + LOW
+	.DB	H'32, H'22, H'26, GAS
+	.DB	H'42, H'2c, H'22, INHAB + FRNDLY + HIGH
+	.DB	H'2a, H'2e, H'14, INHAB + FRNDLY + AVG
+	.DB	H'38, H'36, SUN, H'00	;sun
+	.DB	H'16, H'3e, H'24, INHAB + FRNDLY + HIGH
+	.DB	H'19, H'48, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'45, H'5c, H'26, GAS
+
+  SOLAR41:
+  	.DB	X_SET4 + H'11
+  	.DB	H'42, H'4c, H'04, GAS + INHAB + AVG ;space station
+  	.DB	H'10, H'07, H'24, GAS + INHAB + HIGH
+  	.DB	H'2d, H'09, H'15, GAS + INHAB + LOW
+  	.DB	H'72, H'18, H'26, GAS
+  	.DB	H'59, H'21, H'25, GAS + INHAB + HIGH
+  	.DB	H'13, H'22, H'26, GAS
+  	.DB	H'39, H'29, H'14, GAS + INHAB + AVG
+  	.DB	H'37, H'2c, H'23, GAS + INHAB + LOW
+  	.DB	H'2e, H'39, H'26, GAS
+  	.DB	H'0c, H'3a, H'12, GAS + INHAB + AVG
+  	.DB	H'3b, H'40, SUN, H'00	;sun
+  	.DB	H'3d, H'49, H'14, GAS + INHAB + HIGH
+  	.DB	H'49, H'4f, H'25, GAS + INHAB + LOW
+  	.DB	H'59, H'5a, H'26, GAS
+  	.DB	H'31, H'6d, H'12, FRNDLY + LOW
+  	.DB	H'33, H'6f, H'14, GAS + INHAB + AVG
+  	.DB	H'78, H'6f, H'22, GAS + INHAB + HIGH
+  
+  SOLAR42:
+	.DB	X_SET6 + H'0d
+	.DB	H'48, H'19, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'41, H'0b, H'08, GAS + INHAB + V_HIGH ;space station
+	.DB	H'5a, H'08, H'24, GAS + INHAB + V_HIGH
+	.DB	H'65, H'09, H'26, GAS
+	.DB	H'55, H'0f, H'23, GAS + INHAB + HIGH
+	.DB	H'66, H'13, H'25, GAS + INHAB + AVG
+	.DB	H'16, H'20, H'25, GAS + INHAB + HIGH
+	.DB	H'5a, H'31, H'23, GAS + INHAB + AVG
+	.DB	H'16, H'34, H'25, GAS + INHAB + LOW
+	.DB	H'1d, H'3c, H'12, GAS + INHAB + HIGH
+	.DB	H'3b, H'41, SUN, H'00	;sun
+	.DB	H'58, H'48, H'26, GAS
+	.DB	H'0f, H'4d, H'24, GAS + INHAB + AVG
+
+  SOLAR43:
+	.DB	X_SET4 + H'03
+	.DB	H'69, H'50, H'0B, GAS + INHAB + V_HIGH ;space station
+	.DB	H'5a, H'08, H'14, GAS + INHAB + V_HIGH
+	.DB	H'43, H'37, SUN, H'00	;sun
+
+  SOLAR44:
+  	.DB	X_SET5 + H'06
+  	.DB	H'3e, H'4f, H'01, INHAB + FRNDLY + HIGH ;space station
+  	.DB	H'2e, H'1a, H'22, GAS + INHAB + FRNDLY + HIGH
+  	.DB	H'56, H'25, H'14, INHAB + FRNDLY + LOW
+  	.DB	H'5a, H'31, H'23, GAS + INHAB + FRNDLY + HIGH
+  	.DB	H'35, H'41, SUN, H'00	;sun
+  	.DB	H'1F, H'5A, H'26, GAS
+  
+  SOLAR45:
+	.DB	X_SET4 + H'11
+	.DB	H'39, H'1f, H'0B, GAS + INHAB + V_HIGH ;space station
+	.DB	H'2e, H'07, H'23, GAS + INHAB + HIGH
+	.DB	H'53, H'14, H'26, GAS
+	.DB	H'31, H'17, H'25, GAS + INHAB + AVG
+	.DB	H'39, H'23, H'15, GAS + INHAB + HIGH
+	.DB	H'2f, H'33, H'23, GAS + INHAB + AVG
+	.DB	H'14, H'37, H'25, GAS + INHAB + LOW
+	.DB	H'3d, H'42, SUN, H'00	;sun
+	.DB	H'09, H'44, H'14, GAS + INHAB + AVG
+	.DB	H'29, H'4e, H'14, GAS + INHAB + AVG
+	.DB	H'2e, H'5c, H'24, GAS + INHAB + LOW
+	.DB	H'0e, H'5e, H'26, GAS
+	.DB	H'64, H'66, H'24, GAS + INHAB + AVG
+	.DB	H'57, H'6f, H'13, GAS + INHAB + LOW
+	.DB	H'3b, H'76, H'25, GAS + INHAB + HIGH
+	.DB	H'6d, H'77, H'24, GAS + INHAB + AVG
+	.DB	H'0d, H'7c, H'14, GAS + INHAB + HIGH
+
+  SOLAR46:
+	.DB	X_SET6 + H'05
+	.DB	H'71, H'0e, H'13, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'20, H'2a, H'13, INHAB + FRNDLY + AVG
+	.DB	H'3e, H'3b, SUN, H'00	;sun
+	.DB	H'2b, H'3f, H'26, GAS
+	.DB	H'41, H'52, H'23, GAS + INHAB + FRNDLY + HIGH
+
+  SOLAR47:
+  SOLAR48:
+  	.DB	X_SET4 + H'0c
+  	.DB	H'0b, H'09, H'24, GAS + INHAB + HIGH
+  	.DB	H'6b, H'1b, H'13, GAS + INHAB + HIGH
+  	.DB	H'30, H'21, H'26, GAS
+  	.DB	H'62, H'29, H'14, GAS + INHAB + AVG
+  	.DB	H'71, H'2b, H'15, GAS + INHAB + LOW
+  	.DB	H'70, H'31, H'14, GAS + INHAB + HIGH
+  	.DB	H'33, H'3b, SUN, H'00	;sun
+  	.DB	H'43, H'44, H'15, GAS + INHAB + HIGH
+  	.DB	H'34, H'4c, H'23, FRNDLY + LOW
+  	.DB	H'19, H'57, H'13, GAS + INHAB + AVG
+  	.DB	H'18, H'64, H'22, GAS + INHAB + LOW
+  	.DB	H'47, H'68, H'26, GAS
+  
+  SOLAR49:
+  SOLAR50:
+  SOLAR51:
+	.DB	X_SET7 + H'08
+	.DB	H'29, H'07, H'22, GAS + INHAB + HIGH
+	.DB	H'34, H'25, H'12, GAS + INHAB + LOW
+	.DB	H'49, H'2b, H'24, GAS + INHAB + HIGH
+	.DB	H'0f, H'3d, H'15, GAS + INHAB + AVG
+	.DB	H'1d, H'3e, H'26, GAS
+	.DB	H'42, H'44, SUN, H'00	;sun
+	.DB	H'24, H'46, H'15, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'32, H'5e, H'26, GAS
+
+  SOLAR52:
+	.DB	X_SET7 + H'0e
+	.DB	H'43, H'0f, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'34, H'16, H'25, GAS + INHAB + FRNDLY + LOW
+	.DB	H'47, H'21, H'26, GAS
+	.DB	H'6f, H'22, H'24, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'19, H'28, H'15, GAS + INHAB + FRNDLY + LOW
+	.DB	H'5d, H'2a, H'23, FRNDLY + LOW
+	.DB	H'16, H'30, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'64, H'3d, H'15, GAS + INHAB + FRNDLY + LOW
+	.DB	H'42, H'43, SUN, H'00	;sun
+	.DB	H'58, H'4e, H'12, GAS + INHAB + FRNDLY + AVG
+	.DB	H'56, H'51, H'26, GAS
+	.DB	H'0e, H'5c, H'24, GAS + INHAB + FRNDLY + AVG
+	.DB	H'5e, H'64, H'26, GAS
+	.DB	H'5b, H'6e, H'15, GAS + INHAB + FRNDLY + AVG
+
+  SOLAR53:
+  SOLAR54:
+  SOLAR55:
+	.DB	X_SET6 + H'05
+	.DB	H'20, H'17, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'19, H'2a, H'26, GAS
+	.DB	H'3b, H'2a, H'24, GAS + INHAB + HIGH
+	.DB	H'39, H'3f, SUN, H'00	;sun
+	.DB	H'1c, H'54, H'22, GAS + INHAB + AVG
+
+  SOLAR56:
+  SOLAR57:
+	.DB	X_SET4 + H'07
+	.DB	H'27, H'0b, H'22, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'0b, H'1c, H'15, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'39, H'29, H'25, GAS + INHAB + FRNDLY + AVG
+	.DB	H'32, H'44, SUN, H'00	;sun
+	.DB	H'2b, H'48, H'26, GAS
+	.DB	H'27, H'49, H'13, GAS + INHAB + AVG
+	.DB	H'31, H'5d, H'12, GAS + INHAB + LOW
+
+  SOLAR58:
+  SOLAR59:
+	.DB	X_SET7 + H'0a
+	.DB	H'53, H'5c, H'09, GAS + INHAB + V_HIGH ;space station  FREEM HINT
+	.DB	H'65, H'62, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'3e, H'09, H'22, GAS + INHAB + V_HIGH
+	.DB	H'6e, H'09, H'14, GAS + INHAB + HIGH
+	.DB	H'4c, H'0a, H'25, GAS + INHAB + AVG
+	.DB	H'1f, H'11, H'23, GAS + INHAB + HIGH
+	.DB	H'40, H'40, SUN, H'00	;sun
+	.DB	H'44, H'44, H'15, GAS + INHAB + HIGH
+	.DB	H'74, H'55, H'24, GAS + INHAB + V_HIGH
+	.DB	H'3c, H'5c, H'12, GAS + INHAB + AVG
+
+  SOLAR60:
+	.DB	X_SET6 + H'0b
+	.DB	H'24, H'12, H'05, GAS + INHAB + AVG ;space station
+	.DB	H'47, H'0f, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'12, H'12, H'23, GAS + INHAB + FRNDLY + LOW
+	.DB	H'67, H'26, H'24, GAS + INHAB + FRNDLY + AVG
+	.DB	H'3f, H'2d, H'26, GAS
+	.DB	H'06, H'35, H'25, GAS + INHAB + FRNDLY + AVG
+	.DB	H'44, H'3c, SUN, H'00	;sun
+	.DB	H'35, H'48, H'23, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'76, H'4c, H'13, GAS + INHAB + FRNDLY + AVG
+	.DB	H'34, H'61, H'14, GAS + INHAB + AVG
+	.DB	H'3d, H'78, H'26, GAS
+
+  SOLAR61:
+  SOLAR62:
+	.DB	X_SET7 + H'08
+	.DB	H'53, H'09, H'26, GAS
+	.DB	H'0a, H'0e, H'22, GAS + INHAB + HIGH
+	.DB	H'65, H'12, H'14, GAS + INHAB + LOW
+	.DB	H'68, H'36, H'24, GAS + INHAB + HIGH
+	.DB	H'32, H'45, SUN, H'00	;sun
+	.DB	H'24, H'50, H'15, GAS + INHAB + HIGH
+	.DB	H'14, H'5f, H'25, GAS + INHAB + AVG
+	.DB	H'15, H'6e, H'24, GAS + INHAB + AVG
+
+  SOLAR63:
+  SOLAR64:
+	.DB	X_SET7 + H'05
+	.DB	H'40, H'36, SUN, H'00	;sun
+	.DB	H'63, H'39, H'26, GAS
+	.DB	H'1e, H'4a, H'12, GAS + INHAB + HIGH
+	.DB	H'6b, H'53, H'24, GAS + INHAB + HIGH
+	.DB	H'6a, H'6d, H'13, GAS + INHAB + AVG
+
+  SOLAR65:
+	.DB	X_SET5 + H'07
+	.DB	H'44, H'53, H'04, GAS + INHAB + AVG ;space station
+	.DB	H'53, H'24, H'14, GAS + INHAB + HIGH
+	.DB	H'22, H'3a, H'25, GAS + INHAB + HIGH
+	.DB	H'46, H'43, SUN, H'00	;sun
+	.DB	H'5a, H'4a, H'12, GAS + INHAB + LOW
+	.DB	H'44, H'60, H'26, GAS
+	.DB	H'07, H'61, H'13, GAS + INHAB + AVG
+
+  SOLAR66:
+	.DB	X_SET5 + H'09
+	.DB	H'35, H'08, H'22, GAS + INHAB + HIGH
+	.DB	H'5a, H'19, H'22, GAS + INHAB + LOW
+	.DB	H'65, H'2e, H'15, GAS + INHAB + AVG
+	.DB	H'40, H'32, SUN, H'00	;sun
+	.DB	H'3a, H'36, H'22, GAS + INHAB + HIGH
+	.DB	H'2a, H'3e, H'26, GAS
+	.DB	H'36, H'48, H'25, GAS + INHAB + AVG
+	.DB	H'13, H'4c, H'14, GAS + INHAB + AVG
+	.DB	H'3e, H'5e, H'15, GAS + INHAB + HIGH
+
+  SOLAR67:
+	.DB	X_SET6 + H'06
+	.DB	H'20, H'17, H'04, GAS + INHAB + AVG ;space station
+	.DB	H'62, H'22, H'24, GAS + INHAB + LOW
+	.DB	H'65, H'2e, H'15, GAS + INHAB + AVG
+	.DB	H'1d, H'3c, H'24, GAS + INHAB + HIGH
+	.DB	H'32, H'3e, H'13, GAS + INHAB + AVG
+	.DB	H'44, H'44, SUN, H'00	;sun
+
+  SOLAR68:
+	.DB	X_SET4 + H'0b
+	.DB	H'78, H'0c, H'26, GAS
+	.DB	H'70, H'0d, H'14, GAS + INHAB + LOW
+	.DB	H'1c, H'16, H'23, GAS + INHAB + AVG
+	.DB	H'6c, H'20, H'15, GAS + INHAB + LOW
+	.DB	H'51, H'22, H'23, GAS + INHAB + HIGH
+	.DB	H'73, H'2d, H'15, GAS + INHAB + AVG
+	.DB	H'57, H'32, H'25, GAS + INHAB + LOW
+	.DB	H'38, H'41, SUN, H'00	;sun
+	.DB	H'15, H'46, H'26, GAS
+	.DB	H'55, H'53, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'5d, H'69, H'13, GAS + INHAB + FRNDLY + HIGH
+
+  SOLAR69:
+  SOLAR70:
+  SOLAR71:
+	.DB	X_SET7 + H'0F
+	.DB	H'76, H'15, H'0A, GAS + INHAB + V_HIGH ;space station
+	.DB	H'45, H'0d, H'25, GAS + INHAB + HIGH
+	.DB	H'2b, H'1b, H'14, GAS + INHAB + LOW
+	.DB	H'64, H'26, H'25, GAS + INHAB + AVG
+	.DB	H'24, H'30, H'13, GAS + INHAB + HIGH
+	.DB	H'41, H'35, SUN, H'00	;sun
+	.DB	H'0a, H'3b, H'22, GAS + INHAB + LOW
+	.DB	H'18, H'40, H'26, GAS
+	.DB	H'12, H'4e, H'23, GAS + INHAB + AVG
+	.DB	H'0b, H'4f, H'13, FRNDLY + LOW
+	.DB	H'1e, H'52, H'25, GAS + INHAB + AVG
+	.DB	H'5c, H'54, H'13, GAS + INHAB + HIGH
+	.DB	H'41, H'57, H'26, GAS
+	.DB	H'54, H'5e, H'14, GAS + INHAB + HIGH
+	.DB	H'26, H'74, H'26, GAS
+
+  SOLAR72:
+  SOLAR73:
+	.DB	X_SET5 + H'06
+	.DB	H'71, H'0b, H'26, GAS
+	.DB	H'0c, H'1e, H'25, GAS + INHAB + HIGH
+	.DB	H'31, H'2c, H'14, GAS + INHAB + AVG
+	.DB	H'37, H'2f, H'23, GAS + INHAB + LOW
+	.DB	H'36, H'3d, SUN, H'00	;sun
+	.DB	H'33, H'4b, H'12, GAS + INHAB + HIGH
+
+  SOLAR74:
+  SOLAR75:
+  SOLAR76:
+	.DB	X_SET7 + H'03
+	.DB	H'3a, H'41, SUN, H'00	;sun
+	.DB	H'1a, H'56, H'12, GAS + INHAB + V_HIGH
+	.DB	H'65, H'59, H'26, GAS
+
+  SOLAR77:
+	.DB	X_SET4 + H'07
+	.DB	H'61, H'0d, H'26, GAS
+	.DB	H'49, H'0f, H'25, GAS + INHAB + FRNDLY + AVG
+	.DB	H'0a, H'11, H'22, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'07, H'21, H'14, GAS + INHAB + FRNDLY + LOW
+	.DB	H'40, H'43, H'22, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'72, H'45, H'26, GAS
+	.DB	H'36, H'46, SUN, H'00	;sun
+
+  SOLAR78:
+	.DB	X_SET5 + H'0a
+	.DB	H'71, H'2a, H'08, GAS + INHAB + V_HIGH ;space station
+	.DB	H'14, H'11, H'26, GAS
+	.DB	H'6c, H'1d, H'25, GAS + INHAB + HIGH
+	.DB	H'15, H'1f, H'15, GAS + INHAB + AVG
+	.DB	H'75, H'24, H'23, FRNDLY + LOW
+	.DB	H'71, H'27, H'26, GAS
+	.DB	H'57, H'35, H'23, GAS + INHAB + HIGH
+	.DB	H'39, H'3d, SUN, H'00	;sun
+	.DB	H'48, H'43, H'14, GAS + INHAB + HIGH
+	.DB	H'43, H'50, H'24, GAS + INHAB + AVG
+
+  SOLAR79:
+	.DB	X_SET7 + H'07
+	.DB	H'73, H'46, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'39, H'0f, H'26, GAS
+	.DB	H'07, H'10, H'25, GAS + INHAB + HIGH
+	.DB	H'44, H'3b, SUN, H'00	;sun
+	.DB	H'41, H'4a, H'24, GAS + INHAB + FRNDLY + AVG
+	.DB	H'61, H'65, H'14, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'38, H'66, H'22, GAS + INHAB + FRNDLY + AVG
+
+  SOLAR80:
+	.DB	X_SET5 + H'0e
+	.DB	H'67, H'08, H'15, GAS + INHAB + V_HIGH
+	.DB	H'24, H'0a, H'26, GAS
+	.DB	H'08, H'1b, H'25, GAS + INHAB + AVG
+	.DB	H'73, H'1e, H'13, FRNDLY + LOW
+	.DB	H'38, H'1f, H'25, GAS + INHAB + AVG
+	.DB	H'5e, H'24, H'25, GAS + INHAB + HIGH
+	.DB	H'6b, H'2a, H'14, GAS + INHAB + AVG
+	.DB	H'30, H'3a, H'26, GAS
+	.DB	H'3f, H'3c, SUN, H'00	;sun
+	.DB	H'70, H'41, H'25, GAS + INHAB + AVG
+	.DB	H'76, H'44, H'15, GAS + INHAB + HIGH
+	.DB	H'26, H'61, H'26, GAS
+	.DB	H'60, H'64, H'24, GAS + INHAB + HIGH
+	.DB	H'29, H'75, H'24, GAS + INHAB + HIGH
+
+  SOLAR81:
+	.DB	X_SET5 + H'04
+	.DB	H'39, H'14, H'15, GAS + INHAB + LOW
+	.DB	H'44, H'40, SUN, H'00	;sun
+	.DB	H'09, H'6b, H'15, GAS + INHAB + AVG
+	.DB	H'4c, H'6f, H'12, GAS + INHAB + HIGH
+
+  SOLAR82:
+	.DB	X_SET4 + H'06
+	.DB	H'31, H'07, H'08, GAS + INHAB + V_HIGH ;space station
+	.DB	H'4f, H'21, H'13, GAS + INHAB + AVG
+	.DB	H'09, H'23, H'23, GAS + INHAB + HIGH
+	.DB	H'3d, H'37, SUN, H'00	;sun
+	.DB	H'6a, H'42, H'13, GAS + INHAB + V_HIGH
+	.DB	H'0f, H'57, H'25, GAS + INHAB + AVG
+
+  SOLAR83:
+	.DB	X_SET6 + H'05
+	.DB	H'60, H'6d, H'0C, GAS + INHAB + V_HIGH ;space station
+	.DB	H'09, H'23, H'23, GAS + INHAB + V_HIGH
+	.DB	H'2a, H'42, H'15, GAS + INHAB + AVG
+	.DB	H'44, H'46, SUN, H'00	;sun
+	.DB	H'61, H'63, H'22, GAS + INHAB + AVG
+
+  SOLAR84:
+	.DB	X_SET5 + H'0c
+	.DB	H'60, H'0e, H'13, GAS + INHAB + HIGH
+	.DB	H'49, H'17, H'26, GAS
+	.DB	H'6e, H'26, H'13, FRNDLY + LOW
+	.DB	H'72, H'36, H'26, GAS
+	.DB	H'37, H'39, SUN, H'00	;sun
+	.DB	H'30, H'3a, H'25, GAS + INHAB + AVG
+	.DB	H'5c, H'49, H'12, GAS + INHAB + AVG
+	.DB	H'36, H'4a, H'26, GAS
+	.DB	H'41, H'59, H'13, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'36, H'5b, H'24, GAS + INHAB + FRNDLY + LOW
+	.DB	H'0d, H'5c, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'14, H'68, H'23, GAS + INHAB + HIGH
+
+  SOLAR85:
+  SOLAR86:
+	.DB	X_SET7 + H'0d
+	.DB	H'51, H'36, H'02, INHAB + FRNDLY + V_HIGH ;space station
+	.DB	H'26, H'0b, H'26, GAS 
+	.DB	H'44, H'0e, H'13, GAS + INHAB + FRNDLY + AVG
+	.DB	H'1d, H'17, H'22, FRNDLY + LOW
+	.DB	H'2d, H'22, H'14, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'3e, H'38, SUN, H'00	;sun
+	.DB	H'69, H'3a, H'26, GAS
+	.DB	H'35, H'4e, H'15, GAS + INHAB + HIGH
+	.DB	H'73, H'51, H'25, GAS + INHAB + AVG
+	.DB	H'39, H'52, H'15, GAS + INHAB + LOW
+	.DB	H'2e, H'6c, H'22, GAS + INHAB + HIGH
+	.DB	H'62, H'6d, H'13, GAS + INHAB + AVG
+	.DB	H'66, H'78, H'24, GAS + INHAB + AVG
+
+  SOLAR87:
+	.DB	X_SET5 + H'11
+	.DB	H'10, H'36, H'06, GAS + INHAB + HIGH ;space station
+	.DB	H'59, H'06, H'14, GAS + INHAB + HIGH
+	.DB	H'36, H'10, H'24, GAS + INHAB + V_HIGH
+	.DB	H'48, H'11, H'22, FRNDLY + LOW
+	.DB	H'42, H'23, H'25, GAS + INHAB + AVG
+	.DB	H'73, H'29, H'26, GAS
+	.DB	H'0e, H'2e, H'15, GAS + INHAB + HIGH
+	.DB	H'37, H'35, SUN, H'00	;sun
+	.DB	H'57, H'47, H'22, GAS + INHAB + AVG
+	.DB	H'36, H'4e, H'26, GAS
+	.DB	H'25, H'54, H'25, GAS + INHAB + AVG
+	.DB	H'3c, H'57, H'12, FRNDLY + LOW
+	.DB	H'46, H'58, H'22, GAS + INHAB + HIGH
+	.DB	H'47, H'59, H'15, GAS + INHAB + AVG
+	.DB	H'15, H'5c, H'26, GAS
+	.DB	H'29, H'62, H'25, GAS + INHAB + HIGH
+	.DB	H'55, H'6c, H'14, GAS + INHAB + AVG
+
+  SOLAR88:
+	.DB	X_SET7 + H'0a
+	.DB	H'76, H'39, H'07, GAS + INHAB + HIGH ;space station
+	.DB	H'1b, H'09, H'0A, GAS + INHAB + V_HIGH ;space station
+	.DB	H'50, H'12, H'26, GAS
+	.DB	H'17, H'22, H'14, GAS + INHAB + HIGH
+	.DB	H'42, H'23, H'25, GAS + INHAB + HIGH
+	.DB	H'39, H'33, SUN, H'00	;sun
+	.DB	H'2e, H'36, H'13, GAS + INHAB + HIGH
+	.DB	H'0e, H'3f, H'23, GAS + INHAB + AVG
+	.DB	H'34, H'75, H'22, GAS + INHAB + HIGH
+	.DB	H'55, H'76, H'14, GAS + INHAB + AVG
+
+  SOLAR89:
+	.DB	X_SET5 + H'05
+	.DB	H'71, H'62, H'0A, GAS + INHAB + V_HIGH ;space station
+	.DB	H'26, H'12, H'0B, GAS + INHAB + V_HIGH ;space station
+	.DB	H'40, H'33, SUN, H'00	;sun
+	.DB	H'07, H'34, H'25, GAS + INHAB + HIGH
+	.DB	H'2b, H'72, H'24, GAS + INHAB + HIGH
+
+  SOLAR90:
+	.DB	X_SET7 + H'0b
+	.DB	H'5a, H'06, H'26, GAS
+	.DB	H'0a, H'07, H'23, GAS + INHAB + FRNDLY + AVG
+	.DB	H'36, H'10, H'14, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'5f, H'12, H'25, GAS + INHAB + AVG
+	.DB	H'5c, H'25, H'24, GAS + INHAB + HIGH
+	.DB	H'38, H'2b, H'26, GAS
+	.DB	H'45, H'39, SUN, H'00	;sun
+	.DB	H'3e, H'3b, H'22, GAS + INHAB + HIGH
+	.DB	H'34, H'3f, H'26, GAS
+	.DB	H'6c, H'47, H'14, GAS + INHAB + AVG
+	.DB	H'43, H'57, H'23, GAS + INHAB + HIGH
+
+  SOLAR91:
+	.DB	X_SET5 + H'08
+	.DB	H'58, H'16, H'26, GAS
+	.DB	H'0d, H'22, H'25, GAS + INHAB + HIGH
+	.DB	H'40, H'35, SUN, H'00	;sun
+	.DB	H'29, H'3f, H'26, GAS
+	.DB	H'49, H'58, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'22, H'5b, H'23, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'65, H'77, H'22, GAS + INHAB + FRNDLY + LOW
+	.DB	H'69, H'79, H'14, GAS + INHAB + FRNDLY + AVG
+
+  SOLAR92:
+	.DB	X_SET6 + H'08
+	.DB	H'3b, H'08, H'26, GAS
+	.DB	H'2a, H'11, H'13, GAS + INHAB + AVG
+	.DB	H'47, H'35, H'15, GAS + INHAB + LOW
+	.DB	H'43, H'38, SUN, H'00	;sun
+	.DB	H'0c, H'48, H'25, GAS + INHAB + HIGH
+	.DB	H'2f, H'4a, H'14, GAS + INHAB + AVG
+	.DB	H'45, H'58, H'25, GAS + INHAB + AVG
+	.DB	H'24, H'60, H'12, GAS + INHAB + AVG
+
+  SOLAR93:
+	.DB	X_SET4 + H'04
+	.DB	H'73, H'14, H'23, GAS + INHAB + FRNDLY + V_HIGH
+	.DB	H'39, H'42, SUN, H'00	;sun
+	.DB	H'16, H'53, H'15, GAS + INHAB + HIGH
+	.DB	H'0d, H'73, H'24, GAS + INHAB + AVG
+
+  SOLAR94:
+  SOLAR95:
+  SOLAR96:
+	.DB	X_SET5 + H'08
+	.DB	H'5a, H'06, H'14, GAS + INHAB + HIGH
+	.DB	H'10, H'25, H'25, GAS + INHAB + HIGH
+	.DB	H'74, H'26, H'15, GAS + INHAB + FRNDLY + AVG
+	.DB	H'5c, H'2b, H'25, GAS + INHAB + FRNDLY + HIGH
+	.DB	H'3a, H'32, SUN, H'00	;sun
+	.DB	H'1c, H'4a, H'14, GAS + INHAB + FRNDLY + AVG
+	.DB	H'11, H'4e, H'12, GAS + INHAB + AVG
+	.DB	H'18, H'57, H'25, GAS + INHAB + HIGH
+
+  SOLAR97:
+  SOLAR98:
+	.DB	X_SET6 + H'09
+	.DB	H'54, H'07, H'24, GAS + INHAB + HIGH
+	.DB	H'3c, H'0e, H'26, GAS
+	.DB	H'0c, H'16, H'22, GAS + INHAB + AVG
+	.DB	H'32, H'1a, H'12, GAS + INHAB + HIGH
+	.DB	H'1d, H'24, H'23, GAS + INHAB + AVG
+	.DB	H'62, H'2f, H'26, GAS
+	.DB	H'42, H'33, SUN, H'00	;sun
+	.DB	H'54, H'47, H'23, GAS + INHAB + HIGH
+	.DB	H'24, H'6b, H'24, GAS + INHAB + AVG
+
+  SOLAR99:
+  	.DB	X_SET4 + H'09
+  	.DB	H'70, H'53, H'0B, GAS + INHAB + V_HIGH ;space station
+  	.DB	H'08, H'0a, H'26, GAS
+  	.DB	H'1e, H'0c, H'12, GAS + INHAB + AVG
+  	.DB	H'6b, H'20, H'22, GAS + INHAB + HIGH
+  	.DB	H'0c, H'3f, H'14, GAS + INHAB + HIGH
+  	.DB	H'77, H'45, H'22, GAS + INHAB + HIGH
+  	.DB	H'40, H'46, SUN, H'00	;sun
+  	.DB	H'2a, H'4e, H'14, GAS + INHAB + AVG
+  	.DB	H'4f, H'54, H'14, GAS + INHAB + HIGH
+
+;4632 bytes used for 100 systems.
+
+PRAD_SYS:				;the P'radikus system...
+	.DB	X_SET6 + H'0B		 
+	.DB	H'63, H'5D, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'5D, H'63, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'5D, H'5D, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'63, H'63, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'5C, H'60, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'64, H'60, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'60, H'64, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'60, H'5C, H'0F, GAS + INHAB + V_HIGH ;space station
+	.DB	H'2A, H'2A, H'A6, GAS	
+	.DB	H'3F, H'40, SUN, H'00	;sun	
+	.DB	H'60, H'60, H'26, GAS + INHAB + V_HIGH	;P'RADIKUS
+
+;	  s     s
+;      s           s		     
+;	     P
+;      s           s
+;         s     s 
+
+
+
+;**********************************************************
+
+
+;SECTOR DATA
+
+SECTOR11:
+	.DB	H'03
+	.DB	H'05, H'04
+	.DRW	SOLAR72
+	.DB	H'0C, H'09
+	.DRW	SOLAR25
+	.DB	H'02, H'0D
+	.DRW	SOLAR59	;CLUE TO FIND FREEM IN SECTOR88
+SECTOR21:
+	.DB	H'04
+	.DB	H'05, H'01
+	.DRW	SOLAR41
+	.DB	H'0D, H'03
+	.DRW	SOLAR75
+	.DB	H'02, H'0B
+	.DRW	SOLAR05
+	.DB	H'09, H'0F
+	.DRW	SOLAR86
+SECTOR31:
+	.DB	H'02
+	.DB	H'0E, H'04
+	.DRW	SOLAR62
+	.DB	H'04, H'07
+	.DRW	SOLAR37
+SECTOR41:
+	.DB	H'03
+	.DB	H'03, H'03
+	.DRW	SOLAR12
+	.DB	H'09, H'07
+	.DRW	SOLAR87
+	.DB	H'0E, H'0F
+	.DRW	SOLAR51
+SECTOR51:
+	.DB	H'04
+	.DB	H'0F, H'04
+	.DRW	SOLAR17
+	.DB	H'08, H'08
+	.DRW	SOLAR54
+	.DB	H'02, H'0A
+	.DRW	SOLAR68
+	.DB	H'0E, H'0B
+	.DRW	SOLAR28
+SECTOR61:
+	.DB	H'06
+	.DB	H'05, H'03
+	.DRW	SOLAR75
+	.DB	H'06, H'07
+	.DRW	SOLAR47
+	.DB	H'0B, H'07
+	.DRW	SOLAR92
+	.DB	H'0B, H'0A
+	.DRW	SOLAR35
+	.DB	H'03, H'0B
+	.DRW	SOLAR70
+	.DB	H'07, H'0F
+	.DRW	SOLAR53
+SECTOR71:
+	.DB	H'02
+	.DB	H'06, H'03
+	.DRW	SOLAR41
+	.DB	H'0D, H'0C
+	.DRW	SOLAR55
+SECTOR81:
+	.DB	H'03
+	.DB	H'0B, H'03
+	.DRW	SOLAR90
+	.DB	H'03, H'0A
+	.DRW	SOLAR61
+	.DB	H'0C, H'0B
+	.DRW	SOLAR14
+
+SECTOR12:
+	.DB	H'04
+	.DB	H'02, H'02
+	.DRW	SOLAR05
+	.DB	H'0C, H'04
+	.DRW	SOLAR53
+	.DB	H'07, H'07
+	.DRW	SOLAR68
+	.DB	H'0E, H'09
+	.DRW	SOLAR29
+SECTOR22:
+	.DB	H'07
+	.DB	H'10, H'02
+	.DRW	SOLAR88
+	.DB	H'07, H'03
+	.DRW	SOLAR61
+	.DB	H'02, H'06
+	.DRW	SOLAR07
+	.DB	H'0D, H'08
+	.DRW	SOLAR45
+	.DB	H'03, H'0A
+	.DRW	SOLAR97
+	.DB	H'0B, H'0E
+	.DRW	SOLAR12
+	.DB	H'09, H'0F
+	.DRW	SOLAR92
+SECTOR32:
+	.DB	H'0B
+	.DB	H'04, H'01
+	.DRW	SOLAR65
+	.DB	H'0C, H'03
+	.DRW	SOLAR67
+	.DB	H'0F, H'04
+	.DRW	SOLAR07
+	.DB	H'08, H'06
+	.DRW	SOLAR22
+	.DB	H'02, H'07
+	.DRW	SOLAR16
+	.DB	H'0E, H'09
+	.DRW	SOLAR80
+	.DB	H'03, H'0A
+	.DRW	SOLAR20
+	.DB	H'0A, H'0B
+	.DRW	SOLAR48
+	.DB	H'05, H'0E
+	.DRW	SOLAR09
+	.DB	H'02, H'0F
+	.DRW	SOLAR53
+	.DB	H'0F, H'10
+	.DRW	SOLAR39
+SECTOR42:
+	.DB	H'11
+	.DB	H'09, H'01
+	.DRW	SOLAR42
+	.DB	H'02, H'02
+	.DRW	SOLAR25
+	.DB	H'0E, H'02
+	.DRW	SOLAR03
+	.DB	H'07, H'04
+	.DRW	SOLAR31		;THUNDER BOLT HERE
+	.DB	H'05, H'05
+	.DRW	SOLAR51
+	.DB	H'0F, H'05
+	.DRW	SOLAR36
+	.DB	H'0C, H'06
+	.DRW	SOLAR29
+	.DB	H'02, H'08
+	.DRW	SOLAR45
+	.DB	H'06, H'09
+	.DRW	SOLAR67
+	.DB	H'0F, H'09
+	.DRW	SOLAR86
+	.DB	H'08, H'0A
+	.DRW	SOLAR99
+	.DB	H'01, H'0C
+	.DRW	SOLAR05
+	.DB	H'0D, H'0C
+	.DRW	SOLAR60
+	.DB	H'02, H'0E
+	.DRW	SOLAR35
+	.DB	H'0A, H'0E
+	.DRW	SOLAR52
+	.DB	H'0C, H'0F
+	.DRW	SOLAR00
+	.DB	H'05, H'10
+	.DRW	SOLAR38
+SECTOR52:
+	.DB	H'08
+	.DB	H'10, H'02
+	.DRW	SOLAR40
+	.DB	H'06, H'03
+	.DRW	SOLAR91
+	.DB	H'0D, H'03
+	.DRW	SOLAR44
+	.DB	H'02, H'07
+	.DRW	SOLAR37
+	.DB	H'08, H'07
+	.DRW	SOLAR19
+	.DB	H'0C, H'0B
+	.DRW	SOLAR58
+	.DB	H'01, H'0F
+	.DRW	SOLAR04
+	.DB	H'0F, H'0F
+	.DRW	SOLAR96
+SECTOR62:
+	.DB	H'05
+	.DB	H'05, H'05
+	.DRW	SOLAR28
+	.DB	H'0D, H'07
+	.DRW	SOLAR58
+	.DB	H'02, H'09
+	.DRW	SOLAR46
+	.DB	H'09, H'09
+	.DRW	SOLAR73
+	.DB	H'01, H'0E
+	.DRW	SOLAR00
+SECTOR72:
+	.DB	H'0E
+	.DB	H'10, H'01
+	.DRW	SOLAR07
+	.DB	H'09, H'02
+	.DRW	SOLAR44
+	.DB	H'01, H'03
+	.DRW	SOLAR01
+	.DB	H'0F, H'03
+	.DRW	SOLAR14
+	.DB	H'05, H'04
+	.DRW	SOLAR23
+	.DB	H'0D, H'05
+	.DRW	SOLAR39
+	.DB	H'0A, H'06
+	.DRW	SOLAR86
+	.DB	H'06, H'07
+	.DRW	SOLAR68
+	.DB	H'03, H'09
+	.DRW	SOLAR64
+	.DB	H'0E, H'0A
+	.DRW	SOLAR74
+	.DB	H'08, H'0C
+	.DRW	SOLAR98
+	.DB	H'05, H'0D
+	.DRW	SOLAR51
+	.DB	H'0D, H'0E
+	.DRW	SOLAR78
+	.DB	H'01, H'0F
+	.DRW	SOLAR97
+SECTOR82:
+	.DB	H'09
+	.DB	H'03, H'02
+	.DRW	SOLAR77
+	.DB	H'0E, H'03
+	.DRW	SOLAR91
+	.DB	H'04, H'05
+	.DRW	SOLAR11
+	.DB	H'09, H'06
+	.DRW	SOLAR36
+	.DB	H'06, H'09
+	.DRW	SOLAR21
+	.DB	H'0F, H'0A
+	.DRW	SOLAR74
+	.DB	H'0B, H'0B
+	.DRW	SOLAR02
+	.DB	H'02, H'0D
+	.DRW	SOLAR38
+	.DB	H'08, H'0F
+	.DRW	SOLAR66
+
+SECTOR13:
+	.DB	H'09
+	.DB	H'06, H'05
+	.DRW	SOLAR09
+	.DB	H'02, H'07
+	.DRW	SOLAR06
+	.DB	H'0E, H'09
+	.DRW	SOLAR27
+	.DB	H'09, H'0A
+	.DRW	SOLAR15
+	.DB	H'03, H'0C
+	.DRW	SOLAR47
+	.DB	H'0B, H'0C
+	.DRW	SOLAR80
+	.DB	H'0E, H'0D
+	.DRW	SOLAR48
+	.DB	H'0A, H'0E
+	.DRW	SOLAR07
+	.DB	H'08, H'0F
+	.DRW	SOLAR65
+SECTOR23:
+	.DB	H'0D
+	.DB	H'0D, H'01
+	.DRW	SOLAR70
+	.DB	H'03, H'02
+	.DRW	SOLAR19
+	.DB	H'0B, H'03
+	.DRW	SOLAR37
+	.DB	H'0C, H'05
+	.DRW	SOLAR43
+	.DB	H'0F, H'05
+	.DRW	SOLAR94
+	.DB	H'06, H'06
+	.DRW	SOLAR64
+	.DB	H'09, H'08
+	.DRW	SOLAR77
+	.DB	H'06, H'0A
+	.DRW	SOLAR78
+	.DB	H'0A, H'0A
+	.DRW	SOLAR94
+	.DB	H'03, H'0B
+	.DRW	SOLAR71
+	.DB	H'06, H'0D
+	.DRW	SOLAR34
+	.DB	H'0C, H'0E
+	.DRW	SOLAR69
+	.DB	H'04, H'0F
+	.DRW	SOLAR81
+SECTOR33:
+	.DB	H'07
+	.DB	H'03, H'02
+	.DRW	SOLAR65
+	.DB	H'06, H'03
+	.DRW	SOLAR85
+	.DB	H'02, H'05
+	.DRW	SOLAR55
+	.DB	H'04, H'06
+	.DRW	SOLAR57
+	.DB	H'0D, H'0B
+	.DRW	SOLAR16
+	.DB	H'09, H'0D
+	.DRW	SOLAR94
+	.DB	H'0C, H'0F
+	.DRW	SOLAR13
+SECTOR43:
+	.DB	H'0B
+	.DB	H'0B, H'01
+	.DRW	SOLAR70
+	.DB	H'09, H'02
+	.DRW	SOLAR01
+	.DB	H'0D, H'06
+	.DRW	SOLAR16
+	.DB	H'01, H'07
+	.DRW	SOLAR76
+	.DB	H'03, H'09
+	.DRW	SOLAR41
+	.DB	H'07, H'0B
+	.DRW	SOLAR46
+	.DB	H'04, H'0D
+	.DRW	SOLAR49
+	.DB	H'01, H'0E
+	.DRW	SOLAR27
+	.DB	H'09, H'0E
+	.DRW	SOLAR31
+	.DB	H'06, H'0F
+	.DRW	SOLAR05
+	.DB	H'02, H'10
+	.DRW	SOLAR16
+SECTOR53:
+	.DB	H'0A
+	.DB	H'0C, H'02
+	.DRW	SOLAR58
+	.DB	H'06, H'03
+	.DRW	SOLAR26
+	.DB	H'0C, H'05
+	.DRW	SOLAR13
+	.DB	H'07, H'06
+	.DRW	SOLAR88
+	.DB	H'01, H'07
+	.DRW	SOLAR24
+	.DB	H'05, H'08
+	.DRW	SOLAR51
+	.DB	H'09, H'09
+	.DRW	SOLAR71
+	.DB	H'02, H'0B
+	.DRW	SOLAR28
+	.DB	H'0A, H'0C
+	.DRW	SOLAR48
+	.DB	H'06, H'0E
+	.DRW	SOLAR09
+SECTOR63:
+	.DB	H'0D
+	.DB	H'04, H'02
+	.DRW	SOLAR26
+	.DB	H'09, H'03
+	.DRW	SOLAR00
+	.DB	H'02, H'05
+	.DRW	SOLAR01
+	.DB	H'07, H'05
+	.DRW	SOLAR13
+	.DB	H'0B, H'07
+	.DRW	SOLAR76
+	.DB	H'06, H'08
+	.DRW	SOLAR69
+	.DB	H'05, H'0A
+	.DRW	SOLAR77
+	.DB	H'0A, H'0A
+	.DRW	SOLAR66
+	.DB	H'07, H'0C
+	.DRW	SOLAR25
+	.DB	H'0A, H'0D
+	.DRW	SOLAR75
+	.DB	H'0D, H'0D
+	.DRW	SOLAR39
+	.DB	H'06, H'0E
+	.DRW	SOLAR89
+	.DB	H'09, H'0F
+	.DRW	SOLAR54
+SECTOR73:
+	.DB	H'08
+	.DB	H'08, H'01
+	.DRW	SOLAR52
+	.DB	H'0F, H'01
+	.DRW	SOLAR91
+	.DB	H'0A, H'02
+	.DRW	SOLAR90
+	.DB	H'07, H'04
+	.DRW	SOLAR78
+	.DB	H'0E, H'05
+	.DRW	SOLAR02
+	.DB	H'0B, H'06
+	.DRW	SOLAR42
+	.DB	H'0F, H'07
+	.DRW	SOLAR58
+	.DB	H'06, H'0B
+	.DRW	SOLAR30
+SECTOR83:
+	.DB	H'03
+	.DB	H'03, H'05
+	.DRW	SOLAR98
+	.DB	H'0A, H'09
+	.DRW	SOLAR48
+	.DB	H'06, H'0D
+	.DRW	SOLAR14
+
+SECTOR14:
+	.DB	H'07
+	.DB	H'0A, H'03
+	.DRW	SOLAR13
+	.DB	H'0D, H'05
+	.DRW	SOLAR03
+	.DB	H'09, H'09
+	.DRW	SOLAR32
+	.DB	H'02, H'0A
+	.DRW	SOLAR63
+	.DB	H'0E, H'0B
+	.DRW	SOLAR39
+	.DB	H'0B, H'0D
+	.DRW	SOLAR04
+	.DB	H'0F, H'0F
+	.DRW	SOLAR65
+SECTOR24:
+	.DB	H'02
+	.DB	H'06, H'03
+	.DRW	SOLAR36
+	.DB	H'0B, H'0B
+	.DRW	SOLAR38
+SECTOR34:
+	.DB	H'0A
+	.DB	H'0C, H'02
+	.DRW	SOLAR71
+	.DB	H'09, H'03
+	.DRW	SOLAR44
+	.DB	H'0B, H'06
+	.DRW	SOLAR18
+	.DB	H'0D, H'07
+	.DRW	SOLAR20
+	.DB	H'07, H'08
+	.DRW	SOLAR68
+	.DB	H'05, H'09
+	.DRW	SOLAR72
+	.DB	H'0A, H'0A
+	.DRW	SOLAR64
+	.DB	H'02, H'0B
+	.DRW	SOLAR69
+	.DB	H'06, H'0D
+	.DRW	SOLAR82
+	.DB	H'07, H'0F
+	.DRW	SOLAR95
+SECTOR44:
+	.DB	H'13
+	.DB	H'0E, H'01
+	.DRW	SOLAR49
+	.DB	H'04, H'02
+	.DRW	SOLAR60
+	.DB	H'0A, H'03
+	.DRW	SOLAR46
+	.DB	H'0A, H'06
+	.DRW	SOLAR26
+	.DB	H'08, H'07
+	.DRW	SOLAR15
+	.DB	H'0D, H'07
+	.DRW	SOLAR21
+	.DB	H'10, H'09
+	.DRW	SOLAR40
+	.DB	H'0A, H'0A
+	.DRW	SOLAR11
+	.DB	H'0E, H'0B
+	.DRW	SOLAR23
+	.DB	H'0F, H'0C
+	.DRW	SOLAR19
+	.DB	H'0B, H'0D
+	.DRW	SOLAR03
+	.DB	H'0F, H'0D
+	.DRW	SOLAR24
+	.DB	H'0E, H'0E
+	.DRW	SOLAR91
+	.DB	H'0A, H'0F
+	.DRW	SOLAR18
+	.DB	H'0C, H'0F
+	.DRW	SOLAR06
+	.DB	H'0E, H'0F
+	.DRW	SOLAR27
+	.DB	H'0F, H'0F
+	.DRW	SOLAR52
+	.DB	H'0D, H'10
+	.DRW	SOLAR16
+	.DB	H'0F, H'10
+	.DRW	SOLAR44		;PLAYER STARTS IN HERE
+SECTOR54:
+	.DB	H'11
+	.DB	H'0C, H'04
+	.DRW	SOLAR82
+	.DB	H'06, H'06
+	.DRW	SOLAR96
+	.DB	H'01, H'07
+	.DRW	SOLAR01
+	.DB	H'0B, H'09
+	.DRW	SOLAR07
+	.DB	H'03, H'0A
+	.DRW	SOLAR56
+	.DB	H'01, H'0B
+	.DRW	SOLAR93
+	.DB	H'06, H'0B
+	.DRW	SOLAR50
+	.DB	H'04, H'0C
+	.DRW	SOLAR52
+	.DB	H'0E, H'0C
+	.DRW	SOLAR40
+	.DB	H'03, H'0D
+	.DRW	SOLAR23
+	.DB	H'08, H'0D
+	.DRW	SOLAR16
+	.DB	H'05, H'0E
+	.DRW	SOLAR06
+	.DB	H'09, H'0E
+	.DRW	SOLAR27
+	.DB	H'01, H'0F
+	.DRW	SOLAR00
+	.DB	H'04, H'0F
+	.DRW	SOLAR85
+	.DB	H'07, H'0F
+	.DRW	SOLAR18
+	.DB	H'02, H'10
+	.DRW	SOLAR91
+SECTOR64:
+	.DB	H'0C
+	.DB	H'03, H'02
+	.DRW	SOLAR48
+	.DB	H'09, H'02
+	.DRW	SOLAR14
+	.DB	H'05, H'03
+	.DRW	SOLAR31
+	.DB	H'07, H'05
+	.DRW	SOLAR18
+	.DB	H'04, H'06
+	.DRW	SOLAR23
+	.DB	H'01, H'07
+	.DRW	SOLAR30
+	.DB	H'06, H'09
+	.DRW	SOLAR81
+	.DB	H'09, H'0A
+	.DRW	SOLAR66
+	.DB	H'05, H'0B
+	.DRW	SOLAR20
+	.DB	H'08, H'0D
+	.DRW	SOLAR62
+	.DB	H'07, H'0E
+	.DRW	SOLAR25
+	.DB	H'03, H'0F
+	.DRW	SOLAR67
+SECTOR74:
+	.DB	H'08
+	.DB	H'06, H'02
+	.DRW	SOLAR38
+	.DB	H'0D, H'03
+	.DRW	SOLAR81
+	.DB	H'0A, H'05
+	.DRW	SOLAR68
+	.DB	H'0C, H'09
+	.DRW	SOLAR58
+	.DB	H'08, H'0A
+	.DRW	SOLAR26
+	.DB	H'09, H'0C
+	.DRW	SOLAR05
+	.DB	H'0E, H'0D
+	.DRW	SOLAR24
+	.DB	H'0B, H'0F
+	.DRW	SOLAR52
+SECTOR84:
+	.DB	H'04
+	.DB	H'0C, H'05
+	.DRW	SOLAR25
+	.DB	H'06, H'06
+	.DRW	SOLAR14
+	.DB	H'0B, H'0C
+	.DRW	SOLAR95
+	.DB	H'03, H'0E
+	.DRW	SOLAR20
+
+SECTOR15:
+	.DB	H'08
+	.DB	H'0F, H'02
+	.DRW	SOLAR86
+	.DB	H'0C, H'05
+	.DRW	SOLAR88
+	.DB	H'05, H'06
+	.DRW	SOLAR26
+	.DB	H'0E, H'08
+	.DRW	SOLAR91
+	.DB	H'10, H'09
+	.DRW	SOLAR94
+	.DB	H'0A, H'0A
+	.DRW	SOLAR59
+	.DB	H'0F, H'0C
+	.DRW	SOLAR48
+	.DB	H'0D, H'0E
+	.DRW	SOLAR99
+SECTOR25:
+	.DB	H'04
+	.DB	H'05, H'03
+	.DRW	SOLAR80
+	.DB	H'0C, H'06
+	.DRW	SOLAR35
+	.DB	H'07, H'09
+	.DRW	SOLAR15
+	.DB	H'09, H'0E
+	.DRW	SOLAR42
+SECTOR35:
+	.DB	H'0A
+	.DB	H'09, H'02
+	.DRW	SOLAR11
+	.DB	H'0E, H'03
+	.DRW	SOLAR48
+	.DB	H'03, H'04
+	.DRW	SOLAR02
+	.DB	H'0C, H'05
+	.DRW	SOLAR56
+	.DB	H'0F, H'06
+	.DRW	SOLAR94
+	.DB	H'07, H'07
+	.DRW	SOLAR60
+	.DB	H'03, H'0A
+	.DRW	SOLAR86
+	.DB	H'0B, H'0B
+	.DRW	SOLAR85
+	.DB	H'05, H'0D
+	.DRW	SOLAR75
+	.DB	H'09, H'0F
+	.DRW	SOLAR16
+SECTOR45:
+	.DB	H'0D
+	.DB	H'0F, H'01
+	.DRW	SOLAR70
+	.DB	H'08, H'02
+	.DRW	SOLAR14
+	.DB	H'0D, H'02
+	.DRW	SOLAR18
+	.DB	H'0A, H'03
+	.DRW	SOLAR15
+	.DB	H'0F, H'03
+	.DRW	SOLAR53
+	.DB	H'07, H'06
+	.DRW	SOLAR23
+	.DB	H'0D, H'06
+	.DRW	SOLAR35
+	.DB	H'09, H'07
+	.DRW	SOLAR03
+	.DB	H'0E, H'09
+	.DRW	SOLAR72
+	.DB	H'08, H'0A
+	.DRW	SOLAR66
+	.DB	H'0B, H'0A
+	.DRW	SOLAR11
+	.DB	H'0D, H'0C
+	.DRW	SOLAR50
+	.DB	H'0A, H'0E
+	.DRW	SOLAR61
+SECTOR55:
+	.DB	H'0C
+	.DB	H'03, H'01
+	.DRW	SOLAR04
+	.DB	H'06, H'01
+	.DRW	SOLAR00
+	.DB	H'01, H'03
+	.DRW	SOLAR07
+	.DB	H'05, H'04
+	.DRW	SOLAR63
+	.DB	H'02, H'05
+	.DRW	SOLAR45
+	.DB	H'04, H'05
+	.DRW	SOLAR44
+	.DB	H'07, H'06
+	.DRW	SOLAR06
+	.DB	H'03, H'07
+	.DRW	SOLAR42
+	.DB	H'05, H'08
+	.DRW	SOLAR77
+	.DB	H'01, H'0A
+	.DRW	SOLAR70
+	.DB	H'06, H'0A
+	.DRW	SOLAR01
+	.DB	H'04, H'0C
+	.DRW	SOLAR32
+SECTOR65:
+	.DB	H'0B
+	.DB	H'09, H'02
+	.DRW	SOLAR37
+	.DB	H'0D, H'03
+	.DRW	SOLAR40
+	.DB	H'0A, H'05
+	.DRW	SOLAR15
+	.DB	H'07, H'06
+	.DRW	SOLAR53
+	.DB	H'0C, H'07
+	.DRW	SOLAR26
+	.DB	H'06, H'09
+	.DRW	SOLAR99
+	.DB	H'0B, H'09
+	.DRW	SOLAR81
+	.DB	H'03, H'0B
+	.DRW	SOLAR56
+	.DB	H'08, H'0C
+	.DRW	SOLAR95
+	.DB	H'0A, H'0C
+	.DRW	SOLAR89
+	.DB	H'05, H'0F
+	.DRW	SOLAR53
+SECTOR75:
+	.DB	H'05
+	.DB	H'0C, H'02
+	.DRW	SOLAR14
+	.DB	H'0E, H'05
+	.DRW	SOLAR12
+	.DB	H'0D, H'0A
+	.DRW	SOLAR86
+	.DB	H'0C, H'0D
+	.DRW	SOLAR74
+	.DB	H'0F, H'0E
+	.DRW	SOLAR11
+SECTOR85:
+	.DB	H'03
+	.DB	H'0D, H'04
+	.DRW	SOLAR16
+	.DB	H'05, H'07
+	.DRW	SOLAR79
+	.DB	H'0B, H'09
+	.DRW	SOLAR29
+
+SECTOR16:
+	.DB	H'07
+	.DB	H'0C, H'01
+	.DRW	SOLAR20
+	.DB	H'0E, H'02
+	.DRW	SOLAR59
+	.DB	H'0B, H'03
+	.DRW	SOLAR60
+	.DB	H'0F, H'05
+	.DRW	SOLAR76
+	.DB	H'0D, H'07
+	.DRW	SOLAR51
+	.DB	H'09, H'08
+	.DRW	SOLAR62
+	.DB	H'05, H'09
+	.DRW	SOLAR22
+SECTOR26:
+	.DB	H'06
+	.DB	H'0D, H'08
+	.DRW	SOLAR44
+	.DB	H'03, H'0A
+	.DRW	SOLAR07
+	.DB	H'02, H'0B
+	.DRW	SOLAR60
+	.DB	H'01, H'0D
+	.DRW	SOLAR90
+	.DB	H'04, H'0D
+	.DRW	SOLAR74
+	.DB	H'02, H'0F
+	.DRW	SOLAR92
+SECTOR36:
+	.DB	H'0A
+	.DB	H'05, H'02
+	.DRW	SOLAR15
+	.DB	H'0A, H'03
+	.DRW	SOLAR27
+	.DB	H'07, H'05
+	.DRW	SOLAR18
+	.DB	H'0C, H'05
+	.DRW	SOLAR22
+	.DB	H'0F, H'06
+	.DRW	SOLAR04
+	.DB	H'0B, H'07
+	.DRW	SOLAR91
+	.DB	H'07, H'09
+	.DRW	SOLAR99
+	.DB	H'0A, H'09
+	.DRW	SOLAR73
+	.DB	H'0D, H'0A
+	.DRW	SOLAR86
+	.DB	H'0C, H'0D
+	.DRW	SOLAR77
+SECTOR46:
+	.DB	H'09
+	.DB	H'05, H'02
+	.DRW	SOLAR78
+	.DB	H'0B, H'03
+	.DRW	SOLAR05
+	.DB	H'07, H'06
+	.DRW	SOLAR21
+	.DB	H'0C, H'07
+	.DRW	SOLAR85
+	.DB	H'03, H'08
+	.DRW	SOLAR48
+	.DB	H'0D, H'09
+	.DRW	SOLAR15
+	.DB	H'05, H'0A
+	.DRW	SOLAR37
+	.DB	H'0A, H'0B
+	.DRW	SOLAR54
+	.DB	H'09, H'0E
+	.DRW	SOLAR53
+SECTOR56:
+	.DB	H'08
+	.DB	H'03, H'01
+	.DRW	SOLAR20
+	.DB	H'0B, H'02
+	.DRW	SOLAR63
+	.DB	H'07, H'03
+	.DRW	SOLAR39
+	.DB	H'04, H'04
+	.DRW	SOLAR90
+	.DB	H'0C, H'04
+	.DRW	SOLAR80
+	.DB	H'09, H'05
+	.DRW	SOLAR49
+	.DB	H'0D, H'0E
+	.DRW	SOLAR34
+	.DB	H'02, H'0F
+	.DRW	SOLAR86
+SECTOR66:
+	.DB	H'07
+	.DB	H'07, H'02
+	.DRW	SOLAR69
+	.DB	H'03, H'05
+	.DRW	SOLAR84
+	.DB	H'0E, H'0A
+	.DRW	SOLAR40
+	.DB	H'0E, H'0C
+	.DRW	SOLAR15
+	.DB	H'0C, H'0D
+	.DRW	SOLAR44
+	.DB	H'0D, H'0E
+	.DRW	SOLAR09
+	.DB	H'09, H'0F
+	.DRW	SOLAR98
+SECTOR76:
+	.DB	H'05
+	.DB	H'0C, H'03
+	.DRW	SOLAR63
+	.DB	H'0E, H'04
+	.DRW	SOLAR55
+	.DB	H'07, H'05
+	.DRW	SOLAR64
+	.DB	H'0B, H'06
+	.DRW	SOLAR82
+	.DB	H'02, H'07
+	.DRW	SOLAR92
+SECTOR86:
+	.DB	H'03
+	.DB	H'05, H'05
+	.DRW	SOLAR26
+	.DB	H'0D, H'09
+	.DRW	SOLAR91
+	.DB	H'03, H'0D
+	.DRW	SOLAR83
+
+SECTOR17:
+	.DB	H'03
+	.DB	H'09, H'07
+	.DRW	SOLAR05
+	.DB	H'03, H'0B
+	.DRW	SOLAR07		;THUNDER BOLT HINT
+	.DB	H'0A, H'0E
+	.DRW	SOLAR53
+SECTOR27:
+	.DB	H'08
+	.DB	H'06, H'02
+	.DRW	SOLAR19
+	.DB	H'09, H'03
+	.DRW	SOLAR55
+	.DB	H'0B, H'04
+	.DRW	SOLAR63
+	.DB	H'07, H'05
+	.DRW	SOLAR48
+	.DB	H'0E, H'06
+	.DRW	SOLAR07
+	.DB	H'0C, H'07
+	.DRW	SOLAR71
+	.DB	H'0A, H'08
+	.DRW	SOLAR31
+	.DB	H'0D, H'09
+	.DRW	SOLAR03
+SECTOR37:
+	.DB	H'05
+	.DB	H'09, H'0A
+	.DRW	SOLAR74
+	.DB	H'02, H'0B
+	.DRW	SOLAR03
+	.DB	H'05, H'0C
+	.DRW	SOLAR73
+	.DB	H'03, H'0D
+	.DRW	SOLAR81
+	.DB	H'05, H'0F
+	.DRW	SOLAR95
+SECTOR47:
+	.DB	H'0A
+	.DB	H'0A, H'01
+	.DRW	SOLAR68
+	.DB	H'0C, H'02
+	.DRW	SOLAR56
+	.DB	H'09, H'03
+	.DRW	SOLAR79
+	.DB	H'0F, H'03
+	.DRW	SOLAR17
+	.DB	H'0B, H'04
+	.DRW	SOLAR01
+	.DB	H'09, H'05
+	.DRW	SOLAR14
+	.DB	H'0E, H'05
+	.DRW	SOLAR26
+	.DB	H'0C, H'06
+	.DRW	SOLAR04
+	.DB	H'0D, H'07
+	.DRW	SOLAR82
+	.DB	H'04, H'0A
+	.DRW	SOLAR90
+SECTOR57:
+	.DB	H'0B
+	.DB	H'0D, H'01
+	.DRW	SOLAR09
+	.DB	H'03, H'03
+	.DRW	SOLAR73
+	.DB	H'0B, H'03
+	.DRW	SOLAR82
+	.DB	H'06, H'04
+	.DRW	SOLAR86
+	.DB	H'0C, H'04
+	.DRW	SOLAR71
+	.DB	H'0A, H'05
+	.DRW	SOLAR45
+	.DB	H'02, H'06
+	.DRW	SOLAR14
+	.DB	H'08, H'06
+	.DRW	SOLAR62
+	.DB	H'04, H'07
+	.DRW	SOLAR21
+	.DB	H'07, H'08
+	.DRW	SOLAR83
+	.DB	H'01, H'0B
+	.DRW	SOLAR99
+SECTOR67:
+	.DB	H'08
+	.DB	H'08, H'02
+	.DRW	SOLAR76
+	.DB	H'05, H'03
+	.DRW	SOLAR40
+	.DB	H'06, H'04
+	.DRW	SOLAR29
+	.DB	H'03, H'05
+	.DRW	SOLAR69
+	.DB	H'0C, H'07
+	.DRW	SOLAR96
+	.DB	H'07, H'08
+	.DRW	SOLAR97
+	.DB	H'09, H'0A
+	.DRW	SOLAR41
+	.DB	H'0B, H'0D
+	.DRW	SOLAR47
+SECTOR77:	
+	.DB	H'05
+	.DB	H'06, H'03
+	.DRW	SOLAR84
+	.DB	H'08, H'06
+	.DRW	SOLAR31
+	.DB	H'03, H'07
+	.DRW	SOLAR13
+	.DB	H'0B, H'0B
+	.DRW	SOLAR99
+	.DB	H'07, H'0D
+	.DRW	SOLAR94
+SECTOR87:
+	.DB	H'03
+	.DB	H'02, H'07
+	.DRW	SOLAR59
+	.DB	H'0D, H'0A
+	.DRW	SOLAR61
+	.DB	H'06, H'0F
+	.DRW	SOLAR92
+
+SECTOR18:
+	.DB	H'02
+	.DB	H'09, H'06
+	.DRW	SOLAR14
+	.DB	H'0B, H'0C
+	.DRW	SOLAR31
+SECTOR28:
+	.DB	H'03
+	.DB	H'0B, H'06
+	.DRW	SOLAR20
+	.DB	H'06, H'0A
+	.DRW	SOLAR66
+	.DB	H'09, H'0E
+	.DRW	SOLAR27
+SECTOR38:
+	.DB	H'04
+	.DB	H'0D, H'02
+	.DRW	SOLAR17
+	.DB	H'06, H'09
+	.DRW	SOLAR02
+	.DB	H'0B, H'0C
+	.DRW	SOLAR38
+	.DB	H'03, H'0E
+	.DRW	SOLAR65
+SECTOR48:
+	.DB	H'08
+	.DB	H'03, H'03
+	.DRW	SOLAR00
+	.DB	H'02, H'06
+	.DRW	SOLAR05
+	.DB	H'05, H'07
+	.DRW	SOLAR31
+	.DB	H'08, H'07
+	.DRW	SOLAR22
+	.DB	H'0D, H'08
+	.DRW	SOLAR17
+	.DB	H'09, H'0A
+	.DRW	SOLAR98
+	.DB	H'05, H'0C
+	.DRW	SOLAR38
+	.DB	H'0B, H'0D
+	.DRW	SOLAR78
+SECTOR58:
+	.DB	H'06
+	.DB	H'03, H'07
+	.DRW	SOLAR90
+	.DB	H'04, H'0B
+	.DRW	SOLAR73
+	.DB	H'09, H'0C
+	.DRW	SOLAR84
+	.DB	H'05, H'0D
+	.DRW	SOLAR38
+	.DB	H'02, H'0E
+	.DRW	SOLAR46
+	.DB	H'08, H'0F
+	.DRW	SOLAR42
+SECTOR68:
+	.DB	H'07
+	.DB	H'0A, H'08
+	.DRW	SOLAR72
+	.DB	H'05, H'09
+	.DRW	SOLAR60
+	.DB	H'0C, H'0A
+	.DRW	SOLAR70
+	.DB	H'02, H'0B
+	.DRW	SOLAR05
+	.DB	H'07, H'0C
+	.DRW	SOLAR20
+	.DB	H'04, H'0E
+	.DRW	SOLAR64
+	.DB	H'06, H'0F
+	.DRW	SOLAR80
+SECTOR78:
+	.DB	H'03
+	.DB	H'0E, H'09
+	.DRW	SOLAR35
+	.DB	H'03, H'0B
+	.DRW	SOLAR03
+	.DB	H'0B, H'0D
+	.DRW	SOLAR64
+SECTOR88:
+	.DB	H'02
+	.DB	H'09, H'08
+	.DRW	SOLAR72
+	.DB	H'06, H'0D
+	.DRW	SOLAR33 	;freem drive is here
+
+;**********************************************************
+
+
+GALAXY:
+	.DRW	SECTOR11, SECTOR21, SECTOR31, SECTOR41
+	.DRW	SECTOR51, SECTOR61, SECTOR71, SECTOR81
+	.DRW	SECTOR12, SECTOR22, SECTOR32, SECTOR42
+	.DRW	SECTOR52, SECTOR62, SECTOR72, SECTOR82
+	.DRW	SECTOR13, SECTOR23, SECTOR33, SECTOR43
+	.DRW	SECTOR53, SECTOR63, SECTOR73, SECTOR83
+	.DRW	SECTOR14, SECTOR24, SECTOR34, SECTOR44
+	.DRW	SECTOR54, SECTOR64, SECTOR74, SECTOR84
+	.DRW	SECTOR15, SECTOR25, SECTOR35, SECTOR45
+	.DRW	SECTOR55, SECTOR65, SECTOR75, SECTOR85
+	.DRW	SECTOR16, SECTOR26, SECTOR36, SECTOR46
+	.DRW	SECTOR56, SECTOR66, SECTOR76, SECTOR86
+	.DRW	SECTOR17, SECTOR27, SECTOR37, SECTOR47
+	.DRW	SECTOR57, SECTOR67, SECTOR77, SECTOR87
+	.DRW	SECTOR18, SECTOR28, SECTOR38, SECTOR48
+	.DRW	SECTOR58, SECTOR68, SECTOR78, SECTOR88
+
+;**********************************************************
+

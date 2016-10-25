@@ -1,0 +1,9271 @@
+;the P'Radikus Conflict
+;
+;6502 source code for use with Nintendo (TM)
+;Entertainment System.
+;
+;
+;	SAT 17 MAY 90
+;	   Ver 2.0
+;
+;Graphics and Code by:
+;  Jim Treadway & Mike Hunley
+;
+;
+;"BANK1.ASM" --- back ground test routines
+;
+;
+
+;*******************************************
+;	MEMORY BANK 1
+;*******************************************
+
+
+INCLUDE( RAMVARS.ASM)
+
+
+
+
+;****************************
+; BOOT CODE
+;****************************
+
+
+.ORG	h'8000
+
+
+BOOT:	
+		SEI
+		CLD
+		LDX	#H'FF
+		TXS
+	
+		LDA	#H'06
+		STA	VID_MODE
+	
+		JSR	VR_WAIT
+		JSR	VR_WAIT
+		
+		LDA	ROM0
+		STA	ROM0
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		JMP	BOOT2	;never called!
+
+
+;***********************************
+
+COMPOFF:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	TESTCOMP
+		JMP	COMPOFF
+
+
+
+
+
+
+;***********************************
+
+ROWXFER:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	RXFER
+		JMP	ROWXFER
+
+		
+
+
+
+;***********************************
+
+COLXFER:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	CXFER
+		JMP	COLXFER
+
+
+
+
+
+;***********************************
+
+FINDOBJECT:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+GOBJPTR:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	GETOBJPTR
+		JMP	GOBJPTR
+
+
+
+
+
+;***********************************
+
+ONIL:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	OBJ_NIL
+		JMP	ONIL
+
+
+
+
+
+;***********************************
+
+GBLOCK:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		JSR	GETBLOCK
+		JMP	GBLOCK
+
+
+
+
+
+;***********************************
+
+SCAN:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+ITEMCOST:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+BUYITEM:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+ITEMAVAIL:	STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+MAP:		STY	T4
+
+		LDA	ROMX
+		STA	PROGROM
+		CLC
+		ADC	VIDROM
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+		LDY	T4
+		NOP
+		NOP
+		NOP
+		NOP
+		NOP
+		RTS
+
+;***********************************
+
+ROM0:	.DB	H'00
+ROM1:	.DB	H'01
+ROMX:	.DB	H'00
+
+
+XVIDEO:		
+
+;Acc. = video page #
+
+		ASL	A
+		STA	VIDROM
+		CLC
+		ADC	ROM1
+		TAY
+		LDA	ROMTAB, Y
+		STA	ROMTAB, Y
+
+IFDEF( `RAM', STA ROMSELECT, )
+
+
+		RTS
+
+ROMTAB:		.DB	H'00, H'01, H'10, H'11	;sets 0, 1
+		.DB	H'20, H'21, H'30, H'31  ;sets 2, 3
+		.DB	H'40, H'41, H'50, H'51	;sets 4, 5
+		.DB	H'60, H'61, H'70, H'71	;sets 6, 7
+
+;***********************************
+
+
+BOOT2:	JMP	BOOT2
+
+
+
+;***********************************
+
+
+;*******************************************
+;   TRANSLATE TABLE	(07-25-89)
+;*******************************************
+
+
+XLAT0:	.DB	H'FA,H'FB,H'FC,H'FD,H'02,H'03,H'04,H'05	;PAL2--------
+	.DB	H'06,H'07,H'BF,H'DE,H'BD,H'DC,H'DF,H'DB	;    00 to 5F
+	.DB	H'3C,H'3D,H'3E,H'3F,H'5A,H'1E,H'F9,H'7C
+	.DB	H'B9,H'3B,H'B8,H'BE,H'BC,H'BA,H'BB,H'D9	;normal
+	.DB	H'DA,H'32,H'33,H'34,H'35,H'36,H'37,H'38
+	.DB	H'39,H'3A,H'1F,H'1F,H'8C,H'8D,H'AC,H'AD
+	.DB	H'4C,H'4D,H'6C,H'6D,H'4E,H'4F,H'6E,H'6F 
+	.DB	H'50,H'51,H'70,H'71,H'52,H'53,H'72,H'73
+	.DB	H'8A,H'8B,H'AA,H'AB,H'8E,H'8F,H'AE,H'AF
+	.DB	H'90,H'91,H'B0,H'B1,H'92,H'93,H'B2,H'B3
+	.DB	H'57,H'58,H'77,H'78,H'97,H'98,H'B7,H'D7
+	.DB	H'D8,H'F7,H'F8,H'9C,H'1F,H'1F,H'1F,H'1F
+
+
+	.DB	H'DE,H'3C,H'3D,H'3E,H'3F,H'1E,H'F9,H'7C	;PAL3--------
+	.DB	H'FA,H'FB,H'FC,H'FD,H'4E,H'4F,H'6E,H'6F	;    60 to 7F
+	.DB	H'50,H'51,H'70,H'71,H'52,H'53,H'72,H'73
+	.DB	H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F	;blinking 
+
+
+	.DB	H'FA,H'FB,H'FC,H'FD,H'40,H'41,H'42,H'60	;PAL1--------
+	.DB	H'61,H'62,H'80,H'81,H'82,H'A0,H'A1,H'A2	;    80 to FF
+	.DB	H'C0,H'C1,H'C2,H'E0,H'E1,H'E2,H'43,H'44
+	.DB	H'45,H'63,H'64,H'65,H'83,H'84,H'85,H'A3	;dirt/bushes
+	.DB	H'A4,H'A5,H'C3,H'C4,H'C5,H'E3,H'E4,H'E5
+	.DB	H'46,H'66,H'86,H'A6,H'1F,H'1F,H'1F,H'1F
+
+;upside-down
+
+XLAT1:	.DB	H'FA,H'FB,H'FC,H'FD,H'02,H'03,H'04,H'05	;PAL2--------
+	.DB	H'06,H'07,H'BF,H'DE,H'BD,H'DC,H'DB,H'DF	;    00 to 5F
+	.DB	H'3F,H'3E,H'3D,H'3C,H'5A,H'1E,H'F9,H'7C
+	.DB	H'B9,H'3B,H'B8,H'BE,H'BC,H'D9,H'DA,H'BA	;normal
+	.DB	H'BB,H'38,H'39,H'3A,H'35,H'36,H'37,H'32
+	.DB	H'33,H'34,H'1F,H'1F,H'AC,H'AD,H'8C,H'8D
+	.DB	H'6C,H'6D,H'4C,H'4D,H'6F,H'4F,H'6E,H'4E 
+	.DB	H'70,H'71,H'50,H'51,H'72,H'73,H'52,H'53
+	.DB	H'AA,H'AB,H'8A,H'8B,H'AF,H'8F,H'AE,H'8E
+	.DB	H'B0,H'B1,H'90,H'91,H'B2,H'B3,H'92,H'93
+	.DB	H'F7,H'58,H'97,H'98,H'77,H'78,H'B7,H'D7
+	.DB	H'D8,H'57,H'F8,H'9C,H'1F,H'1F,H'1F,H'1F
+
+
+	.DB	H'DE,H'3F,H'3E,H'3D,H'3C,H'1E,H'F9,H'7C	;PAL3--------
+	.DB	H'FA,H'FB,H'FC,H'FD,H'6E,H'6F,H'4E,H'4F	;    60 to 7F
+	.DB	H'70,H'71,H'50,H'51,H'72,H'73,H'52,H'53
+	.DB	H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F	;blinking 
+
+
+	.DB	H'FA,H'FB,H'FC,H'FD,H'80,H'81,H'82,H'60	;PAL1--------
+	.DB	H'61,H'62,H'40,H'41,H'42,H'E0,H'E1,H'E2	;    80 to FF
+	.DB	H'C0,H'C1,H'C2,H'A0,H'A1,H'A2,H'83,H'84
+	.DB	H'85,H'63,H'64,H'65,H'43,H'44,H'45,H'E3	;dirt/bushes
+	.DB	H'E4,H'E5,H'C3,H'C4,H'C5,H'A3,H'A4,H'A5
+	.DB	H'46,H'66,H'86,H'A6,H'1F,H'1F,H'1F,H'1F
+
+;left-right
+
+XLAT2:	.DB	H'FA,H'FB,H'FC,H'FD,H'02,H'03,H'04,H'05	;PAL2--------
+	.DB	H'06,H'07,H'BF,H'DE,H'DC,H'BD,H'DF,H'DB	;    00 to 5F
+	.DB	H'3D,H'3C,H'3F,H'3E,H'5A,H'1E,H'F9,H'7C
+	.DB	H'B9,H'3B,H'B8,H'BE,H'BC,H'BB,H'BA,H'DA	;normal
+	.DB	H'D9,H'34,H'33,H'32,H'37,H'36,H'35,H'3A
+	.DB	H'39,H'38,H'1F,H'1F,H'8D,H'8C,H'AD,H'AC
+	.DB	H'4D,H'4C,H'6D,H'6C,H'4E,H'6E,H'4F,H'6F 
+	.DB	H'51,H'50,H'71,H'70,H'53,H'52,H'73,H'72
+	.DB	H'8B,H'8A,H'AB,H'AA,H'8E,H'AE,H'8F,H'AF
+	.DB	H'91,H'90,H'B1,H'B0,H'93,H'92,H'B3,H'B2
+	.DB	H'57,H'F8,H'78,H'77,H'98,H'97,H'B7,H'D8
+	.DB	H'D7,H'F7,H'58,H'9C,H'1F,H'1F,H'1F,H'1F
+
+
+	.DB	H'DE,H'3D,H'3C,H'3F,H'3E,H'1E,H'F9,H'7C	;PAL3--------
+	.DB	H'FA,H'FB,H'FC,H'FD,H'4F,H'4E,H'6F,H'6E	;    60 to 7F
+	.DB	H'51,H'50,H'71,H'70,H'53,H'52,H'73,H'72
+	.DB	H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F	;blinking 
+
+
+	.DB	H'FA,H'FB,H'FC,H'FD,H'42,H'41,H'40,H'62	;PAL1--------
+	.DB	H'61,H'60,H'82,H'81,H'80,H'A2,H'A1,H'A0	;    80 to FF
+	.DB	H'C2,H'C1,H'C0,H'E2,H'E1,H'E0,H'45,H'44
+	.DB	H'43,H'65,H'64,H'63,H'85,H'84,H'83,H'A5	;dirt/bushes
+	.DB	H'A4,H'A3,H'C5,H'C4,H'C3,H'E5,H'E4,H'E3
+	.DB	H'46,H'66,H'86,H'A6,H'1F,H'1F,H'1F,H'1F
+
+;both
+
+XLAT3:	.DB	H'FA,H'FB,H'FC,H'FD,H'02,H'03,H'04,H'05	;PAL2--------
+	.DB	H'06,H'07,H'BF,H'DE,H'DC,H'BD,H'DB,H'DF	;    00 to 5F
+	.DB	H'3E,H'3F,H'3C,H'3D,H'5A,H'1E,H'F9,H'7C
+	.DB	H'B9,H'3B,H'B8,H'BE,H'BC,H'DA,H'D9,H'BB	;normal
+	.DB	H'BA,H'3A,H'39,H'38,H'37,H'36,H'35,H'34
+	.DB	H'33,H'32,H'1F,H'1F,H'AD,H'AC,H'8D,H'8C
+	.DB	H'6D,H'6C,H'4D,H'4C,H'6F,H'6E,H'4F,H'4E 
+	.DB	H'71,H'70,H'51,H'50,H'73,H'72,H'53,H'52
+	.DB	H'AB,H'AA,H'8B,H'8A,H'AF,H'AE,H'8F,H'8E
+	.DB	H'B1,H'B0,H'91,H'90,H'B3,H'B2,H'93,H'92
+	.DB	H'F7,H'F8,H'98,H'97,H'97,H'98,H'B7,H'D8
+	.DB	H'D7,H'57,H'58,H'9C,H'1F,H'1F,H'1F,H'1F
+
+
+	.DB	H'DE,H'3E,H'3F,H'3C,H'3D,H'1E,H'F9,H'7C	;PAL3--------
+	.DB	H'FA,H'FB,H'FC,H'FD,H'6F,H'6E,H'4F,H'4E	;    60 to 7F
+	.DB	H'71,H'70,H'51,H'50,H'73,H'72,H'53,H'52
+	.DB	H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F,H'1F	;blinking 
+
+
+	.DB	H'FA,H'FB,H'FC,H'FD,H'82,H'81,H'80,H'62	;PAL1--------
+	.DB	H'61,H'60,H'42,H'41,H'40,H'E2,H'E1,H'E0	;    80 to FF
+	.DB	H'C2,H'C1,H'C0,H'A2,H'A1,H'A0,H'85,H'84
+	.DB	H'83,H'65,H'64,H'63,H'45,H'44,H'43,H'E5	;dirt/bushes
+	.DB	H'E4,H'E3,H'C5,H'C4,H'C3,H'A5,H'A4,H'A3
+	.DB	H'46,H'66,H'86,H'A6,H'1F,H'1F,H'1F,H'1F
+ 
+
+;****************************
+
+HPALINIT:	
+	
+		LDA	#H'02
+		STA	PALINDEX
+		LDA	#H'00
+		STA	PALOFFSET
+		STA	PALSHIFT
+		TYA
+		ROR	A
+		ROR	A
+		ROL	PALSHIFT
+
+		TXA
+		PHA
+
+		LDA	#H'23
+		JSR	HPCHK
+		STA	HPALBUFFER+0
+		JSR	HPCHK
+		STA	HPALBUFFER+3
+		JSR	HPCHK
+		STA	HPALBUFFER+6
+		JSR	HPCHK
+		STA	HPALBUFFER+9
+		JSR	HPCHK
+		STA	HPALBUFFER+12
+		JSR	HPCHK
+		STA	HPALBUFFER+15
+		JSR	HPCHK
+		STA	HPALBUFFER+18
+		JSR	HPCHK
+		STA	HPALBUFFER+21
+		JSR	HPCHK
+		STA	HPALBUFFER+24
+		JSR	HPCHK
+		STA	HPALBUFFER+27
+		
+		PLA
+		TAX
+
+		TXA
+		AND	#H'1F
+		LSR	A
+		LSR	A		;div. by 4
+		STA	COUNT0
+		TYA
+		LSR	A
+		LSR	A
+		ASL	A
+		ASL	A
+		ASL	A		;(div. by 4) * 8
+		CLC
+		ADC	#H'C0
+		ADC	COUNT0
+
+		STA	HPALBUFFER+1
+		JSR	H2CHK
+		STA	HPALBUFFER+4
+		JSR	H2CHK
+		STA	HPALBUFFER+7
+		JSR	H2CHK
+		STA	HPALBUFFER+10
+		JSR	H2CHK
+		STA	HPALBUFFER+13
+		JSR	H2CHK
+		STA	HPALBUFFER+16
+		JSR	H2CHK
+		STA	HPALBUFFER+19
+		JSR	H2CHK
+		STA	HPALBUFFER+22
+		JSR	H2CHK
+		STA	HPALBUFFER+25
+		JSR	H2CHK
+		STA	HPALBUFFER+28
+		
+		LDA	#0
+		STA	HPALBUFFER+2
+		STA	HPALBUFFER+5
+		STA	HPALBUFFER+8
+		STA	HPALBUFFER+11
+		STA	HPALBUFFER+14
+		STA	HPALBUFFER+17
+		STA	HPALBUFFER+20
+		STA	HPALBUFFER+23
+		STA	HPALBUFFER+26
+		STA	HPALBUFFER+29
+
+
+		RTS
+
+
+HPCHK:		LDA	#H'23
+		CPX	#32
+		BCC	HPCHK2
+		LDA	#H'27
+HPCHK2:		PHA
+		TXA
+		CLC
+		ADC	#4
+		CMP	#64
+		BCC	HPCHK3
+		SBC	#64
+HPCHK3:		TAX
+		PLA
+		RTS
+
+
+		
+H2CHK:		CLC
+		ADC	#H'01
+		PHA
+		AND	#H'07
+		BNE	H2OK
+		PLA
+		SEC
+		SBC	#H'08
+		RTS
+H2OK:		PLA
+		RTS
+
+
+
+RXPAL:		
+		STA	ARDAT4	;temp.
+		TYA
+		PHA
+		TXA
+		PHA
+
+		LDA	ARDAT4
+		JSR	GETPAL
+		STA	ARDAT1
+
+		LDY	PALSHIFT
+		LDA	ROFFMASK, Y
+		STA	ARDAT0
+		LDA	PALOFFSET
+		LSR	A
+		TAY
+		LDA	ARDAT0
+		AND	COFFMASK, Y
+		STA	ARDAT0		;mask
+		
+		LDA	ARDAT1
+		TAY
+		LDA	PALTBL, Y
+		AND	ARDAT0
+		STA	ARDAT1		;color
+
+		LDA	ARDAT0
+		EOR	#H'FF
+		STA	ARDAT0
+
+
+		LDA	HORZBUFFER+2	;y. pos.
+		ASL	A
+		ASL	A
+		AND	#H'F0
+		STA	ARDAT2		;(y div 4) * 16
+
+		TXA			;offset in buffer
+		SEC
+		SBC	#3		;kill header space
+		CLC
+		ADC	HORZBUFFER+1	;x. pos. (base)
+		CMP	#64
+		BCC	RXP0
+		SBC	#64
+RXP0:		LSR	A
+		LSR	A
+		CLC
+
+		ADC	ARDAT2
+		STA	ARDAT2		;index into PALGRID
+			      
+		TAY
+		LDA	PALGRID, Y
+		AND	ARDAT0
+		ORA	ARDAT1	
+		STA	PALGRID, Y
+		
+		LDY	PALINDEX
+		STA	HPALBUFFER, Y
+
+
+		INC	PALOFFSET
+		LDA	PALOFFSET
+		CMP	#4
+		BNE	RXPALX
+
+		LDA	#0
+		STA	PALOFFSET
+
+		TYA
+		CLC
+		ADC	#3
+		STA	PALINDEX
+
+RXPALX:
+		PLA
+		TAX
+		PLA
+		TAY
+
+		LDA	ARDAT4
+
+		RTS
+
+
+
+VPALINIT:
+	  	LDA	COUNT0
+	  	PHA
+
+		LDA	#H'02
+		STA	PALINDEX
+
+		LDA	#H'00
+		STA	PALSHIFT
+
+		LDA	YBLOCK
+		AND	#H'03
+		STA	PALOFFSET
+
+		TXA
+		ROR	A
+		ROR	A
+		ROL	PALSHIFT
+
+		LDA	#H'23
+		CPX	#32
+		BCC	VPAL2
+		LDA	#H'27
+VPAL2:		STA	VPALBUFFER+0
+
+		TXA
+		AND	#H'1F
+		LSR	A
+		LSR	A		;div. by 4
+		STA	COUNT0
+		TYA
+		LSR	A
+		LSR	A
+		ASL	A
+		ASL	A
+		ASL	A		;(div. by 4) * 8
+		CLC
+		ADC	#H'C0
+		ADC	COUNT0
+
+		STA	VPALBUFFER+1
+		JSR	V2CHK
+		STA	VPALBUFFER+3
+		JSR	V2CHK
+		STA	VPALBUFFER+5
+		JSR	V2CHK
+		STA	VPALBUFFER+7
+		JSR	V2CHK
+		STA	VPALBUFFER+9
+		JSR	V2CHK
+		STA	VPALBUFFER+11
+		JSR	V2CHK
+		STA	VPALBUFFER+13
+		JSR	V2CHK
+		STA	VPALBUFFER+15
+
+		LDA	#0
+		STA	VPALBUFFER+2
+		STA	VPALBUFFER+4
+		STA	VPALBUFFER+6
+		STA	VPALBUFFER+8
+		STA	VPALBUFFER+10
+		STA	VPALBUFFER+12
+		STA	VPALBUFFER+14
+		STA	VPALBUFFER+16
+
+	    	PLA
+	    	STA	COUNT0
+
+		RTS
+
+V2CHK:		CLC
+		ADC	#H'08
+		BCC	V2OK
+		CLC
+		ADC	#H'C0
+V2OK:		RTS
+
+
+
+
+CXPAL:		
+		STA	ARDAT4	;temp.
+		TYA
+		PHA
+		TXA
+		PHA
+
+
+		LDA	ARDAT4
+		JSR	GETPAL
+		STA	ARDAT1
+
+		LDY	PALSHIFT
+		LDA	COFFMASK, Y
+		STA	ARDAT0
+		LDA	PALOFFSET
+		LSR	A
+		TAY
+		LDA	ARDAT0
+		AND	ROFFMASK, Y
+		STA	ARDAT0		;mask
+		
+		LDA	ARDAT1
+		TAY
+		LDA	PALTBL, Y
+		AND	ARDAT0
+		STA	ARDAT1		;color
+
+		LDA	ARDAT0
+		EOR	#H'FF
+		STA	ARDAT0
+
+
+		LDA	VERTBUFFER+1	;x pos.
+		LSR	A
+		LSR	A
+		STA	ARDAT2
+
+		TXA
+		SEC
+		SBC	#3
+		CLC
+		ADC	VERTBUFFER+2	;y pos.
+		CMP	#30
+		BCC	CXP0
+		SBC	#30
+CXP0:		ASL	A
+		ASL	A
+		AND	#H'F0 		;(y div 4) * 16
+		CLC
+		ADC	ARDAT2
+		STA	ARDAT2		;index to PALGRID
+
+		TAY
+		LDA	PALGRID, Y
+		AND	ARDAT0
+		ORA	ARDAT1	
+		STA	PALGRID, Y
+		
+		LDY	PALINDEX
+		STA	VPALBUFFER, Y
+
+
+		PLA
+		TAX
+
+		SEC
+		SBC	#3
+		CLC
+		ADC	VERTBUFFER+2
+		CMP	#29
+		BEQ	CXPALX0
+
+		INC	PALOFFSET
+		LDA	PALOFFSET
+		CMP	#4
+		BNE	CXPALX1
+
+
+CXPALX0:	LDA	#0
+		STA	PALOFFSET
+
+		TYA			;PALINDEX
+		CLC
+		ADC	#2
+		STA	PALINDEX
+
+
+CXPALX1: 	PLA
+		TAY
+
+		LDA	ARDAT4
+
+		RTS
+
+
+
+ROFFMASK:	.DB	H'0F, H'F0
+COFFMASK:	.DB	H'33, H'CC
+
+PALTBL:		.DB	H'00, H'55, H'AA, H'FF
+
+
+GETPAL:
+
+
+
+;acc = char./index #
+;returns pal. # in accumulator
+
+		PHA		
+
+		LDA	BKGRND
+		BEQ	GETPAL3
+		BPL	GETPAL2
+
+
+;******************************
+;  planet
+;******************************
+
+		PLA
+		BPL	GETPAL1
+;bushes/dirt
+		LDA	#H'00
+		RTS
+
+;space station/turret
+
+GETPAL1:	LDA	#H'01
+		RTS
+
+
+;******************************
+;  space station
+;******************************
+
+GETPAL2:	PLA
+
+		CMP	#H'60
+		BCC	GETPAL2A
+		CMP	#H'6C
+		BCS	GETPAL2A
+
+	 	LDA	#H'03		;blinking...
+		RTS
+		
+GETPAL2A:	LDA	#H'00
+		RTS
+
+;******************************
+;  space
+;******************************
+
+GETPAL3:	PLA
+
+		LDA	OBJINDEX
+		BEQ	GETPAL3E	;stars
+
+		TAY
+		LDA	SYSTEM+2, Y	;type/pal.
+
+		AND	#H'70
+		LSR	A
+		LSR	A
+		LSR	A
+		LSR	A		;shift pal. to low nybble
+		RTS
+		
+GETPAL3E:	LDA	#0
+		RTS
+
+
+;****************************
+
+RXFER:
+
+;TX, TY	= starting pos. in solar system
+;YREL	= offset/line (0..7)
+;X, Y   = starting pos. on screen
+
+		LDA	#40		;no. of bytes
+		STA	HORZBUFFER
+		STX	HORZBUFFER+1
+		STY	HORZBUFFER+2
+
+	JSR	HPALINIT
+
+		LDA	#5		;no. of blocks
+		STA	COUNT0
+
+		LDX	#3
+
+ROWX0:	        TXA
+	        PHA
+        JSR	FINDOBJECT
+
+		LDA	FLIP
+		CMP	#H'01
+		BNE	ROWX0A
+		JMP	RXF01
+ROWX0A:		CMP	#H'02
+		BNE	ROWX0B
+		JMP	RXF02
+ROWX0B:		CMP	#H'03
+		BNE	RXF00
+		JMP	RXF03
+
+;****** NORMAL ***************************************
+
+RXF00:	        PLA
+	        TAX
+	        LDY 	YREL
+		LDA	XROFFTBL, Y
+		TAY
+
+		LDA	#8
+		STA	COUNT1		;no. of bytes per block
+
+RXF00A:		LDA	(OBJPTRL), Y
+		JSR	BKROWTURRET
+	 	JSR	RXPAL
+			
+
+RXF00B:		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	RXF00C
+		LDA	FLIP
+		BMI	RXF00C
+		PLA
+		TAY
+		LDA	XLAT0, Y
+		PHA
+	
+RXF00C:		PLA
+		STA	HORZBUFFER, X
+		INX
+
+		LDY	PHASE0
+		INY
+		DEC	COUNT1
+		BNE	RXF00A
+		INC	TX
+		DEC	COUNT0
+		BNE	ROWX0
+		RTS
+
+
+;****** UPSIDE-DOWN **********************************
+
+RXF01:	        PLA
+	        TAX
+		LDA	#H'07
+		SEC
+		SBC	YREL
+		TAY
+		LDA	XROFFTBL, Y
+		TAY
+		LDA	#8
+		STA	COUNT1		;no. of bytes per block
+RXF01A:		LDA	(OBJPTRL), Y
+		JSR	BKROWTURRET
+		JSR	RXPAL
+
+
+RXF01B:		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	RXF01C
+		LDA	FLIP
+		BMI	RXF01C
+		PLA
+		TAY
+		LDA	XLAT1, Y
+		PHA
+
+RXF01C:		PLA
+		STA	HORZBUFFER, X
+		INX
+
+		LDY	PHASE0
+		INY
+		DEC	COUNT1
+		BNE	RXF01A
+		INC	TX
+		DEC	COUNT0
+		BEQ	RXF01D
+		JMP	ROWX0
+RXF01D:		RTS
+
+;****** LEFT-RIGHT ***********************************
+
+RXF02:	        PLA
+	        TAX
+	        LDY 	YREL
+		LDA	XROFFTBL, Y
+		CLC
+		ADC	#H'07
+		TAY
+		LDA	#8
+		STA	COUNT1		;no. of bytes per block
+
+RXF02A:		LDA	(OBJPTRL), Y
+		JSR	BKROWTURRET
+		JSR	RXPAL
+
+
+RXF02B:		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	RXF02C
+		LDA	FLIP
+		BMI	RXF02C
+		PLA
+		TAY
+		LDA	XLAT2, Y
+		PHA
+
+RXF02C:		PLA
+		STA	HORZBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEY
+		DEC	COUNT1
+		BNE	RXF02A
+		INC	TX
+		DEC	COUNT0
+		BEQ	RXF02D
+		JMP	ROWX0
+RXF02D:		RTS
+
+;****** BOTH *****************************************
+
+RXF03:	        PLA
+	        TAX
+		LDA	#H'07
+		SEC
+		SBC	YREL
+		TAY
+		LDA	XROFFTBL, Y
+		CLC
+		ADC	#H'07
+		TAY
+		LDA	#8
+		STA	COUNT1		;no. of bytes per block
+RXF03A:		LDA	(OBJPTRL), Y
+		JSR	BKROWTURRET
+		JSR	RXPAL
+
+
+RXF03B:		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	RXF03C
+		LDA	FLIP
+		BMI	RXF03C
+		PLA
+		TAY
+		LDA	XLAT3, Y
+		PHA
+RXF03C:		PLA
+		STA	HORZBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEY
+		DEC	COUNT1
+		BNE	RXF03A
+		INC	TX
+		DEC	COUNT0
+		BEQ	RXF03D
+		JMP	ROWX0
+RXF03D:		RTS
+
+;***************		
+
+CXFER:
+
+;TX, TY	= starting pos. in system
+;XREL	= col. # offset (0..7)
+;YREL   = (INITIAL) row offset     (destroyed!!)
+;X, Y	= pos. on screen
+
+
+		LDA	#30
+		STA	COUNT0		;byte count
+		STA	VERTBUFFER
+		STX	VERTBUFFER+1
+		STY	VERTBUFFER+2
+	
+	JSR	VPALINIT
+
+		LDX	#3
+
+
+CXF:		TXA
+		PHA
+		TYA
+		PHA
+	JSR	FINDOBJECT
+
+		PLA
+		TAY
+		PLA
+		TAX
+
+		LDA	FLIP
+		CMP	#H'01
+		BNE	CXFA
+		JMP	CXF01A
+CXFA:		CMP	#H'02
+		BNE	CXFB
+		JMP	CXF02A
+CXFB:		CMP	#H'03
+		BNE	CXF00A
+		JMP	CXF03A
+
+;********* NORMAL ********************************
+
+CXF00A:		
+		LDY	YREL
+		LDA	XREL
+		CLC
+		ADC	XROFFTBL, Y
+		TAY
+
+CXF00B:		LDA	(OBJPTRL), Y
+		JSR	BKCOLTURRET
+		JSR	CXPAL
+
+
+CXF00C:
+		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	CXF00D
+		LDA	FLIP
+		BMI	CXF00D
+		PLA
+		TAY
+		LDA	XLAT0, Y
+		PHA
+
+CXF00D:	   	PLA
+		
+		STA	VERTBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEC	COUNT0
+		BEQ	CXF00E
+		TYA
+		CLC
+		ADC	#8
+		TAY
+		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	CXF00B
+
+		INC	TY
+		LDA	#0
+		STA	YREL
+		JMP	CXF		;always!
+
+CXF00E:		RTS
+
+;********* UPSIDE-DOWN ***************************
+
+CXF01A:		LDA	#7
+		SEC
+		SBC	YREL
+		TAY    
+		LDA	XREL
+		CLC
+		ADC	XROFFTBL, Y
+		TAY
+
+CXF01B:		LDA	(OBJPTRL), Y
+		JSR	BKCOLTURRET
+		JSR	CXPAL
+
+
+CXF01C:
+		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	CXF01D
+		LDA	FLIP
+		BMI	CXF01D
+		PLA
+		TAY
+		LDA	XLAT1, Y
+		PHA
+
+CXF01D:		PLA
+		
+		STA	VERTBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEC	COUNT0
+		BEQ	CXF01E
+		TYA
+		SEC
+		SBC	#8
+		TAY
+		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	CXF01B
+
+		INC	TY
+		LDA	#0
+		STA	YREL
+		JMP	CXF		;always!
+
+CXF01E:		RTS
+
+;********* LEFT-RIGHT ****************************
+
+CXF02A:		
+		LDY	YREL
+		LDA	#H'07
+		SEC
+		SBC	XREL
+		CLC
+		ADC	XROFFTBL, Y
+		TAY
+
+CXF02B:		LDA	(OBJPTRL), Y
+		JSR	BKCOLTURRET
+		JSR	CXPAL
+
+
+CXF02C:
+		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	CXF02D
+		LDA	FLIP
+		BMI	CXF02D
+		PLA
+		TAY
+		LDA	XLAT2, Y
+		PHA
+	
+CXF02D:		PLA
+		
+		STA	VERTBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEC	COUNT0
+		BEQ	CXF02E
+		TYA
+		CLC
+		ADC	#8
+		TAY
+		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	CXF02B
+
+		INC	TY
+		LDA	#0
+		STA	YREL
+		JMP	CXF		;always!
+
+CXF02E:		RTS
+
+;********* BOTH **********************************
+
+CXF03A:		LDA	#H'07
+		SEC
+		SBC	YREL
+		TAY
+		LDA	#H'07
+		SEC
+		SBC	XREL
+		CLC
+		ADC	XROFFTBL, Y
+		TAY
+
+CXF03B:		LDA	(OBJPTRL), Y
+		JSR	BKCOLTURRET
+		JSR	CXPAL
+
+
+CXF03C:
+		STY	PHASE0
+		PHA
+		LDA	BKGRND
+		BEQ	CXF03D
+		LDA	FLIP
+		BMI	CXF03D
+		PLA
+		TAY
+		LDA	XLAT3, Y
+		PHA
+
+CXF03D:		PLA
+		
+		STA	VERTBUFFER, X
+		INX
+
+		LDY	PHASE0
+		DEC	COUNT0
+		BEQ	CXF03E
+		TYA
+		SEC
+		SBC	#8
+		TAY
+		INC	YREL
+		LDA	YREL
+		CMP	#8
+		BCC	CXF03B
+
+		INC	TY
+		LDA	#0
+		STA	YREL
+		JMP	CXF		;always!
+
+CXF03E:		RTS
+	   
+
+
+
+XROFFTBL:	.DB	0, 8, 16, 24, 32, 40, 48, 56, 64
+
+
+
+;*** NEW ***
+
+SET_GUN:
+
+;PHASE1 = turret #
+
+		TXA
+		PHA
+		TYA
+		PHA
+
+		LDA	PHASE1
+		CMP	TWR_MAX
+		BCS	SG_NO
+		STA	LOGIC_TEMP
+		TAY
+		LDA	GUN_STAT,Y
+		AND	#H'80
+		BEQ	SG_NO
+		LDX	#3
+		JSR	GUN_CHK
+		BEQ	SG_NO
+		LDX	#3
+		JSR	GUN_SPC
+		BEQ	SG_NO
+		LDY	LOGIC_TEMP
+		STY	TURRET_1,X
+
+		LDA	SPRXH
+		STA	GUN_XH,Y
+		LDA	SPRXL
+		STA	GUN_XL,Y
+		LDA	SPRYH
+		STA	GUN_YH,Y
+		LDA	SPRYL
+		STA	GUN_YL,Y
+	
+		LDA	GUN_STAT,Y
+		ORA	#H'40
+		STA	GUN_STAT,Y
+		LDA	#0
+		STA	GUN_PHASE,Y
+SG_NO:
+		PLA
+		TAY
+		PLA
+		TAX
+
+		RTS
+
+
+GUN_SPC:
+		LDA	TURRET_1,X
+		BMI	GS_DONE
+		DEX
+		BPL	GUN_SPC
+		LDA	#0
+		RTS
+GS_DONE:
+		LDA	#1
+		RTS
+
+GUN_CHK:
+		LDA	TURRET_1,X
+		CMP	LOGIC_TEMP
+		BEQ	GC_NO
+		DEX
+		BPL	GUN_CHK
+		LDA	#1
+		RTS
+GC_NO:
+		LDA	#0
+		RTS
+
+;**********************************
+
+SETSTN:		PHA
+		TYA
+		PHA
+		TXA
+		PHA
+
+		LDY	#1
+		LDX	#-1
+
+SETSTN1:	LDA	SYSTEM+2, Y	;type/pal.
+		AND	#H'70
+		BEQ	SETSTN1A	;space stn?
+		JMP	SETSTNX
+
+SETSTN1A:	INX
+		LDA	SYSTEM+0, Y	;x-pos.
+		CMP	TX
+		BNE	SETSTN2
+SETSTN0:
+		LDA	SYSTEM+1, Y	;y-pos.
+		CMP	TY
+		BNE	SETSTN2
+
+SETSTN1B:
+
+;found
+		LDA	STN_STAT, X
+		BNE	SETSTN1C
+		JMP	SETSTNX
+SETSTN1C:
+		STX	LOGIC_TEMP
+		LDX	#1
+		JSR	GUN_CHK
+		BNE	SETSTN1D
+		JMP	SETSTNX
+SETSTN1D:
+		LDX	#1
+		JSR	GUN_SPC
+		BNE	SETSTN1E
+		JMP	SETSTNX
+SETSTN1E:
+		LDA	LOGIC_TEMP
+		STA	TURRET_1,X
+		TAX
+	
+		LDA	STN_STAT, X
+		ORA	#H'40		;ON SCREEN
+		STA	STN_STAT, X
+
+		LDA	SPRXH
+		STA	STN_XH, X
+		LDA	SPRXL
+		STA	STN_XL, X
+		LDA	SPRYH
+		STA	STN_YH, X
+		LDA	SPRYL
+		STA	STN_YL, X
+
+		JMP	SETSTNX
+
+SETSTN2:	TYA
+		CLC
+		ADC	#4
+		TAY
+		CPX	#8
+		BCS	SETSTNX
+		JMP	SETSTN1
+
+SETSTNX:	PLA
+		TAX
+		PLA
+		TAY	      
+		PLA
+		
+		RTS	;Error!
+
+;**********************************
+
+
+SETROWPOS:
+		TXA
+		CMP	XREL
+		BCS	SETROW0
+
+		LDA	#H'00	;0 = NO GUN/STATION!
+		RTS	
+
+SETROW0:
+		SEC
+		SBC	XREL
+		CLC
+		ASL	A
+		CLC
+		ADC	#H'5A
+		STA	SPRXH
+		LDA	#0
+		STA	SPRXL
+
+		LDA	YMOVE
+		BEQ	SETRP2
+		BMI	SETRP
+
+		LDA	#H'99	;9B
+		STA	SPRYH
+		LDA	#H'00
+		STA	SPRYL
+		JMP	SETCP_B
+
+SETRP:		
+		LDA	#H'5F
+		STA	SPRYH
+		LDA	#H'00
+		STA	SPRYL
+		JMP	SETCP_B
+
+
+SETRP2:		LDA	HORZBUFFER+2
+		CLC
+		ASL	A
+		ASL	A
+		ASL	A
+		PHA
+		LDA	#0
+		STA	SPRYL
+		PLA
+		ROR	A
+		ROR	SPRYL
+		ROR	A
+		ROR	SPRYL
+		CLC
+		ADC	#H'5F
+		STA	SPRYH
+		LDA	VEL_X
+		BEQ	SETRP2A
+		DEC	SPRYH
+		DEC	SPRYH
+		
+SETRP2A:
+		LDA	#H'01		;1 = OK!
+		JMP	COLROWADJ
+		
+			
+;**********************************
+
+SETCOLPOS:	TXA
+		CLC
+		ASL	A
+		CLC
+		ADC	#H'59
+		STA	SPRYH
+		LDA	#0
+		STA	SPRYL
+
+		LDA	XMOVE
+		BMI	SETCP1
+
+		LDA	#H'A0	;9E
+		STA	SPRXH
+		LDA	#H'00
+		STA	SPRXL
+		LDA	XMOVE
+		JMP	SETCP_A
+
+SETCP1:		LDA	#H'5F	;5F
+		STA	SPRXH
+		LDA	#H'00
+		STA	SPRXL
+		LDA	XMOVE
+		JSR	ABSVAL
+		LDA	#4
+		SEC	
+		SBC	ABS
+SETCP_A:
+		CLC
+		ROR	A
+		ROR	SPRXL
+		ROR	A
+		ROR	SPRXL
+		CLC
+		ADC	SPRXH
+		STA	SPRXH
+
+SETCP_B:	
+		LDA	YMOVE
+		BPL	SETCP2
+		JSR	ABSVAL
+		DEC	SPRYH
+		LDA	#4
+		SEC
+		SBC	ABS
+SETCP2:
+		CLC
+		ROR	A
+		ROR	SPRYL
+		ROR	A
+		ROR	SPRYL
+		CLC
+		ADC	SPRYH
+		STA	SPRYH
+
+		LDA	#H'01	;1 = OK!
+
+
+COLROWADJ:	PHA		;save return code!
+		LDA	COUNT0
+		PHA
+		LDA	COUNT1
+		PHA
+
+	
+		LDA	#0
+		STA	COUNT0
+		LDA	XBOFF
+		CLC
+		ROR	A
+		ROR	COUNT0
+		ROR	A
+		ROR	COUNT0
+		STA	COUNT1
+		LDA	SPRXL
+		SEC
+		SBC	COUNT0
+		STA	SPRXL
+		BCS	CRA_0
+		INC	COUNT1
+CRA_0:
+		LDA	SPRXH
+		SEC
+		SBC	COUNT1
+		STA	SPRXH
+
+		LDA	#0
+		STA	COUNT0
+		LDA	YBOFF
+		CLC
+		ROR	A
+		ROR	COUNT0
+		ROR	A
+		ROR	COUNT0
+		STA	COUNT1
+		LDA	SPRYL
+		SEC
+		SBC	COUNT0
+		STA	SPRYL
+		BCS	CRA_1
+		INC	COUNT1
+CRA_1:
+		LDA	SPRYH
+		SEC
+		SBC	COUNT1
+		CLC
+		ADC	#1
+		STA	SPRYH
+
+		PLA
+		STA	COUNT1
+		PLA
+		STA	COUNT0
+
+		PLA			;return code!
+		RTS
+
+;****************************************
+
+BKROWTURRET:
+
+		PHA	
+		LDA	BKGRND
+		BNE	BKROW2
+
+		PLA
+		CMP	#H'00
+		BEQ	BKROW1
+		RTS
+
+BKROW1:		PHA
+		JSR	SETROWPOS
+		CMP	#H'00		;station "center"
+		BEQ	BKROW1A
+		JSR	SETSTN		;enable space station
+BKROW1A:	PLA
+		RTS
+
+BKROW2:		PLA
+		CMP	#H'25		;turret "center"
+		BEQ	BKROW3
+		RTS
+
+BKROW3:		PHA
+		JSR	SETROWPOS
+		CMP	#H'00
+		BEQ	BKROW3A
+		JSR	GETGUNINDEX
+		JSR	SET_GUN
+BKROW3A:	PLA
+		RTS
+
+
+
+BKCOLTURRET:
+
+		PHA
+		LDA	BKGRND
+		BNE	BKCOL2
+		
+		PLA
+		CMP	#H'00		;space station "center"
+		BEQ	BKCOL1
+		RTS
+
+BKCOL1:		PHA
+		JSR	SETCOLPOS
+		JSR	SETSTN		;enable space station
+		PLA
+		RTS
+
+BKCOL2:		PLA
+		CMP	#H'25		;turret "center"
+		BEQ	BKCOL3
+		RTS
+
+BKCOL3:		PHA
+		JSR	SETCOLPOS
+		JSR	GETGUNINDEX
+		LDA	PHASE1
+		JSR	SET_GUN
+		PLA
+		RTS
+
+
+;***************************************
+
+ABSVAL:		STA	ABS
+		BPL	ABSVAL1
+		LDA	#0
+		SEC
+		SBC	ABS
+		STA	ABS
+ABSVAL1:	RTS
+
+;***************************************
+
+GETGUNINDEX:
+
+;
+;(TX, TY) = current block
+;returns with index in PHASE1
+;
+
+		PHA
+		TYA
+		PHA
+
+
+		LDA	BKGRND
+		BMI	GGISET1
+;space station
+		LDA	#STN_GUNS &H'FF
+		STA	PTR3L
+		LDA	#STN_GUNS >> 8
+		STA	PTR3H
+		JMP	GGISET3
+
+GGISET1:	CMP	#H'80
+		BEQ	GGISET2
+;planet surface
+		LDA	#P1_GUNS &H'FF
+		STA	PTR3L
+		LDA	#P1_GUNS >> 8
+		STA	PTR3H
+		JMP	GGISET3
+
+GGISET2:	;P'radikus
+
+		LDA	#PRAD_GUN &H'FF
+		STA	PTR3L
+		LDA	#PRAD_GUN >> 8
+		STA	PTR3H
+
+GGISET3:	LDY	#0
+
+GGI0:		LDA	(PTR3L), Y
+		CMP	TX
+		BNE	GGI1
+
+		INY
+		LDA	(PTR3L), Y
+		CMP	TY
+		BNE	GGI2
+	
+		TYA
+		CLC
+		LSR	A	;divide by 2
+		STA	PHASE1
+
+
+		PLA
+		TAY
+		PLA
+
+		RTS
+
+GGI1:		INY
+GGI2:		INY
+		TYA
+		CLC
+		LSR	A
+		CMP	TWR_MAX
+		BCC	GGI0
+	
+		LDA	#H'FF
+		STA	PHASE1
+
+GGI3:		PLA
+		TAY
+		PLA
+
+		RTS
+	
+;*******************************
+
+
+GETBLOCK: 	;block num in X-reg.
+ 		
+
+		LDA	BKGRND
+		BMI	GETBLK0
+		
+		LDA	SSOBJL, X
+		STA	OBJPTRL
+		LDA	SSOBJH, X
+		STA	OBJPTRH
+		RTS
+
+GETBLK0:	;planet surface
+
+		LDA	PPOBJL, X
+		STA	OBJPTRL
+		LDA	PPOBJH, X
+		STA	OBJPTRH
+		RTS
+
+
+OBJ_NIL:
+
+;set up OBJPTR for a "random" star field
+
+		LDA	TIMER0
+		AND	#H'03
+		CLC
+		ADC	#STARS >>8
+		STA	OBJPTRH
+
+		JSR	RANDOM
+		AND	#H'BF		;10111111 (so obj. doesn't cross page)
+		CLC
+		ADC	#STARS &H'FF
+		STA	OBJPTRL
+
+		LDA	OBJPTRH
+		ADC	#0
+		STA	OBJPTRH
+
+		RTS
+
+
+
+
+GETOBJPTR:
+
+;based on solar system data item pointed to by
+;'x pos.' byte set up OBJPTR to draw obj.
+
+		LDA 	SYSTEM+2, Y	;type/pal.
+		AND	#H'70
+		BEQ	GET_SPSTAT	;space stn?
+GET_SUN:
+GET_PLANET:
+		LDA	SYSTEM+2, Y	;get size (2-6) in lo. nyb.
+		AND	#H'0F
+		TAY
+		LDA	OBJ_PL, Y
+		STA	OBJPTRL
+		LDA	OBJ_PH, Y
+		STA 	OBJPTRH
+		RTS
+
+GET_SPSTAT:	LDA	SYSTEM+3, Y	;get data
+		AND	#INHAB
+		BEQ	GET_SP0
+
+GET_SP2:
+		LDA	#ST_BLK &H'FF
+		STA	OBJPTRL
+		LDA	#ST_BLK >>8
+		STA	OBJPTRH
+		RTS
+
+GET_SP0:	JMP	OBJ_NIL		;no station
+
+
+;************************************
+
+
+
+
+
+VR_WAIT:			;wait for vertical retrace
+	LDA	Vid_Reset
+	BPL	VR_WAIT
+	RTS
+
+KILL_VID:	
+	LDA	#6
+	STA	VID_MODE
+	RTS
+
+SET_VID:
+	LDA	V_SEL
+	STA	VID_SEL
+	LDA	V_MODE
+	STA	VID_MODE
+		   
+	LDA	VID_RESET
+	LDA	XSCROLL
+	STA	SCR_REG
+	LDA	YSCROLL
+	STA	SCR_REG
+	RTS
+
+
+;************************************************
+;
+; MISC. SOUND
+;
+;************************************************
+
+BEEP1:	LDA	#H'1F
+	JMP	BEEPA
+
+BEEP2:	LDA	#H'0F
+	;-------------fall through to BEEPA
+
+;THIS ROUTINE WILL PRODUCE A DIFFERENT BEEP FOR EACH VALUE IN A.  IT SAVES
+;ALL REGISTERS.
+
+BEEPA:
+	STA	BEEPREG
+	PHA
+	TXA
+	PHA
+	TYA
+	PHA
+
+	LDA	#1
+	STA	H'4015
+	LDA	BEEPREG
+	LDY	#0
+	ASL	A
+	TAX
+	TYA
+	ROL	A
+	TAY
+	TXA
+	ASL	A
+	TAX
+	TYA
+	ROL	A
+	STX	H'4002
+	STA	H'4003	
+	PLA
+	TAY
+	PLA
+	TAX
+	PLA
+	RTS
+
+;************************************************
+
+
+
+;read joystick 1 -- returns w/ X=new joystick val.,
+;		    A=undefined, Y is unchanged...
+;04/26/89
+
+JSTICK1:	LDA	#1
+		STA	Jport1
+		LDA	#0
+		STA	Jport1		;latch joystick
+
+		LDX	#8
+JS1A:		PHA			;save current status byte
+		LDA	Jport1
+		ROR	A		;rotate bit into carry
+		PLA
+		ROL	A		;rotate carry into status byte
+		DEX
+		BNE	JS1A		;read all 8 "buttons"
+	
+		TAX			;save new val.
+		EOR	J1VAL
+		STA	J1CHG
+		TXA
+		STA	J1VAL
+		AND	J1CHG		;find what buttons were just pressed
+		STA	J1CHG
+
+		BEQ	JS1B		;no buttons were just pressed
+		LDA	TIMER0
+		ADC	J1VAL
+		STA	RAND		;player just selected new seed
+
+JS1B:		
+		LDA	J1CHG
+		AND	#SELECT
+		BNE	JS1C
+		LDA	J1CHG
+		AND	#B_BTN
+		BNE	JS1C
+		LDA	J1CHG
+		AND	#A_BTN
+		BNE	JS1D
+		RTS
+
+JS1C:		JMP	BEEP2
+JS1D:		JMP	BEEP1
+
+
+
+
+
+
+RANDOM:	LDA	RAND
+	ADC	TIMER0
+	ADC	#H'EA
+	STA	RAND
+	RTS
+
+
+
+BIGDELAY:
+		TYA
+		PHA
+		LDY	#0
+
+BDELAY:		LDX	#0
+BDELAY0: 	DEX
+		BNE	BDELAY0
+		DEY
+		BNE	BDELAY
+
+		PLA
+		TAY
+		DEY
+		BNE	BIGDELAY
+		RTS
+
+
+ZAP_SPRITES:
+
+;
+;Y-reg = starting index
+
+	LDA	#H'F8
+ZAP_S0:	STA	SPRTBL0, Y
+	STA	SPRTBL1, Y
+	INY
+	BNE	ZAP_S0
+	RTS
+
+
+
+DMAXFER:	
+	LDA	VID_RESET
+	LDA	#0
+	STA	SPR_PTR
+	STA	SPR_PTR
+	INC	COMPTIME
+	BNE	DMAXF0
+	INC	OBJINDEX
+
+DMAXF0:
+	LDA	COMPTIME
+
+	ROR	A
+	BCC	DMAXF1
+
+	LDA	#SPRTBL1 >>8
+	STA	DMA
+	JMP	DMAXF2
+
+DMAXF1:	LDA	#SPRTBL0 >>8
+	STA	DMA
+
+DMAXF2:	LDA	COMPTIME
+	AND	#H'1E		;was H'0F w/no LSR
+	LSR	A
+	TAY
+	LDA	FLSHCOL2, Y	;player ship pos. indicator
+	STA	SPALREGS+9
+	STA	SPALREGS+11
+	LDA	FLASHCOL, Y	;cursor, gun pos. indicator
+	STA	SPALREGS+14
+	JSR	SPALXFER
+
+	
+	LDA	XSCROLL
+	STA	SCR_REG
+	LDA	YSCROLL
+	STA	SCR_REG
+
+	RTS
+
+FLASHCOL:	.DB	H'0E,H'06,H'06,H'06,H'16,H'16,H'16
+	.DB	H'26,H'26,H'26,H'26,H'26,H'26,H'26
+
+FLSHCOL2:	.DB	H'14,H'14,H'24,H'24,H'24,H'24,H'24
+	.DB	H'0E,H'04,H'04,H'04,H'04,H'14,H'14
+
+
+
+
+
+SPALXFER:	LDA	VID_RESET
+		LDA	#H'3F
+		STA	VID_PTR
+		LDA	#H'11
+		STA	VID_PTR
+	
+		LDY	#1
+SPALX0:		LDA	SPALREGS, Y
+		STA	VID_DATA
+		INY
+		CPY	#H'10
+		BNE	SPALX0
+		RTS
+
+
+;**********************************************************
+
+GETORBIT:	
+
+;returns index (into "SYSTEM") of object that
+;player is currently "orbiting"...
+; 	(00 if none)
+
+		LDA	BKGRND
+		BEQ	GETORBX
+		RTS			;keep old val. if not in space
+
+GETORBX:	LDY	#1
+		LDA	SYSTEM
+		STA	T0
+
+GETORB0:	LDA	SYSTEM+0, Y	;xpos
+		CMP	XPOS
+		BNE	GETORB1
+		LDA	SYSTEM+1, Y	;ypos
+		CMP	YPOS
+		BNE	GETORB1
+
+		TYA
+		STA	ORBIT
+		RTS
+
+GETORB1:	TYA
+		CLC
+		ADC	#H'04
+		TAY
+		DEC	T0
+		BNE	GETORB0
+
+		LDA	#H'00
+		STA	ORBIT
+		RTS
+		
+;*************************************
+
+
+;************************************************
+;	COMPUTER DISPLAY MODE
+;************************************************
+
+TESTCOMP:	LDA	#H'1E
+		STA	V_MODE
+	
+		JSR	VR_WAIT
+		JSR	SET_VID
+		JSR	DMAXFER
+	
+		JSR	DISPCOMP
+
+TESTC0:		LDA	BKGRND
+		BNE	TESTC1
+;in space
+		LDA	WARP
+		BEQ	TESTC0B
+		BPL	TESTC0A		;enemy base destroyed!
+
+		LDA	GALAXY_X
+		STA	CX
+		LDA	GALAXY_Y
+		STA	CY
+		JSR	GETSECTOR
+
+		LDA	SECTOR_X
+		STA	CX
+		LDA	SECTOR_Y
+		STA	CY
+		LDA	#0
+		STA	WARP
+		JSR	NEWSYSTEM	;BECAUSE TURRETS OCCUPY SYSTEM SPACE
+		JMP	TESTC0B
+
+TESTC0A:	LDA	#0
+		STA	WARP
+		JSR	LOADSYSTEM	;BECAUSE TURRETS OCCUPY SYSTEM SPACE
+		LDY	ORBIT
+		LDA	SYSTEM+0,Y	;xpos
+		STA	DEST_X
+		LDA	SYSTEM+1,Y	;ypos
+		STA	DEST_Y
+
+		LDA	SAVE_X
+		STA	XPOS
+		LDA	SAVE_Y
+		STA	YPOS
+
+	JSR	CW_1
+	JSR	CW_2
+	JSR	CW_3
+	JSR	STAR_W2
+	JSR	SCAN	
+		LDA	#0
+		JMP	TESTCX
+
+TESTC0B:	JSR	GETORBIT
+		LDA	ORBIT
+		BEQ	TESTC2
+;orbiting
+TESTC1A:
+		JSR	COMP_05
+		JMP	TESTCX
+
+; planet/space station
+
+TESTC1:		JSR	C05_D
+		JMP	TESTCX
+
+;normal space
+
+TESTC2:		JSR	CW_2
+		JSR	CW_3
+		JSR	STAR_W2
+		JSR	DRSYSMAP
+		JSR	SYS_POS
+		LDA	#1
+
+TESTCX:		PHA
+		LDA	COMPITEM	;Non-zero if base is destroyed...
+
+		BEQ	TESTCX0
+		JSR	PROCITEM
+
+	LDY	#1
+	STY	CRSR_I		;START IT AT THE FIRST ENTRY IN THE SYSTEM
+	JSR	SKIPDEAD
+	LDA	SYSTEM+0,Y	;Y points to x pos. byte
+	STA	CURSORX
+	LDA	SYSTEM+1,Y	;y pos.
+	STA	CURSORY
+  ;;	LDA	#0
+  ;;	STA	ORBIT
+
+		JSR	LV_ORB
+TESTCX0:
+		PLA
+		BMI	TESTCX1
+		JSR	COMP_00
+
+TESTCX1:	JSR	VR_WAIT
+		JSR	KILL_VID
+
+		LDA	#H'00
+		STA	J1CHG
+
+		RTS
+		
+	
+
+
+
+        
+;*******************************************
+;	COMPUTER DISPLAY ROUTINES
+;*******************************************
+
+NUMTAB:		.DB	H'F0, H'F1, H'F2, H'F3, H'F4
+		.DB	H'F5, H'F6, H'F7, H'F8, H'F9
+
+
+WPNCHR:		.DB	H'BC	;cloaking device
+		.DB	H'D0	;mines
+		.DB	H'EA	;missiles
+		.DB	H'BB	;emp wave
+		.DB	H'5E	;thunderbolt
+		.DB	H'B0
+
+
+W1AB0:		.DB	0, 0, " CANNON ", -1
+W1AB1:		.DB	0, 0, "A-CANNON", -1
+W1AB2:		.DB	0, 0, "L. LASER", -1
+W1AB3:		.DB	0, 0, "H. LASER", -1
+
+W2AB0:		.DB	0, 0, " NO WPN ", -1
+W2AB1:		.DB	0, 0, "CLOAK DV", -1
+W2AB2:		.DB	0, 0, "  MINE  ", -1
+W2AB3:		.DB	0, 0, "MISSILES", -1
+W2AB4:		.DB	0, 0, "EMP WAVE", -1
+W2AB5:		.DB	0, 0, " T-BOLT ", -1
+
+
+
+W1SNL:		.DB	W2AB0 &H'FF, W1AB0 &H'FF 
+		.DB	W1AB1 &H'FF, W1AB2 &H'FF, W1AB3 &H'FF 
+W1SNH:		.DB	W2AB0 >>8,   W1AB0 >>8
+		.DB	W1AB1 >>8,   W1AB2 >>8,   W1AB3 >>8
+
+W2SNL:		.DB	W2AB0 &H'FF, W2AB1 &H'FF, W2AB2 &H'FF
+		.DB	W2AB3 &H'FF, W2AB4 &H'FF, W2AB5 &H'FF
+W2SNH:		.DB	W2AB0 >>8,   W2AB1 >>8,   W2AB2 >>8
+		.DB	W2AB3 >>8,   W2AB4 >>8,   W2AB5 >>8
+
+
+SPRNUM:		
+
+; ACC = number/value
+;
+; returns with Y = 10's, X = 1's digits
+;
+
+		LDY	#0
+SPRNUM0:	CMP	#10
+		BCC	SPRNUM1
+		SEC
+		SBC	#10
+		INY
+		JMP	SPRNUM0
+SPRNUM1:	TAX
+		LDA	NUMTAB, Y
+		PHA
+		TXA
+		TAY
+		LDA	NUMTAB, Y
+		TAX
+		PLA
+		TAY
+		RTS	
+
+
+DISPCOMP:	LDA	#H'19 	;STATUS INDICATOR
+		STA	SPRTBL0+H'08
+		STA	SPRTBL0+H'0C
+		STA	SPRTBL0+H'10
+		STA	SPRTBL0+H'14
+		LDA	#H'D9
+		STA	SPRTBL0+H'09
+		STA	SPRTBL0+H'15
+		LDA	#H'FB
+		STA	SPRTBL0+H'0D
+		STA	SPRTBL0+H'11
+
+		LDA	STATUS
+		BMI	DC_CRIT
+		LDA	#H'02
+		JMP	DC_STATUS
+
+DC_CRIT:	LDA	#H'03
+
+DC_STATUS:	STA	SPRTBL0+H'0A	;palette
+		STA	SPRTBL0+H'0E
+		STA	SPRTBL0+H'12
+		STA	SPRTBL0+H'16
+		LDA	#H'3E
+		STA	SPRTBL0+H'0B
+		LDA	#H'44
+		STA	SPRTBL0+H'0F
+		LDA	#H'4A
+		STA	SPRTBL0+H'13
+		LDA	#H'50
+		STA	SPRTBL0+H'17
+
+
+		LDA	#H'29	;SCORE
+		STA	SPRTBL0+H'04
+		STA	SPRTBL0+H'18
+		STA	SPRTBL0+H'1C
+		STA	SPRTBL0+H'20
+		STA	SPRTBL0+H'24
+		STA	SPRTBL0+H'28
+		STA	SPRTBL0+H'2C
+		LDY	SC1M
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'05
+		LDY	SC100000
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'19
+		LDY	SC10000
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'1D
+		LDY	SC1000
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'21
+		LDY	SC100
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'25
+		LDY	SC10
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'29
+		LDY	SC1
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'2D
+		LDA	#H'00
+		STA	SPRTBL0+H'06
+		STA	SPRTBL0+H'1A
+		STA	SPRTBL0+H'1E
+		STA	SPRTBL0+H'22
+		STA	SPRTBL0+H'26
+		STA	SPRTBL0+H'2A
+		STA	SPRTBL0+H'2E
+		LDA	#H'1C
+		STA	SPRTBL0+H'07
+		LDA	#H'24
+		STA	SPRTBL0+H'1B
+		LDA	#H'2C
+		STA	SPRTBL0+H'1F
+		LDA	#H'34
+		STA	SPRTBL0+H'23
+		LDA	#H'3C
+		STA	SPRTBL0+H'27
+		LDA	#H'44
+		STA	SPRTBL0+H'2B
+		LDA	#H'4C
+		STA	SPRTBL0+H'2F
+
+
+		LDA	#H'39	;FUEL/ARMOR/SHIELDS
+		STA	SPRTBL0+H'30
+		STA	SPRTBL0+H'34
+		LDA	#H'41
+		STA	SPRTBL0+H'38
+		STA	SPRTBL0+H'3C
+		LDA	#H'49
+		STA	SPRTBL0+H'40
+		STA	SPRTBL0+H'44
+		LDA	FUEL
+		JSR	SPRNUM
+		STY	SPRTBL0+H'31
+		STX	SPRTBL0+H'35
+		LDA	ARMOR
+		JSR	SPRNUM
+		STY	SPRTBL0+H'39
+		STX	SPRTBL0+H'3D
+		LDA	SHIELD
+		JSR	SPRNUM
+		STY	SPRTBL0+H'41
+		STX	SPRTBL0+H'45
+		LDA	#H'00
+		STA	SPRTBL0+H'32
+		STA	SPRTBL0+H'36
+		STA	SPRTBL0+H'3A
+		STA	SPRTBL0+H'3E
+		STA	SPRTBL0+H'42
+		STA	SPRTBL0+H'46
+		LDA	#H'48
+		STA	SPRTBL0+H'33
+		STA	SPRTBL0+H'3B
+		STA	SPRTBL0+H'43
+		LDA	#H'50
+		STA	SPRTBL0+H'37
+		STA	SPRTBL0+H'3F
+		STA	SPRTBL0+H'47
+
+		
+		LDA	#H'59	;DRIVE/PWR-PL/SHIELD
+		STA	SPRTBL0+H'48
+		LDA	#H'61
+		STA	SPRTBL0+H'4C
+		LDA	#H'69
+		STA	SPRTBL0+H'50
+		LDY	DRIVE
+		LDA 	NUMTAB, Y
+		STA	SPRTBL0+H'49
+		LDY	PWRPLANT
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'4D
+		LDY	SHLDTYPE
+		LDA	NUMTAB, Y
+		STA	SPRTBL0+H'51
+		LDA	#H'00
+		STA	SPRTBL0+H'4A
+		STA	SPRTBL0+H'4E
+		STA	SPRTBL0+H'52
+		LDA	#H'4F
+		STA	SPRTBL0+H'4B
+		STA	SPRTBL0+H'4F
+		STA	SPRTBL0+H'53
+
+
+		LDY	WPN1
+		LDX	W1SNL, Y
+		LDA	W1SNH, Y
+		TAY
+		LDA	#2
+		STA	TX
+		LDA	#15
+		STA	TY
+		JSR	XYPRINT
+
+		LDA	WPN2
+		BEQ	DISPC1
+		SEC
+		SBC	#CLOAK - 1	;CLOAK IS OFFSET 1 IN THE WPN2 NAME TABLE
+
+
+DISPC1:
+		TAY
+		LDX	W2SNL, Y
+		LDA	W2SNH, Y
+		TAY
+		LDA	#2
+		STA	TX
+		LDA	#17
+		STA	TY
+		JSR	XYPRINT
+
+		LDA	WPN2
+		BEQ	DISPC0
+		LDA	#H'99
+		STA	SPRTBL0+H'54
+		LDA	WPN2
+		SEC
+		SBC	#CLOAK
+		TAY
+		LDA	WPNCHR, Y
+		STA	SPRTBL0+H'55
+		LDA	#H'03
+		STA	SPRTBL0+H'56
+		LDA	#H'28
+		STA	SPRTBL0+H'57
+
+		LDA	#H'99
+		STA	SPRTBL0+H'58
+		STA	SPRTBL0+H'5C
+		LDA	#00
+		STA	PTR0H
+		LDA	WPN2
+		STA	PTR0L
+		LDY	#0
+		LDA	(PTR0L), Y
+		JSR	SPRNUM
+		STY	SPRTBL0+H'59
+		STX	SPRTBL0+H'5D
+		LDA	#H'00
+		STA	SPRTBL0+H'5A
+		STA	SPRTBL0+H'5E
+		LDA	#H'38
+		STA	SPRTBL0+H'5B
+		LDA	#H'40
+		STA	SPRTBL0+H'5F
+		
+
+DISPC0:		LDY	#H'5F
+DISPC0A:	LDA	SPRTBL0, Y
+		STA	SPRTBL1, Y
+		DEY
+		BPL	DISPC0A
+
+;******************
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+
+DB_FUEL:	LDX	#H'03
+		LDY	#H'06
+		LDA	FUEL
+		JSR	DB_BAR
+
+DB_ARMOR:	LDX	#H'03
+		LDY	#H'07
+		LDA	ARMOR
+		JSR	DB_BAR
+
+DB_SHIELD:	LDX	#H'03
+		LDY	#H'08
+		LDA	SHIELD
+		JSR	DB_BAR
+
+		JSR	DMAXFER
+		JSR	SET_VID
+		
+		RTS
+
+;******************
+
+DB_BAR:		PHA
+
+		LDA	VID_RESET
+		STX	TX
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	TX
+		STA	VID_PTR
+
+		LDY	#4
+		PLA
+
+DB_BAR1:	CMP	#25
+		BCC	DB_BAR2
+		DEY
+		PHA
+		LDA	#H'95
+		STA	VID_DATA
+		PLA
+		SEC
+		SBC	#25
+		JMP	DB_BAR1
+
+DB_BAR2:	CPY	#0
+		BEQ	DB_BAR5
+		
+		CLC
+		LSR	A
+		LSR	A
+		STA	T0
+		LSR	A
+		LSR	A
+		CLC
+		ADC	T0	;1/4 + 1/16 = 1/3 (approx.)
+		TAX
+		LDA	BARTAB, X
+		STA	VID_DATA
+		DEY
+
+DB_BAR3:	CPY	#0
+		BEQ	DB_BAR5
+
+		LDA	#H'5C
+DB_BAR4:	STA	VID_DATA
+		DEY
+		BNE	DB_BAR4
+
+DB_BAR5:	RTS
+		
+BARTAB:		.DB	H'5C,H'54,H'55,H'56,H'74
+		.DB	H'75,H'76,H'94,H'95
+	
+;******************
+
+
+
+
+
+CW_1:
+	JSR	REMARROW
+	LDA	#H'13
+	STA	CY
+	LDA	#H'01	
+	STA	CX
+	LDY	#6
+	LDX	#8
+	JMP	DRAWWIND
+
+CW_2:
+		LDA	#H'01
+		STA	CY
+		LDA	#H'0B
+		STA	CX
+		LDY	#16
+		LDX	#16
+		JSR	DRAWWIND
+
+;clear palettes
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'C3
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'CB
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'D3
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'DB
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		LDA	#H'23
+		STA	VID_PTR
+		LDA	#H'E3
+		STA	VID_PTR
+		LDA	#H'00
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+		STA	VID_DATA
+
+		JSR	DMAXFER
+		JMP	SET_VID
+
+
+CW_3:
+	LDA	#H'13
+	STA	CY
+	LDA	#H'0B
+	STA	CX
+	LDY	#6
+	LDX	#16
+	JMP	DRAWWIND
+
+STAR_W2:
+	LDA	#STARS >>8
+	STA	PTR3H
+	LDA	#STARS &H'FF
+	STA	PTR3L
+	JSR	RANDOM
+	TAY
+
+	LDX	#1
+	LDA	#16
+	STA	CX
+SW2_A:
+	INX
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH,X
+	STA	VID_PTR
+	LDA	#H'0C
+	CLC
+	ADC	LNADDRL,X
+	STA	VID_PTR
+	LDA	#H'0F
+	STA	CY
+SW2_B:
+	LDA	(PTR3L),Y
+	STA	VID_DATA
+	INY
+	DEC	CY
+	BPL	SW2_B
+
+	JSR	SET_VID
+	TYA
+	PHA
+	JSR	DMAXFER
+	PLA
+	TAY
+	DEC	CX
+	BNE	SW2_A
+	RTS
+
+;DRAWS A BORDER AND FILLS WITH BLACK
+;CX - STARTING COLLUMN, CY - STARTING ROW, X - WIDTH, Y - HEIGHT
+
+DRAWWIND:
+	STX	LOGIC_X
+	STY	LOGIC_Y
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	JSR	DRAW_TOP
+	JSR	DMAXFER
+	JSR	SET_VID
+	INC	CY
+DW_0:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	JSR	DRAWSIDE
+	JSR	DMAXFER
+	JSR	SET_VID
+	INC	CY
+	DEC	LOGIC_Y
+	BNE	DW_0
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	JSR	DRAW_BOT
+	JSR	DMAXFER
+	JMP	SET_VID
+
+DRAW_TOP:
+	LDY	CY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	CX
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'77
+	STA	VID_DATA
+	LDX	LOGIC_X
+	LDA	#H'57
+	JSR	DRAW_BAR
+	LDA	#H'78
+	STA	VID_DATA
+	RTS
+
+DRAWSIDE:
+	LDY	CY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	CX
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'58
+	STA	VID_DATA
+	LDX	LOGIC_X
+	LDA	#H'FA
+	JSR	DRAW_BAR
+	LDA	#H'F8
+	STA	VID_DATA
+	RTS
+
+
+DRAW_BOT:
+	LDY	CY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	CX
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'97
+	STA	VID_DATA
+	LDX	LOGIC_X
+	LDA	#H'F7
+	JSR	DRAW_BAR
+	LDA	#H'98
+	STA	VID_DATA
+	RTS
+
+DRAW_BAR:
+	STA	VID_DATA
+	DEX
+	BNE	DRAW_BAR
+	RTS
+
+
+;************ MAP STUFF ****************************
+
+
+GETSECTOR:
+
+;sets up (GAL_PTRL) to point to sector data table
+;for sector @ (CY, CX)...
+
+		LDA	CY	;0..7
+		CLC
+		ASL	A
+		ASL	A
+		ASL	A
+		ASL	A		;mult. by 16
+		CLC
+		ADC	CX
+		ADC	CX
+		TAY
+		LDA	GALAXY, Y
+		STA	GAL_PTRL
+		LDA	GALAXY+1, Y
+		STA	GAL_PTRH
+		RTS
+
+NEWSYSTEM:
+		LDA	#H'FF
+		STA	SAVEBIT0
+		STA	SYSBIT0
+		STA	SAVEBIT1
+		STA	SYSBIT1
+		STA	SAVEBIT2
+		STA	SYSBIT2		;NECESSARY FOR LOADSYSTEM
+
+		JSR	GETSYSTEM
+		JMP	LOADSYSTEM
+
+
+GETSYSTEM:
+
+;set up (SEC_PTRL) to point to system data table for
+;system @ (CX, CY)...assumes that
+;"GETSECTOR" has been called to set (GAL_PTRL)...
+
+		LDY	#0
+		LDA	(GAL_PTRL), Y	;# of objs.
+		STA	T0
+		INY			;now points to 1st X-coord.
+
+GETSYS0:	LDA	(GAL_PTRL), Y
+		CMP	CX
+		BNE	GETSYS1
+		INY			;now Y-coord.
+		LDA	(GAL_PTRL), Y
+		CMP	CY
+		BNE	GETSYS2
+;match!
+		INY			;low ptr
+		LDA	(GAL_PTRL), Y
+		STA	SEC_PTRL
+		INY			;high ptr
+		LDA	(GAL_PTRL), Y
+		STA	SEC_PTRH
+		RTS
+
+GETSYS1:	INY			;now Y-coord.
+GETSYS2:	INY			;low ptr
+		INY			;high ptr
+		INY			;X-coord. of next entry
+		DEC	T0
+		BNE	GETSYS0
+
+		RTS			;ERROR!!
+
+
+LOADSYSTEM:
+
+;copies solar system data table @ (SEC_PTRL)
+;over to "SYSTEM"...
+
+
+		LDY	#120
+LOADSYS0:	LDA	(SEC_PTRL), Y
+		STA	SYSTEM, Y
+		DEY
+		BPL	LOADSYS0
+
+	LDA	SYSTEM
+	AND	#H'C0
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	ORA	#4		;force 4..7
+	STA	SYS_PAL
+
+	LDA	SYSTEM
+	AND	#H'3F		;# of objs.
+	STA	SYSTEM
+
+	ASL	A
+	ASL	A		;mult. by 4
+	STA	COUNT0
+	LDY	#0
+NUKEDEAD:
+	LDA	SYSTEM+4,Y	;INHAB BITS
+	CLC
+	ROL	SYSBIT2
+	ROL	SYSBIT1
+	ROL	SYSBIT0
+	BCS	ND_A
+	AND	#H'27	;NO TECH, GAS, UNHINHABITED
+ND_A:
+	STA	SYSTEM+4,Y
+	TYA
+	CLC
+	ADC	#4
+	TAY
+	CPY	COUNT0
+	BCC	NUKEDEAD
+	LDA	SAVEBIT0
+	STA	SYSBIT0
+	LDA	SAVEBIT1
+	STA	SYSBIT1
+	LDA	SAVEBIT2
+	STA	SYSBIT2
+
+		RTS
+
+
+
+DRAW_GAL:	
+
+;draw the Galaxy Map...
+
+		LDY	#0
+		JMP	MAP
+
+
+
+
+
+DRSECTMAP:	LDY	#0
+		LDA	(GAL_PTRL), Y	;# of objs.
+		STA	COUNT0
+		INY			;now X-pos
+
+DRSECT0:	LDA	(GAL_PTRL), Y
+		STA	TX
+		INY
+		STY	TY
+		LDA	(GAL_PTRL), Y
+		CLC
+		ADC	#H'01
+		TAY
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	TX
+		ADC	#H'0B
+		STA	VID_PTR
+		LDA	#H'96
+		STA	VID_DATA
+
+		JSR	SET_VID
+		JSR	DMAXFER
+		LDY	TY
+		INY
+		INY
+		INY
+		DEC	COUNT0
+		BNE	DRSECT0
+		
+		RTS
+
+
+
+
+DRSYSMAP:
+
+;top 25 sprites of SPRTBL0 & SPRTBL1 are used
+;uses $1B for sizes 2-4 & $1C for sizes 5-6
+;uses correct pal.# from SYSTEM data table
+
+	 	LDA	#0
+	 	JSR	XVIDEO
+	
+		LDY	#H'A0
+		JSR	ZAP_SPRITES
+	
+		LDA	SYSTEM
+		STA	COUNT0
+		LDX	#H'A0
+		LDY	#1		;pointer to x-pos of 1st item
+
+DRSYSM3:	LDA	SYSTEM+2, Y	;type
+		AND	#H'70
+		CMP	#H'30		;sun?
+		BEQ	DRSYS_A
+		CMP	#H'00
+		BEQ	DRSYS_C
+		BNE	DRSYS_B
+
+;err!
+
+DRSYSM4:	TYA
+		CLC
+		ADC	#4
+		TAY
+		DEC	COUNT0
+		BNE	DRSYSM3
+		RTS
+
+
+DRSYS_A:	;sun
+	
+		LDA	#H'B9
+		STA	SPRTBL0+1, X	;char.
+		LDA	#H'00
+		STA	SPRTBL0+2, X	;palette
+		JMP	DRSYSM5
+
+DRSYS_B:	;planet
+
+		STY	T4
+		LDA	SYSTEM+3,Y	;data bits
+		AND	#FRNDLY
+		BNE	DRSYS_B0
+		LDA	SYSTEM+3,Y	;data bits
+	  ;;	AND	#GAS
+	  ;;	BEQ	DRSYS_B0
+
+		LDA	#7
+		JMP	DRSYS_B1
+
+;(friendly) or (non-friendly & no gas)
+
+DRSYS_B0:
+		LDA	#0
+
+
+DRSYS_B1:
+		CLC
+		ADC	SYSTEM+2, Y	;size (lo. nyb.)
+		AND	#H'0F
+		TAY
+		LDA	SYSTAB, Y
+		STA	SPRTBL0+1, X	;char.
+		LDY	T4
+		LDA	SYSTEM+3,Y	;data bits
+		AND	#INHAB
+		BNE	DRSYS_B2
+		LDA	#H'01
+		JMP	DRSYS_B3
+DRSYS_B2:
+		LDA	#H'03
+DRSYS_B3:
+		STA	SPRTBL0+2, X	;palette
+		JMP	DRSYSM5
+
+DRSYS_C:	;space station
+
+		LDA	#H'DB
+		STA	SPRTBL0+1, X	;char.
+		LDA	#H'03
+		STA	SPRTBL0+2, X	;palette
+		LDA	SYSTEM+3, Y	;data bits
+		AND	#INHAB
+		BNE	DRSYSM5
+		LDA	#H'F8
+		STA	SPRTBL0 ,X
+		JMP	DRSYSM5A
+		
+DRSYSM5:	LDA	SYSTEM+0, Y	;x pos.
+		CLC
+		ADC	#H'64		
+		STA	SPRTBL0+3, X	;X-pos
+
+		LDA	SYSTEM+1, Y	;y pos.
+		CLC
+		ADC	#H'15
+		STA	SPRTBL0, X	;Y-pos
+
+DRSYSM5A:
+		TYA
+		PHA
+		STX	COUNT1
+		LDA	#H'9C
+		SEC
+		SBC	COUNT1
+		TAY
+		LDA	SPRTBL0, X
+		STA	SPRTBL1, Y
+		LDA	SPRTBL0+1, X
+		STA	SPRTBL1+1, Y
+		LDA	SPRTBL0+2, X
+		STA	SPRTBL1+2, Y
+		LDA	SPRTBL0+3, X
+		STA	SPRTBL1+3, Y
+		PLA
+		TAY
+		TXA
+		CLC
+		ADC	#H'04
+		TAX
+		JMP	DRSYSM4
+
+SYSTAB:		
+	.DB	H'D4,H'D4,H'B5,H'B6,H'B7,H'B8,H'B9
+	.DB	H'D4,H'D4,H'D5,H'D6,H'D7,H'D8,H'D9
+
+;****************************
+
+
+
+SYS_POS:
+	LDA	XPOS
+	CLC
+	ADC	#H'64
+	STA	SPRTBL0+3
+	STA	SPRTBL1+3
+	LDA	YPOS
+	CLC
+	ADC	#H'15
+	STA	SPRTBL0
+	STA	SPRTBL1
+	LDA	#H'20
+	STA	SPRTBL0+2
+	STA	SPRTBL1+2
+	
+POS_CHAR:
+	LDA	#2		;palette & flip
+	STA	SPRTBL0+2
+	STA	SPRTBL1+2
+POSCHAR0:
+	LDA	#H'BC		;sm. ship char.
+	STA	SPRTBL0+1
+	STA	SPRTBL1+1
+	RTS
+
+
+DRAWPLNT:
+; Draw map when on planet surface:
+;  Y-reg. has "planet index" (0 = space stn., 1 = reg., 2 = P'radikus)
+;  (which is really just BKGRND - $7F).
+
+		STY	LOGIC_X		;save index
+		LDY	BKGRND
+		JSR	MAP		;draw the actual chars. of the map
+		JSR	PSPRXFER
+		JMP	SETTWRSPR
+
+PSPRXFER:	LDY	LOGIC_X	    	;map index
+		LDA	MAPSPR0H,Y	;get pointers to 2 sprite tables.
+		STA	PTR3H
+		LDA	MAPSPR0L,Y
+		STA	PTR3L
+		LDA	MAPSPR1H,Y
+		STA	PTR2H
+		LDA	MAPSPR1L,Y
+		STA	PTR2L
+
+		LDY	#59		;size of table ?
+		LDX	#119		;transfer dest.
+SXF_1:		LDA	(PTR3L),Y
+		STA	SPRTBL0+H'80,X
+		LDA	(PTR2L),Y
+		STA	SPRTBL1+H'80,X
+		DEY
+		CPY	#52
+		BCC	SXF_1A
+		LDA	#H'D4
+		JMP	SXF_1B
+SXF_1A:		LDA	#H'D5
+SXF_1B:		STA	SPRTBL0+H'7E,X
+		STA	SPRTBL1+H'7E,X
+		LDA	#3
+		STA	SPRTBL0+H'7F,X
+		STA	SPRTBL1+H'7F,X
+		LDA	(PTR3L),Y
+		STA	SPRTBL0+H'7D,X
+		LDA	(PTR2L),Y
+		STA	SPRTBL1+H'7D,X
+		DEY
+		TXA
+		SEC
+		SBC	#4
+		TAX
+		BPL	SXF_1
+	
+		LDA	#GUN_STAT >> 8
+		STA	PTR3H
+		LDA	#GUN_STAT & H'FF
+		STA	PTR3L
+
+		CLC
+		ADC	#26
+		STA	PTR2L
+		LDA	PTR3H
+		ADC	#0		;pickup previous carry...
+		STA	PTR2H
+
+		LDY	#25
+SXF_3:		LDA	(PTR3L),Y
+		AND	#H'80		;Alive?
+		BNE	SXF_3A		;Yes if non-zero...
+		TYA
+		ASL	A
+		ASL	A
+		TAX	
+		LDA	#H'F8
+		STA	SPRTBL0+H'80,X
+SXF_3A:		LDA	(PTR2L),Y
+		AND	#H'80		;Alive?
+		BNE	SXF_3B		;Yes if non-zero...
+		TYA
+		ASL	A
+		ASL	A
+		TAX	
+		LDA	#H'F8
+		STA	SPRTBL1+H'80,X
+SXF_3B:		DEY
+		BPL	SXF_3
+		JSR	SXF_5
+		JSR	VR_WAIT
+		JSR	DMAXFER
+		RTS
+
+SXF_5:		LDA	LOGIC_X
+		BNE	SXF_5A
+		LDA	XPOS
+		ASL	A
+		ASL	A
+		STA	COUNT0
+		LDA	YPOS
+		ASL	A
+		ASL	A
+		STA	COUNT1
+		JMP	SXF_5B
+SXF_5A:		LDY	XPOS
+		LDA	P_POS,Y
+		STA	COUNT0
+		LDY	YPOS
+		LDA	P_POS,Y
+		STA	COUNT1
+SXF_5B:		LDA	COUNT0
+		CLC
+		ADC	#H'68
+		STA	SPRTBL0+3
+		STA	SPRTBL1+3
+		LDA	COUNT1
+		CLC
+		ADC	#H'1A
+		STA	SPRTBL0
+		STA	SPRTBL1
+		JSR	POS_CHAR
+		RTS
+
+SETTWRSPR:
+	LDA	BKGRND
+	CMP	#H'80
+	BNE	STS_END
+	LDY	#H'0F
+	LDX	#H'F4
+	JSR	CHK_TWR	
+	TXA
+	SEC
+	SBC	#4
+	TAX
+	JSR	CHK_TWR	
+	TXA
+	SEC
+	SBC	#4
+	TAX
+	JSR	CHK_TWR	
+	TXA
+	SEC
+	SBC	#4
+	TAX
+	JSR	CHK_TWR	
+STS_END:
+	RTS
+
+CHK_TWR:
+	LDA	GUN_STAT+H'34,Y
+	AND	#H'80
+	BNE	CT_END
+	TYA
+	AND	#H'03
+	BEQ	CT_REM
+	DEY
+	JMP	CHK_TWR
+CT_REM:
+	LDA	#H'F8
+	STA	SPRTBL0,X
+	STA	SPRTBL1,X
+CT_END:
+	TYA
+	AND	#H'0C
+	TAY
+	DEY
+	RTS
+
+CLRARDAT:
+	LDA	#H'00
+	STA	ARDAT0
+	LDA	#H'00
+	STA	ARDAT1
+	LDA	#H'00
+	STA	ARDAT2
+	LDA	#H'00
+	STA	ARDAT3
+	LDA	#H'00
+	STA	ARDAT4
+	LDA	#H'00
+	STA	ARDAT5
+	LDA	#H'FF
+	STA	ARDAT6
+	LDA	#H'66
+	STA	CX
+	LDA	#H'FF
+	STA	ARDAT0,Y
+	RTS
+
+ARROW:
+	STA	LOGIC_TEMP
+	LDA	#H'F8
+	STA	H'0264
+	STA	H'0764
+	STA	H'0268
+	STA	H'0768
+	STA	H'026C
+	STA	H'076C
+	LDA	CX	
+	STA	H'0263
+	STA	H'0763
+	LDA	#H'DC
+	STA	H'0261
+	STA	H'0761
+	LDA	#3
+	STA	H'0262
+	STA	H'0762
+AW_0:
+	STY	CY
+	INY
+	TYA
+	CLC	
+	ADC	LOGIC_TEMP
+	JSR	GETCOST
+	BEQ	AW_00
+	JSR	DISPCOST
+AW_00:
+	LDY	CY
+	LDA	ARDAT0,Y
+	BEQ	AW_2A
+	STA	H'0260
+	STA	H'0760
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	JSR	DMAXFER
+	JSR	SET_VID
+	JSR	JSTICK1
+	LDY	CY
+	LDA	J1CHG
+	AND	#SELECT
+	BEQ	AW_0A
+	LDA	#H'FF
+	RTS
+AW_0A:
+	LDA	J1CHG
+	AND	#B_BTN
+	BEQ	AW_1
+	LDA	#H'80
+	RTS
+AW_1:
+	LDA	J1CHG
+	AND	#A_BTN
+	BEQ	AW_2
+	TYA
+	RTS
+AW_2:
+	LDA	J1CHG
+	AND	#DN_BTN
+	BEQ	AW_3
+AW_2A:
+	INY
+	LDA	ARDAT0,Y
+	BEQ	AW_2A
+	CMP	#H'FF
+	BNE	AW_0
+	JMP	AW_4
+AW_3:
+	LDA	J1CHG
+	AND	#UP_BTN
+	BEQ	AW_0
+AW_4:
+	DEY
+	BMI	AW_2A
+	LDA	ARDAT0,Y
+	BEQ	AW_4
+	JMP	AW_0
+
+;MOVES THE 1x1 CURSOR RETURNS 1 TARGET SELECTED OTHERWISE 0 IN A
+;IF A=1 THEN CX AND CY HAVE THE POSTION OF THE CURSOR
+MOVE_1:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	LNADDRH+22
+	STA	VID_PTR
+	LDA	#H'15
+	CLC
+	ADC	LNADDRL+22
+	STA	VID_PTR
+	LDA	#H'08
+	STA	VID_DATA
+	LDA	CURSORX
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'0C
+	STA	VID_DATA
+	LDA	CURSORY
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'09
+	STA	VID_DATA
+	JSR	SET_VID
+	JSR	DMAXFER
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BEQ	M1_0
+	LDA	#H'FF
+	RTS
+M1_0:
+	LDA	J1CHG
+	AND	#A_BTN
+	BNE	M1_CHS
+	LDA	J1CHG
+	AND	#B_BTN
+	BNE	M1_END
+	LDA	J1CHG
+	AND	#UP_BTN
+	BEQ	M1_RT
+M1_UP:
+	LDA	#-4
+	JSR	M1_MOVE
+M1_RT:
+	LDA	J1CHG
+	AND	#RT_BTN
+	BEQ	M1_DN
+M1_RT0:
+	LDA	#4
+	JSR	M1_MOVE
+M1_DN:
+	LDA	J1CHG
+	AND	#DN_BTN
+	BEQ	M1_LT
+M1_DN0:
+	LDA	#4
+	JSR	M1_MOVE
+M1_LT:
+	LDA	J1CHG
+	AND	#LT_BTN
+	BEQ	M1_DONE
+M1_LT0:
+	LDA	#-4
+	JSR	M1_MOVE
+M1_DONE:
+	JSR	M1_CURSR
+	JMP	MOVE_1
+M1_END:
+	LDA	#0
+	RTS
+M1_MOVE:
+	BMI	M1M_SUB
+	CLC
+	ADC	CRSR_I
+	STA	CRSR_I
+	LDY	#0
+	LDA	(GAL_PTRL),Y	;num. objects
+	ASL	A
+	ASL	A
+	SEC
+	SBC	#3
+	CMP	CRSR_I
+	BCS	M1M_END
+	STA	CRSR_I
+	JMP	M1M_END
+M1M_SUB:
+	CLC
+	ADC	CRSR_I
+	STA	CRSR_I
+	BPL	M1M_END
+	LDA	#1
+	STA	CRSR_I
+M1M_END:
+	LDY	CRSR_I
+	LDA	(GAL_PTRL),Y
+	SEC
+	SBC	#1
+	CLC
+	ASL	A
+	ASL	A
+	ASL	A
+	STA	CURSORX
+	INY
+	LDA	(GAL_PTRL),Y
+	SEC
+	SBC	#1
+	CLC
+	ASL	A
+	ASL	A
+	ASL	A
+	STA	CURSORY
+	RTS
+M1_CHS:
+	LDA	CURSORY
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	STA	CY
+	LDA	CURSORX
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	STA	CX
+	LDA	#1
+	RTS
+M1_CURSR:
+	LDA	CURSORX
+	CLC
+	ADC	#H'68
+	STA	H'0263	;CURSOR SPRITE X
+	STA	H'0763
+	LDA	CURSORY
+	CLC
+	ADC	#H'19
+	STA	H'0260	;CURSOR SPRITE Y
+	STA	H'0760
+	LDA	#H'BA
+	STA	H'0261	;CURSOR SPRITE CHAR	
+	STA	H'0761
+	LDA	#3
+	STA	H'0262	;CURSOR SPRITE PAL
+	STA	H'0762
+	LDA	#H'F8
+	STA	H'0264
+	STA	H'0764
+	STA	H'0268
+	STA	H'0768
+	STA	H'026C
+	STA	H'076C
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH + 24
+	STA	VID_PTR
+	LDA	#H'0C
+	CLC
+	ADC	LNADDRL + 24
+	STA	VID_PTR
+	LDA	#H'FA
+	STA	VID_DATA
+	STA	VID_DATA
+	LDY	CRSR_I
+	INY
+	INY
+	LDA	(GAL_PTRL),Y
+	STA	PTR3L
+	INY
+	LDA	(GAL_PTRL),Y
+	STA	PTR3H
+	LDY	#0
+	LDA	(PTR3L),Y
+	AND	#H'3F		;num. of objects.
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+
+	LDX	#PLNTSTR &H'FF
+	LDY	#PLNTSTR >>8
+	JSR	DOPRINT
+
+	RTS
+	
+					      
+;MOVES THE 1x1 CURSOR IN SYSTEM MAP RETURNS 1 TARGET SELECTED OTHERWISE 0 IN A
+;IF A=1 THEN CX AND CY HAVE THE POSTION OF THE CURSOR
+MOVE_1SS:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	LNADDRH+24
+	STA	VID_PTR
+	LDA	#H'0F
+	CLC
+	ADC	LNADDRL+24
+	STA	VID_PTR
+	LDA	#H'08
+	STA	VID_DATA
+	LDA	CURSORX
+	CLC
+	ADC	#1
+	JSR	DRAWNUM3
+	LDA	#H'0C
+	STA	VID_DATA
+	LDA	CURSORY
+	CLC
+	ADC	#1
+	JSR	DRAWNUM3
+	LDA	#H'09
+	STA	VID_DATA
+	JSR	SET_VID
+	JSR	DMAXFER
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BEQ	M1SS_0
+	LDA	#H'FF
+	RTS
+M1SS_0:
+	LDA	J1CHG
+	AND	#A_BTN
+	BNE	M1S_CHS
+	LDA	J1CHG
+	AND	#B_BTN
+	BNE	M1S_END
+	LDA	J1CHG
+	AND	#UP_BTN
+	BEQ	M1S_RT
+M1S_UP:
+	LDA	#-4
+	JSR	M1S_MOVE
+M1S_RT:
+	LDA	J1CHG
+	AND	#RT_BTN
+	BEQ	M1S_DN
+M1S_RT0:
+	LDA	#4
+	JSR	M1S_MOVE
+M1S_DN:
+	LDA	J1CHG
+	AND	#DN_BTN
+	BEQ	M1S_LT
+M1S_DN0:
+	LDA	#4
+	JSR	M1S_MOVE
+M1S_LT:
+	LDA	J1CHG
+	AND	#LT_BTN
+	BEQ	M1S_DONE
+M1S_LT0:
+	LDA	#-4
+	JSR	M1S_MOVE
+M1S_DONE:
+	JSR	M1S_CRSR
+	JMP	MOVE_1SS
+M1S_SUB:
+	CLC
+	ADC	CRSR_I
+	STA	CRSR_I
+	BPL	M1SM_END
+	LDA	#1
+	STA	CRSR_I
+M1SM_END:
+	LDY	CRSR_I
+	JSR	IS_DEAD
+	BNE	M1SM_SKIP
+	LDA	SYSTEM+0,Y	;x pos
+	STA	CURSORX
+	LDA	SYSTEM+1,Y	;y pos
+	STA	CURSORY
+	RTS
+M1SM_SKIP:
+	LDA	EXPL_A
+	BPL	M1S_MOVE
+	LDA	CRSR_I
+	CMP	#1
+	BEQ	M1SM_SUP
+	LDA	EXPL_A
+	JMP	M1S_SUB
+M1SM_SUP:
+	LDA	#4
+	JMP	M1S_MOVE
+M1S_CHS:
+	LDA	CURSORY
+	STA	CY
+	LDA	CURSORX
+	STA	CX
+	LDA	#1
+	RTS
+M1S_END:
+	LDA	#0
+	RTS
+M1S_MOVE:
+	STA	EXPL_A
+	BMI	M1S_SUB
+	CLC
+	ADC	CRSR_I
+	STA	CRSR_I
+	LDA	SYSTEM
+	ASL	A
+	ASL	A
+	SEC
+	SBC	#3
+	CMP	CRSR_I
+	BCS	M1SM_END
+	STA	CRSR_I
+	JMP	M1SM_END
+
+M1S_CRSR:
+	LDA	CURSORX
+	CLC
+	ADC	#H'64
+	STA	H'0263	;CURSOR SPRITE X
+	STA	H'0763
+	LDA	CURSORY
+	CLC
+	ADC	#H'15
+	STA	H'0260	;CURSOR SPRITE Y
+	STA	H'0760
+	LDA	#H'BA
+	STA	H'0261	;CURSOR SPRITE CHAR	
+	STA	H'0761
+	LDA	#3
+	STA	H'0262	;CURSOR SPRITE PAL
+	STA	H'0762
+	LDA	#H'F8
+	STA	H'0264
+	STA	H'0764
+	STA	H'0268
+	STA	H'0768
+	STA	H'026C
+	STA	H'076C
+	RTS
+
+
+;MOVES THE 2x2 CURSOR RETURNS 1 TARGET SELECTED OTHERWISE 0 IN A
+;IF A=1 THEN CX AND CY HAVE THE POSTION OF THE CURSOR
+MOVE_2:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	LNADDRH+22
+	STA	VID_PTR
+	LDA	#H'0C
+	CLC
+	ADC	LNADDRL+22
+	STA	VID_PTR
+	LDA	#H'08
+	STA	VID_DATA
+	LDA	CURSORX
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'0C
+	STA	VID_DATA
+	LDA	CURSORY
+	CLC
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'09
+	STA	VID_DATA
+	JSR	SET_VID
+	JSR	DMAXFER
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BEQ	M2_0
+	LDA	#H'FF
+	RTS
+M2_0:
+	LDA	J1CHG
+	AND	#A_BTN
+	BNE	M2_CHS
+	LDA	J1CHG
+	AND	#B_BTN
+	BNE	M2_END
+	LDA	J1CHG
+	AND	#UP_BTN
+	BEQ	M2_RT
+M2_UP:
+	LDA	#-16
+	LDX	#1
+	JSR	M2_MOVE
+M2_RT:
+	LDA	J1CHG
+	AND	#RT_BTN
+	BEQ	M2_DN
+M2_RT0:
+	LDA	#16
+	LDX	#0
+	JSR	M2_MOVE
+M2_DN:
+	LDA	J1CHG
+	AND	#DN_BTN
+	BEQ	M2_LT
+M2_DN0:
+	LDA	#16
+	LDX	#1
+	JSR	M2_MOVE
+M2_LT:
+	LDA	J1CHG
+	AND	#LT_BTN
+	BEQ	M2_DONE
+M2_LT0:
+	LDA	#-16
+	LDX	#0
+	JSR	M2_MOVE
+M2_DONE:
+	JSR	M2_CURSR
+	JMP	MOVE_2
+M2_CHS:
+	LDA	FUELUSED
+	CMP	FUEL
+	BCS	M2_DONE
+M2_CHS0:
+	LDA	CURSORY
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	STA	CY
+	LDA	CURSORX
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	STA	CX
+	LDA	#1
+	RTS
+M2_END:
+	LDA	#0
+	RTS
+M2_MOVE:
+	CLC
+	ADC	CURSORX,X
+	AND	#H'7F
+	STA	CURSORX,X
+	RTS
+M2_CURSR:
+	LDA	CURSORX
+	CLC
+	ADC	#H'69
+	STA	H'0263	;CURSOR SPRITE X
+	STA	H'0763
+	STA	H'026F
+	STA	H'076F
+	CLC
+	ADC	#6
+	STA	H'0267
+	STA	H'0767
+	STA	H'026B
+	STA	H'076B
+	LDA	CURSORY
+	CLC
+	ADC	#H'19
+	STA	H'0260	;CURSOR SPRITE Y
+	STA	H'0760
+	STA	H'0264
+	STA	H'0764
+	CLC
+	ADC	#8
+	STA	H'0268
+	STA	H'0768
+	STA	H'026C
+	STA	H'076C
+	LDA	#H'DA
+	STA	H'0261	;CURSOR SPRITE CHAR	
+	STA	H'0761
+	STA	H'0265
+	STA	H'0765
+	STA	H'0269
+	STA	H'0769
+	STA	H'026D
+	STA	H'076D
+	LDA	#H'03
+	STA	H'0262	;CURSOR SPRITE PAL
+	STA	H'0762
+	LDA	#H'43
+	STA	H'0266
+	STA	H'0766
+	LDA	#H'C3
+	STA	H'026A
+	STA	H'076A
+	LDA	#H'83
+	STA	H'026E
+	STA	H'076E
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH + 24
+	STA	VID_PTR
+	LDA	#H'0C
+	CLC
+	ADC	LNADDRL + 24
+	STA	VID_PTR
+	LDA	CURSORY
+	LSR	A
+	STA	CY
+	LDA	CURSORX
+	LSR	A
+	LSR	A
+	LSR	A
+	LSR	A
+	CLC
+	ADC	CY
+	ASL	A
+	TAX
+	LDA	GALAXY,X
+	STA	PTR3L
+	LDA	GALAXY+1,X
+	STA	PTR3H
+	LDY	#0
+	LDA	(PTR3L),Y
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+
+	LDX	#SOL_SYS &H'FF
+	LDY	#SOL_SYS >>8
+	JSR	DOPRINT
+
+	JSR	FUEL_USE
+	CMP	FUEL
+	BCC	M2_FUEL
+
+	LDX	#NO_FUEL2 &H'FF
+	LDY	#NO_FUEL2 >> 8
+	JMP	DOPRINT
+
+M2_FUEL:
+	LDX	#FUELSTR4 &H'FF
+	LDY	#FUELSTR4 >> 8
+	JSR	DOPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH + 25
+	STA	VID_PTR
+	LDA	#H'17
+	CLC
+	ADC	LNADDRL + 25
+	STA	VID_PTR
+	LDA	FUELUSED
+	JSR	DRAW_NUM
+	LDA	#H'FA
+	STA	VID_DATA
+	STA	VID_DATA
+	STA	VID_DATA
+	JSR	SET_VID
+	JMP	DMAXFER
+
+FUEL_USE:
+	JSR	M2_CHS0
+	JSR	FU_DISP
+	LDA	CY
+	ASL	A
+	ASL	A
+	ASL	A
+	CLC
+	ADC	CX
+	TAY
+	LDA	FUEL_TBL,Y
+	STA	SUBSVAR1
+	LDY	DRIVE
+	LDA	SECTFUEL,Y
+	STA	SUBSVAR2
+	JSR	MULSUBS
+	BCS	FU_FALSE
+	LDY	DRIVE
+	CLC	
+	ADC	SYSFUEL,Y
+	BCS	FU_FALSE
+	STA	FUELUSED
+	RTS
+FU_FALSE:
+	LDA	#100
+	STA	FUELUSED
+	RTS
+
+FU_DISP:
+	LDA	CY
+	CMP	GALAXY_Y
+	BCS	FUD_Y
+	LDA	GALAXY_Y
+	SEC
+	SBC	CY
+	STA	CY
+	JMP	FUD_X0
+FUD_Y:
+	SEC
+	SBC	GALAXY_Y
+	STA	CY
+FUD_X0:
+	LDA	CX
+	CMP	GALAXY_X
+	BCS	FUD_X
+	LDA	GALAXY_X
+	SEC
+	SBC	CX
+	STA	CX
+	JMP	FUD_END
+FUD_X:
+	SEC
+	SBC	GALAXY_X
+	STA	CX
+FUD_END:
+	RTS
+
+MULSUBS:
+	LDA	#0
+	LDY	SUBSVAR1
+MSUB_0:
+	BEQ	MSUB_END
+	CLC
+	ADC	SUBSVAR2
+	BCS	MSUB_NO
+	DEY
+	JMP	MSUB_0
+MSUB_NO:
+	SEC
+MSUB_END:
+	RTS
+
+;			0 1 2 3 4 5 6 7 8 9 A B C D E F
+
+P1:		.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P10:		.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P100:		.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+P1000:		.DB	0,5,0,5,0,5,0,5,0,5,0,0,0,0,0,0
+P10000:		.DB	1,1,2,2,3,3,4,4,5,5,6,7,8,9,0,5
+P100000:	.DB	0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1
+
+
+CHKGAL:		DEX
+		CPX	GALAXY_X
+		BNE	CHKGALN
+		DEY
+		CPY	GALAXY_Y
+		BNE	CHKGALN
+		LDA	#1
+		RTS
+CHKGALN:	LDA	#0
+		RTS
+
+
+CHKSYS:		CPX	SECTOR_X
+		BNE	CHKSYSN
+		CPY	SECTOR_Y
+		BNE	CHKSYSN
+		LDA	#1
+		RTS
+CHKSYSN:	LDA	#0
+		RTS
+
+CHKPOS:		DEX
+		CPX	XPOS
+		BNE	CHKPOSN
+		DEY
+		CPY	YPOS
+		BNE	CHKPOSN
+		LDA	#1
+		RTS
+CHKPOSN:	LDA	#0
+		RTS
+
+
+PROCITEM:
+;
+;display messages upon destruction of an enemy base
+;
+
+		LDA	COMPITEM
+		CMP	#H'FF
+		BNE	PCHK2
+		LDA	#H'00
+		STA	COMPITEM
+
+;check missions...
+
+PCHK2:		LDA	MISSION
+		CMP	#2
+		BNE	PCHK3
+		LDX	M2LOC+ 0
+		LDY	M2LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK2A
+		LDX	M2LOC+ 2
+		LDY	M2LOC+ 3
+		JSR	CHKSYS
+		BEQ	PCHK2A
+		LDX	M2LOC+ 4
+		LDY	M2LOC+ 5
+		JSR	CHKPOS
+		BEQ	PCHK2A
+		LDA	#H'FF
+		STA	GOAL2
+		STA	GOAL0
+PCHK2A:		JMP	PCHKDONE
+
+PCHK3:		CMP	#3
+		BNE	PCHK4
+		LDX	M3LOC+ 0
+		LDY	M3LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK3A
+		LDX	M3LOC+ 2
+		LDY	M3LOC+ 3
+		JSR	CHKSYS
+		BEQ	PCHK3A
+		LDA	GOAL3
+		ASL	A
+		ORA	#1
+		STA	GOAL3
+		CMP	#H'FF
+		BNE	PCHK3A
+		STA	GOAL0
+PCHK3A:		JMP	PCHKDONE
+
+PCHK4:		CMP	#4
+		BNE	PCHK5
+		LDX	M4LOC+ 0
+		LDY	M4LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK4A
+		LDX	M4LOC+ 2
+		LDY	M4LOC+ 3
+		JSR	CHKSYS
+		BEQ	PCHK4A
+		LDX	M4LOC+ 4
+		LDY	M4LOC+ 5
+		JSR	CHKPOS
+		BEQ	PCHK4A
+		LDA	#H'FF
+		STA	GOAL4
+		STA	GOAL0
+		LDA	#H'FD		;message capsule
+		STA	COMPITEM
+PCHK4A:		JMP	PCHKDONE
+
+PCHK5:		CMP	#5
+		BNE	PCHK6
+		LDX	M5LOC+ 0
+		LDY	M5LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK5A
+		LDX	M5LOC+ 2
+		LDY	M5LOC+ 3
+		JSR	CHKSYS
+		BEQ	PCHK5A
+		LDX	M5LOC+ 4
+		LDY	M5LOC+ 5
+		JSR	CHKPOS
+		BEQ	PCHK5A
+		LDA	#H'FF
+		STA	GOAL5
+		STA	GOAL0
+		LDA	#H'FE
+		STA	COMPITEM	;thunder bolt
+PCHK5A:		JMP	PCHKDONE
+
+PCHK6:		CMP	#6
+		BNE	PCHK7
+		LDX	M6LOC+ 0
+		LDY	M6LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK6A
+		LDX	M6LOC+ 2
+		LDY	M6LOC+ 3
+		JSR	CHKSYS
+		BEQ	PCHK6A
+		LDX	M6LOC+ 4
+		LDY	M6LOC+ 5
+		BEQ	PCHK6A
+		LDA	#H'FF
+		STA	GOAL6
+		STA	GOAL0
+		LDA	#H'FD		;message capsule
+		STA	COMPITEM
+PCHK6A:		JMP	PCHKDONE
+
+PCHK7:		LDX	M7LOC+ 0
+		LDY	M7LOC+ 1
+		JSR	CHKGAL
+		BEQ	PCHK7A
+		LDX	#6
+		LDY	#13
+		JSR	CHKSYS
+		BEQ	PCHK7A
+		LDX	#87
+		LDY	#82
+		BEQ	PCHK7A
+		LDA	#H'FF
+		STA	COMPITEM	;freem drive
+		STA	GOAL7
+		STA	GOAL0
+PCHK7A:
+PCHKDONE:	
+
+
+	LDY	#3
+	JSR	BIGDELAY	;delay to show "SCAN" window
+
+	JSR	CW_3		;clear window
+	
+	LDX	#TWR0_STR &H'FF
+	LDY	#TWR0_STR >> 8
+	JSR	DOPRINT
+
+	LDY	#9
+	JSR	BIGDELAY
+	JSR	CW_3
+
+	LDX	#REFUEL_0 &H'FF
+	LDY	#REFUEL_0 >> 8
+	JSR	DOPRINT
+
+	JSR	C0C_B
+
+	LDX	#FIND_STR &H'FF
+	LDY	#FIND_STR >> 8
+	JSR	DOPRINT
+	
+		LDA	COMPITEM
+		CMP	#H'FF
+		BEQ	PI_A
+		CMP	#H'FE
+		BEQ	PI_B
+		CMP	#H'FD
+		BEQ	PI_CAP
+		JMP	PI_B2		;give money or random item
+
+PI_A:		LDA	HASFREEM
+		BNE	PI_A1
+		JMP	PI_NOT
+
+;give freem drive...
+
+PI_A1:		LDA	#6
+		STA	DRIVE
+		LDA	#0
+		STA	HASFREEM
+		LDX	#FREEMSTR & H'FF
+		LDY	#FREEMSTR >> 8
+		JMP	PI_STR
+
+;give thunderbolt...
+
+PI_B:		CMP	#H'FE
+		BNE	PI_CAP
+		LDA	HASBOLT
+		BNE	PI_B1
+		JMP	PI_NOT
+
+PI_B1:		LDA	#99
+		STA	THUNDER
+		LDA	#0
+		STA	HASBOLT
+
+		LDX	#BOLT_STR &H'FF
+		LDY	#BOLT_STR >>8
+		JMP	PI_STR
+
+;give "message capsule"...
+
+PI_CAP:		LDX	#CAP_STR &H'FF
+		LDY	#CAP_STR >> 8
+		JMP	PI_STR
+
+
+;give money or random item...
+
+PI_B2:		CMP	#H'00
+		BEQ	PI_B2A
+		JMP	PI_CASH
+PI_B2A:
+		JSR	RANDOM
+		ROR	A
+		BCC	PI_C
+;give MINES
+		LDA	#25
+		CLC
+		ADC	MINES
+		CMP	#99
+		BCC	PI_B3
+		LDA	#99
+PI_B3:		STA	MINES
+		LDX	#MINE_STR &H'FF
+		LDY	#MINE_STR >> 8
+		JSR	PI_STR
+		LDA	MINES
+		JMP	PI_NUM
+
+PI_C:		ROR	A
+		BCC 	PI_D
+;give INVISO...
+		LDA	#25
+		CLC
+		ADC	CLOAK
+		CMP	#99
+		BCC	PI_C1
+		LDA	#99
+PI_C1:		STA	CLOAK
+		LDX	#CLOAK_PI &H'FF
+		LDY	#CLOAK_PI >> 8
+		JSR	PI_STR
+		LDA	CLOAK
+		JMP	PI_NUM
+
+PI_D:		ROR	A
+		BCC	PI_E
+;give EMP WAVE
+		LDA	#25
+		CLC
+		ADC	S_WAVE
+		CMP	#99
+		BCC	PI_D1
+		LDA	#99
+PI_D1:		STA	S_WAVE
+		LDX	#WAVE_STR &H'FF
+		LDY	#WAVE_STR >> 8
+		JSR	PI_STR
+		LDA	S_WAVE
+		JMP	PI_NUM
+
+PI_E:		ROR	A
+		BCC	PI_F
+;give MISSILES
+		LDA	#25
+		CLC
+		ADC	MISSILES
+		CMP	#99
+		BCC	PI_E1
+		LDA	#99
+PI_E1:		STA	MISSILES
+		LDX	#MISL_STR &H'FF
+		LDY	#MISL_STR >>8
+		JSR	PI_STR
+		LDA	MISSILES
+		JMP	PI_NUM
+
+PI_F:		LDA	WPN1
+		CMP	#L_LASER
+		BCS	PI_G		;give heavy laser
+;give light laser
+		LDA	#L_LASER
+		STA	WPN1
+		LDX	#LLASER09 &H'FF
+		LDY	#LLASER09 >> 8
+		JMP	PI_STR
+
+PI_G:		LDA	#H_LASER
+		STA	WPN1
+		LDX	#HLASER09 &H'FF
+		LDY	#HLASER09 >> 8
+		JMP	PI_STR
+
+PI_NOT:		LDX	#NOTHING &H'FF
+		LDY	#NOTHING >> 8
+		JSR	XYPRINT
+		JMP	DISPCOMP
+
+PI_STR:		JSR	DOPRINT
+		JMP	DISPCOMP
+
+
+PI_NUM:		PHA
+		LDX	#HAVE_STR &H'FF	;'YOU NOW HAVE'
+		LDY	#HAVE_STR >> 8
+		JSR	DOPRINT
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDA	LNADDRH+24
+		STA	VID_PTR
+		LDA	#25
+		CLC
+		ADC	LNADDRL+24
+		STA	VID_PTR
+		PLA
+		JSR	DRAW_NUM
+		JSR	SET_VID
+		JMP	DMAXFER
+	
+	
+PI_CASH:	AND	#H'0F
+		STA	LOGIC_Y
+		JSR	GETSCORE
+
+		JSR	RANDOM
+		AND	#H'0F
+		CMP	#11
+		BCC	PIC_A
+		CLC
+		ROR	A
+		BCS	PIC_A
+		LDA	#0
+
+PIC_A:		TAY
+		STA	COUNT3
+
+		LDX	CARGO_L, Y
+		LDA	CARGO_H, Y
+		TAY
+		JSR	PI_STR
+
+		LDA	COUNT3
+		BEQ	PI_END		;"nothing"
+
+		LDX	#VAL_STR &H'FF
+		LDY	#VAL_STR >> 8
+		JSR	DOPRINT
+	
+		LDY	#CRDT_STR >>8
+		LDX	#CRDT_STR &H'FF
+		JSR	DOPRINT
+		JSR	DISPCASH
+		LDA	LOGIC_Y
+		JSR	ADDSCORE
+
+PI_END:		JMP	DISPCOMP
+
+;************************************************
+
+ADDSCORE:	AND	#H'0F
+		TAY
+		LDA	P1, Y
+		STA	COUNT0
+		LDA	SC1
+		JSR	ADDIT
+		STA	SC1
+
+		LDA	COUNT0
+		CLC
+		ADC	P10, Y
+		STA	COUNT0
+		LDA	SC10
+		JSR	ADDIT
+		STA	SC10
+
+		LDA	COUNT0
+		CLC
+		ADC	P100, Y
+		STA	COUNT0
+		LDA	SC100
+		JSR	ADDIT
+		STA	SC100
+
+		LDA	COUNT0
+		CLC
+		ADC	P1000, Y
+		STA	COUNT0
+		LDA	SC1000
+		JSR	ADDIT
+		STA	SC1000
+
+		LDA	COUNT0
+		CLC
+		ADC	P10000, Y
+		STA	COUNT0
+		LDA	SC10000
+		JSR	ADDIT
+		STA	SC10000
+
+		LDA	COUNT0
+		CLC
+		ADC	P100000, Y
+		STA	COUNT0
+		LDA	SC100000
+		JSR	ADDIT
+		STA	SC100000
+
+		LDA	SC1M
+		JSR	ADDIT
+		STA	SC1M		
+		
+		LDA	COUNT0
+		BEQ	ADDSRTS
+
+		LDA	#9
+		STA	SC1M
+		STA	SC100000
+		STA	SC10000
+		STA	SC1000
+		STA	SC100
+		STA	SC10
+		STA	SC1
+
+ADDSRTS:	RTS
+
+ADDIT:		CLC
+		ADC	COUNT0
+		PHA
+		LDA	#0
+		STA	COUNT0
+		PLA
+
+ADDIT1:		CMP	#10
+		BCC	ADDIT2
+		SBC	#10
+		INC	COUNT0
+		BNE	ADDIT1		;Always!
+
+ADDIT2:		RTS
+
+;************************************************
+
+XYPRINT:
+; X = low, Y = high addr. ptrs.
+; ---ignore pos. bytes in string and
+;    use TX, TY instead
+
+		LDA	#0
+		STA	PR_PAGE
+		STX	PR_PTRL
+		STY	PR_PTRH
+		LDA	TX
+		STA	PR_X
+		STA	PR_LEFT
+		LDA	TY
+		STA	PR_Y
+		STA	PR_TOP
+		LDY	#2
+		JMP	DOPR2
+
+
+DOPRINT:
+; X = low, Y = high addr. ptrs.
+; PR_X, PR_Y set to screen pos
+; PR_MODE, PR_PAGE also set
+
+	    	LDA	#0
+	    	STA	PR_PAGE
+		STX	PR_PTRL
+		STY	PR_PTRH
+		LDY	#0
+		LDA	(PR_PTRL), Y
+		STA	PR_X
+		STA	PR_LEFT
+		INY
+		LDA	(PR_PTRL), Y
+		STA	PR_Y
+		STA	PR_TOP
+		INY
+
+DOPR2:		STY	PR_INDEX
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+
+		LDA	VID_RESET
+		JSR	PR_ADDR
+		LDY	PR_INDEX
+PRINT_LOOP:	LDA	(PR_PTRL), Y
+		CMP	#-1
+		BEQ	PRINT_END
+		CMP	#0
+		BEQ	PRINT_CR
+		SEC
+		SBC	#32
+		STA	VID_DATA		
+		INC	PR_X
+		INY
+		BNE	PRINT_LOOP
+
+PRINT_END:	JSR	SET_VID
+		LDA	#0
+		RTS
+
+PRINT_CR:	STY	PR_INDEX
+		LDA	PR_LEFT
+		STA	PR_X
+		INC	PR_Y
+		
+		JSR	SET_VID
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+		LDA	VID_RESET
+
+		JSR	PR_ADDR
+		LDY	PR_INDEX
+		INY
+		BNE	PRINT_LOOP
+		JMP	PRINT_END
+
+		
+PR_ADDR:	LDY	PR_Y
+		LDA	LNADDRH, Y		
+	    	LDX	PR_PAGE
+	    	BEQ	PR_ADDR2
+	    	ORA	#4
+PR_ADDR2:	STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	PR_X
+		STA	VID_PTR
+		RTS
+
+;****************************
+
+GETSCORE:
+	TAY
+	LDA	P1,Y
+	STA	C1
+	LDA	P10,Y
+	STA	C10
+	LDA	P100,Y
+	STA	C100
+	LDA	P1000,Y
+	STA	C1000
+	LDA	P10000,Y
+	STA	C10000
+	LDA	P100000,Y
+	STA	C100000
+	RTS
+
+DISPCASH:	JSR	VR_WAIT
+		JSR	KILL_VID
+		LDA	VID_RESET
+		LDA	LNADDRH+24
+		STA	VID_PTR
+		LDA	#H'0D
+		CLC
+		ADC	LNADDRL+24
+		STA	VID_PTR
+
+		LDY	#0
+DISPCSH2:	LDA	C100000, Y
+		BNE	DISPCSH3
+		CPY	#5
+		BEQ	DISPCSH3
+		LDA	#H'FA
+		STA	VID_DATA
+		INY
+		JMP	DISPCSH2
+
+DISPCSH3:	LDA	C100000,Y
+		CLC
+		ADC	#H'10
+		STA	VID_DATA
+		INY
+		CPY	#6
+		BNE	DISPCSH3
+
+	JSR	SET_VID
+	JMP	DMAXFER	
+
+
+CARGO_L: 
+	.DB	NOTHING &H'FF, PARTS &H'FF, ROBOTS &H'FF, TOOLS &H'FF
+	.DB	CRYSTAL &H'FF, GOLD &H'FF, GEMS &H'FF
+	.DB	PLATINUM &H'FF, WEAPONS &H'FF
+	.DB	RELICS &H'FF, URANIUM &H'FF
+CARGO_H:
+	.DB	NOTHING >>8, PARTS >>8, ROBOTS >>8, TOOLS >>8
+	.DB	CRYSTAL >>8, GOLD >>8, GEMS >>8
+	.DB	PLATINUM >>8, WEAPONS >>8
+	.DB	RELICS >>8, URANIUM >>8
+
+NOTHING:	.DB	13, 22, "NOTHING",H'FF
+GOLD:		.DB	13, 22, "GOLD",H'FF
+GEMS:		.DB	13, 22, "GEMS",H'FF
+PARTS:		.DB	13, 22, "SHIP PARTS",H'FF
+ROBOTS:		.DB	13, 22, "ROBOTS",H'FF
+CRYSTAL:	.DB	13, 22, "CRYSTALS",H'FF
+TOOLS:		.DB	13, 22, "TOOLS",H'FF
+PLATINUM:	.DB	13, 22, "PLATINUM",H'FF
+WEAPONS:	.DB	13, 22, "WEAPONS",H'FF
+RELICS:		.DB	13, 22, "ART RELICS",H'FF
+URANIUM:	.DB	13, 22, "URANIUM",H'FF
+
+
+MSG_0:		.DB	14, 22, "A MESSAGE", 0
+		.DB	        "IT SAYS:", -1
+
+
+PMSG:		.DB	12, 20, "YOU FOUND THE   ", 0
+		.DB	        "P*RADIKUS SYSTEM", 0
+		.DB	        "THE TOSON DRIVE ", 0
+		.DB	        "BLEW A CIRCUIT. ", 0
+		.DB	        "YOU ARE TRAPPED ", 0
+		.DB	        "IN THIS SYSTEM. ", -1
+
+
+REFUEL_0:	.DB	12, 21, "DRAINING FUEL", 0
+		.DB	        " FROM TOWER!", -1
+
+TWR0_STR:	.DB	12, 21, "CONTROL TOWER", 0
+		.DB		"  DESTROYED!", 0
+		.DB	0
+		.DB		"SEARCHING RUINS", -1
+
+FIND_STR:	.DB	12, 21, "YOU FIND: ", -1
+HAVE_STR:	.DB	12, 24, "YOU NOW HAVE ", -1
+VAL_STR:	.DB	12, 23, "VALUED AT:", -1
+CRDT_STR:	.DB	20, 24, "CREDITS", -1
+
+ARMRSTR0:	.DB	12, 20, "ARMOR COSTS ", -1
+FUELSTR0:	.DB	12, 20, "FUEL COSTS ", -1
+FUELSTR1:	.DB	12, 21, "PER UNIT...", -1
+
+FUELSTR2:	.DB	12, 20, " SKIMMING FUEL", 0
+		.DB		" FROM PLANET!!", -1
+
+FUELSTR4:	.DB	12, 25, "  FUEL USE:", -1
+
+NO_FUEL2:	.DB	12, 25, "NOT ENOUGH FUEL!", -1
+
+NOMONEY0:	.DB	12, 21, "COME BACK WHEN", 0
+		.DB		"YOU HAVE MORE", 0
+		.DB		"MONEY!", -1
+
+THANKS0:	.DB	12, 21, "THANK YOU,", 0
+		.DB		"COME AGAIN!", -1
+
+PRICESTR:	.DB	13, 25, "PRICE =      CR", -1
+
+DEST_STR:	.DB	14, 20, "DESTINATION:", -1
+
+GAL_STR:	.DB	12, 20, "WARP TO:", 0
+		.DB		" CURRENT GALAXY", 0
+PRAD_STR:	.DB	        " P*RADIKUS", -1
+
+SECT_STR:	.DB	12, 21, "SECTOR", -1
+SYS_STR:	.DB	21, 21, "SYSTEM", -1
+
+SOL_SYS:	.DB	15, 24, "SOLAR SYSTEMS", -1
+PLNTSTR:	.DB	16, 24, " PLANETS    ", -1
+
+SCAN1STR:	.DB	16, 23, "SCANNING", -1
+WARP2STR:	.DB	14, 21, " COMPLETED! ", -1
+WARP1STR:	.DB	14, 21, "INITIATED...", -1
+WARP0STR:	.DB	18, 20, "WARP", -1
+
+SHLD_UP0:	.DB	12, 20, "SHIELD IS UP", 0
+		.DB		"CANNOT LAND!", -1
+
+NO_WARP0:	.DB	12, 21, "DRIVE BROKEN", 0
+		.DB		"CANNOT WARP!", -1
+
+BUY_STR:	.DB	2, 20, "PURCHASE", 0
+		.DB	       " FUEL   ", 0
+		.DB	       " ARMOR  ", -1
+BUY_STR2:	.DB	2, 23, " WEAPON ", 0
+		.DB	       " SPECIAL", 0
+		.DB	       " SHIP   ", -1
+
+DRV_0B:		.DB	3, 20, "DRIVES", 0
+		.DB	       "POWER ", 0
+		.DB	       "SHIELD", -1
+
+TYPE_1:		.DB	13, 22, "TYPE 1 ", -1
+TYPE_2:		.DB	13, 23, "TYPE 2 ", -1
+TYPE_3:		.DB	13, 24, "TYPE 3 ", -1
+TYPE_4:		.DB	13, 25, "TYPE 4 ", -1
+TYPE_5:		.DB	13, 26, "TYPE 5 ", -1
+
+DRV_0:		.DB	3, 20, "DRIVE", -1
+PWR_0:		.DB	3, 20, "PWR PLNT", -1
+SHLD_0:		.DB	3, 20, "SHIELD", -1
+
+WARP_STR:	.DB	3, 20, "WARP   ", 0
+		.DB	       "MAP    ", 0
+		.DB	       "SCAN   ", 0
+EQUIPSTR:	.DB	       "EQUIP  ", 0
+		.DB	       "MISSION", 0	
+		.DB	       "EXIT   ", -1
+
+SKIM_STR:	.DB	3, 20, "REFUEL ", -1
+MAIN_STR:	.DB	3, 21, "MAIN   ", -1
+LAND_STR:	.DB	3, 20, "LAND   ", -1
+LEAVESTR:	.DB	3, 20, "LEAVE  ", -1
+
+DRV_STR:	.DB	12, 12, "DRIVE/ENGINE -", 0
+		.DB		"POWER PLANT  -", 0
+		.DB		"SHIELD GEN.  -", -1
+
+FUEL_STR:	.DB	12, 16, "FUEL UNITS   -", 0
+		.DB	        "ARMOR POINTS -", -1
+
+CLOAKSTR:	.DB	 0,  0, "CLOAKING DEV", -1
+MINE_STR:	.DB	13, 22, "MINES       ", -1
+MISL_STR:	.DB	13, 22, "MISSILES    ", -1
+WAVE_STR:	.DB 	13, 22, "EMP WAVE    ", -1
+BOLT_STR:	.DB	13, 22, "THUNDERBOLT ", -1
+FREEMSTR:	.DB	13, 22, "THE TOSON DRIVE", -1
+CLOAK_PI:	.DB	13, 22, "CLOAKING DEVICE", -1
+CAP_STR:	.DB	13, 22, "MESSAGE CAPSULE", -1
+NW_STR:		.DB	0, 0, "   NO WEAPON! ", -1
+CAN_STR:	.DB	0, 0, "     CANNON   ", -1
+AC_STR:		.DB	0, 0, " ATOMIC CANNON", -1
+LLSR_STR:	.DB	0, 0, "  LIGHT LASER ", -1
+HLSR_STR:	.DB	0, 0, "  HEAVY LASER ", -1
+
+CANNON_09:	.DB	13, 22, "CANNON       ", -1
+ACAN_09:	.DB	13, 22, "ATOMIC CANNON", -1
+LLASER09:	.DB	13, 22, "LIGHT LASER  ", -1
+HLASER09:	.DB	13, 22, "HEAVY LASER  ", -1
+
+
+
+WPNNAMEH:
+	.DB	NW_STR >>8, CAN_STR >>8, AC_STR >>8, LLSR_STR >>8, HLSR_STR >>8
+WPNNAMEL:
+	.DB	NW_STR &H'FF, CAN_STR &H'FF, AC_STR &H'FF, LLSR_STR &H'FF, HLSR_STR &H'FF
+
+;;W2_NAMEH:
+;;	.DB	NW_STR >>8, CLOAKSTR >>8, MINE_STR >>8, MISL_STR >>8
+;;	.DB	WAVE_STR >>8, BOLT_STR >>8
+;;W2_NAMEL:
+;;	.DB	NW_STR &H'FF, CLOAKSTR &H'FF, MINE_STR &H'FF, MISL_STR &H'FF
+;;	.DB	WAVE_STR &H'FF, BOLT_STR &H'FF
+;;
+
+COMP_00:
+	LDA	#0
+	STA	EXPL_X
+C00_0:
+	LDX	#WARP_STR &H'FF
+	LDY	#WARP_STR >> 8
+	JSR	DOPRINT
+
+
+	LDA	#H'AA		;WARP
+	STA	ARDAT0
+	LDA	#H'B2		;MAP
+	STA	ARDAT1
+	LDA	#H'BA		;SCAN
+	STA	ARDAT2
+	LDA	#H'C2		;EQUIP
+	STA	ARDAT3
+	LDA	#H'CA		;MISSION
+	STA	ARDAT4
+	LDA	#H'D2		;EXIT
+	STA	ARDAT5
+	LDA	#H'FF 		;--end
+	STA	ARDAT6
+
+	LDA	#H'16
+	STA	CX
+	LDA	#0
+	LDY	EXPL_X
+	JSR	ARROW
+	BMI	C00_END
+
+	STA	EXPL_X
+
+	LDY	#H'80
+	JSR	ZAP_SPRITES
+	JSR	REM_POS
+	LDA	EXPL_X
+
+	BNE	C00_A
+	JSR	COMP_01		;0 = warp
+	JMP	C00_E
+C00_A:
+	CMP	#1
+	BNE	C00_B
+	JSR	COMP_04	       	;1 = map
+	JMP	C00_E
+C00_B:
+	CMP	#2
+	BNE	C00_C
+				;2 = scan
+	LDA	ORBIT
+	BEQ	C00_E
+	JSR	COMP_05
+	JMP	C00_E
+C00_C:
+	CMP	#3
+	BNE	C00_D
+	JSR	COMP_10	  	;3 = equip
+	JMP	C00_E
+
+C00_D:		CMP	#4
+		BNE	C00_END
+		JSR	COMP_MISSION	;4 = mission
+		
+C00_E:		BMI	C00_END
+		JSR	DISPCOMP
+		JMP	C00_0
+
+C00_END:	RTS
+
+
+
+
+MSSN_HDR:	.DB	14,  1, "HEADQUARTERS:", -1
+MORE_LBL:	.DB	16, 17, H'1F, " = MORE", -1
+ERASE_LBL:	.DB	16, 17,      "        ", -1
+
+CW_MSSN:    	LDY	#2
+		
+CW_M2:		TYA
+		PHA
+
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+
+		PLA
+		TAY
+		LDA	VID_RESET
+		LDA	LNADDRH, Y
+		STA	VID_PTR
+		LDA	LNADDRL, Y
+		CLC
+		ADC	#12
+		STA	VID_PTR
+
+		LDA	#H'FA
+		LDX	#16
+		JSR	DRAW_BAR
+
+		JSR	SET_VID
+		INY
+		CPY	#18
+		BNE	CW_M2
+
+		RTS
+
+
+COMP_MISSION:	JSR	REMARROW
+		JSR	CW_2
+		JSR	CW_3
+		LDX	#MSSN_HDR &H'FF
+		LDY	#MSSN_HDR >> 8
+		JSR	DOPRINT
+
+;;;;;
+		LDA	GOAL0
+		CMP	#-1
+		BNE	CHK1
+		JMP	CHK1NO
+
+CHK1:		LDA	MISSION
+		CMP	#1
+		BNE	CHK1NO
+
+;complete if DRIVE > 1 and SHLDTYPE > 1
+
+		LDA	DRIVE
+		CMP	#2
+		BCC	CHK1NO
+		LDA	SHLDTYPE
+		CMP	#2
+		BCC	CHK1NO
+
+		LDA	#H'FF
+		STA	GOAL0
+		STA	GOAL1
+CHK1NO:		
+
+;;;;;
+		
+		LDA	GOAL0
+		CMP	#H'FF
+		BNE	WHICHMISSION		;display mission
+
+;current mission is complete...
+;check to see if player is at homeworld
+
+		LDY	ORBIT
+		BEQ	SHOWHOME
+
+		LDA	GALAXY_X
+		CLC
+		ADC	#1
+		CMP	HOMELOC+ 0
+		BNE	SHOWHOME
+		LDA	GALAXY_Y
+		CLC
+		ADC	#1
+		CMP	HOMELOC+ 1
+		BNE	SHOWHOME
+		LDA	SECTOR_X
+		CMP	HOMELOC+ 2
+		BNE	SHOWHOME
+		LDA	SECTOR_Y
+		CMP	HOMELOC+ 3
+		BNE	SHOWHOME
+		LDA	XPOS
+		CLC
+		ADC	#1
+		CMP	HOMELOC+ 4
+		BNE	SHOWHOME
+		LDA	YPOS
+		CLC
+		ADC	#1
+		CMP	HOMELOC+ 5
+		BNE	SHOWHOME
+
+		LDA	#H'00
+		STA	GOAL0
+		STA	MS_FLAG
+		INC	MISSION
+		JMP	WHICHMISSION		;display the new mission
+
+SHOWHOME:	JSR	DOMSSN0
+		LDY	#0
+		JMP	SHOWLOC
+
+WHICHMISSION:	LDA	MISSION
+		CMP	#1
+		BNE	WHC2
+		JMP	DOMSSN1
+WHC2:		CMP	#2
+		BNE	WHC3
+		JMP	DOMSSN2
+WHC3:		CMP	#3
+		BNE	WHC4
+		JMP	DOMSSN3
+WHC4:		CMP	#4
+		BNE	WHC5
+		JMP	DOMSSN4
+WHC5:		CMP	#5
+		BNE	WHC6
+		JMP	DOMSSN5
+WHC6:		CMP	#6
+		BNE	WHC7
+		JMP	DOMSSN6
+WHC7:		CMP	#7
+		BNE	WHC8
+		JMP	DOMSSN7
+WHC8:		JMP	DOMSSN8
+
+
+MTXTLOC:	.DB	15, 20, "-- GOAL --", -1    	
+MTXTSECT:	.DB	12, 21, "SECTOR", -1
+MTXTSYST:	.DB	21, 21, "SYSTEM", -1
+MTXTDEST:	.DB	14, 24, "DESTINATION:", -1
+
+SHOWLOC:	LDA	HOMELOC+ 0, Y	;galaxy-x
+		CMP	#-1
+		BNE	SHOWOK
+		JMP	SHOWEND
+
+SHOWOK:		TYA
+		PHA
+		LDX	#MTXTSECT &H'FF
+		LDY	#MTXTSECT >> 8
+		JSR	DOPRINT
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+		PLA	
+		TAY
+		LDA	VID_RESET
+		LDA	LNADDRH+22
+		STA	VID_PTR
+		LDA	LNADDRL+22
+		CLC
+		ADC	#12
+		STA	VID_PTR
+		LDA	#H'08
+		STA	VID_DATA
+		LDA	HOMELOC+0, Y		
+		JSR	DRAW_NUM
+		LDA	#H'0C		;","
+		STA	VID_DATA
+		LDA	HOMELOC+1, Y		
+		JSR	DRAW_NUM
+		LDA	#H'09
+		STA	VID_DATA
+		JSR	SET_VID
+
+		LDA	HOMELOC+ 2, Y	;sector-x
+		CMP	#-1
+		BNE	SHOWOK2
+		JMP	SHOWEND
+
+SHOWOK2:	TYA
+		PHA
+		LDX	#MTXTSYST &H'FF
+		LDY	#MTXTSYST >> 8
+		JSR	DOPRINT
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+		PLA	
+		TAY
+		LDA	LNADDRH+22
+		STA	VID_PTR
+		LDA	LNADDRL+22
+		CLC
+		ADC	#21
+		STA	VID_PTR
+		LDA	#H'08
+		STA	VID_DATA
+		LDA	HOMELOC+2, Y		
+		JSR	DRAW_NUM
+		LDA	#H'0C
+		STA	VID_DATA
+		LDA	HOMELOC+3, Y		
+		JSR	DRAW_NUM
+		LDA	#H'09
+		STA	VID_DATA
+		JSR	SET_VID
+
+		LDA	HOMELOC+ 4, Y	;pos-x
+		CMP	#-1
+		BEQ	SHOWEND
+
+		TYA
+		PHA
+		LDX	#MTXTDEST &H'FF
+		LDY	#MTXTDEST >> 8
+		JSR	DOPRINT
+		JSR	VR_WAIT
+		JSR	KILL_VID
+		JSR	DMAXFER
+		PLA	
+		TAY
+		LDA	LNADDRH+25
+		STA	VID_PTR
+		LDA	LNADDRL+25
+		CLC
+		ADC	#15
+		STA	VID_PTR
+		LDA	#H'08
+		STA	VID_DATA
+		LDA	HOMELOC+4, Y		
+		JSR	DRAWNUM3
+		LDA	#H'0C
+		STA	VID_DATA
+		LDA	HOMELOC+5, Y		
+		JSR	DRAWNUM3
+		LDA	#H'09
+		STA	VID_DATA
+		JSR	SET_VID
+
+SHOWEND:	LDA	#H'00
+		RTS
+
+
+
+DO_MMORE:	LDX	#MORE_LBL &H'FF
+		LDY	#MORE_LBL >> 8
+		JSR	DOPRINT
+		JSR	J_DELAY
+		PHA
+		LDX	#ERASE_LBL &H'FF
+		LDY	#ERASE_LBL >> 8
+		JSR	DOPRINT
+		PLA
+		RTS
+
+DOMSSN0:	LDX	#MTXT0 &H'FF
+		LDY	#MTXT0 >> 8
+		JSR	DOPRINT
+		RTS
+
+DOMSSN1:	LDA	#H'FF
+		STA	MS_FLAG
+
+		LDX	#MTXT1 &H'FF
+		LDY	#MTXT1 >> 8
+		JSR	DOPRINT
+		JSR	DO_MMORE
+		BMI	DOMSSN1X
+		JSR	CW_MSSN
+		LDX	#MTXT1A &H'FF
+		LDY	#MTXT1A >> 8
+		JSR	DOPRINT
+		LDY	#6
+		JSR	SHOWLOC	
+DOMSSN1X:	RTS
+
+DOMSSN2:	LDA	MS_FLAG
+		BNE	DM2SKIP
+;give money
+		LDA	#H'01		;15,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+	
+DM2SKIP:	LDX	#MTXT2 &H'FF
+		LDY	#MTXT2 >> 8
+		JSR	DOPRINT
+		LDY	#12
+		JSR	SHOWLOC	
+		RTS
+
+DOMSSN3:	LDA	MS_FLAG
+		BNE	DM3SKIP
+;give money
+		LDA	#H'03		;25,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM3SKIP:	LDX	#MTXT3 &H'FF
+		LDY	#MTXT3 >> 8
+		JSR	DOPRINT
+		LDY	#18
+		JSR	SHOWLOC	
+		JSR	DO_MMORE
+		BMI	DOMSSN3X
+		JSR	CW_MSSN
+		LDX	#MTXT3A &H'FF
+		LDY	#MTXT3A >> 8
+		JSR	DOPRINT
+DOMSSN3X:	RTS
+
+DOMSSN4:	LDA	MS_FLAG
+		BNE	DM4SKIP
+;give money
+		LDA	#H'05		;35,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM4SKIP:	LDX	#MTXT4 &H'FF
+		LDY	#MTXT4 >> 8
+		JSR	DOPRINT
+		LDY	#24
+		JSR	SHOWLOC	
+		RTS
+
+DOMSSN5:	LDA	MS_FLAG
+		BNE	DM5SKIP
+;give money
+		LDA	#H'08		;50,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM5SKIP:	LDX	#MTXT5 &H'FF
+		LDY	#MTXT5 >> 8
+		JSR	DOPRINT
+		LDY	#30
+		JSR	SHOWLOC	
+		JSR	DO_MMORE
+		BMI	DOMSSN5X
+		JSR	CW_MSSN
+		LDX	#MTXT5A &H'FF
+		LDY	#MTXT5A >> 8
+		JSR	DOPRINT
+DOMSSN5X:      ;;	JSR	DISPCOMP
+		RTS
+
+DOMSSN6:	LDA	MS_FLAG
+		BNE	DM6SKIP
+;give money
+		LDA	#H'08		;50,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM6SKIP:	LDX	#MTXT6 &H'FF
+		LDY	#MTXT6 >> 8
+		JSR	DOPRINT
+		JSR	DO_MMORE
+		BMI	DOMSSN6X
+		JSR	CW_MSSN
+		LDX	#MTXT6A &H'FF
+		LDY	#MTXT6A >> 8
+		JSR	DOPRINT
+		LDY	#36
+		JSR	SHOWLOC	
+DOMSSN6X:     ;;	JSR	DISPCOMP
+		RTS
+
+DOMSSN7:	LDA	MS_FLAG
+		BNE	DM7SKIP
+;give money
+		LDA	#H'08		;50,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM7SKIP:	LDX	#MTXT7 &H'FF
+		LDY	#MTXT7 >> 8
+		JSR	DOPRINT
+		LDY	#42
+		JSR	SHOWLOC	
+	      ;;	JSR	DISPCOMP
+		RTS
+
+DOMSSN8:	LDA	#99
+		STA	THUNDER
+		LDA	MS_FLAG
+		BNE	DM8SKIP
+;give money
+		LDA	#H'0E		;100,000
+		JSR	ADDSCORE
+		LDA	#H'FF
+		STA	MS_FLAG
+
+DM8SKIP:	LDX	#MTXT8 &H'FF
+		LDY	#MTXT8 >> 8
+		JSR	DOPRINT
+		JSR	DO_MMORE
+		BMI	DOMSSN8X
+		JSR	CW_MSSN
+		LDX	#MTXT8A &H'FF
+		LDY	#MTXT8A >> 8
+		JSR	DOPRINT
+		JSR	DO_MMORE
+		BMI	DOMSSN8X
+		JSR	CW_MSSN
+		LDX	#MTXT8B &H'FF
+		LDY	#MTXT8B >> 8
+		JSR	DOPRINT
+		JSR	DO_MMORE
+		BMI	DOMSSN8X
+		JSR	CW_MSSN
+		LDX	#MTXT8C &H'FF
+		LDY	#MTXT8C >> 8
+		JSR	DOPRINT
+DOMSSN8X:     ;;	JSR	DISPCOMP
+		RTS
+		
+;!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+J_DELAY:	JSR	JSTICK1		
+		LDA	J1CHG
+		AND	#(A_BTN + SELECT)
+		BEQ	J_DELAY
+
+		LDX	#0
+		AND	#SELECT
+		BEQ	J_DONE
+	       	LDX	#-1		;select was pressed...
+
+;return if joystick activity
+
+J_DONE:		TXA
+		RTS
+
+;
+;!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+COMP_01:
+	LDA	BKGRND
+	BEQ	C01_A
+	JMP	C01_OK
+C01_A:
+	LDA	DRIVE
+	CMP	#6
+	BNE	C01_C
+	LDA	PRADIKUS
+	BEQ	C01_A0
+	JSR	CW_3
+
+	LDX	#NO_WARP0 &H'FF
+	LDY	#NO_WARP0 >> 8
+	JSR	DOPRINT
+
+	JMP	C01_OK
+C01_A0:
+	JSR	CW_1
+	JSR	CW_2
+	JSR	CW_3
+	JSR	DRAW_GAL
+
+	LDX	#GAL_STR &H'FF
+	LDY	#GAL_STR >>8
+	JSR	DOPRINT
+
+	LDA	#H'66
+	STA	TX
+	LDA	#H'B2
+	STA	TY
+	JSR	C05_COM
+	PHA
+	JSR	CW_3
+	PLA
+	BEQ	C01_C
+	CMP	#1
+	BEQ	C01_B
+	LDA	#H'FF
+	RTS
+C01_B:
+	JMP	PRADWARP
+
+C01_C:
+	JSR	CW_2
+	JSR	DRAW_GAL
+	JSR	CW_3
+	LDX	#DEST_STR &H'FF
+	LDY	#DEST_STR >>8
+	JSR	DOPRINT
+
+	LDX	#SECT_STR &H'FF
+	LDY	#SECT_STR >>8
+	JSR	DOPRINT
+
+	LDX	#SYS_STR &H'FF
+	LDY	#SYS_STR >> 8
+	JSR	DOPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+22
+	STA	VID_PTR
+	LDA	#H'15
+	CLC
+	ADC	LNADDRL+22
+	STA	VID_PTR
+	LDA	#H'08		;[
+	STA	VID_DATA
+	LDA	SECTOR_X
+	JSR	DRAW_NUM
+	LDA	#H'0C		;=
+	STA	VID_DATA
+	LDA	SECTOR_Y
+	JSR	DRAW_NUM
+	LDA	#H'09		;]
+	STA	VID_DATA
+	JSR	DMAXFER
+	JSR	SET_VID
+	LDA	GALAXY_X
+	JSR	GAL_OFF
+	STA	CURSORX
+	LDA	GALAXY_Y
+	JSR	GAL_OFF
+	STA	CURSORY
+	JSR	M2_CURSR
+	LDA	CURSORX
+	CLC
+	ADC	#H'6D
+	STA	SPRTBL0+3
+	STA	SPRTBL1+3
+	LDA	CURSORY
+	CLC
+	ADC	#H'1D
+	STA	SPRTBL0
+	STA	SPRTBL1
+	LDA	#H'BC		;sm. ship char.
+	STA	SPRTBL0+1
+	STA	SPRTBL1+1
+	LDA	#2		;palette
+	STA	SPRTBL0+2
+	STA	SPRTBL1+2
+	JSR	MOVE_2
+	BMI	C01_END
+	BEQ	C01_OK
+	LDA	CX
+	STA	DEST_GX
+	LDA	CY
+	STA	DEST_GY
+
+	JSR	GETSECTOR
+	JMP	COMP_02
+C01_OK:
+	LDA	#1
+	RTS
+C01_END:
+	LDA	#H'FF
+	RTS
+
+GAL_OFF:
+	CLC
+	ASL	A
+	ASL	A
+	ASL	A
+	ASL	A
+	RTS
+
+SECT_OFF:
+	SEC		 
+	SBC	#1
+	CLC
+	ASL	A
+	ASL	A
+	ASL	A
+	RTS
+
+COMP_02:
+	JSR	CW_2
+	JSR	STAR_W2
+	JSR	DRSECTMAP
+
+	LDY	#1
+	STY	CRSR_I
+	LDA	(GAL_PTRL),Y
+	JSR	SECT_OFF
+	STA	CURSORX
+	INY
+	LDA	(GAL_PTRL),Y
+	JSR	SECT_OFF
+	STA	CURSORY
+	JSR	M1_CURSR	;COMP_02 IMBEDDED IN COMP_01
+	JSR	REM_POS
+	LDA	GALAXY_X
+	CMP	DEST_GX
+	BNE	C02_A0
+	LDA	GALAXY_Y
+	CMP	DEST_GY
+	BNE	C02_A0
+	LDA	SECTOR_X
+	JSR	SECT_OFF
+	CLC
+	ADC	#H'68
+	STA	SPRTBL0+3
+	STA	SPRTBL1+3
+	LDA	SECTOR_Y
+	JSR	SECT_OFF
+	CLC
+	ADC	#H'19
+	STA	SPRTBL0
+	STA	SPRTBL1
+	JSR	POS_CHAR
+C02_A0:
+	JSR	MOVE_1
+	BMI	C01_END
+	BNE	C02_A
+	JMP	COMP_01
+C02_A:
+	LDA	CX
+	STA	DEST_SX
+	LDA	CY
+	STA	DEST_SY
+
+COMP_03:	;do the warp...
+
+	JSR	CW_3
+
+	LDX	#WARP0STR &H'FF
+	LDY	#WARP0STR >> 8
+	JSR	DOPRINT		;"WARP"
+
+	LDY	#WARP1STR >> 8
+	LDX	#WARP1STR &H'FF
+	JSR	DOPRINT		;"INITIATED..."
+
+	LDA	DEST_GX
+	STA	GALAXY_X
+	LDA	DEST_GY
+	STA	GALAXY_Y
+	LDA	DEST_SX
+	STA	SECTOR_X
+		STA	CX
+	LDA	DEST_SY
+	STA	SECTOR_Y
+		STA	CY
+
+	JSR	NEWSYSTEM
+
+;set new position in solar system...somewhere near the middle
+
+		JSR	RANDOM
+		AND	#H'3F
+		CLC
+		ADC	#H'20	;make $20..5F (or 32..95)
+		STA	XPOS
+		
+		JSR	RANDOM
+		AND	#H'3F
+		CLC
+		ADC	#H'20	;make $20..5F (or 32..95)
+		STA	YPOS
+
+		LDA	FUEL	
+		SEC
+		SBC	FUELUSED
+		STA	FUEL
+	
+		JSR	DISPCOMP
+	
+		LDY	#8
+		JSR	BIGDELAY
+	
+		LDX	#WARP2STR &H'FF	
+		LDY	#WARP2STR >> 8
+		JSR	DOPRINT		;"COMPLETED..."
+
+		LDX	#SCAN1STR &H'FF
+		LDY	#SCAN1STR >> 8
+		JSR	DOPRINT
+
+		LDY	#SYS_STR >> 8
+		LDX	#SYS_STR &H'FF
+		LDA	#17
+		STA	TX
+		LDA	#24
+		STA	TY
+		JSR	XYPRINT
+	
+		LDA	#H'FF
+		STA	WARP
+	
+		LDY	#8
+		JSR	BIGDELAY
+	
+		LDA	SYSTEM+1	;x pos of 1st item in system
+		STA	DEST_X
+		LDA	SYSTEM+2	;y pos of 1st item...
+		STA	DEST_Y
+	
+		JSR	STOPSHIP
+		JSR	GETORBIT
+	
+COMP_04:
+	JSR	CW_2
+	LDA	BKGRND
+	BEQ	C04_A
+	SEC
+	SBC	#H'7F
+	TAY
+	JSR	DRAWPLNT
+	JMP	C04_END
+C04_A:
+	JSR	CW_3
+	JSR	STAR_W2
+	JSR	DRSYSMAP
+	JSR	SYS_POS
+
+	LDY	#SECT_STR >> 8
+	LDX	#SECT_STR &H'FF
+	LDA	#12
+	STA	TX
+	LDA	#20
+	STA	TY
+	JSR	XYPRINT
+
+	LDX	#SYS_STR &H'FF
+	LDY	#SYS_STR >>8
+	LDA	#21
+	STA	TX
+	LDA	#20
+	STA	TY
+	JSR	XYPRINT
+
+	LDA	#23
+	STA	TY
+	LDA	#14
+	STA	TX
+	LDX	#DEST_STR &H'FF
+	LDY	#DEST_STR >>8
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+21
+	STA	VID_PTR
+	LDA	#H'0C
+	CLC
+	ADC	LNADDRL+21
+	STA	VID_PTR
+	LDA	#H'08
+	STA	VID_DATA
+	LDA	GALAXY_X
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'0C
+	STA	VID_DATA
+	LDA	GALAXY_Y
+	CLC
+	ADC	#1
+	JSR	DRAW_NUM
+	LDA	#H'09
+	STA	VID_DATA
+	LDA	LNADDRH+21
+	STA	VID_PTR
+	LDA	#H'15
+	CLC
+	ADC	LNADDRL+21
+	STA	VID_PTR
+	LDA	#H'08
+	STA	VID_DATA
+	LDA	SECTOR_X
+	JSR	DRAW_NUM
+	LDA	#H'0C
+	STA	VID_DATA
+	LDA	SECTOR_Y
+	JSR	DRAW_NUM
+	LDA	#H'09
+	STA	VID_DATA
+	JSR	DMAXFER
+	JSR	SET_VID
+	LDY	#1
+	STY	CRSR_I		;START IT AT THE FIRST ENTRY IN THE SYSTEM
+	JSR	SKIPDEAD
+	LDA	SYSTEM+0,Y	;Y points to x pos. byte
+	STA	CURSORX
+	LDA	SYSTEM+1,Y	;y pos.
+	STA	CURSORY
+	JSR	M1S_CRSR
+	JSR	MOVE_1SS
+	BMI	C04_FLS
+	BEQ	C04_END
+	LDA	CX
+	STA	DEST_X
+	LDA	CY
+	STA	DEST_Y
+C04_END:
+	LDA	#1
+	RTS
+C04_FLS:
+	LDA	#H'FF
+	RTS
+
+
+
+
+COMP_05:
+	LDA	ORBIT
+	BEQ	C05_000
+	LDA	BKGRND
+	BEQ	C05_00
+	JMP	C05_D		;on a planet/station...
+
+C05_000:
+	LDA	#1		;not "orbiting" anything...
+	RTS
+
+;in orbit
+
+C05_00:
+	JSR	CW_1
+	JSR	CW_2
+	JSR	CW_3
+	JSR	STAR_W2
+	JSR	SCAN
+	LDY	ORBIT 		;points to x pos. byte
+	LDA	SYSTEM+2,Y
+	AND	#H'70		;get type/pal...
+	CMP	#H'30		;sun?
+	BEQ	C05_END		;(yes)
+
+;non-sun
+
+C05_0:
+	LDA	SYSTEM+3,Y	;data bits
+	AND	#INHAB
+	BNE	C05_A
+	LDA	SYSTEM+2, Y	;type/pal byte
+	AND	#H'70
+	BEQ	C05_END		;space station!
+	JMP	C05_C
+C05_A:
+	LDX	#LAND_STR &H'FF
+	LDY	#LAND_STR >> 8	
+	JSR	DOPRINT
+
+	LDX	#MAIN_STR &H'FF
+	LDY	#MAIN_STR >> 8	
+	JSR	DOPRINT
+
+	LDA	#H'16
+	STA	TX
+	LDA	#H'AA
+	STA	TY
+	JSR	C05_COM
+	CMP	#H'FF
+	BEQ	C05_EXIT
+	CMP	#0
+	BNE	C05_END
+	LDY	ORBIT
+	LDA	SYSTEM+3,Y	;data bits
+	AND	#FRNDLY
+
+	BEQ	C05_B
+	JSR	STOPSHIP
+	JSR	COMP_06
+	BMI	C05_EXIT
+	JSR	CW_1
+	JSR	CW_2
+	JSR	CW_3
+	JSR	SCAN
+	JMP	C05_A
+
+
+;enemy planet
+
+C05_B:
+	JSR	CHK_LAND
+	BEQ	C05_END
+	JSR	LANDPLNT
+	JMP	C05_EXIT
+
+
+C05_END:
+	LDA	#1
+	RTS
+
+
+C05_EXIT:		;select was hit/or just landed on enemy
+	LDA	#H'FF
+	RTS
+
+
+;uninhabited
+
+C05_C:
+	LDY	ORBIT
+	LDA	SYSTEM+3,Y	;data bits
+	AND	#GAS
+	BEQ	C05_END
+	JSR	STOPSHIP
+
+	LDX	#SKIM_STR &H'FF
+	LDY	#SKIM_STR >> 8
+	JSR	DOPRINT
+
+	LDX	#MAIN_STR &H'FF
+	LDY	#MAIN_STR >> 8	
+	JSR	DOPRINT
+
+	LDA	#H'16
+	STA	TX
+	LDA	#H'AA
+	STA	TY
+	JSR	C05_COM
+	CMP	#H'FF
+	BEQ	C05_EXIT
+	CMP	#0
+	BNE	C05_END
+	JSR	COMP_0C
+	JMP	C05_END
+
+;already landed!
+
+C05_D:
+	JSR	CW_1
+	JSR	COMP_04
+
+	LDX	#LEAVESTR &H'FF
+	LDY	#LEAVESTR >> 8
+	JSR	DOPRINT
+
+	LDX	#MAIN_STR &H'FF
+	LDY	#MAIN_STR >> 8
+	JSR	DOPRINT
+
+	LDA	#H'16
+	STA	TX
+	LDA	#H'AA
+	STA	TY
+	JSR	C05_COM
+	BEQ	C05_E
+	CMP	#H'FF
+	BEQ	C05_EX0
+	JMP	C05_END
+C05_E:
+	JMP	LV_ORB
+C05_EX0:
+	JMP	C05_EXIT
+C05_COM:
+	LDA	#H'BD
+	STA	SPRTBL0+H'F9
+	STA	SPRTBL1+H'F9
+	LDA	#H'DD
+	STA	SPRTBL0+H'FD
+	STA	SPRTBL1+H'FD
+	LDA	TY
+	STA	SPRTBL0+H'F8
+	STA	SPRTBL1+H'F8
+	CLC
+	ADC	#8
+	STA	SPRTBL0+H'FC
+	STA	SPRTBL1+H'FC
+	LDA	TX
+	STA	SPRTBL0+H'FB
+	STA	SPRTBL1+H'FB
+	STA	SPRTBL0+H'FF
+	STA	SPRTBL1+H'FF
+	LDA	#1
+	STA	SPRTBL0+H'FA
+	STA	SPRTBL1+H'FA
+	STA	SPRTBL0+H'FE
+	STA	SPRTBL1+H'FE
+C05_COM0:
+	JSR	VR_WAIT
+	JSR	DMAXFER
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BNE	C05_EX0
+	LDA	J1CHG
+	AND	#B_BTN
+	BEQ	C05_COM1
+	JSR	C05_COM2
+	JSR	CW_1
+	LDA	#1
+	RTS
+C05_COM1:
+	LDA	J1CHG
+	AND	#A_BTN
+	BEQ	C05_COM0	
+	JSR	C05_COM2
+	JSR	CW_1
+	LDA	#0
+	RTS
+
+C05_COM2:
+	LDA	#H'F8
+	STA	SPRTBL0+H'F8
+	STA	SPRTBL1+H'F8
+	STA	SPRTBL0+H'FC
+	STA	SPRTBL1+H'FC
+	RTS
+
+COMP_06:
+	LDA	#0
+	STA	EXPL_Y
+	LDY	#H'80
+	JSR	ZAP_SPRITES
+	JSR	INVEN
+	JSR	CW_1
+	JSR	CW_3
+C06_A:
+	LDX	#BUY_STR &H'FF
+	LDY	#BUY_STR >> 8
+	JSR	DOPRINT
+
+	LDX	#BUY_STR2 &H'FF
+	LDY	#BUY_STR2 >> 8
+	JSR	DOPRINT
+
+	LDA	#H'B2
+	STA	ARDAT0
+	LDA	#H'BA
+	STA	ARDAT1
+	LDA	#H'C2
+	STA	ARDAT2
+	LDA	#H'CA
+	STA	ARDAT3
+	LDA	#H'D2
+	STA	ARDAT4
+	LDA	#H'FF
+	STA	ARDAT5
+	LDA	#H'16
+	STA	CX
+	LDA	#0
+	LDY	EXPL_Y
+	JSR	ARROW
+	CMP	#H'FF
+	BEQ	C06_EXIT
+	CMP	#H'80
+	BEQ	C06_END
+	STA	EXPL_Y
+	CMP	#0
+	BNE	C06_B
+	LDA	#H'FF
+	STA	CRDT_Y
+	JSR	COMP_07
+	PHA
+	JSR	INV_3
+	PLA
+	JMP	C06_F
+C06_B:
+	CMP	#1
+	BNE	C06_C
+	LDA	#H'FF
+	STA	CRDT_Y
+	JSR	COMP_08
+	PHA
+	JSR	INV_3
+	PLA
+	JMP	C06_F
+C06_C:
+	CMP	#2
+	BNE	C06_D
+	LDA	WPN1
+	CLC
+	ADC	#16	;BASE OFFSET FOR A WEAPON INTO CREDIT TABLE
+	STA	CRDT_Y
+	JSR	COMP_09
+	PHA
+	JSR	INV_1
+	JSR	DISPCOMP
+	PLA
+	JMP	C06_F
+C06_D:
+	CMP	#3
+	BNE	C06_E
+	LDA	#H'FF
+	STA	CRDT_Y
+	JSR	COMP_0A
+	PHA
+	JSR	INV_2
+	JSR	DISPCOMP
+	PLA
+	JMP	C06_F
+C06_E:
+	CMP	#4
+	BNE	C06_F
+	JSR	COMP_0B
+	PHA
+	JSR	INV_3
+	JSR	DISPCOMP
+	PLA
+C06_F:
+	BMI	C06_EXIT
+	JMP	C06_A
+C06_END:
+	LDA	#1
+	RTS
+C06_EXIT:
+	LDA	#H'FF
+	RTS
+
+COMP_07:
+	JSR	REMARROW
+	JSR	CW_3
+	LDA	FUEL
+	CMP	#99
+	BCS	C06_END				;;;extra
+C07_A:
+	LDA	#H'20
+	JSR	GETCOST
+	JSR	C07_COST
+
+	LDX	#FUELSTR0 &H'FF
+	LDY	#FUELSTR0 >> 8
+	JSR	DOPRINT
+
+	LDX	#FUELSTR1 &H'FF
+	LDY	#FUELSTR1 >> 8
+	JSR	DOPRINT
+
+C07_B:
+	JSR	DISPCOMP
+	JSR	INV_3
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BNE	C07_EXIT
+	LDA	J1CHG
+	AND	#B_BTN
+	BEQ	C07_C
+C07_B1:
+	JSR	CW_3
+	JSR	REMPRICE
+		LDA	#H'00
+		STA	H'4015	;KILL SOUND
+	LDA	#1
+	RTS
+C07_EXIT:
+		LDA	#H'00
+		STA	H'4015 	;KILL SOUND
+	LDA	#H'FF
+	RTS
+C07_C:
+	LDA	FUEL
+	CMP	#99
+	BCS	C07_B1
+	LDA	J1VAL
+	AND	#A_BTN
+	BEQ	C07_B
+	TAY
+	JSR	BUYITEM
+	TYA
+	BEQ	C07_D
+	INC 	FUEL
+		LDA	#H'C1
+		STA	H'4000
+		LDA	#H'C9
+		STA	H'4001
+		LDA	#H'69
+		STA	H'4002
+		LDA	#H'98
+		STA	H'4003
+		LDA	#H'01
+		STA	H'4015
+	JMP	C07_B
+
+C07_D:	JSR	REMPRICE
+	JSR	CW_3
+
+	LDX	#NOMONEY0 &H'FF
+	LDY	#NOMONEY0 >> 8
+	JSR	DOPRINT
+
+		LDA	#H'00
+		STA	H'4015	;KILL SOUND
+	LDA	#1
+	RTS
+
+C07_E:	JSR	REMPRICE
+	JSR	CW_3
+
+	LDX	#THANKS0 &H'FF
+	LDY	#THANKS0 >> 8
+	JSR	DOPRINT
+
+		LDA	#H'00
+		STA	H'4015	;KILL SOUND
+	LDA	#1
+	RTS
+
+C07_COST:
+	LDA	#H'AA
+	STA	COSTSPR0+12
+	STA	COSTSPR0+16
+	STA	COSTSPR0+20
+	STA	COSTSPR1+12
+	STA	COSTSPR1+16
+	STA	COSTSPR1+20
+	LDA	#H'C6
+	STA	COSTSPR0+15
+	STA	COSTSPR1+15
+	LDA	#H'CE
+	STA	COSTSPR0+19
+	STA	COSTSPR1+19
+	LDA	#H'D6
+	STA	COSTSPR0+23
+	STA	COSTSPR1+23
+	RTS
+
+COMP_08:
+	JSR	REMARROW
+	JSR	CW_3
+	LDA	ARMOR
+	CMP	#99
+	BCS	C08_END
+	LDA	#H'1F
+	JSR	GETCOST
+	JSR	C07_COST
+
+	LDX	#ARMRSTR0 &H'FF
+	LDY	#ARMRSTR0 >> 8
+	JSR	DOPRINT
+
+	LDX	#FUELSTR1 &H'FF
+	LDY	#FUELSTR1 >> 8
+	JSR	DOPRINT
+C08_A:
+	JSR	DISPCOMP
+	JSR	INV_3
+	JSR	JSTICK1
+	LDA	J1CHG
+	AND	#SELECT
+	BEQ	C08_A0
+	LDA	#H'FF
+		LDA	#H'00
+		STA	H'4015	;KILL SOUND
+	RTS
+C08_A0:
+	LDA	J1CHG
+	AND	#B_BTN
+	BEQ	C08_C
+C08_B:
+	JSR	CW_3
+	JSR	REMPRICE
+C08_END:
+	LDA	#0
+		LDA	#H'00
+		STA	H'4015	;KILL SOUND
+	RTS
+C08_C:
+	LDA	ARMOR
+	CMP	#99
+	BCS	C08_B
+	LDA	J1VAL
+	AND	#A_BTN
+	BEQ	C08_A
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C08_D
+	JMP	C07_D
+C08_D:
+	INC 	ARMOR
+		LDA	#H'C1
+		STA	H'4000
+		LDA	#H'C9
+		STA	H'4001
+		LDA	#H'69
+		STA	H'4002
+		LDA	#H'98
+		STA	H'4003
+		LDA	#H'01
+		STA	H'4015
+	JMP	C08_A
+
+COMP_09:
+	JSR	CW_3
+	LDY	#4
+	JSR	CLRARDAT
+	JSR	C09_MENU
+	BEQ	C09_END
+	LDA	#H'20
+	LDY	#0
+	JSR	ARROW
+	BMI	C09_END
+	STA	LOGIC_TEMP
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C09_A
+	JMP	C07_D
+C09_A:
+	LDA	LOGIC_TEMP
+	CLC
+	ADC	#CANNON
+	STA	WPN1
+	JMP	C07_E
+C09_END:
+	CMP	#H'FF
+	BEQ	C09_EXIT
+	JSR	CW_3
+	JSR	REMPRICE
+	LDA	#1
+C09_EXIT:
+	RTS
+
+C09_MENU:
+		LDA	#1
+		STA	EXPL_A
+	LDY	#20
+	LDA	#H'AA
+	STA	LOGIC_TEMP
+	LDA	#H'21
+	JSR	HASITEM
+	BEQ	C09M_0
+	TYA
+	PHA
+	STA	TY
+	LDX	#CANNON_09 & H'FF
+	LDY	#CANNON_09 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT0
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+C09M_0:
+	LDA	#H'22
+	JSR	HASITEM
+	BEQ	C09M_1
+	TYA
+	PHA
+	STA	TY
+	LDX	#ACAN_09 & H'FF
+	LDY	#ACAN_09 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT1
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+C09M_1:
+	LDA	#H'23
+	JSR	HASITEM
+	BEQ	C09M_2
+
+	TYA
+	PHA
+	STA	TY
+	LDY	#LLASER09 >> 8
+	LDX	#LLASER09 & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT2
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+C09M_2:
+	LDA	#H'24
+	JSR	HASITEM
+	BEQ	C09M_3
+	STY	TY
+	LDX	#HLASER09 & H'FF
+	LDY	#HLASER09 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	LDA	LOGIC_TEMP
+	STA	ARDAT3
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	
+C09M_3:
+	LDX	#PRICESTR & H'FF
+	LDY	#PRICESTR >> 8
+		JSR	DOPRINT
+		LDA	EXPL_A
+	RTS
+	
+COMP_0A:
+	LDA	#0
+	STA	LOGIC_Y
+C0A_A:
+	JSR	CW_3
+	LDY	#5
+	JSR	CLRARDAT
+	JSR	C0A_MENU
+	BEQ	C0A_END
+C0A_A0:
+	LDY	LOGIC_Y
+	LDA	#H'24
+	JSR	ARROW
+	BMI	C0A_END
+	STA	LOGIC_Y
+	TAY
+	LDA	CLOAK,Y
+	CMP	#99
+	BCS	C0A_A0
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C0A_B
+	JMP	C07_D
+C0A_END:
+	CMP	#H'FF
+	BEQ	C0A_EXIT
+	JSR	CW_3
+	JSR	REMPRICE
+	LDA	#1
+C0A_EXIT:
+	RTS
+C0A_B:
+	LDY	LOGIC_Y
+	CPY	#4
+	BEQ	C0A_C
+	LDX	ITEM1CNT,Y
+	DEX
+	STX	ITEM1CNT,Y
+	LDX	CLOAK,Y
+	INX
+	STX	CLOAK,Y
+	JSR	DISPCOMP
+	JSR	INV_2
+	LDY	LOGIC_Y
+	LDA	ITEM1CNT,Y
+	BNE	C0A_D
+	JMP	C0A_A
+C0A_C:
+	LDA	#99
+	STA	CLOAK,Y
+	JSR	DISPCOMP
+	JSR	INV_2
+	JMP	C0A_A
+C0A_D:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDY	LOGIC_Y
+	LDA	ARDAT0,Y
+	SEC
+	SBC	#H'AA
+	LSR	A
+	LSR	A
+	LSR	A
+	TAX
+	LDA	LNADDRH+20,X
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+20,X
+	STA	VID_PTR
+	LDA	ITEM1CNT,Y
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	JMP	C0A_A0
+
+C0A_MENU:
+	LDY	#20
+	LDA	#H'AA
+	STA	LOGIC_TEMP
+	LDA	#0
+	STA	EXPL_A
+	LDA	#H'25
+	JSR	HASITEM
+	BEQ	C0AM_A
+	LDA	ITEM1CNT
+	BEQ	C0AM_A
+	TYA
+	PHA
+	STA	TY
+	LDX	#CLOAKSTR & H'FF
+	LDY	#CLOAKSTR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	PHA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'19
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	ITEM1CNT
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT0
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDA	#1
+	STA	EXPL_A
+C0AM_A:
+	LDA	#H'26
+	JSR	HASITEM
+	BEQ	C0AM_B
+	LDA	ITEM2CNT
+	BEQ	C0AM_B
+	TYA
+	PHA
+	STA	TY
+	LDY	#MINE_STR >> 8
+	LDX	#MINE_STR & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	PHA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'19
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	ITEM2CNT
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT1
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDA	#1
+	STA	EXPL_A
+C0AM_B:
+	LDA	#H'27
+	JSR	HASITEM
+	BEQ	C0AM_C
+	LDA	ITEM3CNT
+	BEQ	C0AM_C
+	TYA
+	PHA
+	STA	TY
+	LDX	#MISL_STR & H'FF
+	LDY	#MISL_STR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	PHA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'19
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	ITEM3CNT
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT2
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDA	#1
+	STA	EXPL_A
+C0AM_C:
+	LDA	#H'28
+	JSR	HASITEM
+	BEQ	C0AM_D
+	LDA	ITEM4CNT
+	BEQ	C0AM_D
+	TYA
+	PHA
+	STA	TY
+	LDX	#WAVE_STR & H'FF
+	LDY	#WAVE_STR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	PHA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'19
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	ITEM4CNT
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT3
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDA	#1
+	STA	EXPL_A
+C0AM_D:
+	LDA	#H'29
+	JSR	HASITEM
+	BEQ	C0AM_E
+	TYA
+	PHA
+	STA	TY
+	LDX	#BOLT_STR & H'FF
+	LDY	#BOLT_STR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	PHA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'19
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	#99
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	LDA	LOGIC_TEMP
+	STA	ARDAT4
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDA	#1
+	STA	EXPL_A
+C0AM_E:
+	JSR	C09M_3
+	LDA	EXPL_A
+	RTS
+	
+	
+COMP_0B:
+	JSR	CW_1
+	LDA	#0
+	STA	LOGIC_AY
+	JSR	CW_3
+C0B_A:
+	LDY	#DRV_0B >> 8
+	LDX	#DRV_0B &H'FF
+	JSR	DOPRINT
+
+	LDA	#H'AA
+	STA	ARDAT0
+	LDA	#H'B2
+	STA	ARDAT1
+	LDA	#H'BA
+	STA	ARDAT2
+	LDA	#H'FF
+	STA	ARDAT3
+	LDA	#H'16
+	STA	CX
+	LDA	#0
+	LDY	LOGIC_AY
+	JSR	ARROW
+	BMI	C0B_END
+	STA	LOGIC_AY
+	BNE	C0B_B
+	LDA	DRIVE
+	CMP	#6
+	BCC	C0B_A1
+	LDA	#H'FF
+	JMP	C0B_A2
+C0B_A1:
+	SEC
+	SBC	#1
+C0B_A2:
+	STA	CRDT_Y
+	JSR	COMP_0D
+	CMP	#H'FF
+	BEQ	C0B_EXIT
+	JMP	C0B_D
+C0B_B:
+	CMP	#1
+	BNE	C0B_C
+	LDA	PWRPLANT
+	CLC
+	ADC	#4
+	STA	CRDT_Y
+	JSR	COMP_0E
+	CMP	#H'FF
+	BEQ	C0B_EXIT
+	JMP	C0B_D
+C0B_C:
+	CMP	#2
+	BNE	C0B_D
+	LDA	SHLDTYPE
+	BNE	C0B_C1
+	LDA	#H'FF
+	JMP	C0B_C2
+C0B_C1:
+	CLC
+	ADC	#9
+C0B_C2:
+	STA	CRDT_Y
+	JSR	COMP_0F
+	CMP	#H'FF
+	BEQ	C0B_EXIT
+C0B_D:
+	JSR	INV_3
+	JSR	DISPCOMP
+	JMP	C0B_A
+C0B_END:
+	CMP	#H'FF
+	BEQ	C0B_EXIT
+	JSR	REMARROW
+	LDA	#1
+C0B_EXIT:
+	RTS
+
+COMP_0C:
+	JSR	CW_1
+	JSR	CW_3
+	LDA	FUEL
+	CMP	#99
+	BCC	C0C_0A
+	LDA	#1
+	RTS
+C0C_0A:
+	LDX	#FUELSTR2 &H'FF
+	LDY	#FUELSTR2 >> 8
+	JSR	DOPRINT
+C0C_B:
+	JSR	DISPCOMP
+C0C_C:
+	LDA	FUEL
+	CMP	#99
+	BCS	C0C_D
+	INC 	FUEL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; REFUEL SOUND (05/14/90)
+	LDA	#H'4F
+	STA	H'4000
+	LDA	#H'87
+	STA	H'4001
+	LDA	#H'FF
+	SEC
+	SBC	FUEL
+	STA	H'4002
+	LDA	#H'78
+	STA	H'4003
+	LDA	#H'01
+	STA	H'4015
+
+
+	JMP	C0C_B
+C0C_D:
+			LDA	#H'00
+			STA	H'4015
+	LDY	#4
+	JSR	BIGDELAY
+	JSR	CW_3
+	LDA	#1
+	RTS
+
+COMP_0D:
+	JSR	CW_3
+	LDY	#5
+	JSR	CLRARDAT
+	LDA	#DRV_0 >> 8
+	STA	PTR2H
+	LDA	#DRV_0 &H'FF
+	STA	PTR2L
+	LDA	#H'10
+	STA	LOGIC_BY
+	JSR	C0D_MENU
+	BEQ	C0D_END
+	LDA	#H'0F
+	LDY	#0
+	JSR	ARROW
+	BMI	C0D_END
+	STA	LOGIC_TEMP
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C0D_A
+	JMP	C07_D
+C0D_A:
+	JSR	C07_E
+	LDA	LOGIC_TEMP
+	CLC
+	ADC	#1
+	STA	DRIVE
+	LDA	#1
+	RTS
+C0D_END:
+	CMP	#H'FF
+	BEQ	C0D_EXIT
+	JSR	CW_3
+	JSR	REMPRICE
+	LDA	#1
+C0D_EXIT:
+	RTS
+
+C0D_MENU:
+	LDY	#20
+	LDA	#H'AA
+	STA	LOGIC_TEMP
+	LDX	#0
+	STX	EXPL_A
+	LDA	LOGIC_BY
+	JSR	HASITEM
+	BEQ	C0DM_0
+	STY	CY
+	TYA
+	PHA
+	STA	TY
+	LDY	#TYPE_1 >> 8
+	LDX	#TYPE_1 & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	WRITEOBJ
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT0
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+C0DM_0:
+	LDA	#H'01
+	CLC
+	ADC	LOGIC_BY
+	JSR	HASITEM
+	BEQ	C0DM_1
+	STY	CY
+	TYA
+	PHA
+	STA	TY
+	LDX	#TYPE_2 & H'FF
+	LDY	#TYPE_2 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	WRITEOBJ
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT1
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+C0DM_1:
+	LDA	#H'02
+	CLC
+	ADC	LOGIC_BY
+	JSR	HASITEM
+	BEQ	C0DM_2
+	STY	CY
+	TYA
+	PHA
+	STA	TY
+	LDX	#TYPE_3 & H'FF
+	LDY	#TYPE_3 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	WRITEOBJ
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT2
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+C0DM_2:
+	LDA	#H'03
+	CLC
+	ADC	LOGIC_BY
+	JSR	HASITEM
+	BEQ	C0DM_3
+	STY	CY
+	TYA
+	PHA
+	STA	TY
+	LDX	#TYPE_4 & H'FF
+	LDY	#TYPE_4 >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	WRITEOBJ
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT3
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+C0DM_3:
+	LDA	#H'04
+	CLC
+	ADC	LOGIC_BY
+	JSR	HASITEM
+	BEQ	C0DM_4
+	STY	CY
+	STY	TY
+	LDY	#TYPE_5 >> 8
+	LDX	#TYPE_5 & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	WRITEOBJ
+	LDA	LOGIC_TEMP
+	STA	ARDAT4
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+C0DM_4:
+	JSR	C09M_3
+	LDA	EXPL_A
+	RTS
+
+WRITEOBJ:
+	LDX	PTR2L
+	LDY	PTR2H
+	LDA	CY
+	STA	TY
+	LDA	#20
+	STA	TX
+	JMP	XYPRINT
+	
+COMP_0E:
+	JSR	CW_3
+	LDY	#5
+	JSR	CLRARDAT
+	LDA	#PWR_0 >> 8
+	STA	PTR2H
+	LDA	#PWR_0 &H'FF
+	STA	PTR2L
+	LDA	#H'15
+	STA	LOGIC_BY
+	JSR	C0D_MENU
+	BEQ	C0E_END
+	LDA	#H'14
+	LDY	#0
+	JSR	ARROW
+	BMI	C0E_END
+	STA	LOGIC_TEMP
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C0E_A
+	JMP	C07_D
+C0E_A:
+	JSR	C07_E
+	LDA	LOGIC_TEMP
+	CLC
+	ADC	#1
+	STA	PWRPLANT
+	LDA	#1
+	RTS
+C0E_END:
+	CMP	#H'FF
+	BEQ	C0E_EXIT
+	JSR	CW_3
+	JSR	REMPRICE
+	LDA	#1
+C0E_EXIT:
+	RTS
+
+COMP_0F:
+	JSR	CW_3
+	LDY	#5
+	JSR	CLRARDAT
+	LDA	#SHLD_0 >> 8
+	STA	PTR2H
+	LDA	#SHLD_0 &H'FF
+	STA	PTR2L
+	LDA	#H'1A
+	STA	LOGIC_BY
+	JSR	C0D_MENU
+	BEQ	C0F_END
+	LDA	#H'19
+	LDY	#0
+	JSR	ARROW
+	BMI	C0F_END
+	STA	LOGIC_TEMP
+	TAY
+	JSR	BUYITEM
+	TYA
+	BNE	C0F_A
+	JMP	C07_D
+C0F_A:
+	JSR	C07_E
+	LDA	LOGIC_TEMP
+	CLC
+	ADC	#1
+	STA	SHLDTYPE
+	TAY
+	LDA	SHMAX,Y
+	STA	SHIELD
+	LDA	#1
+	RTS
+C0F_END:
+	CMP	#H'FF
+	BEQ	C0F_EXIT
+	JSR	CW_3
+	JSR	REMPRICE
+	LDA	#1	
+C0F_EXIT:
+	RTS
+
+SHMAX:		.DB	0,  20,  40,  60,  80,  99
+
+
+COMP_10:
+	JSR	CW_3
+	JSR	INVEN
+	LDY	#5
+	JSR	CLRARDAT
+	JSR	USE_MENU
+	BEQ	C10_END
+	LDA	#0
+	LDY	#0
+	JSR	ARROW
+	BMI	C10_END
+	CLC
+	ADC	#CLOAK & H'FF
+	STA	WPN2
+C10_END:
+	CMP	#H'FF
+	BEQ	C10_EXIT
+	LDA	#1
+	RTS
+C10_EXIT:
+	LDA	#H'FF
+	RTS
+
+PRADWARP:
+	LDA	#1
+	STA	PRADIKUS
+	LDA	#H'FF
+	STA	WARP
+	LDA	#PRAD_SYS >>8
+	STA	SEC_PTRH
+	LDA	#PRAD_SYS &H'FF
+	STA	SEC_PTRL
+
+	JSR	CW_3
+
+	LDX	#PMSG &H'FF
+	LDY	#PMSG >> 8
+	JSR	DOPRINT
+
+	LDY	#20
+	JSR	BIGDELAY
+	
+	LDA	#H'FF
+	STA	SAVEBIT0
+	STA	SYSBIT0
+	STA	SAVEBIT1
+	STA	SYSBIT1
+	STA	SAVEBIT2
+	STA	SYSBIT2		;NECESSARY FOR LOADSYSTEM
+	JSR	LOADSYSTEM
+	JMP	COMP_04
+
+LV_ORB:
+	JSR	STOPSHIP
+	LDA	#0
+	STA	BKGRND
+	JSR	LOADSYSTEM
+	LDY	ORBIT
+	LDA	SYSTEM+0,Y	;x pos.
+	STA	XPOS
+    ;	STA	DEST_X
+	LDA	SYSTEM+1,Y	;y pos.
+	STA	YPOS
+    ;	STA	DEST_Y
+	LDA	#2
+	STA	WARP
+	LDA	#H'FF
+	RTS
+
+CHK_LAND:
+	LDY	ORBIT
+	LDA	SYSTEM+2,Y	;type/pal.
+	AND	#H'70
+	BNE	CL_PRAD		;space stn?
+	TYA
+	LDY	#-1
+CL_0:
+	INY
+	SEC
+	SBC	#4
+	BPL	CL_0
+CL_1:
+	LDA	STN_STAT,Y
+	BEQ	CL_3		;completely destroyed...
+	AND	#H'88
+	CMP	#H'08
+	BNE	CL_2
+	LDA	#1
+	RTS
+CL_2:
+	JSR	CW_3
+
+	LDY	#SHLD_UP0 >> 8
+	LDX	#SHLD_UP0 &H'FF
+	JSR	DOPRINT
+
+CL_3:
+	LDA	#0
+	RTS
+CL_PRAD:
+	LDA	PRADIKUS
+	BEQ	CLP_1
+	LDY	#1
+	LDX	#0
+CLP_0:
+	LDA	SYSTEM+2,Y	;type/pal.
+	AND	#H'70
+	BNE	CLP_1		;space stn?
+	LDA	STN_STAT,X
+	BEQ	CLP_0A
+	AND	#H'88
+	CMP	#H'08
+	BNE	CL_2
+CLP_0A:	TYA
+	CLC
+	ADC	#4
+	TAY
+	INX
+	JMP	CLP_0
+CLP_1:
+	LDA	#1
+	RTS
+
+SKIPDEAD:
+	JSR	IS_DEAD
+	BEQ	SD_END
+	TYA
+	CLC
+	ADC	#4
+	TAY
+	JMP	SKIPDEAD
+SD_END:
+	STY	CRSR_I
+	RTS
+
+IS_DEAD:
+	LDA	SYSTEM+2,Y	;type/pal.
+	AND	#H'70
+	BNE	ID_FALSE	;space stn?
+	LDA	SYSTEM+3,Y	;data bits
+	AND	#INHAB
+	BNE	ID_FALSE
+	LDA	#1		;dead...
+	RTS
+ID_FALSE:
+	LDA	#0		;not dead...
+	RTS
+
+REM_POS:
+	LDA	#H'F8
+	STA	SPRTBL0
+	STA	SPRTBL1
+	RTS
+
+REMPRICE:
+	JSR	GETC_END
+REMARROW:
+	LDA	#H'F8
+	STA	H'0260
+	STA	H'0760
+	RTS
+
+STOPSHIP:
+	LDA	#0
+	STA	THRUST
+	STA	TSPD
+	STA	XMOVE
+	STA	YMOVE
+  ;	STA	SAV_XVEL
+  ;	STA	SAV_YVEL
+	STA	PSHPXVEL
+	STA	PSHPYVEL
+	STA	PXOFF
+	STA	PYOFF
+;	STA	THR_CNT
+	RTS
+
+LANDPLNT:
+	JSR	STOPSHIP
+	LDA	#4
+	STA	DIR
+	LDA	#1
+	STA	WARP
+	LDY	ORBIT
+	LDA	SYSTEM+2, Y	;type/pal.
+	AND	#H'70
+	BNE	LAND_A		;space stn?
+	
+	LDA	#H'7F
+	STA	BKGRND
+	JMP	LAND_C
+LAND_A:	
+	LDA	PRADIKUS
+	BEQ	LAND_B
+	LDA	#H'80
+	STA	BKGRND
+	JMP	LAND_C
+LAND_B:
+	LDA	#H'81
+	STA	BKGRND
+LAND_C:
+	LDA	#H'FF
+	RTS
+
+
+GETCOST:
+	CMP	#H'10
+	BCC	GETC_END
+
+	TAY
+	JSR	ITEMCOST
+
+	LDY	C100000
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+1
+	STA	COSTSPR1+1
+	LDY	C10000
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+5
+	STA	COSTSPR1+5
+	LDY	C1000
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+9
+	STA	COSTSPR1+9
+	LDY	C100
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+13
+	STA	COSTSPR1+13
+	LDY	C10
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+17
+	STA	COSTSPR1+17
+	LDY	C1
+	LDA	NUMTAB, Y
+	STA	COSTSPR0+21
+	STA	COSTSPR1+21
+
+	LDA	#H'00
+	STA	COSTSPR0+2
+	STA	COSTSPR0+6
+	STA	COSTSPR0+10
+	STA	COSTSPR0+14
+	STA	COSTSPR0+18
+	STA	COSTSPR0+22
+	STA	COSTSPR1+2
+	STA	COSTSPR1+6
+	STA	COSTSPR1+10
+	STA	COSTSPR1+14
+	STA	COSTSPR1+18
+	STA	COSTSPR1+22
+	LDA	#1
+	RTS
+GETC_END:
+	LDA	#H'F8
+	STA	COSTSPR0
+	STA	COSTSPR0+4
+	STA	COSTSPR0+8
+	STA	COSTSPR0+12
+	STA	COSTSPR0+16
+	STA	COSTSPR0+20
+	STA	COSTSPR1
+	STA	COSTSPR1+4
+	STA	COSTSPR1+8
+	STA	COSTSPR1+12
+	STA	COSTSPR1+16
+	STA	COSTSPR1+20
+	LDA	#0
+	RTS
+
+HASITEM:	
+	STA	T3
+	TYA
+	PHA
+	LDY	T3
+	JSR	ITEMAVAIL
+	STY	T3
+	PLA
+	TAY
+	LDA	T3
+	
+	RTS
+
+DISPCOST:
+	LDA	#H'D1
+	STA	COSTSPR0
+	STA	COSTSPR0+4
+	STA	COSTSPR0+8
+	STA	COSTSPR0+12
+	STA	COSTSPR0+16
+	STA	COSTSPR0+20
+	STA	COSTSPR1
+	STA	COSTSPR1+4
+	STA	COSTSPR1+8
+	STA	COSTSPR1+12
+	STA	COSTSPR1+16
+	STA	COSTSPR1+20
+
+	LDA	#H'A8
+	STA	COSTSPR0+3
+	STA	COSTSPR1+3
+	LDA	#H'B0
+	STA	COSTSPR0+7
+	STA	COSTSPR1+7
+	LDA	#H'B8
+	STA	COSTSPR0+11
+	STA	COSTSPR1+11
+	LDA	#H'C0
+	STA	COSTSPR0+15
+	STA	COSTSPR1+15
+	LDA	#H'C8
+	STA	COSTSPR0+19
+	STA	COSTSPR1+19
+	LDA	#H'D0
+	STA	COSTSPR0+23
+	STA	COSTSPR1+23
+	RTS
+
+INVEN:
+	JSR	CW_2
+	JSR	INV_1
+	JSR	INV_2
+	JMP	INV_3
+
+USE_MENU:
+	LDY	#20
+	LDA	#H'AA
+	STA	LOGIC_TEMP
+	LDX	#0
+	STX	EXPL_A
+	LDA	CLOAK
+	BEQ	UM_0
+
+	TYA
+	PHA
+	STA	TY
+	LDY	#CLOAKSTR >> 8
+	LDX	#CLOAKSTR & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT0
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+UM_0:
+	LDA	MINES
+	BEQ	UM_1
+	TYA
+	PHA
+	STA	TY
+	LDX	#MINE_STR & H'FF
+	LDY	#MINE_STR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT1
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+UM_1:
+	LDA	MISSILES
+	BEQ	UM_2
+	TYA
+	PHA
+	STA	TY
+	LDX	#MISL_STR & H'FF
+	LDY	#MISL_STR >> 8
+	LDA	#13	
+	STA	TX
+	JSR	XYPRINT
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT2
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+UM_2:
+	LDA	S_WAVE
+	BEQ	UM_3
+	TYA
+	PHA
+	STA	TY
+	LDY	#WAVE_STR >> 8
+	LDX	#WAVE_STR & H'FF
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	PLA
+	TAY
+	INY
+	LDA	LOGIC_TEMP
+	STA	ARDAT3
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+UM_3:
+	LDA	THUNDER
+	BEQ	UM_4
+	STY	TY
+	LDX	#BOLT_STR & H'FF
+	LDY	#BOLT_STR >> 8
+	LDA	#13
+	STA	TX
+	JSR	XYPRINT
+	LDA	LOGIC_TEMP
+	STA	ARDAT4
+	CLC
+	ADC	#8
+	STA	LOGIC_TEMP
+	LDX	#1
+	STX	EXPL_A
+UM_4:
+	LDA	EXPL_A
+	RTS
+
+INV1_STR:
+	.DB	14, 1, "MAIN",H'77,"WEAPON",H'3A,H'FF
+
+INV_1:
+	LDY	#INV1_STR >>8
+	LDX	#INV1_STR &H'FF
+	JSR	DOPRINT
+
+	LDY	WPN1
+	LDX	WPNNAMEL, Y
+	LDA	WPNNAMEH, Y
+	TAY
+	LDA	#2
+	STA	TY
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+3
+	STA	VID_PTR
+	LDA	#H'0B
+	CLC
+	ADC	LNADDRL+3
+	STA	VID_PTR
+	LDA	#H'97
+	STA	VID_DATA
+	LDX	#H'10
+	LDA	#H'F7
+	JSR	DRAW_BAR
+	LDA	#H'98
+	STA	VID_DATA
+	JSR	SET_VID
+	JMP	DMAXFER
+
+INV2_STR:
+	.DB	11, 4, H'97,H'77,"SPECIAL",H'77,"ITEMS",H'3A,H'77,H'98,H'FF
+
+INV_2:
+	LDY	#INV2_STR >>8
+	LDX	#INV2_STR &H'FF
+	JSR	DOPRINT
+
+	LDY	#5
+	LDA	CLOAK
+	BEQ	I2_0
+
+	TYA
+	PHA
+	STA	TY
+	LDX	#CLOAKSTR &H'FF
+	LDY	#CLOAKSTR >> 8
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'18
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	TYA
+	PHA
+	LDA	#H'0E
+	STA	VID_DATA
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	CLOAK
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+I2_0:
+	LDA	MINES
+	BEQ	I2_1
+	TYA
+	PHA
+	STA	TY
+	LDY	#MINE_STR >>8
+	LDX	#MINE_STR &H'FF
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'18
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	TYA
+	PHA
+	LDA	#H'FA
+	STA	VID_DATA
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	MINES
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+I2_1:
+	LDA	MISSILES
+	BEQ	I2_2
+	TYA
+	PHA
+	STA	TY
+	LDX	#MISL_STR &H'FF
+	LDY	#MISL_STR >> 8
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'18
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	TYA
+	PHA
+	LDA	#H'FA
+	STA	VID_DATA
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	MISSILES
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA
+	TAY
+	INY
+I2_2:
+	LDA	S_WAVE
+	BEQ	I2_3
+	TYA
+	PHA
+	STA	TY
+	LDX	#WAVE_STR &H'FF
+	LDY	#WAVE_STR >> 8
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA	      
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'18
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	TYA
+	PHA
+	LDA	#H'FA
+	STA	VID_DATA
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	S_WAVE
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+	PLA	      
+	TAY
+	INY
+I2_3:
+	LDA	THUNDER
+	BEQ	I2_4
+	TYA
+	PHA
+	STA	TY
+	LDY	#BOLT_STR >> 8
+	LDX	#BOLT_STR &H'FF
+	LDA	#12
+	STA	TX
+	JSR	XYPRINT
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	PLA	      
+	TAY
+	LDA	LNADDRH,Y
+	STA	VID_PTR
+	LDA	#H'18
+	CLC
+	ADC	LNADDRL,Y
+	STA	VID_PTR
+	LDA	#H'FA
+	STA	VID_DATA
+	LDA	#H'0D
+	STA	VID_DATA
+	LDA	THUNDER
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+I2_4:
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+10
+	STA	VID_PTR
+	LDA	#H'0B	
+	CLC
+	ADC	LNADDRL+10
+	STA	VID_PTR
+	LDA	#H'97
+	STA	VID_DATA
+	LDA	#H'F7
+	LDX	#H'10
+	JSR	DRAW_BAR
+	LDA	#H'98
+	STA	VID_DATA
+	JSR	SET_VID
+	JMP	DMAXFER
+
+INV3_STR:
+	.DB	11, 11, H'97,H'77,H'77,H'77,"SHIP"
+	.DB	H'77,"INFO",H'3A,H'77,H'77,H'77,H'98,H'FF
+
+INV_3:
+	LDX	#INV3_STR &H'FF
+	LDY	#INV3_STR >> 8
+	JSR	DOPRINT
+
+	LDX	#DRV_STR &H'FF
+	LDY	#DRV_STR >> 8
+	JSR	DOPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+12
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+12
+	STA	VID_PTR
+	LDA	DRIVE
+	JSR	DRAW_NUM
+
+	LDA	LNADDRH+13
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+13
+	STA	VID_PTR
+	LDA	PWRPLANT
+	JSR	DRAW_NUM
+
+	LDA	VID_RESET
+	LDA	LNADDRH+14
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+14
+	STA	VID_PTR
+	LDA	SHLDTYPE
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+
+	LDX	#FUEL_STR &H'FF
+	LDY	#FUEL_STR >> 8
+	JSR	DOPRINT
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+16
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+16
+	STA	VID_PTR
+	LDA	FUEL
+	JSR	DRAW_NUM
+
+	LDA	LNADDRH+17
+	STA	VID_PTR
+	LDA	#H'1A
+	CLC
+	ADC	LNADDRL+17
+	STA	VID_PTR
+	LDA	ARMOR
+	JSR	DRAW_NUM
+	JSR	SET_VID
+	JSR	DMAXFER
+
+	JSR	VR_WAIT
+	JSR	KILL_VID
+	LDA	VID_RESET
+	LDA	LNADDRH+18
+	STA	VID_PTR
+	LDA	#H'0B	
+	CLC
+	ADC	LNADDRL+18
+	STA	VID_PTR
+	LDA	#H'97
+	STA	VID_DATA
+	LDA	#H'F7
+	LDX	#H'10
+	JSR	DRAW_BAR
+	LDA	#H'98
+	STA	VID_DATA
+	JSR	SET_VID
+	JMP	DMAXFER
+
+DRAWNUM3:
+	PHA
+	LDA	#H'10
+	STA	COUNT1
+	PLA
+DN3_100:
+	CMP	#100
+	BCC	DN3_10
+	SEC
+	SBC	#100
+	INC	COUNT1
+	JMP	DN3_100
+DN3_10:
+	PHA	                         
+	LDA	COUNT1
+	STA	VID_DATA
+	LDA	#H'10
+	STA	COUNT1
+	PLA
+DN3_10A:
+	CMP	#10
+	BCC	DN3_1
+	SEC
+	SBC	#10
+	INC	COUNT1
+	JMP	DN3_10A
+DN3_1:
+	PHA	                         
+	LDA	COUNT1
+	STA	VID_DATA
+	PLA
+	CLC
+	ADC	#H'10
+	STA	VID_DATA
+	RTS
+
+DRAW_NUM:
+	PHA
+	LDA	#H'10
+	STA	COUNT1
+	PLA
+	CMP	#99
+	BCC	DN_10
+	LDA	#H'19
+	STA	VID_DATA
+	STA	VID_DATA
+	RTS
+DN_10:
+	CMP	#10
+	BCC	DN_1
+	SEC
+	SBC	#10
+	INC	COUNT1
+	JMP	DN_10
+DN_1:
+	PHA	                         
+	LDA	COUNT1
+	STA	VID_DATA
+	PLA
+	CLC
+	ADC	#H'10
+	STA	VID_DATA
+	RTS
+
+
+
+;*****************************************************
+
+
+
+;**********************************************************
+
+;--------PLANETS.DAT---------------------------------------
+
+INCLUDE( PLANETS.DAT)
+
+
+;**********************************************************
+
+;--------PRADSYS.DAT---------------------------------------
+
+INCLUDE( PRADSYS.DAT)
+
+
+;***********************************************************
+
+
+
+PPOBJL:	.DB	BLK_00 &H'FF, BLK_01 &H'FF, BLK_02 &H'FF, BLK_03 &H'FF
+	.DB	BLK_04 &H'FF, BLK_05 &H'FF, BLK_06 &H'FF, BLK_07 &H'FF
+	.DB	BLK_08 &H'FF, BLK_09 &H'FF, BLK_0A &H'FF, BLK_0B &H'FF
+	.DB	BLK_0C &H'FF, BLK_0D &H'FF, BLK_0E &H'FF, BLK_0F &H'FF
+	.DB	BLK_10 &H'FF, BLK_11 &H'FF, BLK_12 &H'FF, BLK_13 &H'FF
+	.DB	BLK_14 &H'FF, BLK_15 &H'FF, BLK_16 &H'FF, BLK_17 &H'FF
+	.DB	BLK_18 &H'FF, BLK_19 &H'FF, BLK_1A &H'FF, BLK_1B &H'FF
+	.DB	BLK_1C &H'FF, BLK_1D &H'FF, BLK_1E &H'FF, BLK_1F &H'FF
+	.DB	BLK_20 &H'FF, BLK_21 &H'FF, BLK_22 &H'FF, BLK_23 &H'FF
+	.DB	BLK_24 &H'FF, BLK_25 &H'FF, BLK_26 &H'FF, BLK_27 &H'FF
+	.DB	BLK_28 &H'FF, BLK_29 &H'FF, BLK_2A &H'FF, BLK_2B &H'FF
+	.DB	BLK_2C &H'FF, BLK_2D &H'FF, BLK_2E &H'FF, BLK_2F &H'FF
+	.DB	BLK_30 &H'FF, BLK_31 &H'FF, BLK_32 &H'FF, BLK_33 &H'FF
+	.DB	BLK_34 &H'FF, BLK_35 &H'FF, BLK_36 &H'FF, BLK_37 &H'FF
+	.DB	BLK_38 &H'FF, BLK_39 &H'FF, BLK_3A &H'FF, BLK_3B &H'FF
+	.DB	BLK_3C &H'FF, BLK_3D &H'FF, BLK_3E &H'FF, BLK_3F &H'FF
+
+
+PPOBJH:	.DB	BLK_00 >>8, BLK_01 >>8, BLK_02 >>8, BLK_03 >>8  
+	.DB	BLK_04 >>8, BLK_05 >>8, BLK_06 >>8, BLK_07 >>8  
+	.DB	BLK_08 >>8, BLK_09 >>8, BLK_0A >>8, BLK_0B >>8  
+	.DB	BLK_0C >>8, BLK_0D >>8, BLK_0E >>8, BLK_0F >>8  
+	.DB	BLK_10 >>8, BLK_11 >>8, BLK_12 >>8, BLK_13 >>8  
+	.DB	BLK_14 >>8, BLK_15 >>8, BLK_16 >>8, BLK_17 >>8  
+	.DB	BLK_18 >>8, BLK_19 >>8, BLK_1A >>8, BLK_1B >>8  
+	.DB	BLK_1C >>8, BLK_1D >>8, BLK_1E >>8, BLK_1F >>8  
+	.DB	BLK_20 >>8, BLK_21 >>8, BLK_22 >>8, BLK_23 >>8  
+	.DB	BLK_24 >>8, BLK_25 >>8, BLK_26 >>8, BLK_27 >>8
+	.DB	BLK_28 >>8, BLK_29 >>8, BLK_2A >>8, BLK_2B >>8
+	.DB	BLK_2C >>8, BLK_2D >>8, BLK_2E >>8, BLK_2F >>8
+	.DB	BLK_30 >>8, BLK_31 >>8, BLK_32 >>8, BLK_33 >>8
+	.DB	BLK_34 >>8, BLK_35 >>8, BLK_36 >>8, BLK_37 >>8
+	.DB	BLK_38 >>8, BLK_39 >>8, BLK_3A >>8, BLK_3B >>8
+	.DB	BLK_3C >>8, BLK_3D >>8, BLK_3E >>8, BLK_3F >>8
+
+
+
+
+
+
+SSOBJL:	.DB	SSB00 &H'FF, SSB01 &H'FF, SSB02 &H'FF, SSB03 &H'FF
+	.DB	SSB04 &H'FF, SSB05 &H'FF, SSB06 &H'FF, SSB07 &H'FF
+	.DB	SSB08 &H'FF, SSB09 &H'FF, SSB0A &H'FF, SSB0B &H'FF
+	.DB	SSB0C &H'FF, SSB0D &H'FF, SSB0E &H'FF, SSB0F &H'FF
+	.DB	SSB10 &H'FF, SSB11 &H'FF, SSB12 &H'FF, SSB13 &H'FF
+	.DB	SSB14 &H'FF, SSB15 &H'FF, SSB16 &H'FF, SSB17 &H'FF
+	.DB	SSB18 &H'FF, SSB19 &H'FF, SSB1A &H'FF, SSB1B &H'FF
+	.DB	SSB1C &H'FF, SSB1D &H'FF, SSB1E &H'FF, SSB1F &H'FF
+	.DB	SSB20 &H'FF, SSB21 &H'FF, SSB22 &H'FF, SSB23 &H'FF
+	.DB	SSB24 &H'FF, SSB25 &H'FF, SSB26 &H'FF, SSB27 &H'FF
+	.DB	SSB28 &H'FF, SSB29 &H'FF, SSB2A &H'FF, SSB2B &H'FF  
+	.DB	SSB2C &H'FF, SSB2D &H'FF, SSB2E &H'FF, SSB2F &H'FF  
+	.DB	SSB30 &H'FF, SSB31 &H'FF, SSB32 &H'FF, SSB33 &H'FF
+	.DB	SSB34 &H'FF, SSB35 &H'FF, SSB36 &H'FF, SSB37 &H'FF
+	.DB	SSB38 &H'FF, SSB39 &H'FF, SSB3A &H'FF, SSB3B &H'FF  
+	.DB	SSB3C &H'FF, SSB3D &H'FF, SSB3E &H'FF, SSB3F &H'FF  
+ 
+ 
+
+SSOBJH:	.DB	SSB00 >>8, SSB01 >>8, SSB02 >>8, SSB03 >>8  
+	.DB	SSB04 >>8, SSB05 >>8, SSB06 >>8, SSB07 >>8  
+	.DB	SSB08 >>8, SSB09 >>8, SSB0A >>8, SSB0B >>8  
+	.DB	SSB0C >>8, SSB0D >>8, SSB0E >>8, SSB0F >>8  
+	.DB	SSB10 >>8, SSB11 >>8, SSB12 >>8, SSB13 >>8  
+	.DB	SSB14 >>8, SSB15 >>8, SSB16 >>8, SSB17 >>8  
+	.DB	SSB18 >>8, SSB19 >>8, SSB1A >>8, SSB1B >>8  
+	.DB	SSB1C >>8, SSB1D >>8, SSB1E >>8, SSB1F >>8  
+	.DB	SSB20 >>8, SSB21 >>8, SSB22 >>8, SSB23 >>8
+	.DB	SSB24 >>8, SSB25 >>8, SSB26 >>8, SSB27 >>8
+	.DB	SSB28 >>8, SSB29 >>8, SSB2A >>8, SSB2B >>8  
+	.DB	SSB2C >>8, SSB2D >>8, SSB2E >>8, SSB2F >>8  
+	.DB	SSB30 >>8, SSB31 >>8, SSB32 >>8, SSB33 >>8  
+	.DB	SSB34 >>8, SSB35 >>8, SSB36 >>8, SSB37 >>8  
+	.DB	SSB38 >>8, SSB39 >>8, SSB3A >>8, SSB3B >>8  
+	.DB	SSB3C >>8, SSB3D >>8, SSB3E >>8, SSB3F >>8  
+
+
+SSB2C:
+SSB2D:
+SSB2E:
+SSB2F:
+
+SSB32:
+SSB33:
+SSB34:
+SSB35:
+SSB36:
+SSB37:
+SSB38:
+SSB39:
+SSB3A:
+SSB3B:
+SSB3C:
+SSB3D:
+SSB3E:
+SSB3F:
+
+
+SSB00:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+SSB01:
+	.DB	H'02,H'02,H'02,H'17,H'02,H'11,H'68,H'68
+	.DB	H'02,H'1F,H'1C,H'1A,H'1C,H'1C,H'60,H'6A
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'1D,H'1C
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'1C,H'18,H'1C,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB02:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'17,H'02,H'02,H'11,H'00
+	.DB	H'1C,H'20,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+SSB03:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'11,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'02,H'02,H'11
+	.DB	H'16,H'16,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'1C,H'20,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'0C,H'1C,H'1A,H'1C,H'1C,H'1C,H'1C
+SSB04:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'16,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'11,H'00,H'00
+	.DB	H'02,H'02,H'02,H'17,H'02,H'02,H'11,H'00
+	.DB	H'1C,H'20,H'02,H'17,H'02,H'02,H'02,H'11
+SSB05:
+	.DB	H'02,H'02,H'02,H'17,H'62,H'68,H'00,H'00
+	.DB	H'02,H'1F,H'1C,H'1A,H'60,H'6A,H'11,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+SSB06:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'11,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'16,H'16,H'15,H'11,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'02,H'11,H'00
+	.DB	H'1C,H'20,H'02,H'17,H'02,H'02,H'02,H'11
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB07:
+	.DB	H'02,H'02,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'11,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'17,H'02,H'11,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'02,H'11,H'00
+	.DB	H'16,H'16,H'16,H'15,H'16,H'16,H'16,H'11
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'1F,H'1C,H'20
+	.DB	H'1C,H'0E,H'1C,H'1A,H'1C,H'1E,H'6A,H'60
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'6A,H'6A
+SSB08:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'11,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'1C,H'20,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'11,H'00,H'00,H'00,H'00
+SSB09:
+	.DB	H'02,H'1B,H'02,H'17,H'11,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'11,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'11,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'11
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'24,H'25,H'26,H'17,H'02,H'02,H'02,H'02
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+SSB0A:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'11,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'11,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'11,H'00,H'00,H'00,H'00,H'00
+SSB0B:
+	.DB	H'6A,H'60,H'20,H'11,H'00,H'00,H'00,H'00
+	.DB	H'6A,H'6A,H'1B,H'17,H'11,H'00,H'00,H'00
+	.DB	H'02,H'1F,H'1E,H'17,H'02,H'11,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'00,H'00
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'11,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'11
+	.DB	H'1C,H'0D,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB0C:
+	.DB	H'02,H'11,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'11,H'00,H'00,H'00,H'00
+ 	.DB	H'16,H'16,H'16,H'15,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'11,H'00,H'00,H'00
+	.DB	H'1C,H'20,H'02,H'17,H'02,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'11,H'00,H'00
+SSB0D:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'11,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'6A,H'68
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'60,H'62
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'19,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'1B,H'02
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'1C,H'1E,H'02
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+SSB0E:
+	.DB	H'11,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'11,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'11,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'16,H'16,H'00,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'11,H'00,H'00,H'00,H'00
+	.DB	H'1C,H'20,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+SSB0F:
+	.DB	H'02,H'1B,H'02,H'17,H'11,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'00,H'00,H'00
+	.DB	H'16,H'19,H'16,H'15,H'16,H'11,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'00,H'00
+	.DB	H'1C,H'0D,H'02,H'17,H'02,H'02,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'00,H'00
+SSB10:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'11,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'00
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'00
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'00
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'20,H'02,H'00
+	.DB	H'27,H'28,H'29,H'17,H'02,H'1B,H'02,H'00
+SSB11:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'1B,H'6A,H'68
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'1D,H'60,H'68
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'1B,H'11
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'1B,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'19,H'16
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'1B,H'02
+	.DB	H'1C,H'18,H'1C,H'1A,H'1C,H'1C,H'0F,H'1C
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB12:
+	.DB	H'1B,H'1B,H'02,H'17,H'02,H'00,H'00,H'00
+	.DB	H'1D,H'0D,H'02,H'17,H'02,H'11,H'00,H'00
+	.DB	H'02,H'0C,H'1C,H'1A,H'1C,H'20,H'62,H'68
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'1D,H'60,H'68
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'19,H'16
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'1B,H'02
+	.DB	H'1C,H'18,H'1C,H'1A,H'1C,H'1C,H'0F,H'1C
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB13:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'11,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'11,H'68,H'68,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'60,H'68,H'00,H'00,H'00,H'00
+	.DB	H'1C,H'20,H'02,H'11,H'00,H'00,H'00,H'00
+	.DB	H'20,H'1B,H'02,H'17,H'11,H'00,H'00,H'00
+SSB14:
+	.DB	H'02,H'1B,H'02,H'17,H'68,H'68,H'00,H'00
+	.DB	H'02,H'0C,H'1C,H'1A,H'60,H'62,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'1D,H'20,H'11,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'1B,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'19,H'16,H'16
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'1B,H'02,H'02
+	.DB	H'0E,H'18,H'1C,H'1A,H'1C,H'18,H'1C,H'1C
+	.DB	H'1D,H'0D,H'02,H'17,H'02,H'1D,H'1C,H'1C
+SSB15:
+	.DB	H'6A,H'60,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'6A,H'6A,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'02,H'0A,H'17,H'00,H'00,H'00,H'00
+	.DB	H'16,H'16,H'16,H'15,H'00,H'00,H'00,H'00
+	.DB	H'21,H'22,H'23,H'17,H'00,H'00,H'00,H'00
+	.DB	H'24,H'25,H'26,H'1A,H'00,H'00,H'00,H'00
+	.DB	H'27,H'28,H'29,H'17,H'00,H'00,H'00,H'00
+SSB16:
+	.DB	H'02,H'0C,H'1C,H'1A,H'60,H'6A,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'68,H'68,H'00,H'13
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'00,H'00,H'00,H'00
+	.DB	H'16,H'19,H'16,H'15,H'00,H'00,H'00,H'00
+	.DB	H'21,H'22,H'23,H'17,H'00,H'00,H'00,H'00
+	.DB	H'24,H'25,H'26,H'1A,H'00,H'00,H'00,H'00
+	.DB	H'27,H'28,H'29,H'17,H'00,H'00,H'00,H'00
+SSB17:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'00,H'00,H'13,H'17,H'02,H'02,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'13,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'13
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+SSB18:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1D,H'1C,H'1A,H'1C,H'20,H'02,H'02
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'1B,H'02,H'02
+	.DB	H'16,H'16,H'16,H'15,H'16,H'19,H'16,H'16
+	.DB	H'00,H'13,H'0A,H'17,H'0A,H'1D,H'1C,H'20
+	.DB	H'00,H'00,H'00,H'13,H'02,H'02,H'6A,H'60
+	.DB	H'00,H'00,H'00,H'00,H'00,H'13,H'6A,H'6A
+SSB19:
+	.DB	H'02,H'1D,H'1C,H'1A,H'1C,H'0E,H'1C,H'20
+	.DB	H'13,H'02,H'02,H'17,H'02,H'1B,H'0B,H'1B
+	.DB	H'00,H'13,H'02,H'17,H'02,H'1D,H'1C,H'0D
+	.DB	H'00,H'00,H'00,H'13,H'0A,H'02,H'02,H'1B
+	.DB	H'00,H'00,H'00,H'00,H'13,H'16,H'16,H'19
+	.DB	H'00,H'00,H'00,H'00,H'00,H'13,H'02,H'1B
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'13,H'1D
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'13
+SSB1A:
+	.DB	H'13,H'1D,H'1C,H'1A,H'0E,H'0E,H'0E,H'20
+	.DB	H'00,H'13,H'02,H'17,H'1D,H'18,H'18,H'0D
+	.DB	H'00,H'00,H'13,H'17,H'02,H'1D,H'18,H'0D
+	.DB	H'00,H'00,H'00,H'13,H'0A,H'02,H'1D,H'0D
+	.DB	H'00,H'00,H'00,H'00,H'13,H'16,H'16,H'19
+	.DB	H'00,H'00,H'00,H'00,H'00,H'02,H'02,H'1B
+	.DB	H'00,H'00,H'00,H'00,H'00,H'13,H'02,H'1D
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'13,H'02
+SSB1B:
+	.DB	H'6A,H'60,H'20,H'17,H'02,H'02,H'02,H'02
+	.DB	H'6A,H'6A,H'1B,H'17,H'02,H'02,H'02,H'02
+	.DB	H'13,H'02,H'1D,H'1A,H'1C,H'1C,H'1C,H'20
+	.DB	H'00,H'02,H'0A,H'17,H'0A,H'02,H'02,H'1B
+	.DB	H'00,H'13,H'16,H'15,H'16,H'16,H'16,H'19
+	.DB	H'00,H'00,H'0A,H'17,H'0A,H'02,H'02,H'1B
+	.DB	H'00,H'00,H'13,H'17,H'02,H'02,H'02,H'1D
+	.DB	H'00,H'00,H'00,H'17,H'02,H'02,H'02,H'02
+SSB1C:
+	.DB	H'00,H'00,H'00,H'13,H'02,H'02,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'02,H'02,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'13,H'02,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'02,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'16,H'16,H'16
+	.DB	H'00,H'00,H'00,H'00,H'00,H'13,H'02,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'1C,H'1C
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'02,H'02
+SSB1D:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'13,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'02
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'68,H'6A
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'68,H'60
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'19
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'1B
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'1C,H'1C,H'0F
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+SSB1E:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'24,H'25,H'26,H'17,H'02,H'02,H'6A,H'60
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'6A,H'6A
+SSB1F:
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'00,H'00,H'00,H'00,H'00,H'00,H'00,H'00
+	.DB	H'16,H'16,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'02,H'02,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'1C,H'0E,H'1C,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB20:
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'00,H'00,H'00,H'00
+	.DB	H'16,H'19,H'16,H'15,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'0A,H'17,H'00,H'00,H'00,H'00
+	.DB	H'1C,H'0D,H'02,H'17,H'00,H'00,H'00,H'00
+	.DB	H'02,H'1B,H'02,H'17,H'00,H'00,H'00,H'00
+
+SSB21:
+	.DB	H'0A,H'02,H'02,H'02,H'17,H'02,H'1D,H'1C
+	.DB	H'02,H'02,H'02,H'02,H'17,H'02,H'02,H'02
+	.DB	H'02,H'02,H'0A,H'02,H'17,H'02,H'02,H'02
+	.DB	H'02,H'02,H'02,H'02,H'17,H'02,H'2C,H'44
+	.DB	H'16,H'16,H'16,H'16,H'15,H'2C,H'01,H'01
+	.DB	H'02,H'02,H'02,H'02,H'2C,H'01,H'01,H'01
+	.DB	H'20,H'02,H'02,H'2C,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'02,H'02,H'46,H'01,H'01,H'01,H'01
+SSB22:
+	.DB	H'1C,H'1C,H'1C,H'1C,H'1A,H'1C,H'18,H'1C
+	.DB	H'02,H'02,H'02,H'02,H'17,H'2C,H'38,H'34
+	.DB	H'2C,H'44,H'44,H'44,H'44,H'01,H'36,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'36,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'36,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'36,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'36,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'36,H'02
+SSB23:
+	.DB	H'1B,H'02,H'2C,H'01,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'21,H'22,H'23
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'24,H'25,H'26							     
+	.DB	H'19,H'16,H'46,H'01,H'01,H'27,H'28,H'29
+	.DB	H'1B,H'2C,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'18,H'46,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'46,H'01,H'01,H'01,H'01,H'01,H'01
+SSB24:
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'6E,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'6E,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'6E,H'02
+	.DB	H'01,H'01,H'01,H'01,H'01,H'45,H'2C,H'44
+	.DB	H'01,H'01,H'01,H'01,H'01,H'40,H'01,H'01
+	.DB	H'01,H'01,H'01,H'01,H'40,H'01,H'01,H'01
+	.DB	H'01,H'01,H'01,H'4C,H'01,H'01,H'21,H'22
+	.DB	H'01,H'01,H'01,H'46,H'01,H'01,H'24,H'25
+SSB25:
+	.DB	H'02,H'35,H'01,H'01,H'01,H'01,H'01,H'01 
+	.DB	H'02,H'35,H'01,H'01,H'01,H'01,H'01,H'01 
+	.DB	H'02,H'35,H'01,H'01,H'01,H'01,H'01,H'01 
+	.DB	H'44,H'2D,H'46,H'01,H'01,H'01,H'01,H'01 
+	.DB	H'01,H'01,H'41,H'01,H'01,H'01,H'01,H'01 
+	.DB	H'01,H'01,H'01,H'41,H'01,H'01,H'01,H'01 
+	.DB	H'23,H'14,H'01,H'01,H'4D,H'01,H'01,H'01 
+	.DB	H'26,H'14,H'01,H'01,H'45,H'01,H'01,H'01  
+SSB26:
+	.DB	H'1B,H'46,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'18,H'46,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'2E,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'19,H'16,H'46,H'01,H'01,H'01,H'01,H'01
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'01,H'01,H'2F							     
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'01,H'2F,H'02
+	.DB	H'1B,H'02,H'46,H'01,H'01,H'2F,H'02,H'02
+	.DB	H'1B,H'02,H'2E,H'01,H'2F,H'02,H'02,H'02
+SSB27:
+	.DB	H'01,H'01,H'01,H'46,H'01,H'01,H'27,H'28
+	.DB	H'01,H'01,H'2F,H'2E,H'01,H'01,H'14,H'14
+	.DB	H'01,H'2F,H'02,H'02,H'32,H'01,H'01,H'01
+	.DB	H'2F,H'02,H'02,H'02,H'02,H'32,H'01,H'01
+	.DB	H'02,H'02,H'02,H'02,H'02,H'02,H'2E,H'47
+	.DB	H'02,H'02,H'02,H'02,H'02,H'02,H'2C,H'01
+	.DB	H'02,H'02,H'02,H'02,H'02,H'2C,H'01,H'01
+	.DB	H'02,H'02,H'02,H'02,H'2C,H'01,H'01,H'01
+SSB28:
+	.DB	H'29,H'14,H'01,H'01,H'45,H'01,H'01,H'01
+	.DB	H'14,H'14,H'01,H'01,H'2F,H'2E,H'01,H'01
+	.DB	H'01,H'01,H'01,H'33,H'02,H'02,H'2E,H'01
+	.DB	H'01,H'01,H'33,H'02,H'02,H'02,H'02,H'2E
+	.DB	H'47,H'2F,H'02,H'02,H'02,H'02,H'02,H'02
+	.DB	H'01,H'2D,H'02,H'02,H'02,H'02,H'02,H'02
+	.DB	H'01,H'01,H'2D,H'02,H'02,H'02,H'02,H'02
+	.DB	H'01,H'01,H'01,H'2D,H'02,H'02,H'02,H'02
+SSB29:
+	.DB	H'1B,H'02,H'35,H'2F,H'02,H'02,H'02,H'02
+	.DB	H'1E,H'02,H'02,H'3E,H'02,H'02,H'02,H'02
+	.DB	H'02,H'02,H'02,H'02,H'3E,H'02,H'02,H'02
+	.DB	H'16,H'16,H'16,H'16,H'15,H'3E,H'02,H'02
+	.DB	H'02,H'02,H'02,H'02,H'17,H'02,H'3E,H'2C
+	.DB	H'02,H'02,H'02,H'02,H'17,H'02,H'02,H'34
+	.DB	H'02,H'02,H'02,H'02,H'17,H'02,H'02,H'02
+	.DB	H'0A,H'02,H'02,H'02,H'17,H'02,H'1F,H'1C
+SSB2A:
+	.DB	H'02,H'02,H'02,H'2C,H'01,H'01,H'01,H'01
+	.DB	H'02,H'02,H'2C,H'01,H'01,H'01,H'21,H'22
+	.DB	H'02,H'2C,H'01,H'01,H'01,H'01,H'24,H'25
+	.DB	H'2C,H'01,H'01,H'01,H'01,H'01,H'27,H'28
+	.DB	H'01,H'01,H'01,H'01,H'01,H'01,H'14,H'14
+	.DB	H'2E,H'47,H'47,H'47,H'47,H'01,H'01,H'01
+	.DB	H'02,H'02,H'02,H'02,H'17,H'2E,H'47,H'47
+	.DB	H'1C,H'1C,H'1C,H'1C,H'1A,H'1C,H'18,H'1C
+SSB2B:
+	.DB	H'01,H'01,H'01,H'01,H'2D,H'02,H'02,H'02
+	.DB	H'23,H'14,H'01,H'01,H'01,H'2D,H'02,H'02
+	.DB	H'26,H'14,H'01,H'01,H'01,H'01,H'2D,H'02
+	.DB	H'29,H'14,H'01,H'01,H'01,H'01,H'01,H'2D
+	.DB	H'14,H'14,H'01,H'01,H'01,H'01,H'01,H'01
+	.DB	H'01,H'01,H'01,H'47,H'47,H'47,H'47,H'2F
+	.DB	H'47,H'47,H'2F,H'17,H'02,H'02,H'02,H'02
+	.DB	H'1C,H'18,H'1C,H'1A,H'1C,H'1C,H'1C,H'1C
+
+SSB30:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'1C,H'18,H'1C,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+SSB31:
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'02,H'17,H'02,H'02,H'02,H'02
+	.DB	H'02,H'1B,H'0A,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'16,H'19,H'16,H'15,H'16,H'16,H'16,H'16
+	.DB	H'21,H'22,H'23,H'17,H'0A,H'02,H'02,H'02
+	.DB	H'24,H'25,H'26,H'1A,H'1C,H'1C,H'1C,H'1C
+	.DB	H'27,H'28,H'29,H'17,H'02,H'02,H'02,H'02
+
+
+;***********************************************************
+
+
+OBJ_PL: .DB	SSB31 &H'FF
+	.DB	SSB31 &H'FF
+	.DB	P2_BLK &H'FF, P3_BLK &H'FF,  P4_BLK &H'FF
+	.DB	P5_BLK &H'FF, P6_BLK &H'FF
+	.DB	SSB31 &H'FF
+
+OBJ_PH: .DB	SSB31 >>8
+	.DB	SSB31 >>8
+	.DB	P2_BLK >>8, P3_BLK >>8,  P4_BLK >>8
+	.DB	P5_BLK >>8, P6_BLK >>8
+	.DB	SSB31 >>8
+
+
+ST_BLK:	
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC,H'00, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+ 
+P2_BLK: 
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC,H'40,H'41, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC,H'60,H'61, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+
+P3_BLK: 
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC,H'42,H'43,H'44, SPC, SPC
+	.DB	 SPC, SPC, SPC,H'62,H'63,H'64, SPC, SPC
+	.DB	 SPC, SPC, SPC,H'82,H'83,H'84, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+
+P4_BLK:
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC,H'45,H'46,H'47,H'48, SPC, SPC
+	.DB	 SPC, SPC,H'65,H'66,H'67,H'68, SPC, SPC
+	.DB	 SPC, SPC,H'85,H'86,H'87,H'88, SPC, SPC
+	.DB	 SPC, SPC,H'A5,H'A6,H'A7,H'A8, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+
+P5_BLK: 
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+	.DB	 SPC, SPC,H'49,H'4A,H'4B,H'4C,H'4D, SPC
+	.DB	 SPC, SPC,H'69,H'6A,H'6B,H'6C,H'6D, SPC
+	.DB	 SPC, SPC,H'89,H'8A,H'8B,H'8C,H'8D, SPC
+	.DB	 SPC, SPC,H'A9,H'AA,H'AB,H'AC,H'AD, SPC
+	.DB	 SPC, SPC,H'C9,H'CA,H'CB,H'CC,H'CD, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+
+P6_BLK: 
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC 
+	.DB	 SPC, SPC,H'4F,H'50,H'51,H'52, SPC, SPC
+	.DB	 SPC,H'6E,H'6F,H'70,H'71,H'72,H'73, SPC
+	.DB	 SPC,H'8E,H'8F,H'90,H'91,H'92,H'93, SPC
+	.DB	 SPC,H'AE,H'AF,H'B0,H'B1,H'B2,H'B3, SPC
+	.DB 	 SPC,H'CE,H'CF,H'D0,H'D1,H'D2,H'D3, SPC
+	.DB	 SPC, SPC,H'EF,H'F0,H'F1,H'F2, SPC, SPC
+	.DB	 SPC, SPC, SPC, SPC, SPC, SPC, SPC, SPC
+
+
+;***********************************************************
+
+
+
+STARS:	
+	.DB 	SPC,SPC, s4,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s6,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC, s1,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC, s3,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC, s2,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC, s5,SPC,SPC, s6,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC, s2,SPC,SPC
+	.DB	SPC,SPC, s3, s1, s4,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s1,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC, s5,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s6,SPC,SPC,SPC
+
+	.DB	SPC,SPC, s1,SPC,SPC, s3,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s2,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC, s1, s4,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC, s6
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC, s1,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC, s3
+	.DB	SPC,SPC,SPC, s2,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+
+	.DB	SPC, s5,SPC,SPC,SPC, s1,SPC,SPC
+	.DB	SPC,SPC, s4,SPC,SPC,SPC, s6,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC, s3
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC, s2,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s1,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC, s5,SPC,SPC,SPC,SPC,SPC
+
+	.DB	 s3, s1,SPC,SPC, s4,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC, s2,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+
+	.DB	 s1,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s6,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC, s5,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC, s2,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC, s3,SPC,SPC,SPC,SPC
+	.DB	 s6,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	 s4,SPC, s5,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s2,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s5,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+;****
+	.DB 	 s4, s1,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s6,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s3,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	 s5,SPC,SPC,SPC,SPC, s2,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s1,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s5,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC, s1,SPC
+	.DB	 s3,SPC,SPC,SPC,SPC,SPC, s4,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC, s1
+	.DB	 s2,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s6,SPC, s5,SPC,SPC,SPC,SPC
+
+	
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s4,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s1,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s3,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s1,SPC,SPC, s5,SPC,SPC,SPC,SPC
+	.DB	SPC, s2,SPC,SPC,SPC, s1,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s3,SPC,SPC, s6,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC, s1,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC, s4,SPC,SPC,SPC,SPC,SPC
+	.DB	 s2,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC,SPC,SPC,SPC,SPC, s5
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s2,SPC,SPC
+	.DB	 s1,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	 s3,SPC, s5,SPC,SPC,SPC, s4,SPC
+	.DB	SPC, s1,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s5,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s2,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC, s1,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC, s2
+
+	.DB	 s3,SPC,SPC,SPC,SPC,SPC,SPC, s5
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC, s6,SPC,SPC, s4,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+
+	.DB	 s1, s2,SPC,SPC,SPC,SPC,SPC,SPC	;***
+	.DB	SPC, s3,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s6,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s5,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC, s1,SPC,SPC,SPC,SPC, s3
+	.DB	 s4,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+
+	.DB	SPC,SPC,SPC, s1,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	SPC,SPC,SPC,SPC,SPC, s1, s5,SPC
+
+	.DB	SPC,SPC,SPC,SPC,SPC,SPC,SPC,SPC
+	.DB	 s6,SPC,SPC,SPC,SPC,SPC, s4,SPC
+	.DB	SPC, s5,SPC,SPC,SPC,SPC, s3,SPC
+	.DB	SPC,SPC,SPC,SPC, s2,SPC,SPC,SPC
+
+;*************************************************
+
+
+FUEL_TBL:
+	.DB	H'00, H'01, H'02, H'03, H'04, H'05, H'06, H'07
+	.DB	H'01, H'02, H'03, H'04, H'05, H'06, H'07, H'08
+	.DB	H'02, H'03, H'04, H'05, H'06, H'07, H'08, H'09
+	.DB	H'03, H'04, H'05, H'06, H'07, H'08, H'09, H'0A
+	.DB	H'04, H'05, H'06, H'07, H'08, H'09, H'0A, H'0B
+	.DB	H'05, H'06, H'07, H'08, H'09, H'0A, H'0B, H'0C
+	.DB	H'06, H'07, H'08, H'09, H'0A, H'0B, H'0C, H'0D
+	.DB	H'07, H'08, H'09, H'0A, H'0B, H'0C, H'0D, H'0E
+
+SECTFUEL:
+	.DB	0, 100, 60, 35, 15, 10,  5
+  ;;	.DB	0, 100, 50, 25, 10,  5,  2
+  ;;	.DB	H'00, H'64, H'32, H'19, H'0A, H'05, H'02
+
+SYSFUEL:
+	.DB	0, 25, 15, 10, 5, 2, 1
+  ;;	.DB	0, 25, 10, 5, 2, 1, 0
+  ;;	.DB	H'00, H'19, H'0A, H'05, H'02, H'01, H'00
+
+LNADDRL:
+	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+	.DB	H'00, H'20, H'40, H'60, H'80, H'A0, H'C0, H'E0
+
+LNADDRH:
+	.DB	H'20, H'20, H'20, H'20, H'20, H'20, H'20, H'20
+	.DB	H'21, H'21, H'21, H'21, H'21, H'21, H'21, H'21
+	.DB	H'22, H'22, H'22, H'22, H'22, H'22, H'22, H'22
+	.DB	H'23, H'23, H'23, H'23, H'23, H'23, H'23, H'23
+
+
+
+
+
+;THE SPRITE MAP FOR A SPACE STATION TURRETS IN COMPUTER MODE
+STN_SPR0:
+	.DB	H'32, H'92
+	.DB	H'32, H'B6	;TURRETS
+	.DB	H'3A, H'92
+	.DB	H'3E, H'AA
+	.DB	H'42, H'82
+	.DB	H'46, H'9E
+	.DB	H'42, H'C6
+	.DB	H'4E, H'8E
+	.DB	H'4E, H'B2
+	.DB	H'5A, H'96
+	.DB	H'5A, H'BA
+	.DB	H'66, H'82
+	.DB	H'62, H'AA
+	.DB	H'66, H'C6
+	.DB	H'6A, H'9E
+	.DB	H'6E, H'B6
+	.DB	H'76, H'92
+	.DB	H'76, H'B6
+	.DB	H'2E, H'9E
+	.DB	H'00, H'00
+	.DB	H'3A, H'B6
+	.DB	H'42, H'8A
+	.DB	H'00, H'00
+	.DB	H'4E, H'CA
+	.DB	H'5A, H'7E
+	.DB	H'00, H'00
+	.DB	H'55, H'A4	;THE FOUR TOWERS
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+
+;THE SPRITE MAP FOR A SPACE STATION TURRETS IN COMPUTER MODE
+STN_SPR1:
+	.DB	H'66, H'8A	;TURRETS
+	.DB	H'6E, H'92
+	.DB	H'7A, H'AA
+	.DB	H'2E, H'AA
+	.DB	H'00, H'00
+	.DB	H'38, H'88
+	.DB	H'38, H'C0
+	.DB	H'42, H'BE
+	.DB	H'4E, H'7E
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+	.DB	H'5A, H'CA
+	.DB	H'66, H'BE
+	.DB	H'70, H'88
+	.DB	H'70, H'C0
+	.DB	H'7A, H'9E
+	.DB	H'3E, H'9E
+	.DB	H'46, H'AA
+	.DB	H'00, H'00
+	.DB	H'4E, H'96
+	.DB	H'4E, H'BA
+	.DB	H'5A, H'8E
+	.DB	H'5A, H'B2
+	.DB	H'62, H'9E
+	.DB	H'6A, H'AA
+	.DB	H'00, H'00
+	.DB	H'55, H'A4	;THE FOUR TOWERS
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+
+;THE SPRITE MAP FOR PRADIKUS TURRETS IN COMPUTER MODE
+PRADSPR0:
+	.DB	H'3C, H'9F	;TURRETS
+	.DB	H'3C, H'AA
+	.DB	H'00, H'00
+	.DB	H'46, H'A4
+	.DB	H'3C, H'A4
+	.DB	H'00, H'00
+	.DB	H'46, H'BE
+	.DB	H'50, H'8C
+	.DB	H'50, H'BE
+	.DB	H'55, H'94
+	.DB	H'53, H'A4
+	.DB	H'55, H'A6
+	.DB	H'55, H'B4
+	.DB	H'55, H'8C
+	.DB	H'55, H'A2
+	.DB	H'57, H'A4
+	.DB	H'55, H'BE
+	.DB	H'5C, H'8C
+	.DB	H'5C, H'BE
+	.DB	H'64, H'8C
+	.DB	H'00, H'00
+	.DB	H'64, H'A4
+	.DB	H'6F, H'A4
+	.DB	H'00, H'00
+	.DB	H'6F, H'9F
+	.DB	H'6F, H'AA
+	.DB	H'4D, H'9C	;THE FOUR TOWERS
+	.DB	H'4D, H'AC
+	.DB	H'5D, H'9C
+	.DB	H'5D, H'AC
+
+;THE TWO SPRITE TABLES FOR THE PLANET 1 MAP
+P1_SPR0:
+	.DB	H'40, H'9C	;TURRETS
+	.DB	H'40, H'AC
+	.DB	H'48, H'94
+	.DB	H'48, H'B4
+	.DB	H'50, H'8C
+	.DB	H'50, H'BC
+	.DB	H'5C, H'8C
+	.DB	H'5C, H'BC
+	.DB	H'64, H'94
+	.DB	H'64, H'B4
+	.DB	H'6C, H'9C
+	.DB	H'6C, H'AC
+	.DB	H'2C, H'84
+	.DB	H'2C, H'C8
+	.DB	H'7C, H'84
+	.DB	H'7C, H'C8
+	.DB	H'24, H'94
+	.DB	H'24, H'B4
+	.DB	H'40, H'7C
+	.DB	H'40, H'D0
+	.DB	H'68, H'7C
+	.DB	H'68, H'D0
+	.DB	H'84, H'94
+	.DB	H'84, H'B4
+	.DB	H'1C, H'A2
+	.DB	H'8C, H'A6
+	.DB	H'55, H'A4	;THE FOUR TOWERS
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+
+;THE SPRITE MAP FOR PRADIKUS TURRETS IN COMPUTER MODE
+PRADSPR1:
+	.DB	H'2C, H'7C	;TURRETS
+	.DB	H'2C, H'86
+	.DB	H'2C, H'C4
+	.DB	H'2C, H'CE
+	.DB	H'30, H'A3
+	.DB	H'37, H'7C
+	.DB	H'37, H'86
+	.DB	H'37, H'C4
+	.DB	H'37, H'CE
+	.DB	H'3C, H'95
+	.DB	H'3C, H'B4
+	.DB	H'48, H'8C
+	.DB	H'54, H'C7
+	.DB	H'58, H'84
+	.DB	H'64, H'BE
+	.DB	H'6F, H'95
+	.DB	H'6F, H'B4
+	.DB	H'74, H'7C
+	.DB	H'74, H'86
+	.DB	H'74, H'C4
+	.DB	H'74, H'CE
+	.DB	H'78, H'A3
+	.DB	H'7F, H'7C
+	.DB	H'7F, H'86
+	.DB	H'7F, H'C4
+	.DB	H'7F, H'CE
+	.DB	H'4D, H'9C	;THE FOUR TOWERS
+	.DB	H'4D, H'AC
+	.DB	H'5D, H'9C
+	.DB	H'5D, H'AC
+
+
+P1_SPR1:
+	.DB	H'1C, H'A6	;TURRETS
+	.DB	H'20, H'90
+	.DB	H'20, H'B8
+	.DB	H'24, H'7C
+	.DB	H'24, H'D0
+	.DB	H'2C, H'90
+	.DB	H'2C, H'BC
+	.DB	H'38, H'84
+	.DB	H'38, H'C8
+	.DB	H'3C, H'78
+	.DB	H'3C, H'D4
+	.DB	H'52, H'74
+	.DB	H'52, H'D8
+	.DB	H'56, H'74
+	.DB	H'56, H'D8
+	.DB	H'6C, H'78
+	.DB	H'6C, H'D4
+	.DB	H'70, H'84
+	.DB	H'70, H'C8
+	.DB	H'7C, H'90
+	.DB	H'7C, H'BC
+	.DB	H'84, H'7C
+	.DB	H'84, H'D0
+	.DB	H'88, H'90
+	.DB	H'88, H'B8
+	.DB	H'8C, H'A2
+	.DB	H'55, H'A4	;THE FOUR TOWERS
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+	.DB	H'00, H'00
+
+
+MAPSPR0H:
+	.DB	STN_SPR0 >>8, PRADSPR0 >>8, P1_SPR0 >>8
+MAPSPR0L:
+	.DB	STN_SPR0 &H'FF, PRADSPR0 &H'FF, P1_SPR0 &H'FF
+
+MAPSPR1H:
+	.DB	STN_SPR1 >>8, PRADSPR1 >>8, P1_SPR1 >>8
+MAPSPR1L:
+	.DB	STN_SPR1 &H'FF, PRADSPR1 &H'FF, P1_SPR1 &H'FF
+
+;GIVES THE PLANET MAP POSITION BASED ON XPOS AND YPOS
+P_POS:
+	.DB	  0,   0,   0,   0,   2,   4,   6,   8,  12,  16,  18,  22
+	.DB	 26,  30,  32,  36,  40,  44,  48,  52,  56,  60,  62,  65
+	.DB	 68,  71,  74,  76,  80,  83,  86,  89,  93,  97, 101, 106
+	.DB	110, 113, 116, 120, 122, 124, 124, 124
+
+
+;************************************************
+; MISSION DATA TABLES (04-25-90)
+;************************************************
+
+MTXT0:		.DB	12, 4, "    YOU HAVE", 0
+		.DB	       " COMPLETED YOUR", 0
+		.DB	       "PRESENT MISSION!", 0
+		.DB	0, 0
+		.DB	       " RETURN TO BASE", 0
+		.DB	       "    FOR YOUR", 0
+		.DB	       "      NEXT", 0
+		.DB	       "   ASSIGNMENT", -1
+
+MTXT1:		.DB	12, 3, "GREETINGS, NEW", 0
+		.DB	"RECRUIT!", 0
+		.DB	0
+		.DB	"ENEMY ACTIVITY", 0
+		.DB	"IN THIS SECTOR", 0
+		.DB	"IS INCREASING.", 0
+		.DB	"GO OUT AND", 0
+		.DB	"DESTROY ENEMY", 0
+		.DB	"SHIPS.", -1
+
+MTXT1A:		.DB	12, 3, "USE MONEY EARNED", 0
+		.DB	"TO IMPROVE YOUR", 0
+		.DB	"SHIP.", 0
+		.DB	0
+		.DB	"WHEN YOUR SHIP", 0
+		.DB	"IS EQUIPPED WITH", 0
+		.DB	"A SHIELD-2", 0
+		.DB	"AND A DRIVE-2", 0
+		.DB	"REPORT BACK TO", 0
+		.DB	"BASE FOR YOUR", 0
+		.DB	"NEXT ASSIGNMENT.", -1
+
+MTXT2:		.DB	12, 3, "CONGRATULATIONS!", 0
+		.DB	0
+		.DB	"YOU ARE NOW", 0
+		.DB	"READY TO ATTACK", 0
+		.DB	"ENEMY BASES.", 0
+		.DB	0
+		.DB	"DESTROY THE", 0
+		.DB	"SPACE STATION AT", 0
+		.DB	"THE COORDINATES", 0
+		.DB	"SHOWN BELOW.", -1
+
+MTXT3:		.DB	12, 3, "YOUR VALIANT", 0
+		.DB	"DEEDS HAVE", 0
+		.DB	"EARNED YOU OUR", 0
+		.DB	"THANKS, BUT THE", 0
+		.DB	"ENEMY THREAT IS", 0
+		.DB	"STILL GROWING...", 0
+		.DB	0
+		.DB	"OUR SOURCES SHOW", 0
+		.DB	"A MAJOR CONCEN-", 0
+		.DB	"TRATION OF THE", 0
+		.DB	"ENEMY FLEET AT", 0
+		.DB	"THE LOCATION", 0
+		.DB	"BELOW.", -1
+
+MTXT3A:		.DB	12, 3, "DESTROY ALL", 0
+		.DB	"ENEMY BASES IN", 0
+		.DB	"THIS SYSTEM", 0
+		.DB	"BEFORE THE ENEMY", 0
+		.DB	"CAN MOBILIZE TO", 0
+		.DB	"ATTACK US.", 0
+		.DB	0
+		.DB	"GOOD LUCK!", -1
+
+MTXT4:		.DB	12, 3, "A CAPTURED ENEMY", 0
+		.DB	"SPY HAS REVEALED", 0
+		.DB	"THE EXISTENCE OF", 0
+		.DB	"A POWERFUL NEW", 0
+		.DB	"WEAPON BEING", 0
+		.DB	"DEVELOPED IN A", 0
+		.DB	"LABORATORY AT", 0
+		.DB	"THE COORDINATES", 0
+		.DB	"LISTED BELOW.", 0
+		.DB	0
+		.DB	"INVESTIGATE AND", 0
+		.DB	"REPORT BACK.", -1
+
+MTXT5:		.DB	12, 3, "THE MESSAGE CAP-", 0
+		.DB	"SULE THAT YOU", 0
+		.DB	"OBTAINED FROM", 0
+		.DB	"THE ENEMY SPACE", 0
+		.DB	"STATION REVEALS", 0
+		.DB	"THAT THE NEW", 0
+		.DB	"WEAPON, CALLED", 0
+		.DB	"THE THUNDERBOLT,", 0
+		.DB	"HAS BEEN MOVED", 0
+		.DB	"TO THE SPACE", 0
+		.DB	"STATION AT THE", 0
+		.DB	"COORDINATES", 0
+		.DB	"BELOW.", -1
+
+MTXT5A:		.DB	12, 3, "FIND THE WEAPON", 0
+		.DB	"BUT USE IT ONLY", 0
+		.DB	"SPARINGLY AS IT", 0
+		.DB	"MAY BE THE ONLY", 0
+		.DB	"ONE OF ITS KIND.", -1
+
+MTXT6:		.DB	12, 3, "GREAT JOB!", 0
+		.DB	0
+		.DB	"THE THUNDERBOLT", 0
+		.DB	"SHOULD MAKE YOUR", 0
+		.DB	"SHIP POWERFUL", 0
+		.DB	"ENOUGH TO DEFEAT", 0
+		.DB	"THE P*RADIKUS", 0
+		.DB	"FLEET...", -1
+
+MTXT6A:		.DB	12, 3, "OUR SCOUTS TELL", 0
+		.DB	"US OF INCREASING", 0
+		.DB	"ENEMY ACTIVITY", 0
+		.DB	"AT THE LOCATION", 0
+		.DB	"BELOW.", 0
+		.DB	0
+		.DB	"INVESTIGATE AND", 0
+		.DB	"REPORT BACK.", -1
+
+MTXT7:		.DB	12, 3, "THIS MESSAGE", 0
+		.DB	"CAPSULE SHOWS", 0
+		.DB	"THE LOCATION OF", 0
+		.DB	"AN ENEMY STRONG-", 0
+		.DB	"HOLD IN THE", 0
+		.DB	"LOCATION BELOW.", 0
+		.DB	0
+		.DB	"WE BELIEVE THAT", 0
+		.DB	"THE HOME PLANET", 0
+		.DB	"OF THE P*RADIKUS", 0
+		.DB	"FLEET IS SOME-", 0
+		.DB	"WHERE IN THIS", 0
+		.DB	"SECTOR.", -1
+
+MTXT8:		.DB	12, 3, "ANALYSIS OF THE", 0
+		.DB	"DRIVE THAT YOU", 0
+		.DB	"OBTAINED SHOWS", 0
+		.DB	"IT TO BE OF A", 0
+		.DB	"HIGHLY ADVANCED", 0
+		.DB	"NATURE---IT IS", 0
+		.DB	"FAR BETTER THAN", 0
+		.DB	"ANYTHING OUR", 0
+		.DB	"ENGINEERS CAN", 0
+		.DB	"PRODUCE!", -1
+
+MTXT8A:		.DB	12, 3, "ALSO, THE DRIVE", 0
+		.DB	"APPEARS TO HAVE", 0
+		.DB	"AN AUTO-HOMING", 0
+		.DB	"ATTACHMENT THAT", 0
+		.DB	"WE BELIEVE WILL", 0
+		.DB	"LEAD YOU DIRECT-", 0
+		.DB	"LY TO THE HOME", 0
+		.DB	"PLANET OF THE", 0
+		.DB	"P*RADIKUS FLEET.", -1
+
+MTXT8B:		.DB	12, 3, "OUR SCIENTISTS", 0
+		.DB	"HAVE SUCCEEDED", 0
+		.DB	"IN COPYING THE", 0
+		.DB	"THUNDERBOLT, BUT", 0
+		.DB	"ONLY IN LIMITED", 0
+		.DB	"AMOUNTS---WE", 0
+		.DB	"HAVE GIVEN YOU", 0
+		.DB	"WHAT WE CAN", 0
+		.DB	"SPARE.", -1
+
+MTXT8C:		.DB	12, 3, "YOUR FINAL", 0
+		.DB	"MISSION IS TO", 0
+		.DB	"DESTROY THE", 0
+		.DB	"P*RADIKUS HOME", 0
+		.DB	"PLANET, IF YOU", 0
+		.DB	"CAN FIND IT...", 0
+		.DB	0
+		.DB	"GOOD LUCK AND", 0
+		.DB	"DON*T FORGET TO", 0
+		.DB	"STOCK UP ON", 0
+		.DB	"WEAPONS BEFORE", 0
+		.DB	"YOU LEAVE.", -1
+
+		;	SECTOR, SYSTEM, POSITION
+HOMELOC:	.DB	 4,  4, 15, 16,  63,  80
+M1LOC:		.DB	 4,  4, -1, -1,  -1,  -1
+M2LOC:		.DB	 5,  3, 12,  5,  82,  73
+M3LOC:		.DB	 3,  5, 14,  3,  -1,  -1
+M4LOC:		.DB	 1,  4, 14, 11,   7, 116
+M5LOC:		.DB	 1,  5, 13, 14, 113,  84
+M6LOC:		.DB	 6,  7,  9, 10,  67,  77
+M7LOC:		.DB	 8,  8, -1, -1,  -1,  -1
+M8LOC:		.DB	-1, -1, -1, -1,  -1,  -1
+
+
+
+
+;
+;****************************
+; INT. VECTORS
+;****************************
+
+IRQ:	JMP	BOOT		;power up or reset
+	RTI
+
+NMI:	RTI
+
+.ORG	h'FFFA
+
+.DRW	NMI
+.DRW	BOOT
+.DRW	IRQ
+
+;****************************
+; END
+;****************************
+
+
